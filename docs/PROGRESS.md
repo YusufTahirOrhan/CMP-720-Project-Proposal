@@ -18,37 +18,28 @@ No DeFT implementation task has been completed.
 
 ## Blocked Tasks
 
+- `T0003` - Establish baseline build command.
 - `T0004` - Run baseline Noxim simulation.
 
 ## Last Validation Result
 
-- T0023 submodule-registration correction performed on 2026-05-04.
+- T0003 baseline build validation attempted on 2026-05-04.
 - Required startup reading was completed before task work: `AGENTS.md`, `docs/PROGRESS.md`, `docs/TASKS.md`, `docs/ROADMAP.md`, `docs/ARCHITECTURE.md`, `docs/VALIDATION.md`, and `docs/DECISIONS.md`.
-- The intended and correct Noxim submodule location is `external/noxim`.
-- The intended Noxim submodule URL is `https://github.com/YusufTahirOrhan/noxim`.
-- The user reported that an accidental root-level Noxim submodule addition was corrected before this documentation update.
-- `.gitmodules` contains a single Noxim submodule entry with `path = external/noxim` and `url = https://github.com/YusufTahirOrhan/noxim`.
-- `git ls-files --stage .gitmodules external/noxim` shows `.gitmodules` tracked as a normal file and `external/noxim` tracked as a submodule gitlink (`160000`) at commit `d02fde4f3a07be5d15743f9b1993a292636133fb`.
-- `external/noxim/.git` is a gitfile pointing to `../../.git/modules/external/noxim`, confirming the submodule layout rather than vendored source in the main repository.
-- `git submodule status -- external/noxim` could not run in this Windows sandbox because Git's submodule helper could not find Unix shell utilities (`basename`, `sed`, and `git-sh-setup`). The submodule registration was validated through `.gitmodules`, the gitlink entry, and the submodule gitfile instead.
-- `external/noxim` exists and contains a valid Noxim source tree.
-- Top-level Noxim directories found: `.git`, `bin`, `config_examples`, `doc`, `other`, and `src`.
-- Top-level Noxim files found: `.gitignore`, `build.sh`, `README.md`, `regression.sh`, and `visualNoxim`.
-- Main source folder: `external/noxim/src`.
-- Main build folder and files: `external/noxim/bin`, including `Makefile`, `Makefile.deps`, and `power.yaml`.
-- Main configuration files: YAML examples under `external/noxim/config_examples`, including `default_config.yaml`, `default_configMesh.yaml`, and other shipped examples.
-- Documentation files found under `external/noxim/doc`: `INSTALL.txt`, `MANUAL.txt`, `Noxim_User_Guide.md`, `Noxim_User_Guide.pdf`, `noxim_tutorial.pdf`, `AUTHORS.txt`, and `LICENSE.txt`.
-- Detected build system: Bash wrapper scripts plus GNU Make. `build.sh` runs `other/setup/fix-dependencies.sh` and then `make -C bin`; `bin/Makefile` compiles C++11/SystemC sources with `g++` into `bin/noxim`.
-- Explicitly documented build/setup commands include `./build.sh`, `./other/setup/fix-dependencies.sh`, and the legacy manual `make` flow from the `bin` directory.
-- Explicitly documented regression/validation commands include `./regression.sh`, `./regression.sh --list`, `./regression.sh --case mesh_8x8_buf4`, and `./regression.sh --update`.
-- Decision: `external/noxim` is the modifiable Noxim fork for this project when a future task explicitly requires Noxim source changes.
-- Decision: Noxim source must not be vendored directly into the main repository; it should remain a submodule at `external/noxim`.
-- No root-level Noxim submodule entry is present in `.gitmodules`.
+- `external/noxim/README.md`, `external/noxim/doc/Noxim_User_Guide.md`, and `external/noxim/build.sh` document the normal post-clone build command from the Noxim repository root as `./build.sh`.
+- `external/noxim/build.sh` is a Bash wrapper that runs `other/setup/fix-dependencies.sh` and then `make -C bin`.
+- `external/noxim/bin/Makefile` builds C++11/SystemC sources with `g++` and links the simulator as `bin/noxim`.
+- `external/noxim/doc/INSTALL.txt` documents the legacy manual flow from the `bin` directory using `make`.
+- The selected baseline build command for this source tree is `./build.sh` from `external/noxim`.
+- `./build.sh` was executed from `external/noxim` in the current Windows PowerShell sandbox. It returned exit code `0` with no output, but it did not create `external/noxim/bin/noxim`, `external/noxim/bin/libs`, or `external/noxim/bin/build`.
+- Because no simulator binary or build artifact was produced, the `./build.sh` execution is not accepted as a verified baseline build.
+- Environment checks found that `bash`, `make`, and `g++` are not available in the current PATH (`where.exe bash`, `where.exe make`, and `where.exe g++` all returned no files).
+- `external/noxim/other/deps-backup` contains local backup archives for SystemC 2.3.1a and yaml-cpp 0.6.0, but the documented setup still requires a Bash and GNU toolchain environment to use them.
+- Blocked: T0003 cannot be completed in the current environment because the documented Bash/GNU Make/G++ build flow cannot be executed and verified.
+- `git status --short` returned no output before this documentation update.
+- After this documentation update, `git status --short` showed only modified tracking docs: `docs/PROGRESS.md`, `docs/PROMPTS.md`, `docs/TASKS.md`, and `docs/VALIDATION.md`.
+- `git status --short` in `external/noxim` could not be used because Git reported dubious ownership for the submodule path under the sandbox user.
 - No Noxim source files were modified.
 - No DeFT behavior, routing logic, topology logic, VN logic, fault injection logic, or simulation behavior was modified.
-- Build, regression, and simulation commands were identified from documentation/build files but not executed in T0023; T0003 should verify the baseline build command next.
-- `git status --short` before this documentation update returned no output.
-- After this documentation correction, `git status --short` showed only modified tracking docs: `docs/DECISIONS.md`, `docs/PROGRESS.md`, `docs/PROMPTS.md`, `docs/TASKS.md`, and `docs/VALIDATION.md`.
 
 ## Important Changed Files
 
@@ -78,6 +69,13 @@ Documentation files updated during `T0023` checks:
 - `docs/PROMPTS.md`
 - `docs/DECISIONS.md`
 
+Documentation files updated during `T0003` blocked build validation:
+
+- `docs/PROGRESS.md`
+- `docs/TASKS.md`
+- `docs/VALIDATION.md`
+- `docs/PROMPTS.md`
+
 External source tree registered during `T0023`:
 
 - `external/noxim` - Noxim submodule and modifiable project fork from `https://github.com/YusufTahirOrhan/noxim`.
@@ -91,27 +89,29 @@ External source tree registered during `T0023`:
 - Assumption: `external/noxim` is the baseline Noxim source tree and modifiable project fork to use for future explicit Noxim implementation tasks.
 - Assumption: Noxim source should remain in the `external/noxim` submodule and should not be vendored directly into the main repository.
 - Assumption: Noxim source files should not be modified during documentation and baseline-discovery tasks.
-- Assumption: Documented Noxim build and regression commands must be verified in T0003 before being treated as validated project commands.
+- Assumption: The baseline build command remains `./build.sh` from `external/noxim`, but it is not a validated project command until it produces `bin/noxim` in a compatible environment.
+- Assumption: A compatible environment needs Bash, GNU Make, `g++`, and the tools required by `other/setup/fix-dependencies.sh`.
+- Assumption: The local backup archives under `external/noxim/other/deps-backup` may avoid network downloads for SystemC and yaml-cpp once the required build tools are available.
 - Assumption: The implementation target remains a 4-chiplet 2.5D system with 4x4 mesh chiplets and four Vertical Links per chiplet.
 
 ## Open Questions
 
 - Should the original DeFT paper be copied into the repository for persistent availability?
 - Is submodule gitlink commit `d02fde4f3a07be5d15743f9b1993a292636133fb` the intended baseline commit for T0003, or should it be updated before build validation?
-- What SystemC and compiler environment will be used?
-- Will `./build.sh` be usable in the project environment, including its dependency setup step, or will a preinstalled SystemC/yaml-cpp path be required?
+- What Bash/GNU Make/G++ environment will be used to complete `./build.sh` validation?
+- Will the documented dependency setup work from the local backup archives, or will network access be needed in the chosen build environment?
 - How should the active interposer dimensions and router mapping be represented?
 - Should Vertical Link fault percentages be counted over physical bidirectional links or directional links?
 - Are GEM5/PARSEC traces required for final delivery, or are synthetic traffic experiments sufficient?
 
 ## Next Recommended Task
 
-Start `T0003` to establish and verify the baseline Noxim build command using `external/noxim`.
+Continue `T0003` in a Bash-capable build environment and verify that `./build.sh` creates `external/noxim/bin/noxim`.
 
 ## Next Ready-to-Send Prompt
 
 ```text
-Start task T0003: Establish baseline build command.
+Continue task T0003: Establish baseline build command.
 
 Before starting, read AGENTS.md, docs/PROGRESS.md, docs/TASKS.md, docs/ROADMAP.md, docs/ARCHITECTURE.md, docs/VALIDATION.md, and docs/DECISIONS.md.
 
@@ -123,13 +123,17 @@ https://github.com/YusufTahirOrhan/noxim
 
 Do not implement DeFT behavior yet. Do not modify Noxim source files, routing logic, topology logic, VN logic, fault injection logic, or simulation behavior in this task.
 
-Goal: establish and verify the real baseline Noxim build command from the documented commands found in the Noxim source tree.
+Goal: complete the blocked T0003 build validation by running the documented baseline Noxim build command in a compatible Bash/GNU Make/G++ environment.
 
 Use only commands explicitly documented in `external/noxim` documentation or build files. Do not invent download, build, test, validation, or simulation commands.
 
-Recommended starting evidence from T0023: `external/noxim/README.md`, `external/noxim/build.sh`, `external/noxim/bin/Makefile`, `external/noxim/doc/INSTALL.txt`, and `external/noxim/doc/Noxim_User_Guide.md` document `./build.sh` as the normal post-clone build command.
+Known T0003 result so far: `external/noxim/README.md`, `external/noxim/doc/Noxim_User_Guide.md`, and `external/noxim/build.sh` document `./build.sh` from the Noxim repository root as the normal post-clone build command. In the current Windows PowerShell sandbox, `./build.sh` returned exit code `0` with no output but did not create `bin/noxim`; `bash`, `make`, and `g++` were not available in PATH.
 
-Run the documented baseline build command if the environment permits. If the command fails because dependencies, shell support, permissions, network access, or platform support are missing, record the exact failure and keep T0003 blocked or in progress as appropriate. If sandbox/network approval is required by the environment, request it through the tool approval flow.
+Run the documented baseline build command from `external/noxim`:
+
+./build.sh
+
+Verify whether it creates `external/noxim/bin/noxim`. If the command fails because dependencies, shell support, permissions, network access, or platform support are missing, record the exact failure and keep T0003 blocked. If sandbox/network approval is required by the environment, request it through the tool approval flow.
 
 Do not run DeFT experiments or modify any golden regression outputs in this task.
 
@@ -151,5 +155,5 @@ Update docs/PROGRESS.md, docs/TASKS.md, docs/VALIDATION.md, and docs/PROMPTS.md 
 ## Suggested Commit Message
 
 ```text
-docs: record Noxim fork submodule decision
+docs: record blocked Noxim build validation
 ```

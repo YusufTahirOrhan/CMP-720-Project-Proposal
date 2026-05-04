@@ -83,7 +83,7 @@ Purpose:
 - Confirm that Noxim builds before project-specific implementation begins.
 - Record exact compiler, SystemC, and build environment requirements.
 
-Documented candidate commands, not yet verified as project validation:
+Documented commands:
 
 - From the Noxim repository root: `./build.sh`
 - Dependency setup only, from the Noxim repository root: `./other/setup/fix-dependencies.sh`
@@ -97,7 +97,22 @@ Notes:
 - The normal post-clone build command documented by `external/noxim/README.md` and `external/noxim/doc/Noxim_User_Guide.md` is `./build.sh`.
 - `external/noxim/build.sh` runs `other/setup/fix-dependencies.sh` and then `make -C bin`.
 - `external/noxim/bin/Makefile` builds C++11/SystemC sources with `g++` and links `bin/noxim`.
-- T0003 must execute and verify the selected build command before it is treated as the validated project build command.
+- T0003 selected `./build.sh` from `external/noxim` as the baseline build command, but the command is not yet a validated project build command because it has not produced `bin/noxim` in the available environment.
+
+T0003 blocked result on 2026-05-04:
+
+- Required startup reading was completed before task work: `AGENTS.md`, `docs/PROGRESS.md`, `docs/TASKS.md`, `docs/ROADMAP.md`, `docs/ARCHITECTURE.md`, `docs/VALIDATION.md`, and `docs/DECISIONS.md`.
+- `external/noxim/README.md`, `external/noxim/doc/Noxim_User_Guide.md`, `external/noxim/build.sh`, `external/noxim/bin/Makefile`, and `external/noxim/doc/INSTALL.txt` were inspected for build-command evidence.
+- The selected documented baseline command is `./build.sh` from `external/noxim`.
+- `./build.sh` was executed from `external/noxim` in the current Windows PowerShell sandbox. It returned exit code `0` with no output, but no `external/noxim/bin/noxim`, `external/noxim/bin/libs`, or `external/noxim/bin/build` path was created.
+- Because the simulator binary was not created, the build is not verified.
+- `where.exe bash`, `where.exe make`, and `where.exe g++` all returned no files, so the current environment lacks the Bash/GNU Make/G++ toolchain required by `build.sh`, `other/setup/fix-dependencies.sh`, and `bin/Makefile`.
+- `external/noxim/other/deps-backup` contains backup archives for SystemC 2.3.1a and yaml-cpp 0.6.0, which may avoid network downloads once a compatible build toolchain is available.
+- `git status --short` returned no output before T0003 documentation updates.
+- After T0003 documentation updates, `git status --short` showed only modified tracking docs: `docs/PROGRESS.md`, `docs/PROMPTS.md`, `docs/TASKS.md`, and `docs/VALIDATION.md`.
+- `git status --short` inside `external/noxim` could not be used because Git reported dubious ownership for the submodule path under the sandbox user.
+- No Noxim source files were modified.
+- No DeFT behavior, routing logic, topology logic, VN logic, fault injection logic, or simulation behavior was modified.
 
 ## Source Document Validation
 

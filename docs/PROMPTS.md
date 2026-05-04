@@ -472,3 +472,68 @@ Update docs/PROGRESS.md, docs/TASKS.md, docs/VALIDATION.md, and docs/PROMPTS.md 
 8. Suggested commit message
 9. Unknowns or blockers
 ```
+
+## 2026-05-04: Start T0003 Baseline Build Command
+
+- **Date:** 2026-05-04
+- **Prompt summary:** Establish and verify the documented baseline Noxim build command from `external/noxim`, without modifying Noxim source or DeFT behavior.
+- **Full prompt:**
+
+```text
+Start task T0003: Establish baseline build command.
+
+Before starting, read AGENTS.md, docs/PROGRESS.md, docs/TASKS.md, docs/ROADMAP.md, docs/ARCHITECTURE.md, docs/VALIDATION.md, and docs/DECISIONS.md.
+
+Use the registered Noxim source tree at:
+external/noxim
+
+Do not implement DeFT behavior yet. Do not modify Noxim source files, routing logic, topology logic, VN logic, fault injection logic, or simulation behavior in this task.
+
+Use only commands explicitly documented in external/noxim documentation or build files. Establish and verify the baseline build command, then update the tracking docs with the result.
+```
+
+- **Result summary:** T0003 is blocked in the current Windows PowerShell sandbox. The documented baseline build command is `./build.sh` from `external/noxim`, supported by `README.md`, `doc/Noxim_User_Guide.md`, and `build.sh`. The wrapper runs `other/setup/fix-dependencies.sh` and then `make -C bin`. The command was attempted from `external/noxim` and returned exit code `0` with no output, but it did not create `bin/noxim`, `bin/libs`, or `bin/build`, so the build was not verified. Environment checks found no `bash`, `make`, or `g++` in PATH. No Noxim source files or DeFT behavior were modified.
+- **Follow-up tasks:** Continue `T0003` in a Bash-capable environment with GNU Make and `g++` available, then rerun the documented `./build.sh` command from `external/noxim`.
+- **Next ready-to-send prompt:**
+
+```text
+Continue task T0003: Establish baseline build command.
+
+Before starting, read AGENTS.md, docs/PROGRESS.md, docs/TASKS.md, docs/ROADMAP.md, docs/ARCHITECTURE.md, docs/VALIDATION.md, and docs/DECISIONS.md.
+
+Use the registered Noxim source tree at:
+external/noxim
+
+`external/noxim` is the Noxim submodule and modifiable project fork from:
+https://github.com/YusufTahirOrhan/noxim
+
+Do not implement DeFT behavior yet. Do not modify Noxim source files, routing logic, topology logic, VN logic, fault injection logic, or simulation behavior in this task.
+
+Goal: complete the blocked T0003 build validation by running the documented baseline Noxim build command in a compatible Bash/GNU Make/G++ environment.
+
+Use only commands explicitly documented in `external/noxim` documentation or build files. Do not invent download, build, test, validation, or simulation commands.
+
+Known T0003 result so far: `external/noxim/README.md`, `external/noxim/doc/Noxim_User_Guide.md`, and `external/noxim/build.sh` document `./build.sh` from the Noxim repository root as the normal post-clone build command. In the current Windows PowerShell sandbox, `./build.sh` returned exit code `0` with no output but did not create `bin/noxim`; `bash`, `make`, and `g++` were not available in PATH.
+
+Run the documented baseline build command from `external/noxim`:
+
+./build.sh
+
+Verify whether it creates `external/noxim/bin/noxim`. If the command fails because dependencies, shell support, permissions, network access, or platform support are missing, record the exact failure and keep T0003 blocked. If sandbox/network approval is required by the environment, request it through the tool approval flow.
+
+Do not run DeFT experiments or modify any golden regression outputs in this task.
+
+Ignore the peer evaluation document completely.
+
+Update docs/PROGRESS.md, docs/TASKS.md, docs/VALIDATION.md, and docs/PROMPTS.md with the result. At the end, provide:
+
+1. Created files
+2. Modified files
+3. Whether any source code files changed
+4. Validation result
+5. Current project phase
+6. Next recommended task
+7. The next ready-to-send prompt
+8. Suggested commit message
+9. Unknowns or blockers
+```

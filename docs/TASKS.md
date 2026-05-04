@@ -24,13 +24,13 @@ Statuses: `TODO`, `IN_PROGRESS`, `DONE`, `BLOCKED`.
 
 ## T0003: Establish Baseline Build Command
 
-- **Status:** TODO
+- **Status:** BLOCKED
 - **Objective:** Identify and document the actual Noxim build command.
 - **Relevant roadmap phase:** Phase 1
-- **Files likely to change:** `docs/VALIDATION.md`, `docs/PROGRESS.md`
-- **Acceptance criteria:** A real build command is documented and verified.
-- **Validation command:** Candidate documented command from `external/noxim`: `./build.sh` from the Noxim repository root; to be verified in T0003.
-- **Notes:** Unblocked by T0023. The registered Noxim source tree is the `external/noxim` submodule from `https://github.com/YusufTahirOrhan/noxim`; it is the modifiable Noxim fork for this project. T0023 found top-level build documentation and build files that document `./build.sh` as the normal post-clone build command; T0003 must verify it before treating it as the validated project build command.
+- **Files changed:** `docs/PROGRESS.md`, `docs/TASKS.md`, `docs/VALIDATION.md`, `docs/PROMPTS.md`
+- **Acceptance criteria:** A real build command is documented and verified. Not yet met because the current environment cannot execute the documented Bash/GNU Make/G++ build flow.
+- **Validation command:** Documented baseline command from `external/noxim`: `./build.sh` from the Noxim repository root.
+- **Notes:** Blocked on 2026-05-04. `external/noxim/README.md`, `external/noxim/doc/Noxim_User_Guide.md`, and `external/noxim/build.sh` document `./build.sh` as the normal post-clone build command. `build.sh` runs `other/setup/fix-dependencies.sh` and then `make -C bin`; `bin/Makefile` builds `bin/noxim` with `g++`. The command was attempted from `external/noxim` in the current Windows PowerShell sandbox and returned exit code `0` with no output, but it did not create `bin/noxim`, `bin/libs`, or `bin/build`, so it is not accepted as verified. Environment checks found no `bash`, `make`, or `g++` in PATH. No Noxim source files or DeFT behavior were modified.
 
 ## T0004: Run Baseline Noxim Simulation
 
@@ -40,7 +40,7 @@ Statuses: `TODO`, `IN_PROGRESS`, `DONE`, `BLOCKED`.
 - **Files likely to change:** `docs/VALIDATION.md`, `docs/PROGRESS.md`
 - **Acceptance criteria:** A baseline simulation command and result are documented.
 - **Validation command:** To be confirmed after repository inspection
-- **Notes:** Blocked until Noxim builds successfully. T0023 registered the Noxim source as the `external/noxim` submodule from `https://github.com/YusufTahirOrhan/noxim`, but T0003 must verify the baseline build command before T0004 selects and runs a baseline simulation command.
+- **Notes:** Blocked until Noxim builds successfully. T0023 registered the Noxim source as the `external/noxim` submodule from `https://github.com/YusufTahirOrhan/noxim`. T0003 identified `./build.sh` as the documented baseline build command, but verification is blocked in the current environment because Bash, GNU Make, and `g++` are unavailable.
 
 ## T0005: Map Noxim Extension Points
 
