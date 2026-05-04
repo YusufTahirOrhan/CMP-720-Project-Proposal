@@ -73,3 +73,11 @@ This document records project decisions that affect implementation, validation, 
 - **Context:** The project should preserve memory across Codex sessions and make continuation easy.
 - **Decision:** After each completed task, Codex must provide a ready-to-send prompt for the next recommended task and a suggested commit message for the completed work.
 - **Consequences:** `docs/PROGRESS.md` should record the next prompt and suggested commit message. Final task responses should include both items.
+
+## ADR-0010: Register Baseline Noxim Source at `external/noxim`
+
+- **Date:** 2026-05-04
+- **Status:** Accepted
+- **Context:** T0023 required the Noxim source location to be explicit before baseline build validation and future DeFT implementation tasks.
+- **Decision:** Use `external/noxim` as the registered baseline Noxim source tree. The user cloned it from `https://github.com/davidepatti/noxim`.
+- **Consequences:** T0003 and later source-inspection tasks should use `external/noxim` unless a later decision replaces this source path. Baseline build and regression commands must still be verified before they become validated project commands. Noxim source files must not be modified outside explicit implementation tasks.

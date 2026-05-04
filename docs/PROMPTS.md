@@ -268,3 +268,137 @@ Update docs/PROGRESS.md, docs/TASKS.md, docs/VALIDATION.md, and docs/PROMPTS.md 
 8. Suggested commit message
 9. Unknowns or blockers
 ```
+
+## 2026-05-04: Continue T0023 Noxim Source Registration Placeholder Check
+
+- **Date:** 2026-05-04
+- **Prompt summary:** Continue T0023 again, using the intended Noxim source location or import method if provided, otherwise record that the task remains blocked.
+- **Full prompt:**
+
+```text
+Continue task T0023: Add or register the Noxim source tree.
+
+Before starting, read AGENTS.md, docs/PROGRESS.md, docs/TASKS.md, docs/ROADMAP.md, and docs/ARCHITECTURE.md.
+
+Use this intended Noxim source location or import method:
+<insert the local source path, repository import method, archive path, or other explicit source registration instruction here>
+
+Do not implement DeFT behavior yet. Do not modify routing logic, topology logic, VN logic, fault injection logic, or simulation behavior in this task.
+
+Goal: make Noxim source availability explicit so T0003 can establish a real baseline build command.
+
+If a Noxim source tree is available, inspect only its top-level structure and build documentation. If it is still not available, record that the task remains blocked. Do not invent download, build, test, or simulation commands.
+
+Ignore the peer evaluation document completely.
+
+Update docs/PROGRESS.md, docs/TASKS.md, docs/VALIDATION.md, and docs/PROMPTS.md with the result.
+```
+
+- **Result summary:** T0023 remains blocked. The provided intended source location or import method is still the literal placeholder, and repository inspection found no Noxim source tree, Noxim-named path, C/C++/SystemC source file, script source file, recognized build-system file, or explicit external source path. No top-level Noxim structure or build documentation could be inspected. No DeFT behavior or source code was changed.
+- **Follow-up tasks:** Continue `T0023` after replacing the placeholder with an actionable Noxim source location, repository import method, archive path, or equivalent source registration instruction.
+- **Next ready-to-send prompt:**
+
+```text
+Continue task T0023: Add or register the Noxim source tree.
+
+Before starting, read AGENTS.md, docs/PROGRESS.md, docs/TASKS.md, docs/ROADMAP.md, and docs/ARCHITECTURE.md.
+
+Use this intended Noxim source location or import method:
+<insert the local source path, repository import method, archive path, or other explicit source registration instruction here>
+
+Do not implement DeFT behavior yet. Do not modify routing logic, topology logic, VN logic, fault injection logic, or simulation behavior in this task.
+
+Goal: make Noxim source availability explicit so T0003 can establish a real baseline build command.
+
+If a Noxim source tree is available, inspect only its top-level structure and build documentation. If it is still not available, record that the task remains blocked. Do not invent download, build, test, or simulation commands.
+
+Ignore the peer evaluation document completely.
+
+Update docs/PROGRESS.md, docs/TASKS.md, docs/VALIDATION.md, and docs/PROMPTS.md with the result. At the end, provide:
+
+1. Created files
+2. Modified files
+3. Whether any source code files changed
+4. Validation result
+5. Current project phase
+6. Next recommended task
+7. The next ready-to-send prompt
+8. Suggested commit message
+9. Unknowns or blockers
+```
+
+## 2026-05-04: Continue T0023 with `external/noxim`
+
+- **Date:** 2026-05-04
+- **Prompt summary:** Continue T0023 using `external/noxim` as the intended Noxim source location, inspect only top-level structure and build documentation, and mark the task done if the source tree is valid.
+- **Full prompt:**
+
+```text
+Continue task T0023: Add or register the Noxim source tree.
+
+Before starting, read AGENTS.md, docs/PROGRESS.md, docs/TASKS.md, docs/ROADMAP.md, docs/ARCHITECTURE.md, docs/VALIDATION.md, and docs/DECISIONS.md.
+
+Use this intended Noxim source location:
+
+external/noxim
+
+I have cloned the baseline Noxim repository from https://github.com/davidepatti/noxim into external/noxim.
+
+Do not implement DeFT behavior yet. Do not modify routing logic, topology logic, VN logic, fault injection logic, or simulation behavior in this task.
+
+Goal: make Noxim source availability explicit so T0003 can establish a real baseline build command.
+
+Inspect only the Noxim top-level structure and build documentation. Identify the detected build system, main source folders, configuration files, documentation files, and any explicitly documented build or validation commands.
+
+Do not invent download, build, test, or simulation commands. Only record commands if they are explicitly present in the repository documentation or build files.
+
+Ignore the peer evaluation document completely.
+
+Update docs/PROGRESS.md, docs/TASKS.md, docs/VALIDATION.md, and docs/PROMPTS.md with the result.
+
+Expected outcome:
+1. If external/noxim contains a valid Noxim source tree, mark T0023 as DONE.
+2. If external/noxim is missing or invalid, keep T0023 as BLOCKED and explain why.
+3. Do not modify any Noxim source files.
+4. Report all modified documentation files.
+5. Recommend the next task, likely T0003: establish baseline build and validation command.
+```
+
+- **Result summary:** T0023 completed. `external/noxim` exists and contains a valid Noxim source checkout with top-level directories `.git`, `bin`, `config_examples`, `doc`, `other`, and `src`. The detected build system is Bash wrapper scripts plus GNU Make: `build.sh` runs `other/setup/fix-dependencies.sh` and then `make -C bin`; `bin/Makefile` builds C++11/SystemC sources with `g++` into `bin/noxim`. Documented build/setup commands include `./build.sh`, `./other/setup/fix-dependencies.sh`, and the legacy manual `make` flow from `bin`. Documented regression/validation commands include `./regression.sh`, `./regression.sh --list`, `./regression.sh --case mesh_8x8_buf4`, and `./regression.sh --update`. No Noxim source files or DeFT behavior were modified.
+- **Follow-up tasks:** Start `T0003` to establish and verify the baseline Noxim build command using `external/noxim`.
+- **Next ready-to-send prompt:**
+
+```text
+Start task T0003: Establish baseline build command.
+
+Before starting, read AGENTS.md, docs/PROGRESS.md, docs/TASKS.md, docs/ROADMAP.md, docs/ARCHITECTURE.md, docs/VALIDATION.md, and docs/DECISIONS.md.
+
+Use the registered Noxim source tree at:
+external/noxim
+
+Do not implement DeFT behavior yet. Do not modify Noxim source files, routing logic, topology logic, VN logic, fault injection logic, or simulation behavior in this task.
+
+Goal: establish and verify the real baseline Noxim build command from the documented commands found in the Noxim source tree.
+
+Use only commands explicitly documented in `external/noxim` documentation or build files. Do not invent download, build, test, validation, or simulation commands.
+
+Recommended starting evidence from T0023: `external/noxim/README.md`, `external/noxim/build.sh`, `external/noxim/bin/Makefile`, `external/noxim/doc/INSTALL.txt`, and `external/noxim/doc/Noxim_User_Guide.md` document `./build.sh` as the normal post-clone build command.
+
+Run the documented baseline build command if the environment permits. If the command fails because dependencies, shell support, permissions, network access, or platform support are missing, record the exact failure and keep T0003 blocked or in progress as appropriate. If sandbox/network approval is required by the environment, request it through the tool approval flow.
+
+Do not run DeFT experiments or modify any golden regression outputs in this task.
+
+Ignore the peer evaluation document completely.
+
+Update docs/PROGRESS.md, docs/TASKS.md, docs/VALIDATION.md, and docs/PROMPTS.md with the result. At the end, provide:
+
+1. Created files
+2. Modified files
+3. Whether any source code files changed
+4. Validation result
+5. Current project phase
+6. Next recommended task
+7. The next ready-to-send prompt
+8. Suggested commit message
+9. Unknowns or blockers
+```

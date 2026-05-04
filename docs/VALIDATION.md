@@ -36,17 +36,36 @@ T0023 result on 2026-05-04:
 - T0023 is blocked pending the intended Noxim source location or import method.
 - No source code files were changed.
 
-T0023 continuation result on 2026-05-04:
+Latest T0023 continuation result on 2026-05-04:
 
-- `git status --short` returned no output before T0023 continuation documentation updates.
-- The intended Noxim source location or import method in the prompt was still the literal placeholder `<insert the local source path, repository import method, archive path, or other explicit source registration instruction here>`.
+- `git status --short` returned no output before the latest T0023 continuation documentation updates.
+- The current continuation prompt again left the intended Noxim source location or import method as the literal placeholder `<insert the local source path, repository import method, archive path, or other explicit source registration instruction here>`.
 - `rg --files` could not be used because `rg.exe` returned access denied.
 - PowerShell top-level and recursive directory/file inspection was used as the fallback.
 - Repository inspection found no Noxim source tree, Noxim-named path, C/C++/SystemC source file, script source file, or recognized build-system file.
+- A repeat recognized build-file inspection found no `Makefile`, `CMakeLists.txt`, `SConstruct`, `meson.build`, `package.json`, `configure`, Visual Studio project file, `.mk`, or `.pro` file.
 - No top-level Noxim structure or Noxim build documentation could be inspected because no Noxim source tree or explicit external Noxim source path is available.
 - Blocked: T0023 remains blocked pending a real Noxim source location or import method.
-- After T0023 continuation documentation updates, `git status --short` showed only modified documentation files: `docs/PROGRESS.md`, `docs/PROMPTS.md`, `docs/TASKS.md`, and `docs/VALIDATION.md`.
+- After the latest T0023 continuation documentation updates, `git status --short` showed only modified documentation files: `docs/PROGRESS.md`, `docs/PROMPTS.md`, `docs/TASKS.md`, and `docs/VALIDATION.md`.
 - No source code files were changed.
+
+T0023 source registration result on 2026-05-04:
+
+- `external/noxim` exists and contains a valid Noxim checkout cloned by the user.
+- Top-level Noxim directories found: `.git`, `bin`, `config_examples`, `doc`, `other`, and `src`.
+- Top-level Noxim files found: `.gitignore`, `build.sh`, `README.md`, `regression.sh`, and `visualNoxim`.
+- Main source folder: `external/noxim/src`.
+- Main build folder and files: `external/noxim/bin`, including `Makefile`, `Makefile.deps`, and `power.yaml`.
+- Main configuration files: YAML examples under `external/noxim/config_examples`, including `default_config.yaml`, `default_configMesh.yaml`, and other shipped examples.
+- Main documentation files found under `external/noxim/doc`: `INSTALL.txt`, `MANUAL.txt`, `Noxim_User_Guide.md`, `Noxim_User_Guide.pdf`, `noxim_tutorial.pdf`, `AUTHORS.txt`, and `LICENSE.txt`.
+- Detected build system: Bash wrapper scripts plus GNU Make. `build.sh` runs `other/setup/fix-dependencies.sh` and then `make -C bin`; `bin/Makefile` compiles C++11/SystemC sources with `g++` into `bin/noxim`.
+- Explicitly documented build/setup commands include `./build.sh`, `./other/setup/fix-dependencies.sh`, and the legacy manual `make` flow from the `bin` directory.
+- Explicitly documented regression/validation commands include `./regression.sh`, `./regression.sh --list`, `./regression.sh --case mesh_8x8_buf4`, and `./regression.sh --update`.
+- Noxim nested Git metadata could not be queried with `git -C external/noxim ...` because Git reported a safe-directory ownership mismatch in the sandbox.
+- T0023 is complete because Noxim source availability is now explicit and the top-level structure/build documentation are documented.
+- No Noxim source files were modified.
+- No DeFT behavior, routing logic, topology logic, VN logic, fault injection logic, or simulation behavior was modified.
+- After T0023 documentation updates, `git status --short` showed modified tracking docs (`docs/DECISIONS.md`, `docs/PROGRESS.md`, `docs/PROMPTS.md`, `docs/TASKS.md`, and `docs/VALIDATION.md`) and untracked `external/`, which contains the user-cloned Noxim source tree.
 
 ## Build Validation
 
@@ -55,16 +74,19 @@ Purpose:
 - Confirm that Noxim builds before project-specific implementation begins.
 - Record exact compiler, SystemC, and build environment requirements.
 
-Command:
+Documented candidate commands, not yet verified as project validation:
 
-- Unknown until repository inspection.
+- From the Noxim repository root: `./build.sh`
+- Dependency setup only, from the Noxim repository root: `./other/setup/fix-dependencies.sh`
+- Legacy manual build from `external/noxim/bin`: `make`
 
 Notes:
 
-- Noxim source code is not currently present in the repository as of the T0023 continuation check on 2026-05-04.
-- No build-system file such as `Makefile`, `CMakeLists.txt`, `SConstruct`, `meson.build`, `package.json`, or Visual Studio project file was found during T0002 or T0023.
-- Build commands must come from the repository, Noxim documentation, or user-provided instructions.
-- T0023 did not add a build command because the Noxim source location or import method is still unknown.
+- Noxim source code is registered at `external/noxim` as of T0023 on 2026-05-04.
+- The normal post-clone build command documented by `external/noxim/README.md` and `external/noxim/doc/Noxim_User_Guide.md` is `./build.sh`.
+- `external/noxim/build.sh` runs `other/setup/fix-dependencies.sh` and then `make -C bin`.
+- `external/noxim/bin/Makefile` builds C++11/SystemC sources with `g++` and links `bin/noxim`.
+- T0003 must execute and verify the selected build command before it is treated as the validated project build command.
 
 ## Source Document Validation
 
@@ -95,14 +117,19 @@ Purpose:
 
 - Validate isolated behavior for topology mapping, Vertical Link faults, VN transitions, LUT generation, and metrics extraction.
 
-Command:
+Documented candidate commands, not yet executed by this project:
 
-- Unknown until repository inspection.
+- From the Noxim repository root: `./regression.sh`
+- List available regression cases: `./regression.sh --list`
+- Run matching regression cases: `./regression.sh --case mesh_8x8_buf4`
+- Regenerate golden outputs after intentional simulator behavior changes: `./regression.sh --update`
 
 Notes:
 
-- Test framework availability is unknown.
-- If no test framework exists, future tasks should document the smallest safe validation method before adding one.
+- `external/noxim/README.md`, `external/noxim/regression.sh`, and `external/noxim/doc/Noxim_User_Guide.md` document a deterministic regression suite.
+- `./regression.sh` rebuilds by default unless `--skip-build` is used.
+- Do not use `./regression.sh --update` unless intentionally refreshing golden outputs after planned simulator behavior changes.
+- T0003 should first establish the baseline build command. Regression execution can be selected after the build command is verified.
 
 ## Noxim Simulation Runs
 
@@ -114,13 +141,13 @@ Purpose:
 
 Command:
 
-- Unknown until repository inspection.
+- Baseline simulation command not yet selected or run.
 
 Notes:
 
 - Simulation commands must not be invented.
 - Baseline simulation must be confirmed before DeFT-specific changes are evaluated.
-- Blocked as of T0023 because Noxim source code and build files are not present or registered.
+- `external/noxim/doc/Noxim_User_Guide.md` includes documented sample simulator invocations, but T0004 must choose and verify the baseline simulation command after T0003 confirms the build.
 
 ## Experiment Validation
 

@@ -8,8 +8,9 @@ Phase 1 - Noxim baseline source availability and validation setup
 
 - `T0001` - Repository analysis and documentation setup.
 - `T0002` - Confirm repository contents, Noxim availability, and source-document availability.
+- `T0023` - Add or register the Noxim source tree.
 
-No implementation task has been completed.
+No DeFT implementation task has been completed.
 
 ## In-Progress Tasks
 
@@ -17,26 +18,29 @@ No implementation task has been completed.
 
 ## Blocked Tasks
 
-- `T0023` - Add or register the Noxim source tree.
-- `T0003` - Establish baseline build command.
 - `T0004` - Run baseline Noxim simulation.
-- `T0005` - Map Noxim extension points.
 
 ## Last Validation Result
 
-- T0023 continuation source-availability check performed on 2026-05-04.
-- Required startup reading was completed before task work: `AGENTS.md`, `docs/PROGRESS.md`, `docs/TASKS.md`, `docs/ROADMAP.md`, and `docs/ARCHITECTURE.md`.
-- `git status --short` returned no output before T0023 continuation documentation updates.
-- The intended Noxim source location or import method in the prompt was still the literal placeholder `<insert the local source path, repository import method, archive path, or other explicit source registration instruction here>`.
-- `rg --files` could not be used because `rg.exe` returned access denied; PowerShell file inspection was used as the fallback.
-- Repository top-level inspection found only `.git`, `docs`, project rule/documentation files, proposal PDFs/zips, and the ignored peer evaluation artifact. The peer evaluation document was not opened or used.
-- Recursive directory inspection found no source directory other than `docs`.
-- File inspection found no Noxim source tree, Noxim-named path, C/C++/SystemC source file, script source file, or recognized build-system file in the repository.
-- No top-level Noxim structure or build documentation could be inspected because no Noxim source tree or explicit external Noxim source path is available.
-- Blocked: T0023 remains blocked pending a real Noxim source location or import method.
-- Build, test, and simulation commands remain unknown because Noxim source code and build documentation are not present.
-- After T0023 continuation documentation updates, `git status --short` showed only modified documentation files: `docs/PROGRESS.md`, `docs/PROMPTS.md`, `docs/TASKS.md`, and `docs/VALIDATION.md`.
-- No source code files were changed.
+- T0023 source-registration check performed on 2026-05-04.
+- Required startup reading was completed before task work: `AGENTS.md`, `docs/PROGRESS.md`, `docs/TASKS.md`, `docs/ROADMAP.md`, `docs/ARCHITECTURE.md`, `docs/VALIDATION.md`, and `docs/DECISIONS.md`.
+- The intended Noxim source location was provided as `external/noxim`.
+- `git status --short` before this continuation's documentation updates showed existing modified tracking docs from the earlier T0023 blocked check and a new untracked `external/` directory.
+- `external/noxim` exists and contains a valid Noxim checkout cloned by the user.
+- Top-level Noxim directories found: `.git`, `bin`, `config_examples`, `doc`, `other`, and `src`.
+- Top-level Noxim files found: `.gitignore`, `build.sh`, `README.md`, `regression.sh`, and `visualNoxim`.
+- Main source folder: `external/noxim/src`.
+- Main build folder and files: `external/noxim/bin`, including `Makefile`, `Makefile.deps`, and `power.yaml`.
+- Main configuration files: YAML examples under `external/noxim/config_examples`, including `default_config.yaml`, `default_configMesh.yaml`, and other shipped examples.
+- Documentation files found under `external/noxim/doc`: `INSTALL.txt`, `MANUAL.txt`, `Noxim_User_Guide.md`, `Noxim_User_Guide.pdf`, `noxim_tutorial.pdf`, `AUTHORS.txt`, and `LICENSE.txt`.
+- Detected build system: Bash wrapper scripts plus GNU Make. `build.sh` runs `other/setup/fix-dependencies.sh` and then `make -C bin`; `bin/Makefile` compiles C++11/SystemC sources with `g++` into `bin/noxim`.
+- Explicitly documented build/setup commands include `./build.sh`, `./other/setup/fix-dependencies.sh`, and the legacy manual `make` flow from the `bin` directory.
+- Explicitly documented regression/validation commands include `./regression.sh`, `./regression.sh --list`, `./regression.sh --case mesh_8x8_buf4`, and `./regression.sh --update`.
+- Noxim nested Git metadata could not be queried with `git -C external/noxim ...` because Git reported a safe-directory ownership mismatch in the sandbox. The source tree was still validated by top-level files and Noxim documentation.
+- No Noxim source files were modified.
+- No DeFT behavior, routing logic, topology logic, VN logic, fault injection logic, or simulation behavior was modified.
+- Build, regression, and simulation commands were identified from documentation/build files but not executed in T0023; T0003 should verify the baseline build command next.
+- After T0023 documentation updates, `git status --short` showed modified tracking docs (`docs/DECISIONS.md`, `docs/PROGRESS.md`, `docs/PROMPTS.md`, `docs/TASKS.md`, and `docs/VALIDATION.md`) and untracked `external/`, which contains the user-cloned Noxim source tree.
 
 ## Important Changed Files
 
@@ -64,6 +68,11 @@ Documentation files updated during `T0023` checks:
 - `docs/TASKS.md`
 - `docs/VALIDATION.md`
 - `docs/PROMPTS.md`
+- `docs/DECISIONS.md`
+
+External source tree registered during `T0023`:
+
+- `external/noxim` - baseline Noxim checkout cloned by the user from `https://github.com/davidepatti/noxim`.
 
 ## Current Assumptions
 
@@ -71,43 +80,47 @@ Documentation files updated during `T0023` checks:
 - Assumption: The original DeFT paper is the primary algorithmic reference for DeFT routing, VN rules, and VL selection.
 - Assumption: `Proposal.pdf` is initial context only.
 - Assumption: The peer evaluation document is unrelated and out of scope.
-- Assumption: The repository currently does not contain Noxim source code.
-- Assumption: The placeholder Noxim source instruction is not an actionable source registration method.
-- Assumption: Build, test, and simulation commands cannot be known until Noxim source and build files are available.
+- Assumption: `external/noxim` is the baseline Noxim source tree to use for build and source inspection tasks.
+- Assumption: The nested Noxim checkout should not be modified during documentation and baseline-discovery tasks.
+- Assumption: Documented Noxim build and regression commands must be verified in T0003 before being treated as validated project commands.
 - Assumption: The implementation target remains a 4-chiplet 2.5D system with 4x4 mesh chiplets and four Vertical Links per chiplet.
 
 ## Open Questions
 
-- Blocked: `T0023` cannot proceed until the intended Noxim source location or import method is provided with a real local path, repository import method, archive path, or equivalent actionable instruction.
-- Blocked: `T0003`, `T0004`, and `T0005` cannot proceed until Noxim source code is added to the repository or a specific external Noxim source path is provided.
-- Where will Noxim source code be added or referenced?
-- Should Noxim be imported into the repository, registered as an external local path, or added through another explicit method?
+- Should `external/noxim` remain a nested Git checkout, be converted to a submodule, or be vendored as normal repository files?
 - Should the original DeFT paper be copied into the repository for persistent availability?
-- Which Noxim version should be used?
+- Which exact Noxim commit should be treated as the baseline, given that nested Git metadata could not be queried from the sandbox without a safe-directory exception?
 - What SystemC and compiler environment will be used?
+- Will `./build.sh` be usable in the project environment, including its dependency setup step, or will a preinstalled SystemC/yaml-cpp path be required?
 - How should the active interposer dimensions and router mapping be represented?
 - Should Vertical Link fault percentages be counted over physical bidirectional links or directional links?
 - Are GEM5/PARSEC traces required for final delivery, or are synthetic traffic experiments sufficient?
 
 ## Next Recommended Task
 
-Continue `T0023` by replacing the placeholder with the intended Noxim source location or import method so the source tree can be added or registered explicitly.
+Start `T0003` to establish and verify the baseline Noxim build command using `external/noxim`.
 
 ## Next Ready-to-Send Prompt
 
 ```text
-Continue task T0023: Add or register the Noxim source tree.
+Start task T0003: Establish baseline build command.
 
-Before starting, read AGENTS.md, docs/PROGRESS.md, docs/TASKS.md, docs/ROADMAP.md, and docs/ARCHITECTURE.md.
+Before starting, read AGENTS.md, docs/PROGRESS.md, docs/TASKS.md, docs/ROADMAP.md, docs/ARCHITECTURE.md, docs/VALIDATION.md, and docs/DECISIONS.md.
 
-Use this intended Noxim source location or import method:
-<insert the local source path, repository import method, archive path, or other explicit source registration instruction here>
+Use the registered Noxim source tree at:
+external/noxim
 
-Do not implement DeFT behavior yet. Do not modify routing logic, topology logic, VN logic, fault injection logic, or simulation behavior in this task.
+Do not implement DeFT behavior yet. Do not modify Noxim source files, routing logic, topology logic, VN logic, fault injection logic, or simulation behavior in this task.
 
-Goal: make Noxim source availability explicit so T0003 can establish a real baseline build command.
+Goal: establish and verify the real baseline Noxim build command from the documented commands found in the Noxim source tree.
 
-If a Noxim source tree is available, inspect only its top-level structure and build documentation. If it is still not available, record that the task remains blocked. Do not invent download, build, test, or simulation commands.
+Use only commands explicitly documented in `external/noxim` documentation or build files. Do not invent download, build, test, validation, or simulation commands.
+
+Recommended starting evidence from T0023: `external/noxim/README.md`, `external/noxim/build.sh`, `external/noxim/bin/Makefile`, `external/noxim/doc/INSTALL.txt`, and `external/noxim/doc/Noxim_User_Guide.md` document `./build.sh` as the normal post-clone build command.
+
+Run the documented baseline build command if the environment permits. If the command fails because dependencies, shell support, permissions, network access, or platform support are missing, record the exact failure and keep T0003 blocked or in progress as appropriate. If sandbox/network approval is required by the environment, request it through the tool approval flow.
+
+Do not run DeFT experiments or modify any golden regression outputs in this task.
 
 Ignore the peer evaluation document completely.
 
@@ -127,5 +140,5 @@ Update docs/PROGRESS.md, docs/TASKS.md, docs/VALIDATION.md, and docs/PROMPTS.md 
 ## Suggested Commit Message
 
 ```text
-docs: confirm Noxim source registration remains blocked
+docs: register external Noxim source tree
 ```
