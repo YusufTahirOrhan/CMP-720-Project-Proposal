@@ -402,3 +402,73 @@ Update docs/PROGRESS.md, docs/TASKS.md, docs/VALIDATION.md, and docs/PROMPTS.md 
 8. Suggested commit message
 9. Unknowns or blockers
 ```
+
+## 2026-05-04: Correct T0023 Noxim Submodule Registration
+
+- **Date:** 2026-05-04
+- **Prompt summary:** Correct the T0023 documentation to record `external/noxim` as the intended Noxim submodule path, using the project fork URL, and state that Noxim must remain a submodule rather than being vendored.
+- **Full prompt:**
+
+```text
+Update the project documentation for T0023.
+
+I accidentally added the Noxim submodule to the repository root before because I forgot to pass the target path. That was corrected.
+
+The intended and correct Noxim submodule location is:
+
+external/noxim
+
+The submodule URL is:
+
+https://github.com/YusufTahirOrhan/noxim
+
+Treat external/noxim as the modifiable Noxim fork for this project. Do not vendor Noxim source directly into the main repository.
+
+Record this in docs/PROGRESS.md, docs/TASKS.md, docs/VALIDATION.md, docs/PROMPTS.md, and docs/DECISIONS.md if relevant.
+
+Do not implement DeFT yet.
+Do not modify Noxim source code in this task.
+Only inspect and document the source availability and submodule decision.
+```
+
+- **Result summary:** T0023 documentation was corrected. `.gitmodules` records `external/noxim` with URL `https://github.com/YusufTahirOrhan/noxim`, and `git ls-files --stage` records `external/noxim` as a submodule gitlink at commit `d02fde4f3a07be5d15743f9b1993a292636133fb`. `external/noxim/.git` is a submodule gitfile pointing into the parent repository's `.git/modules` directory, confirming that Noxim is not vendored directly. The docs now state that `external/noxim` is the modifiable Noxim fork for future explicit implementation tasks. No Noxim source files or DeFT behavior were modified.
+- **Follow-up tasks:** Start `T0003` to establish and verify the baseline Noxim build command using the `external/noxim` submodule.
+- **Next ready-to-send prompt:**
+
+```text
+Start task T0003: Establish baseline build command.
+
+Before starting, read AGENTS.md, docs/PROGRESS.md, docs/TASKS.md, docs/ROADMAP.md, docs/ARCHITECTURE.md, docs/VALIDATION.md, and docs/DECISIONS.md.
+
+Use the registered Noxim source tree at:
+external/noxim
+
+`external/noxim` is the Noxim submodule and modifiable project fork from:
+https://github.com/YusufTahirOrhan/noxim
+
+Do not implement DeFT behavior yet. Do not modify Noxim source files, routing logic, topology logic, VN logic, fault injection logic, or simulation behavior in this task.
+
+Goal: establish and verify the real baseline Noxim build command from the documented commands found in the Noxim source tree.
+
+Use only commands explicitly documented in `external/noxim` documentation or build files. Do not invent download, build, test, validation, or simulation commands.
+
+Recommended starting evidence from T0023: `external/noxim/README.md`, `external/noxim/build.sh`, `external/noxim/bin/Makefile`, `external/noxim/doc/INSTALL.txt`, and `external/noxim/doc/Noxim_User_Guide.md` document `./build.sh` as the normal post-clone build command.
+
+Run the documented baseline build command if the environment permits. If the command fails because dependencies, shell support, permissions, network access, or platform support are missing, record the exact failure and keep T0003 blocked or in progress as appropriate. If sandbox/network approval is required by the environment, request it through the tool approval flow.
+
+Do not run DeFT experiments or modify any golden regression outputs in this task.
+
+Ignore the peer evaluation document completely.
+
+Update docs/PROGRESS.md, docs/TASKS.md, docs/VALIDATION.md, and docs/PROMPTS.md with the result. At the end, provide:
+
+1. Created files
+2. Modified files
+3. Whether any source code files changed
+4. Validation result
+5. Current project phase
+6. Next recommended task
+7. The next ready-to-send prompt
+8. Suggested commit message
+9. Unknowns or blockers
+```

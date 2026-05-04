@@ -30,7 +30,7 @@ Statuses: `TODO`, `IN_PROGRESS`, `DONE`, `BLOCKED`.
 - **Files likely to change:** `docs/VALIDATION.md`, `docs/PROGRESS.md`
 - **Acceptance criteria:** A real build command is documented and verified.
 - **Validation command:** Candidate documented command from `external/noxim`: `./build.sh` from the Noxim repository root; to be verified in T0003.
-- **Notes:** Unblocked by T0023. The registered Noxim source tree is `external/noxim`. T0023 found top-level build documentation and build files that document `./build.sh` as the normal post-clone build command; T0003 must verify it before treating it as the validated project build command.
+- **Notes:** Unblocked by T0023. The registered Noxim source tree is the `external/noxim` submodule from `https://github.com/YusufTahirOrhan/noxim`; it is the modifiable Noxim fork for this project. T0023 found top-level build documentation and build files that document `./build.sh` as the normal post-clone build command; T0003 must verify it before treating it as the validated project build command.
 
 ## T0004: Run Baseline Noxim Simulation
 
@@ -40,7 +40,7 @@ Statuses: `TODO`, `IN_PROGRESS`, `DONE`, `BLOCKED`.
 - **Files likely to change:** `docs/VALIDATION.md`, `docs/PROGRESS.md`
 - **Acceptance criteria:** A baseline simulation command and result are documented.
 - **Validation command:** To be confirmed after repository inspection
-- **Notes:** Blocked until Noxim builds successfully. T0002 confirmed no build command is known because Noxim source is absent. T0023 checks confirmed the Noxim source location or import method is still unknown.
+- **Notes:** Blocked until Noxim builds successfully. T0023 registered the Noxim source as the `external/noxim` submodule from `https://github.com/YusufTahirOrhan/noxim`, but T0003 must verify the baseline build command before T0004 selects and runs a baseline simulation command.
 
 ## T0005: Map Noxim Extension Points
 
@@ -50,7 +50,7 @@ Statuses: `TODO`, `IN_PROGRESS`, `DONE`, `BLOCKED`.
 - **Files likely to change:** `docs/ARCHITECTURE.md`, `docs/TASKS.md`, `docs/PROGRESS.md`
 - **Acceptance criteria:** Extension points are documented with file paths.
 - **Validation command:** To be confirmed after baseline source inspection.
-- **Notes:** Unblocked by T0023 because `external/noxim` is now registered as the baseline Noxim source tree. Prefer completing T0003 and T0004 first so extension-point mapping is grounded in a validated baseline build and run.
+- **Notes:** Unblocked by T0023 because `external/noxim` is now registered as the baseline Noxim source tree and modifiable project fork. Prefer completing T0003 and T0004 first so extension-point mapping is grounded in a validated baseline build and run.
 
 ## T0006: Design 2.5D Router ID and Coordinate Mapping
 
@@ -230,4 +230,4 @@ Statuses: `TODO`, `IN_PROGRESS`, `DONE`, `BLOCKED`.
 - **Files changed:** `docs/PROGRESS.md`, `docs/TASKS.md`, `docs/VALIDATION.md`, `docs/PROMPTS.md`, `docs/DECISIONS.md`
 - **Acceptance criteria:** Noxim source availability is explicit, the top-level Noxim structure is documented, and the next task can inspect real build documentation without guessing.
 - **Validation command:** `git status --short`
-- **Notes:** Completed on 2026-05-04. The baseline Noxim source tree is registered at `external/noxim`, cloned by the user from `https://github.com/davidepatti/noxim`. Top-level directories include `.git`, `bin`, `config_examples`, `doc`, `other`, and `src`. Top-level files include `.gitignore`, `build.sh`, `README.md`, `regression.sh`, and `visualNoxim`. The detected build system is Bash wrapper scripts plus GNU Make: `build.sh` runs `other/setup/fix-dependencies.sh` and then `make -C bin`, while `bin/Makefile` builds C++11/SystemC sources with `g++` into `bin/noxim`. Documented build/setup commands include `./build.sh`, `./other/setup/fix-dependencies.sh`, and the legacy manual `make` flow from the `bin` directory. Documented regression commands include `./regression.sh`, `./regression.sh --list`, `./regression.sh --case mesh_8x8_buf4`, and `./regression.sh --update`. No Noxim source files or DeFT behavior were modified.
+- **Notes:** Completed on 2026-05-04 and corrected on 2026-05-04 after the user reported that an accidental root-level Noxim submodule addition had been fixed. The intended Noxim source location is the `external/noxim` submodule, with URL `https://github.com/YusufTahirOrhan/noxim`. This submodule is the modifiable Noxim fork for the project. Noxim source must not be vendored directly into the main repository. `.gitmodules` contains only the `external/noxim` submodule entry for Noxim, and `git ls-files --stage` records `external/noxim` as a submodule gitlink at commit `d02fde4f3a07be5d15743f9b1993a292636133fb`. Top-level directories include `bin`, `config_examples`, `doc`, `other`, and `src`. Top-level files include `.gitignore`, `build.sh`, `README.md`, `regression.sh`, and `visualNoxim`. The detected build system is Bash wrapper scripts plus GNU Make: `build.sh` runs `other/setup/fix-dependencies.sh` and then `make -C bin`, while `bin/Makefile` builds C++11/SystemC sources with `g++` into `bin/noxim`. Documented build/setup commands include `./build.sh`, `./other/setup/fix-dependencies.sh`, and the legacy manual `make` flow from the `bin` directory. Documented regression commands include `./regression.sh`, `./regression.sh --list`, `./regression.sh --case mesh_8x8_buf4`, and `./regression.sh --update`. No Noxim source files or DeFT behavior were modified during this documentation correction.

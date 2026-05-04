@@ -22,11 +22,16 @@ No DeFT implementation task has been completed.
 
 ## Last Validation Result
 
-- T0023 source-registration check performed on 2026-05-04.
+- T0023 submodule-registration correction performed on 2026-05-04.
 - Required startup reading was completed before task work: `AGENTS.md`, `docs/PROGRESS.md`, `docs/TASKS.md`, `docs/ROADMAP.md`, `docs/ARCHITECTURE.md`, `docs/VALIDATION.md`, and `docs/DECISIONS.md`.
-- The intended Noxim source location was provided as `external/noxim`.
-- `git status --short` before this continuation's documentation updates showed existing modified tracking docs from the earlier T0023 blocked check and a new untracked `external/` directory.
-- `external/noxim` exists and contains a valid Noxim checkout cloned by the user.
+- The intended and correct Noxim submodule location is `external/noxim`.
+- The intended Noxim submodule URL is `https://github.com/YusufTahirOrhan/noxim`.
+- The user reported that an accidental root-level Noxim submodule addition was corrected before this documentation update.
+- `.gitmodules` contains a single Noxim submodule entry with `path = external/noxim` and `url = https://github.com/YusufTahirOrhan/noxim`.
+- `git ls-files --stage .gitmodules external/noxim` shows `.gitmodules` tracked as a normal file and `external/noxim` tracked as a submodule gitlink (`160000`) at commit `d02fde4f3a07be5d15743f9b1993a292636133fb`.
+- `external/noxim/.git` is a gitfile pointing to `../../.git/modules/external/noxim`, confirming the submodule layout rather than vendored source in the main repository.
+- `git submodule status -- external/noxim` could not run in this Windows sandbox because Git's submodule helper could not find Unix shell utilities (`basename`, `sed`, and `git-sh-setup`). The submodule registration was validated through `.gitmodules`, the gitlink entry, and the submodule gitfile instead.
+- `external/noxim` exists and contains a valid Noxim source tree.
 - Top-level Noxim directories found: `.git`, `bin`, `config_examples`, `doc`, `other`, and `src`.
 - Top-level Noxim files found: `.gitignore`, `build.sh`, `README.md`, `regression.sh`, and `visualNoxim`.
 - Main source folder: `external/noxim/src`.
@@ -36,11 +41,14 @@ No DeFT implementation task has been completed.
 - Detected build system: Bash wrapper scripts plus GNU Make. `build.sh` runs `other/setup/fix-dependencies.sh` and then `make -C bin`; `bin/Makefile` compiles C++11/SystemC sources with `g++` into `bin/noxim`.
 - Explicitly documented build/setup commands include `./build.sh`, `./other/setup/fix-dependencies.sh`, and the legacy manual `make` flow from the `bin` directory.
 - Explicitly documented regression/validation commands include `./regression.sh`, `./regression.sh --list`, `./regression.sh --case mesh_8x8_buf4`, and `./regression.sh --update`.
-- Noxim nested Git metadata could not be queried with `git -C external/noxim ...` because Git reported a safe-directory ownership mismatch in the sandbox. The source tree was still validated by top-level files and Noxim documentation.
+- Decision: `external/noxim` is the modifiable Noxim fork for this project when a future task explicitly requires Noxim source changes.
+- Decision: Noxim source must not be vendored directly into the main repository; it should remain a submodule at `external/noxim`.
+- No root-level Noxim submodule entry is present in `.gitmodules`.
 - No Noxim source files were modified.
 - No DeFT behavior, routing logic, topology logic, VN logic, fault injection logic, or simulation behavior was modified.
 - Build, regression, and simulation commands were identified from documentation/build files but not executed in T0023; T0003 should verify the baseline build command next.
-- After T0023 documentation updates, `git status --short` showed modified tracking docs (`docs/DECISIONS.md`, `docs/PROGRESS.md`, `docs/PROMPTS.md`, `docs/TASKS.md`, and `docs/VALIDATION.md`) and untracked `external/`, which contains the user-cloned Noxim source tree.
+- `git status --short` before this documentation update returned no output.
+- After this documentation correction, `git status --short` showed only modified tracking docs: `docs/DECISIONS.md`, `docs/PROGRESS.md`, `docs/PROMPTS.md`, `docs/TASKS.md`, and `docs/VALIDATION.md`.
 
 ## Important Changed Files
 
@@ -72,7 +80,7 @@ Documentation files updated during `T0023` checks:
 
 External source tree registered during `T0023`:
 
-- `external/noxim` - baseline Noxim checkout cloned by the user from `https://github.com/davidepatti/noxim`.
+- `external/noxim` - Noxim submodule and modifiable project fork from `https://github.com/YusufTahirOrhan/noxim`.
 
 ## Current Assumptions
 
@@ -80,16 +88,16 @@ External source tree registered during `T0023`:
 - Assumption: The original DeFT paper is the primary algorithmic reference for DeFT routing, VN rules, and VL selection.
 - Assumption: `Proposal.pdf` is initial context only.
 - Assumption: The peer evaluation document is unrelated and out of scope.
-- Assumption: `external/noxim` is the baseline Noxim source tree to use for build and source inspection tasks.
-- Assumption: The nested Noxim checkout should not be modified during documentation and baseline-discovery tasks.
+- Assumption: `external/noxim` is the baseline Noxim source tree and modifiable project fork to use for future explicit Noxim implementation tasks.
+- Assumption: Noxim source should remain in the `external/noxim` submodule and should not be vendored directly into the main repository.
+- Assumption: Noxim source files should not be modified during documentation and baseline-discovery tasks.
 - Assumption: Documented Noxim build and regression commands must be verified in T0003 before being treated as validated project commands.
 - Assumption: The implementation target remains a 4-chiplet 2.5D system with 4x4 mesh chiplets and four Vertical Links per chiplet.
 
 ## Open Questions
 
-- Should `external/noxim` remain a nested Git checkout, be converted to a submodule, or be vendored as normal repository files?
 - Should the original DeFT paper be copied into the repository for persistent availability?
-- Which exact Noxim commit should be treated as the baseline, given that nested Git metadata could not be queried from the sandbox without a safe-directory exception?
+- Is submodule gitlink commit `d02fde4f3a07be5d15743f9b1993a292636133fb` the intended baseline commit for T0003, or should it be updated before build validation?
 - What SystemC and compiler environment will be used?
 - Will `./build.sh` be usable in the project environment, including its dependency setup step, or will a preinstalled SystemC/yaml-cpp path be required?
 - How should the active interposer dimensions and router mapping be represented?
@@ -109,6 +117,9 @@ Before starting, read AGENTS.md, docs/PROGRESS.md, docs/TASKS.md, docs/ROADMAP.m
 
 Use the registered Noxim source tree at:
 external/noxim
+
+`external/noxim` is the Noxim submodule and modifiable project fork from:
+https://github.com/YusufTahirOrhan/noxim
 
 Do not implement DeFT behavior yet. Do not modify Noxim source files, routing logic, topology logic, VN logic, fault injection logic, or simulation behavior in this task.
 
@@ -140,5 +151,5 @@ Update docs/PROGRESS.md, docs/TASKS.md, docs/VALIDATION.md, and docs/PROMPTS.md 
 ## Suggested Commit Message
 
 ```text
-docs: register external Noxim source tree
+docs: record Noxim fork submodule decision
 ```

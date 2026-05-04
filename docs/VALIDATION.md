@@ -51,8 +51,15 @@ Latest T0023 continuation result on 2026-05-04:
 
 T0023 source registration result on 2026-05-04:
 
-- `external/noxim` exists and contains a valid Noxim checkout cloned by the user.
-- Top-level Noxim directories found: `.git`, `bin`, `config_examples`, `doc`, `other`, and `src`.
+- Corrected source registration: `external/noxim` is the intended Noxim submodule location.
+- Corrected submodule URL: `https://github.com/YusufTahirOrhan/noxim`.
+- The user reported that an accidental root-level Noxim submodule addition was corrected.
+- `.gitmodules` contains a single Noxim submodule entry with `path = external/noxim` and `url = https://github.com/YusufTahirOrhan/noxim`.
+- `git ls-files --stage .gitmodules external/noxim` shows `.gitmodules` tracked as a normal file and `external/noxim` tracked as a submodule gitlink (`160000`) at commit `d02fde4f3a07be5d15743f9b1993a292636133fb`.
+- `external/noxim/.git` is a gitfile pointing to `../../.git/modules/external/noxim`, confirming the submodule layout rather than direct vendoring in the main repository.
+- `git submodule status -- external/noxim` could not run in this Windows sandbox because Git's submodule helper could not find Unix shell utilities (`basename`, `sed`, and `git-sh-setup`).
+- `external/noxim` exists and contains a valid Noxim source tree.
+- Top-level Noxim directories found: `bin`, `config_examples`, `doc`, `other`, and `src`.
 - Top-level Noxim files found: `.gitignore`, `build.sh`, `README.md`, `regression.sh`, and `visualNoxim`.
 - Main source folder: `external/noxim/src`.
 - Main build folder and files: `external/noxim/bin`, including `Makefile`, `Makefile.deps`, and `power.yaml`.
@@ -61,11 +68,13 @@ T0023 source registration result on 2026-05-04:
 - Detected build system: Bash wrapper scripts plus GNU Make. `build.sh` runs `other/setup/fix-dependencies.sh` and then `make -C bin`; `bin/Makefile` compiles C++11/SystemC sources with `g++` into `bin/noxim`.
 - Explicitly documented build/setup commands include `./build.sh`, `./other/setup/fix-dependencies.sh`, and the legacy manual `make` flow from the `bin` directory.
 - Explicitly documented regression/validation commands include `./regression.sh`, `./regression.sh --list`, `./regression.sh --case mesh_8x8_buf4`, and `./regression.sh --update`.
-- Noxim nested Git metadata could not be queried with `git -C external/noxim ...` because Git reported a safe-directory ownership mismatch in the sandbox.
+- Decision recorded: `external/noxim` is the modifiable Noxim fork for this project when a future task explicitly requires Noxim source changes.
+- Decision recorded: Noxim source must remain a submodule and must not be vendored directly into the main repository.
 - T0023 is complete because Noxim source availability is now explicit and the top-level structure/build documentation are documented.
 - No Noxim source files were modified.
 - No DeFT behavior, routing logic, topology logic, VN logic, fault injection logic, or simulation behavior was modified.
-- After T0023 documentation updates, `git status --short` showed modified tracking docs (`docs/DECISIONS.md`, `docs/PROGRESS.md`, `docs/PROMPTS.md`, `docs/TASKS.md`, and `docs/VALIDATION.md`) and untracked `external/`, which contains the user-cloned Noxim source tree.
+- `git status --short` before the T0023 submodule documentation correction returned no output.
+- After the T0023 submodule documentation correction, `git status --short` showed only modified tracking docs: `docs/DECISIONS.md`, `docs/PROGRESS.md`, `docs/PROMPTS.md`, `docs/TASKS.md`, and `docs/VALIDATION.md`.
 
 ## Build Validation
 
@@ -82,7 +91,9 @@ Documented candidate commands, not yet verified as project validation:
 
 Notes:
 
-- Noxim source code is registered at `external/noxim` as of T0023 on 2026-05-04.
+- Noxim source code is registered as the `external/noxim` submodule from `https://github.com/YusufTahirOrhan/noxim` as of T0023 on 2026-05-04.
+- The submodule is the modifiable project fork, but Noxim source files should only be changed in explicit implementation tasks.
+- Noxim source must not be vendored directly into the main repository.
 - The normal post-clone build command documented by `external/noxim/README.md` and `external/noxim/doc/Noxim_User_Guide.md` is `./build.sh`.
 - `external/noxim/build.sh` runs `other/setup/fix-dependencies.sh` and then `make -C bin`.
 - `external/noxim/bin/Makefile` builds C++11/SystemC sources with `g++` and links `bin/noxim`.
