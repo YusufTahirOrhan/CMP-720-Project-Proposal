@@ -30,7 +30,7 @@ Statuses: `TODO`, `IN_PROGRESS`, `DONE`, `BLOCKED`.
 - **Files likely to change:** `docs/VALIDATION.md`, `docs/PROGRESS.md`
 - **Acceptance criteria:** A real build command is documented and verified.
 - **Validation command:** To be confirmed after repository inspection
-- **Notes:** Blocked until Noxim source code and build files are present. T0002 confirmed they are not present in the repository.
+- **Notes:** Blocked until Noxim source code and build files are present. T0002 confirmed they are not present in the repository. T0023 confirmed they still have not been added or registered.
 
 ## T0004: Run Baseline Noxim Simulation
 
@@ -40,7 +40,7 @@ Statuses: `TODO`, `IN_PROGRESS`, `DONE`, `BLOCKED`.
 - **Files likely to change:** `docs/VALIDATION.md`, `docs/PROGRESS.md`
 - **Acceptance criteria:** A baseline simulation command and result are documented.
 - **Validation command:** To be confirmed after repository inspection
-- **Notes:** Blocked until Noxim builds successfully. T0002 confirmed no build command is known because Noxim source is absent.
+- **Notes:** Blocked until Noxim builds successfully. T0002 confirmed no build command is known because Noxim source is absent. T0023 confirmed the Noxim source location or import method is still unknown.
 
 ## T0005: Map Noxim Extension Points
 
@@ -50,7 +50,7 @@ Statuses: `TODO`, `IN_PROGRESS`, `DONE`, `BLOCKED`.
 - **Files likely to change:** `docs/ARCHITECTURE.md`, `docs/TASKS.md`, `docs/PROGRESS.md`
 - **Acceptance criteria:** Extension points are documented with file paths.
 - **Validation command:** To be confirmed after repository inspection
-- **Notes:** Blocked until Noxim source code is present. T0002 confirmed no Noxim source paths are present in the repository.
+- **Notes:** Blocked until Noxim source code is present. T0002 confirmed no Noxim source paths are present in the repository. T0023 confirmed no Noxim source tree or explicit external source path is available yet.
 
 ## T0006: Design 2.5D Router ID and Coordinate Mapping
 
@@ -224,10 +224,10 @@ Statuses: `TODO`, `IN_PROGRESS`, `DONE`, `BLOCKED`.
 
 ## T0023: Add or Register Noxim Source Tree
 
-- **Status:** TODO
+- **Status:** BLOCKED
 - **Objective:** Make the Noxim source location explicit by adding the source tree to the repository or documenting the exact external local source path to use.
 - **Relevant roadmap phase:** Phase 1
-- **Files likely to change:** `docs/PROGRESS.md`, `docs/TASKS.md`, `docs/VALIDATION.md`, `docs/PROMPTS.md`; possibly source-tree files only if the user explicitly provides or requests a Noxim import.
+- **Files changed:** `docs/PROGRESS.md`, `docs/TASKS.md`, `docs/VALIDATION.md`, `docs/PROMPTS.md`
 - **Acceptance criteria:** Noxim source availability is explicit, the top-level Noxim structure is documented, and the next task can inspect real build documentation without guessing.
 - **Validation command:** `git status --short`
-- **Notes:** Do not implement DeFT behavior in this task. Do not invent download, build, test, or simulation commands. Complete this before `T0003`.
+- **Notes:** Blocked on 2026-05-04 because no Noxim source tree, explicit external Noxim source path, C/C++/SystemC source file, script source file, or recognized build-system file is present in the repository. The peer evaluation document was ignored. No DeFT behavior, routing logic, topology logic, VN logic, fault injection logic, or simulation behavior was modified. The intended Noxim source location or import method is required before this task can be completed.

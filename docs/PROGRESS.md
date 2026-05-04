@@ -17,23 +17,23 @@ No implementation task has been completed.
 
 ## Blocked Tasks
 
+- `T0023` - Add or register the Noxim source tree.
 - `T0003` - Establish baseline build command.
 - `T0004` - Run baseline Noxim simulation.
 - `T0005` - Map Noxim extension points.
 
 ## Last Validation Result
 
-- T0002 repository inspection performed on 2026-05-04.
-- `git status --short` returned no output before T0002 documentation updates.
-- After T0002 documentation updates, `git status --short` shows only modified documentation files: `docs/PROGRESS.md`, `docs/PROMPTS.md`, `docs/TASKS.md`, and `docs/VALIDATION.md`.
+- T0023 source-availability check performed on 2026-05-04.
+- Required startup reading was completed before task work: `AGENTS.md`, `docs/PROGRESS.md`, `docs/TASKS.md`, `docs/ROADMAP.md`, and `docs/ARCHITECTURE.md`.
+- `git status --short` returned no output before T0023 documentation updates.
 - `rg --files` could not be used because `rg.exe` returned access denied; PowerShell file inspection was used as the fallback.
-- Repository file inspection found only project rules, documentation, proposal PDFs/zips, and the ignored peer evaluation artifact. The peer evaluation document was not opened or used.
-- No Noxim source tree, Noxim-named file path, C/C++/SystemC source file, script source file, or recognized build-system file was found in the repository.
-- Required source documents were available:
-  - `Extended_Proposal.pdf`
-  - `Proposal.pdf`
-  - `C:/Users/9500203/Downloads/DeFT_A_Deadlock-Free_and_Fault-Tolerant_Routing_Algorithm_for_2.5D_Chiplet_Networks.pdf`
-- Build, test, and simulation commands remain unknown because Noxim source code and build files are not present.
+- Repository top-level inspection found only `.git`, `docs`, project rule/documentation files, proposal PDFs/zips, and the ignored peer evaluation artifact. The peer evaluation document was not opened or used.
+- Recursive directory inspection found no source directory other than `docs`.
+- File inspection found no Noxim source tree, Noxim-named path, C/C++/SystemC source file, script source file, or recognized build-system file in the repository.
+- Because no Noxim source tree or explicit external Noxim source path is available, T0023 is blocked pending the intended Noxim source location or import method.
+- Build, test, and simulation commands remain unknown because Noxim source code and build documentation are not present.
+- After T0023 documentation updates, `git status --short` showed only modified documentation files: `docs/PROGRESS.md`, `docs/PROMPTS.md`, `docs/TASKS.md`, and `docs/VALIDATION.md`.
 - No source code files were changed.
 
 ## Important Changed Files
@@ -56,6 +56,13 @@ Documentation files updated during `T0002`:
 - `docs/VALIDATION.md`
 - `docs/PROMPTS.md`
 
+Documentation files updated during `T0023`:
+
+- `docs/PROGRESS.md`
+- `docs/TASKS.md`
+- `docs/VALIDATION.md`
+- `docs/PROMPTS.md`
+
 ## Current Assumptions
 
 - Assumption: `Extended_Proposal.pdf` is the primary technical source.
@@ -68,8 +75,10 @@ Documentation files updated during `T0002`:
 
 ## Open Questions
 
+- Blocked: `T0023` cannot proceed until the intended Noxim source location or import method is provided.
 - Blocked: `T0003`, `T0004`, and `T0005` cannot proceed until Noxim source code is added to the repository or a specific external Noxim source path is provided.
 - Where will Noxim source code be added or referenced?
+- Should Noxim be imported into the repository, registered as an external local path, or added through another explicit method?
 - Should the original DeFT paper be copied into the repository for persistent availability?
 - Which Noxim version should be used?
 - What SystemC and compiler environment will be used?
@@ -79,20 +88,23 @@ Documentation files updated during `T0002`:
 
 ## Next Recommended Task
 
-Start `T0023`: Add or register the Noxim source tree.
+Continue `T0023` by providing the intended Noxim source location or import method so the source tree can be added or registered explicitly.
 
 ## Next Ready-to-Send Prompt
 
 ```text
-Start task T0023: Add or register the Noxim source tree.
+Continue task T0023: Add or register the Noxim source tree.
 
 Before starting, read AGENTS.md, docs/PROGRESS.md, docs/TASKS.md, docs/ROADMAP.md, and docs/ARCHITECTURE.md.
+
+Use this intended Noxim source location or import method:
+<insert the local source path, repository import method, archive path, or other explicit source registration instruction here>
 
 Do not implement DeFT behavior yet. Do not modify routing logic, topology logic, VN logic, fault injection logic, or simulation behavior in this task.
 
 Goal: make Noxim source availability explicit so T0003 can establish a real baseline build command.
 
-If Noxim source code has already been added to the repository, inspect only its top-level structure and build documentation. If it has not been added, record that the task is blocked and ask for the intended Noxim source location or import method. Do not invent download, build, test, or simulation commands.
+If a Noxim source tree is available, inspect only its top-level structure and build documentation. If it is still not available, record that the task remains blocked. Do not invent download, build, test, or simulation commands.
 
 Ignore the peer evaluation document completely.
 
@@ -112,5 +124,5 @@ Update docs/PROGRESS.md, docs/TASKS.md, docs/VALIDATION.md, and docs/PROMPTS.md 
 ## Suggested Commit Message
 
 ```text
-docs: record repository availability check
+docs: record blocked Noxim source registration
 ```

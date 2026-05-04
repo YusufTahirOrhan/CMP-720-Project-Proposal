@@ -145,3 +145,68 @@ Update docs/PROGRESS.md, docs/TASKS.md, docs/VALIDATION.md, and docs/PROMPTS.md 
 8. Suggested commit message
 9. Unknowns or blockers
 ```
+
+## 2026-05-04: Start T0023 Noxim Source Registration
+
+- **Date:** 2026-05-04
+- **Prompt summary:** Add or register the Noxim source tree so a real baseline build command can be established later, without implementing DeFT behavior or changing simulation logic.
+- **Full prompt:**
+
+```text
+Start task T0023: Add or register the Noxim source tree.
+
+Before starting, read AGENTS.md, docs/PROGRESS.md, docs/TASKS.md, docs/ROADMAP.md, and docs/ARCHITECTURE.md.
+
+Do not implement DeFT behavior yet. Do not modify routing logic, topology logic, VN logic, fault injection logic, or simulation behavior in this task.
+
+Goal: make Noxim source availability explicit so T0003 can establish a real baseline build command.
+
+If Noxim source code has already been added to the repository, inspect only its top-level structure and build documentation. If it has not been added, record that the task is blocked and ask for the intended Noxim source location or import method. Do not invent download, build, test, or simulation commands.
+
+Ignore the peer evaluation document completely.
+
+Update docs/PROGRESS.md, docs/TASKS.md, docs/VALIDATION.md, and docs/PROMPTS.md with the result. At the end, provide:
+
+1. Created files
+2. Modified files
+3. Whether any source code files changed
+4. Validation result
+5. Current project phase
+6. Next recommended task
+7. The next ready-to-send prompt
+8. Suggested commit message
+9. Unknowns or blockers
+```
+
+- **Result summary:** T0023 is blocked. Repository inspection found no Noxim source tree, explicit external Noxim source path, C/C++/SystemC source file, script source file, or recognized build-system file. No top-level Noxim structure or build documentation could be inspected. No DeFT behavior or source code was changed.
+- **Follow-up tasks:** Continue `T0023` after the intended Noxim source location or import method is provided.
+- **Next ready-to-send prompt:**
+
+```text
+Continue task T0023: Add or register the Noxim source tree.
+
+Before starting, read AGENTS.md, docs/PROGRESS.md, docs/TASKS.md, docs/ROADMAP.md, and docs/ARCHITECTURE.md.
+
+Use this intended Noxim source location or import method:
+<insert the local source path, repository import method, archive path, or other explicit source registration instruction here>
+
+Do not implement DeFT behavior yet. Do not modify routing logic, topology logic, VN logic, fault injection logic, or simulation behavior in this task.
+
+Goal: make Noxim source availability explicit so T0003 can establish a real baseline build command.
+
+If a Noxim source tree is available, inspect only its top-level structure and build documentation. If it is still not available, record that the task remains blocked. Do not invent download, build, test, or simulation commands.
+
+Ignore the peer evaluation document completely.
+
+Update docs/PROGRESS.md, docs/TASKS.md, docs/VALIDATION.md, and docs/PROMPTS.md with the result. At the end, provide:
+
+1. Created files
+2. Modified files
+3. Whether any source code files changed
+4. Validation result
+5. Current project phase
+6. Next recommended task
+7. The next ready-to-send prompt
+8. Suggested commit message
+9. Unknowns or blockers
+```
