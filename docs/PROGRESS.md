@@ -2,11 +2,12 @@
 
 ## Current Phase
 
-Phase 0 - Repository analysis and documentation setup
+Phase 1 - Noxim baseline source availability and validation setup
 
 ## Completed Tasks
 
 - `T0001` - Repository analysis and documentation setup.
+- `T0002` - Confirm repository contents, Noxim availability, and source-document availability.
 
 No implementation task has been completed.
 
@@ -22,13 +23,18 @@ No implementation task has been completed.
 
 ## Last Validation Result
 
-- Repository inspection performed on 2026-05-04.
-- `git status --short` returned no tracked or untracked changes before documentation creation.
-- Documentation validation performed on 2026-05-04.
-- `git status --short` shows only untracked documentation additions: `AGENTS.md` and `docs/`.
+- T0002 repository inspection performed on 2026-05-04.
+- `git status --short` returned no output before T0002 documentation updates.
+- After T0002 documentation updates, `git status --short` shows only modified documentation files: `docs/PROGRESS.md`, `docs/PROMPTS.md`, `docs/TASKS.md`, and `docs/VALIDATION.md`.
+- `rg --files` could not be used because `rg.exe` returned access denied; PowerShell file inspection was used as the fallback.
+- Repository file inspection found only project rules, documentation, proposal PDFs/zips, and the ignored peer evaluation artifact. The peer evaluation document was not opened or used.
+- No Noxim source tree, Noxim-named file path, C/C++/SystemC source file, script source file, or recognized build-system file was found in the repository.
+- Required source documents were available:
+  - `Extended_Proposal.pdf`
+  - `Proposal.pdf`
+  - `C:/Users/9500203/Downloads/DeFT_A_Deadlock-Free_and_Fault-Tolerant_Routing_Algorithm_for_2.5D_Chiplet_Networks.pdf`
+- Build, test, and simulation commands remain unknown because Noxim source code and build files are not present.
 - No source code files were changed.
-- Build and test commands are unknown because Noxim source code is not present in the repository.
-- Original DeFT paper was found at `C:/Users/9500203/Downloads/DeFT_A_Deadlock-Free_and_Fault-Tolerant_Routing_Algorithm_for_2.5D_Chiplet_Networks.pdf`.
 
 ## Important Changed Files
 
@@ -43,6 +49,13 @@ Documentation files created or updated during `T0001`:
 - `docs/PROGRESS.md`
 - `docs/VALIDATION.md`
 
+Documentation files updated during `T0002`:
+
+- `docs/PROGRESS.md`
+- `docs/TASKS.md`
+- `docs/VALIDATION.md`
+- `docs/PROMPTS.md`
+
 ## Current Assumptions
 
 - Assumption: `Extended_Proposal.pdf` is the primary technical source.
@@ -55,6 +68,7 @@ Documentation files created or updated during `T0001`:
 
 ## Open Questions
 
+- Blocked: `T0003`, `T0004`, and `T0005` cannot proceed until Noxim source code is added to the repository or a specific external Noxim source path is provided.
 - Where will Noxim source code be added or referenced?
 - Should the original DeFT paper be copied into the repository for persistent availability?
 - Which Noxim version should be used?
@@ -65,24 +79,22 @@ Documentation files created or updated during `T0001`:
 
 ## Next Recommended Task
 
-Start `T0002`: Confirm repository contents, Noxim availability, and source availability.
+Start `T0023`: Add or register the Noxim source tree.
 
 ## Next Ready-to-Send Prompt
 
 ```text
-Start task T0002: Confirm repository contents, Noxim availability, and source-document availability.
+Start task T0023: Add or register the Noxim source tree.
 
 Before starting, read AGENTS.md, docs/PROGRESS.md, docs/TASKS.md, docs/ROADMAP.md, and docs/ARCHITECTURE.md.
 
-Do not write implementation code. Do not modify source code files. Inspect only the repository structure and the required source documents:
+Do not implement DeFT behavior yet. Do not modify routing logic, topology logic, VN logic, fault injection logic, or simulation behavior in this task.
 
-- Extended_Proposal.pdf
-- Proposal.pdf
-- C:/Users/9500203/Downloads/DeFT_A_Deadlock-Free_and_Fault-Tolerant_Routing_Algorithm_for_2.5D_Chiplet_Networks.pdf
+Goal: make Noxim source availability explicit so T0003 can establish a real baseline build command.
+
+If Noxim source code has already been added to the repository, inspect only its top-level structure and build documentation. If it has not been added, record that the task is blocked and ask for the intended Noxim source location or import method. Do not invent download, build, test, or simulation commands.
 
 Ignore the peer evaluation document completely.
-
-Confirm whether Noxim source code is present in the repository. If it is not present, record that explicitly. Confirm whether build, test, and simulation commands are known. Do not invent commands.
 
 Update docs/PROGRESS.md, docs/TASKS.md, docs/VALIDATION.md, and docs/PROMPTS.md with the result. At the end, provide:
 
@@ -100,5 +112,5 @@ Update docs/PROGRESS.md, docs/TASKS.md, docs/VALIDATION.md, and docs/PROMPTS.md 
 ## Suggested Commit Message
 
 ```text
-docs: add traceable project management structure
+docs: record repository availability check
 ```

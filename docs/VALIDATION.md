@@ -18,6 +18,14 @@ Known validation:
 
 Additional repository listing commands may be used for inspection, but they should not be treated as project build or test commands.
 
+T0002 result on 2026-05-04:
+
+- `rg --files` could not be used because `rg.exe` returned access denied.
+- PowerShell file inspection was used as the fallback.
+- No Noxim source tree, Noxim-named path, C/C++/SystemC source file, script source file, or recognized build-system file was found in the repository.
+- `git status --short` returned no output before T0002 documentation updates.
+- After T0002 documentation updates, `git status --short` shows only modified documentation files: `docs/PROGRESS.md`, `docs/PROMPTS.md`, `docs/TASKS.md`, and `docs/VALIDATION.md`.
+
 ## Build Validation
 
 Purpose:
@@ -31,7 +39,8 @@ Command:
 
 Notes:
 
-- Noxim source code is not currently present in the repository.
+- Noxim source code is not currently present in the repository as of T0002 on 2026-05-04.
+- No build-system file such as `Makefile`, `CMakeLists.txt`, `SConstruct`, `meson.build`, `package.json`, or Visual Studio project file was found during T0002.
 - Build commands must come from the repository, Noxim documentation, or user-provided instructions.
 
 ## Source Document Validation
@@ -49,10 +58,11 @@ Known sources:
 
 Command:
 
-- Unknown until repository inspection.
+- Availability check: `Get-Item -LiteralPath <required-source-path>`
 
 Notes:
 
+- T0002 confirmed that `Extended_Proposal.pdf`, `Proposal.pdf`, and `C:/Users/9500203/Downloads/DeFT_A_Deadlock-Free_and_Fault-Tolerant_Routing_Algorithm_for_2.5D_Chiplet_Networks.pdf` are available.
 - The original DeFT paper is currently outside the repository.
 - Future tasks should decide whether to copy it into the repository for reproducibility.
 
@@ -87,6 +97,7 @@ Notes:
 
 - Simulation commands must not be invented.
 - Baseline simulation must be confirmed before DeFT-specific changes are evaluated.
+- Blocked as of T0002 because Noxim source code and build files are not present.
 
 ## Experiment Validation
 

@@ -14,13 +14,13 @@ Statuses: `TODO`, `IN_PROGRESS`, `DONE`, `BLOCKED`.
 
 ## T0002: Confirm Repository Contents, Noxim Availability, and Source Availability
 
-- **Status:** TODO
+- **Status:** DONE
 - **Objective:** Re-inspect repository contents at the start of the next session, confirm whether Noxim source code has been added, and confirm whether the original DeFT paper remains available at the documented path.
 - **Relevant roadmap phase:** Phase 1
-- **Files likely to change:** `docs/PROGRESS.md`, `docs/TASKS.md`, `docs/VALIDATION.md`
+- **Files changed:** `docs/PROGRESS.md`, `docs/TASKS.md`, `docs/VALIDATION.md`, `docs/PROMPTS.md`
 - **Acceptance criteria:** Repository structure, Noxim availability, and source-document availability are documented.
-- **Validation command:** To be confirmed after repository inspection
-- **Notes:** Do not add code during this task unless explicitly requested. After completion, provide the next ready-to-send prompt and suggested commit message.
+- **Validation command:** `git status --short`
+- **Notes:** Completed on 2026-05-04. `rg --files` could not be used because `rg.exe` returned access denied, so repository inspection used PowerShell file listing. The repository contains project documentation, proposal PDFs/zips, and the ignored peer evaluation artifact, but no Noxim source tree, Noxim-named path, C/C++/SystemC source file, script source file, or recognized build-system file. `Extended_Proposal.pdf`, `Proposal.pdf`, and the original DeFT paper at `C:/Users/9500203/Downloads/DeFT_A_Deadlock-Free_and_Fault-Tolerant_Routing_Algorithm_for_2.5D_Chiplet_Networks.pdf` are available. Build, test, and simulation commands remain unknown.
 
 ## T0003: Establish Baseline Build Command
 
@@ -30,7 +30,7 @@ Statuses: `TODO`, `IN_PROGRESS`, `DONE`, `BLOCKED`.
 - **Files likely to change:** `docs/VALIDATION.md`, `docs/PROGRESS.md`
 - **Acceptance criteria:** A real build command is documented and verified.
 - **Validation command:** To be confirmed after repository inspection
-- **Notes:** Blocked until Noxim source code and build files are present.
+- **Notes:** Blocked until Noxim source code and build files are present. T0002 confirmed they are not present in the repository.
 
 ## T0004: Run Baseline Noxim Simulation
 
@@ -40,7 +40,7 @@ Statuses: `TODO`, `IN_PROGRESS`, `DONE`, `BLOCKED`.
 - **Files likely to change:** `docs/VALIDATION.md`, `docs/PROGRESS.md`
 - **Acceptance criteria:** A baseline simulation command and result are documented.
 - **Validation command:** To be confirmed after repository inspection
-- **Notes:** Blocked until Noxim builds successfully.
+- **Notes:** Blocked until Noxim builds successfully. T0002 confirmed no build command is known because Noxim source is absent.
 
 ## T0005: Map Noxim Extension Points
 
@@ -50,7 +50,7 @@ Statuses: `TODO`, `IN_PROGRESS`, `DONE`, `BLOCKED`.
 - **Files likely to change:** `docs/ARCHITECTURE.md`, `docs/TASKS.md`, `docs/PROGRESS.md`
 - **Acceptance criteria:** Extension points are documented with file paths.
 - **Validation command:** To be confirmed after repository inspection
-- **Notes:** Blocked until Noxim source code is present.
+- **Notes:** Blocked until Noxim source code is present. T0002 confirmed no Noxim source paths are present in the repository.
 
 ## T0006: Design 2.5D Router ID and Coordinate Mapping
 
@@ -221,3 +221,13 @@ Statuses: `TODO`, `IN_PROGRESS`, `DONE`, `BLOCKED`.
 - **Acceptance criteria:** Results are traceable to configurations, commands, and validation status.
 - **Validation command:** To be confirmed after repository inspection
 - **Notes:** Keep limitations and assumptions explicit.
+
+## T0023: Add or Register Noxim Source Tree
+
+- **Status:** TODO
+- **Objective:** Make the Noxim source location explicit by adding the source tree to the repository or documenting the exact external local source path to use.
+- **Relevant roadmap phase:** Phase 1
+- **Files likely to change:** `docs/PROGRESS.md`, `docs/TASKS.md`, `docs/VALIDATION.md`, `docs/PROMPTS.md`; possibly source-tree files only if the user explicitly provides or requests a Noxim import.
+- **Acceptance criteria:** Noxim source availability is explicit, the top-level Noxim structure is documented, and the next task can inspect real build documentation without guessing.
+- **Validation command:** `git status --short`
+- **Notes:** Do not implement DeFT behavior in this task. Do not invent download, build, test, or simulation commands. Complete this before `T0003`.

@@ -81,3 +81,67 @@ Also provide the commit messages too.
 
 - **Result summary:** Project rules and progress documentation were updated to require a next prompt and suggested commit message after every completed task.
 - **Follow-up tasks:** Use the ready-to-send prompt in `docs/PROGRESS.md` to start `T0002`.
+
+## 2026-05-04: Start T0002 Repository Availability Check
+
+- **Date:** 2026-05-04
+- **Prompt summary:** Confirm repository contents, Noxim availability, required source-document availability, and known build/test/simulation commands without writing implementation code.
+- **Full prompt:**
+
+```text
+Start task T0002: Confirm repository contents, Noxim availability, and source-document availability.
+
+Before starting, read AGENTS.md, docs/PROGRESS.md, docs/TASKS.md, docs/ROADMAP.md, and docs/ARCHITECTURE.md.
+
+Do not write implementation code. Do not modify source code files. Inspect only the repository structure and the required source documents:
+
+- Extended_Proposal.pdf
+- Proposal.pdf
+- C:/Users/9500203/Downloads/DeFT_A_Deadlock-Free_and_Fault-Tolerant_Routing_Algorithm_for_2.5D_Chiplet_Networks.pdf
+
+Ignore the peer evaluation document completely.
+
+Confirm whether Noxim source code is present in the repository. If it is not present, record that explicitly. Confirm whether build, test, and simulation commands are known. Do not invent commands.
+
+Update docs/PROGRESS.md, docs/TASKS.md, docs/VALIDATION.md, and docs/PROMPTS.md with the result. At the end, provide:
+
+1. Created files
+2. Modified files
+3. Whether any source code files changed
+4. Validation result
+5. Current project phase
+6. Next recommended task
+7. The next ready-to-send prompt
+8. Suggested commit message
+9. Unknowns or blockers
+```
+
+- **Result summary:** T0002 confirmed the repository contains documentation and proposal artifacts but no Noxim source tree, Noxim-named path, C/C++/SystemC source file, script source file, or recognized build-system file. The required source documents are available. Build, test, and simulation commands remain unknown. No source code files were changed.
+- **Follow-up tasks:** Start `T0023` to add or register the Noxim source tree before attempting `T0003`.
+- **Next ready-to-send prompt:**
+
+```text
+Start task T0023: Add or register the Noxim source tree.
+
+Before starting, read AGENTS.md, docs/PROGRESS.md, docs/TASKS.md, docs/ROADMAP.md, and docs/ARCHITECTURE.md.
+
+Do not implement DeFT behavior yet. Do not modify routing logic, topology logic, VN logic, fault injection logic, or simulation behavior in this task.
+
+Goal: make Noxim source availability explicit so T0003 can establish a real baseline build command.
+
+If Noxim source code has already been added to the repository, inspect only its top-level structure and build documentation. If it has not been added, record that the task is blocked and ask for the intended Noxim source location or import method. Do not invent download, build, test, or simulation commands.
+
+Ignore the peer evaluation document completely.
+
+Update docs/PROGRESS.md, docs/TASKS.md, docs/VALIDATION.md, and docs/PROMPTS.md with the result. At the end, provide:
+
+1. Created files
+2. Modified files
+3. Whether any source code files changed
+4. Validation result
+5. Current project phase
+6. Next recommended task
+7. The next ready-to-send prompt
+8. Suggested commit message
+9. Unknowns or blockers
+```
