@@ -24,16 +24,18 @@ No implementation task has been completed.
 
 ## Last Validation Result
 
-- T0023 source-availability check performed on 2026-05-04.
+- T0023 continuation source-availability check performed on 2026-05-04.
 - Required startup reading was completed before task work: `AGENTS.md`, `docs/PROGRESS.md`, `docs/TASKS.md`, `docs/ROADMAP.md`, and `docs/ARCHITECTURE.md`.
-- `git status --short` returned no output before T0023 documentation updates.
+- `git status --short` returned no output before T0023 continuation documentation updates.
+- The intended Noxim source location or import method in the prompt was still the literal placeholder `<insert the local source path, repository import method, archive path, or other explicit source registration instruction here>`.
 - `rg --files` could not be used because `rg.exe` returned access denied; PowerShell file inspection was used as the fallback.
 - Repository top-level inspection found only `.git`, `docs`, project rule/documentation files, proposal PDFs/zips, and the ignored peer evaluation artifact. The peer evaluation document was not opened or used.
 - Recursive directory inspection found no source directory other than `docs`.
 - File inspection found no Noxim source tree, Noxim-named path, C/C++/SystemC source file, script source file, or recognized build-system file in the repository.
-- Because no Noxim source tree or explicit external Noxim source path is available, T0023 is blocked pending the intended Noxim source location or import method.
+- No top-level Noxim structure or build documentation could be inspected because no Noxim source tree or explicit external Noxim source path is available.
+- Blocked: T0023 remains blocked pending a real Noxim source location or import method.
 - Build, test, and simulation commands remain unknown because Noxim source code and build documentation are not present.
-- After T0023 documentation updates, `git status --short` showed only modified documentation files: `docs/PROGRESS.md`, `docs/PROMPTS.md`, `docs/TASKS.md`, and `docs/VALIDATION.md`.
+- After T0023 continuation documentation updates, `git status --short` showed only modified documentation files: `docs/PROGRESS.md`, `docs/PROMPTS.md`, `docs/TASKS.md`, and `docs/VALIDATION.md`.
 - No source code files were changed.
 
 ## Important Changed Files
@@ -56,7 +58,7 @@ Documentation files updated during `T0002`:
 - `docs/VALIDATION.md`
 - `docs/PROMPTS.md`
 
-Documentation files updated during `T0023`:
+Documentation files updated during `T0023` checks:
 
 - `docs/PROGRESS.md`
 - `docs/TASKS.md`
@@ -70,12 +72,13 @@ Documentation files updated during `T0023`:
 - Assumption: `Proposal.pdf` is initial context only.
 - Assumption: The peer evaluation document is unrelated and out of scope.
 - Assumption: The repository currently does not contain Noxim source code.
+- Assumption: The placeholder Noxim source instruction is not an actionable source registration method.
 - Assumption: Build, test, and simulation commands cannot be known until Noxim source and build files are available.
 - Assumption: The implementation target remains a 4-chiplet 2.5D system with 4x4 mesh chiplets and four Vertical Links per chiplet.
 
 ## Open Questions
 
-- Blocked: `T0023` cannot proceed until the intended Noxim source location or import method is provided.
+- Blocked: `T0023` cannot proceed until the intended Noxim source location or import method is provided with a real local path, repository import method, archive path, or equivalent actionable instruction.
 - Blocked: `T0003`, `T0004`, and `T0005` cannot proceed until Noxim source code is added to the repository or a specific external Noxim source path is provided.
 - Where will Noxim source code be added or referenced?
 - Should Noxim be imported into the repository, registered as an external local path, or added through another explicit method?
@@ -88,7 +91,7 @@ Documentation files updated during `T0023`:
 
 ## Next Recommended Task
 
-Continue `T0023` by providing the intended Noxim source location or import method so the source tree can be added or registered explicitly.
+Continue `T0023` by replacing the placeholder with the intended Noxim source location or import method so the source tree can be added or registered explicitly.
 
 ## Next Ready-to-Send Prompt
 
@@ -124,5 +127,5 @@ Update docs/PROGRESS.md, docs/TASKS.md, docs/VALIDATION.md, and docs/PROMPTS.md 
 ## Suggested Commit Message
 
 ```text
-docs: record blocked Noxim source registration
+docs: confirm Noxim source registration remains blocked
 ```
