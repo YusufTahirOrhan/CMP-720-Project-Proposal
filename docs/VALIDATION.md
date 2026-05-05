@@ -102,6 +102,32 @@ T0005 result on 2026-05-05:
 - Final parent-project status after documentation updates showed only the requested tracking docs modified: `docs/ARCHITECTURE.md`, `docs/DECISIONS.md`, `docs/PROGRESS.md`, `docs/PROMPTS.md`, `docs/TASKS.md`, and `docs/VALIDATION.md`.
 - Final `external/noxim` status remained clean.
 
+## Topology Mapping Design
+
+Purpose:
+
+- Validate documentation-only topology mapping work against the source documents and the relevant Noxim ID/coordinate code.
+- Confirm that no Noxim source files, simulator behavior, or golden regression outputs are changed during pre-implementation design tasks.
+
+Known validation:
+
+- Parent repository status: `git status --short`
+- Noxim submodule status: `git -c safe.directory=C:/Projects/CMP-720-Project-Proposal/external/noxim -C external/noxim status --short`
+
+T0006 result on 2026-05-05:
+
+- Required startup reading was completed before task work: `AGENTS.md`, `docs/PROGRESS.md`, `docs/TASKS.md`, `docs/ROADMAP.md`, `docs/ARCHITECTURE.md`, `docs/VALIDATION.md`, and `docs/DECISIONS.md`.
+- Before source inspection, `git status --short` in the parent repository returned no output.
+- Before source inspection, `git -c safe.directory=C:/Projects/CMP-720-Project-Proposal/external/noxim -C external/noxim status --short` returned no output.
+- Required source documents were confirmed present: `Extended_Proposal.pdf`, `Proposal.pdf`, and `docs/references/DeFT_A_Deadlock-Free_and_Fault-Tolerant_Routing_Algorithm_for_2.5D_Chiplet_Networks.pdf`.
+- `pdftotext` was not available in the current environment. The bundled Python runtime with `pypdf` was used to inspect short source-document snippets. No extracted text files were created.
+- Noxim source inspection was limited to ID, coordinate, topology-construction, routing, traffic, and stats surfaces needed to ground the design: `DataStructs.h`, `Utils.h`, `NoC.*`, `Tile.h`, `Router.*`, `GlobalParams.*`, `ProcessingElement.*`, `GlobalStats.*`, and `routingAlgorithms/Routing_XY.cpp`.
+- T0006 documented a deterministic 2.5D mapping: chiplet router IDs `0..63`, interposer router IDs `64..127`, a 2x2 chiplet grid, 4x4 chiplet-local meshes, an 8x8 active-interposer footprint, four boundary-router slots per chiplet, and physical bidirectional VL IDs `0..15`.
+- No build, simulation, or regression command was run because T0006 made no code change and introduced no new validated command.
+- No Noxim source files, DeFT behavior, routing logic, topology logic, VN logic, fault injection logic, simulator behavior, or golden regression outputs were modified.
+- Final parent-project status after documentation updates showed only the requested tracking docs modified: `docs/ARCHITECTURE.md`, `docs/DECISIONS.md`, `docs/PROGRESS.md`, `docs/PROMPTS.md`, `docs/TASKS.md`, and `docs/VALIDATION.md`.
+- Final `external/noxim` status remained clean.
+
 ## Build Validation
 
 Purpose:

@@ -42,6 +42,202 @@ Planned:
 
 Assumption: Interposer routing can reuse mesh-style routing behavior unless Noxim integration requires a different representation.
 
+## T0006 Router ID and Coordinate Mapping
+
+This design records the planned 2.5D router identity model before topology implementation. It is documentation-only and does not implement DeFT behavior.
+
+Source alignment:
+
+- `Extended_Proposal.pdf` defines the target as four CPU chiplets on an active interposer, with each chiplet using a 4x4 2D mesh and four bidirectional Vertical Links per chiplet at local mesh boundaries.
+- The original DeFT paper defines boundary routers as chiplet routers attached to Vertical Links, uses horizontal ports for the cardinal mesh directions, uses Down for chiplet-to-interposer movement, and uses Up for interposer-to-chiplet movement.
+- The original DeFT paper states that four VLs are placed on chiplet borders for the baseline system. It also reports `total VLs=32` for the 4-chiplet evaluation, while the proposal states four bidirectional VLs per chiplet.
+
+Assumption: The project will model 16 physical bidirectional Vertical Links, four per chiplet, and can derive 32 directional VL channels or endpoint directions when a later fault-accounting task needs to align with the paper's `total VLs=32` wording.
+
+### Existing Noxim Grounding
+
+Current Noxim mesh IDs are flat node IDs:
+
+- `external/noxim/src/DataStructs.h` defines `Coord` with only `x` and `y`.
+- `external/noxim/src/Utils.h` maps mesh IDs with `id = y * GlobalParams::mesh_dim_x + x`.
+- `external/noxim/src/NoC.cpp::buildMesh()` creates one 2D mesh of `Tile` instances and assigns the same flat ID to each `Tile`, `Router`, and `ProcessingElement`.
+- `external/noxim/src/Router.cpp::getNeighborId()` assumes one rectangular mesh and returns cardinal neighbors from `id2Coord()`.
+- `external/noxim/src/routingAlgorithms/Routing_XY.cpp` routes by comparing only `id2Coord(current_id)` and `id2Coord(dst_id)`.
+- `external/noxim/src/ProcessingElement.cpp` generates packet `src_id` and `dst_id` values in the existing node-ID space.
+
+Design consequence: The 2.5D topology must not treat the four chiplets as one directly connected 8x8 chiplet-layer mesh. It needs a 2.5D-aware mapping helper that decodes IDs into layer, global footprint coordinate, chiplet ownership, and chiplet-local coordinate.
+
+### Physical Floorplan
+
+Planned constants for the initial target topology:
+
+| Name | Value |
+| --- | --- |
+| Chiplet grid | 2 columns x 2 rows |
+| Chiplet-local mesh | 4 x 4 routers |
+| Global footprint | 8 x 8 positions |
+| Chiplet routers | 64 |
+| Active-interposer routers | 64 |
+| Total routers | 128 |
+| Physical bidirectional VLs | 16 |
+| Directional VL channels/endpoints | 32 |
+
+Chiplet placement is row-major:
+
+| `chiplet_id` | Chiplet grid coordinate | Global footprint origin |
+| --- | --- | --- |
+| 0 | `(0,0)` | `(0,0)` |
+| 1 | `(1,0)` | `(4,0)` |
+| 2 | `(0,1)` | `(0,4)` |
+| 3 | `(1,1)` | `(4,4)` |
+
+### Router ID Ranges
+
+Planned router ID ranges:
+
+- Chiplet router IDs: `0..63`.
+- Interposer router IDs: `64..127`.
+- Packet source and final destination IDs remain chiplet router IDs only.
+- Interposer routers are internal transit routers and must not be selected by synthetic traffic generation as packet sources or final destinations.
+
+Global footprint index:
+
+```text
+footprint_x = 0..7
+footprint_y = 0..7
+footprint_index = footprint_y * 8 + footprint_x
+```
+
+Chiplet router ID:
+
+```text
+chiplet_router_id = footprint_index
+```
+
+Interposer router ID:
+
+```text
+interposer_router_id = 64 + footprint_index
+```
+
+This keeps the existing row-major mesh intuition for `Coord(x,y)` while using a layer bit encoded by the ID range. A chiplet router and the interposer router directly below the same footprint position share the same `footprint_index`.
+
+### Chiplet Ownership and Local Coordinates
+
+For any chiplet router ID `id` in `0..63`:
+
+```text
+footprint_x = id % 8
+footprint_y = id / 8
+chiplet_x = footprint_x / 4
+chiplet_y = footprint_y / 4
+chiplet_id = chiplet_y * 2 + chiplet_x
+local_x = footprint_x % 4
+local_y = footprint_y % 4
+local_router_index = local_y * 4 + local_x
+```
+
+For any interposer router ID `id` in `64..127`:
+
+```text
+footprint_index = id - 64
+footprint_x = footprint_index % 8
+footprint_y = footprint_index / 8
+chiplet_x = footprint_x / 4
+chiplet_y = footprint_y / 4
+chiplet_id_under_footprint = chiplet_y * 2 + chiplet_x
+```
+
+`chiplet_id_under_footprint` is physical floorplan metadata for interposer routers. It does not mean the interposer router is owned by that chiplet.
+
+### Boundary Router Slots
+
+Each chiplet has four VL slots, one per border. The slot names are local to each chiplet:
+
+| `vl_slot` | Name | Local boundary router coordinate |
+| --- | --- | --- |
+| 0 | `NORTH` | `(1,0)` |
+| 1 | `EAST` | `(3,1)` |
+| 2 | `SOUTH` | `(2,3)` |
+| 3 | `WEST` | `(0,2)` |
+
+Assumption: A 4x4 mesh has no single centered router on an edge. The initial boundary-slot coordinates choose near-center, non-corner border routers and form a rotationally symmetric pattern: `(1,0) -> (3,1) -> (2,3) -> (0,2)`.
+
+Boundary router ID for a slot:
+
+```text
+origin_x = (chiplet_id % 2) * 4
+origin_y = (chiplet_id / 2) * 4
+boundary_footprint_x = origin_x + slot_local_x
+boundary_footprint_y = origin_y + slot_local_y
+boundary_router_id = boundary_footprint_y * 8 + boundary_footprint_x
+```
+
+### Vertical Link Endpoint Mapping
+
+Physical bidirectional VL ID:
+
+```text
+vl_id = chiplet_id * 4 + vl_slot
+```
+
+Each `vl_id` has:
+
+- `owner_chiplet_id`: `chiplet_id`.
+- `chiplet_endpoint_router_id`: the boundary router ID.
+- `interposer_endpoint_router_id`: `64 + boundary_router_id`.
+- `slot`: one of `NORTH`, `EAST`, `SOUTH`, `WEST`.
+- `is_functional`: future fault-state field, default true.
+
+Canonical VL endpoint table:
+
+| `vl_id` | Chiplet | Slot | Boundary router ID | Boundary footprint | Interposer endpoint ID |
+| --- | --- | --- | --- | --- | --- |
+| 0 | 0 | `NORTH` | 1 | `(1,0)` | 65 |
+| 1 | 0 | `EAST` | 11 | `(3,1)` | 75 |
+| 2 | 0 | `SOUTH` | 26 | `(2,3)` | 90 |
+| 3 | 0 | `WEST` | 16 | `(0,2)` | 80 |
+| 4 | 1 | `NORTH` | 5 | `(5,0)` | 69 |
+| 5 | 1 | `EAST` | 15 | `(7,1)` | 79 |
+| 6 | 1 | `SOUTH` | 30 | `(6,3)` | 94 |
+| 7 | 1 | `WEST` | 20 | `(4,2)` | 84 |
+| 8 | 2 | `NORTH` | 33 | `(1,4)` | 97 |
+| 9 | 2 | `EAST` | 43 | `(3,5)` | 107 |
+| 10 | 2 | `SOUTH` | 58 | `(2,7)` | 122 |
+| 11 | 2 | `WEST` | 48 | `(0,6)` | 112 |
+| 12 | 3 | `NORTH` | 37 | `(5,4)` | 101 |
+| 13 | 3 | `EAST` | 47 | `(7,5)` | 111 |
+| 14 | 3 | `SOUTH` | 62 | `(6,7)` | 126 |
+| 15 | 3 | `WEST` | 52 | `(4,6)` | 116 |
+
+### Topology Graph Rules
+
+The ID mapping does not by itself define connectivity. Future topology construction should create links according to these graph rules:
+
+- Chiplet-layer cardinal links connect only routers with the same `chiplet_id` and adjacent `local_x/local_y`.
+- Chiplet-layer cardinal links must not connect across chiplet boundaries even when global footprint coordinates are adjacent.
+- Interposer-layer cardinal links connect adjacent active-interposer routers over the full 8x8 footprint.
+- A Vertical Link connects exactly one chiplet boundary router to exactly one interposer router at the same footprint coordinate.
+- Each physical VL should be represented as bidirectional connectivity, with separate directional accounting available for later fault-rate work.
+
+### Required Mapping Helper Surface
+
+Future code should introduce a small 2.5D mapping helper instead of scattering ID arithmetic through routing logic. The helper should expose at least:
+
+- `isChipletRouter(id)`.
+- `isInterposerRouter(id)`.
+- `decodeRouterId(id)` returning layer, router category, footprint coordinate, chiplet ownership when applicable, and chiplet-local coordinate when applicable.
+- `chipletRouterId(chiplet_id, local_x, local_y)`.
+- `interposerRouterId(footprint_x, footprint_y)`.
+- `isBoundaryRouter(id)`.
+- `verticalLinksForChiplet(chiplet_id)`.
+- `verticalLinkForBoundaryRouter(id)`.
+- `interposerEndpointForVerticalLink(vl_id)`.
+
+Assumption: The helper can initially be implemented as deterministic static functions or a small immutable topology-map object built during `NoC` construction. The implementation choice should be made in `T0007` after inspecting the smallest safe integration point.
+
+Blocked: The final physical port encoding for Up and Down movement is not decided in `T0006`. Existing Noxim has `DIRECTION_NORTH`, `DIRECTION_EAST`, `DIRECTION_SOUTH`, `DIRECTION_WEST`, `DIRECTION_LOCAL`, and `DIRECTION_HUB`, but no explicit `DIRECTION_UP` or `DIRECTION_DOWN`. `T0007` must choose a minimal topology-construction approach without changing DeFT routing behavior.
+
 ## Router Model
 
 Planned router categories:
@@ -53,7 +249,7 @@ Planned router categories:
 Router metadata should support:
 
 - Router ID.
-- Coordinates.
+- Layer-aware coordinates.
 - Router category.
 - Chiplet ownership when applicable.
 - Boundary router status.

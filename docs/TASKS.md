@@ -54,13 +54,13 @@ Statuses: `TODO`, `IN_PROGRESS`, `DONE`, `BLOCKED`.
 
 ## T0006: Design 2.5D Router ID and Coordinate Mapping
 
-- **Status:** TODO
+- **Status:** DONE
 - **Objective:** Define a small, reviewable design for chiplet, interposer, and router coordinate mapping before coding.
 - **Relevant roadmap phase:** Phase 2
-- **Files likely to change:** `docs/ARCHITECTURE.md`, `docs/DECISIONS.md`, `docs/PROGRESS.md`
+- **Files changed:** `docs/ARCHITECTURE.md`, `docs/TASKS.md`, `docs/PROGRESS.md`, `docs/VALIDATION.md`, `docs/PROMPTS.md`, `docs/DECISIONS.md`
 - **Acceptance criteria:** Mapping design is documented and assumptions are explicit.
-- **Validation command:** To be confirmed after repository inspection
-- **Notes:** Documentation task first; implementation should follow in a separate task. Check the original DeFT paper before finalizing mapping assumptions. Use the T0005 extension point map in `docs/ARCHITECTURE.md`, especially the `NoC`, `Tile`, `Router`, `GlobalParams`, and `DataStructs` notes.
+- **Validation command:** `git status --short`; `git -c safe.directory=C:/Projects/CMP-720-Project-Proposal/external/noxim -C external/noxim status --short`
+- **Notes:** Completed on 2026-05-05 as a documentation-only design task. The design uses chiplet router IDs `0..63` as an 8x8 global chiplet footprint and interposer router IDs `64..127` as the same footprint offset by 64. Four 4x4 chiplets are placed in a 2x2 grid. Four physical bidirectional VLs per chiplet are mapped with stable `vl_id = chiplet_id * 4 + vl_slot` endpoint records. Assumption: 16 physical bidirectional VLs are the system model, and 32 directional VL channels or endpoint directions can be derived for paper-aligned fault accounting later. No Noxim source files, topology logic, routing logic, VN logic, fault injection behavior, simulator behavior, or golden regression outputs were changed.
 
 ## T0007: Implement 2.5D Topology Construction
 
@@ -70,7 +70,7 @@ Statuses: `TODO`, `IN_PROGRESS`, `DONE`, `BLOCKED`.
 - **Files likely to change:** To be confirmed after Noxim source inspection
 - **Acceptance criteria:** Simulator can construct the topology and report expected router/link counts.
 - **Validation command:** To be confirmed after repository inspection
-- **Notes:** Requires a short implementation plan before coding.
+- **Notes:** Requires a short implementation plan before coding. Use the T0006 mapping in `docs/ARCHITECTURE.md`. Do not implement DeFT routing behavior, VN behavior, VL fault injection behavior, VL LUT generation, experiment automation, or golden-output updates in this task.
 
 ## T0008: Add Vertical Link Data Model
 

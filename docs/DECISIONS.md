@@ -113,3 +113,19 @@ This document records project decisions that affect implementation, validation, 
 - **Context:** T0005 inspected `external/noxim` and mapped the existing extension points for configuration, topology construction, routing, selection, traffic, statistics, power, logging, tracing, and regression assets.
 - **Decision:** Future DeFT work should integrate through existing Noxim surfaces where feasible: `ConfigurationManager.*` and `GlobalParams.*` for configuration, `NoC.*` and `Tile.h` for topology construction, `Router.*` and `DataStructs.h` for routing pipeline and flit/VC metadata, registered implementations under `routingAlgorithms/*` for routing behavior, registered implementations under `selectionStrategies/*` for output selection, `ProcessingElement.*` plus the global traffic table/hardcoding classes for traffic generation, and `GlobalStats.*`/`Stats.*`/`Power.*` for reporting.
 - **Consequences:** DeFT changes should be smaller and easier to validate because they will follow Noxim's existing ownership boundaries. Any future task that needs to bypass these surfaces must document why the existing surface is insufficient before modifying lower-level simulator behavior.
+
+## ADR-0015: Use Global-Footprint Router IDs for the 2.5D Mapping
+
+- **Date:** 2026-05-05
+- **Status:** Accepted
+- **Context:** T0006 needed a deterministic router ID and coordinate design for four 4x4 chiplets on an active interposer before topology code changes. Noxim's existing mesh model uses flat row-major node IDs and a two-field `Coord`, while the 2.5D topology needs chiplet ownership and a distinct interposer layer.
+- **Decision:** Use chiplet router IDs `0..63` as row-major positions in an 8x8 global chiplet footprint, and use active-interposer router IDs `64..127` as the same 8x8 footprint offset by 64. Packet source and final destination IDs remain chiplet router IDs only. Chiplet ownership is derived from the global footprint coordinate. Each physical bidirectional VL is identified by `vl_id = chiplet_id * 4 + vl_slot`, where slots are `NORTH`, `EAST`, `SOUTH`, and `WEST`.
+- **Consequences:** A chiplet router and the interposer router directly below it share the same footprint index, which keeps VL endpoint mapping simple. Future 2.5D code must use a layer-aware mapping helper instead of treating `id2Coord()` and `Router::getNeighborId()` as sufficient for all router IDs. Existing mesh behavior must remain unchanged for normal `MESH` configurations.
+
+## ADR-0016: Do Not Create Task Branches Automatically
+
+- **Date:** 2026-05-05
+- **Status:** Accepted
+- **Context:** During T0006, an attempted branch creation for the supplied task branch failed with a `.git` ref permission error. The user then instructed Codex not to create new branches for tasks ever again and to continue on the existing branch.
+- **Decision:** Future tasks must not create or switch Git branches automatically, even when a prompt includes a suggested branch name. Work should continue on the currently checked-out branch unless the user explicitly asks for a branch operation in that future message.
+- **Consequences:** Final task summaries should report the next-task branch field as `None; continue on the existing branch` unless the user changes this instruction. This decision does not prohibit providing commit-message suggestions or using normal non-branch Git status validation.

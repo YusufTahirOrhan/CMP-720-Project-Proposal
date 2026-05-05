@@ -839,3 +839,109 @@ At the end, provide:
 ```
 
 - **Suggested branch name for next task:** `codex/t0006-design-router-coordinate-mapping`
+
+## 2026-05-05: Start T0006 Router ID and Coordinate Mapping Design
+
+- **Date:** 2026-05-05
+- **Prompt summary:** Design the 2.5D router ID and coordinate mapping for four 4x4 chiplets, active-interposer routers, boundary routers, VL endpoints, and chiplet ownership before implementation.
+- **Full prompt:**
+
+```text
+Start task T0006: Design 2.5D Router ID and Coordinate Mapping.
+
+Suggested branch name:
+feat/t0006-design-router-coordinate-mapping
+
+Before starting, read AGENTS.md, docs/PROGRESS.md, docs/TASKS.md, docs/ROADMAP.md, docs/ARCHITECTURE.md, docs/VALIDATION.md, and docs/DECISIONS.md.
+
+Use the registered Noxim source tree at:
+external/noxim
+
+`external/noxim` is the Noxim submodule and modifiable project fork from:
+https://github.com/YusufTahirOrhan/noxim
+
+Do not implement DeFT behavior yet. Do not modify Noxim source files, routing logic, topology logic, VN logic, fault injection logic, fault injection behavior, simulator behavior, or golden regression outputs in this task.
+
+Goal: produce a small, reviewable design for router IDs and coordinates for the 2.5D chiplet topology before coding. The design must cover four 4x4 chiplets, active-interposer routers, boundary routers, Vertical Link endpoints, chiplet ownership, and how these concepts map onto or extend the existing Noxim node ID and coordinate model.
+
+Known result so far: T0005 mapped the relevant Noxim extension points. Topology construction is centered in `external/noxim/src/NoC.*` and `external/noxim/src/Tile.h`; router ports, directions, buffers, and VC state are centered in `external/noxim/src/Router.*`, `external/noxim/src/GlobalParams.h`, and `external/noxim/src/DataStructs.h`; routing and selection extensions use registered strategy folders under `external/noxim/src/routingAlgorithms` and `external/noxim/src/selectionStrategies`.
+
+Use `Extended_Proposal.pdf` as the primary project requirements source and the original DeFT paper at `docs/references/DeFT_A_Deadlock-Free_and_Fault-Tolerant_Routing_Algorithm_for_2.5D_Chiplet_Networks.pdf` as the primary algorithmic reference. Use `Proposal.pdf` only as initial context. Ignore the peer evaluation document completely.
+
+This is a documentation-design task. Read only the project sources and the Noxim files needed to ground the mapping. Clearly mark assumptions as `Assumption` and blockers as `Blocked`.
+
+Update docs/ARCHITECTURE.md, docs/TASKS.md, docs/PROGRESS.md, docs/VALIDATION.md, and docs/PROMPTS.md with the result. If a durable mapping decision becomes clear, update docs/DECISIONS.md too.
+
+At the end, provide:
+
+1. Created files
+2. Modified files
+3. Whether any source code files changed
+4. Validation result
+5. Current project phase
+6. Next recommended task
+7. The next ready-to-send prompt
+8. Suggested branch name for the next task
+9. Suggested commit message
+10. Unknowns or blockers
+```
+
+- **Result summary:** T0006 completed as a documentation-only design task. The mapping design records chiplet router IDs `0..63` as an 8x8 global chiplet footprint, active-interposer router IDs `64..127` as the same footprint offset by 64, chiplet ownership derived from global footprint coordinates, deterministic boundary-router slots for each chiplet, and physical bidirectional VL IDs `0..15` with chiplet and interposer endpoints. The design records the assumption that 16 physical bidirectional VLs can derive 32 directional VL channels or endpoint directions for later paper-aligned fault accounting. No Noxim source files or simulator behavior were changed.
+- **Follow-up tasks:** Start `T0007` to implement the smallest 2.5D topology construction change using the T0006 mapping, without implementing DeFT routing behavior.
+- **Next ready-to-send prompt:**
+
+```text
+Start task T0007: Implement 2.5D Topology Construction.
+
+Before starting, read AGENTS.md, docs/PROGRESS.md, docs/TASKS.md, docs/ROADMAP.md, docs/ARCHITECTURE.md, docs/VALIDATION.md, and docs/DECISIONS.md.
+
+Continue on the existing Git branch. Do not create or switch task branches.
+
+Use the registered Noxim source tree at:
+external/noxim
+
+`external/noxim` is the Noxim submodule and modifiable project fork from:
+https://github.com/YusufTahirOrhan/noxim
+
+This is the first explicit 2.5D topology implementation task. Keep the change as small as possible. Do not implement DeFT routing behavior, VN assignment behavior, VN transition restrictions, VL fault injection behavior, VL LUT generation, experiment automation, metrics changes, simulator behavior outside topology construction, or golden regression output updates in this task.
+
+Goal: add the smallest code change needed for Noxim to instantiate the planned 2.5D topology shape from the T0006 design, using four 4x4 chiplets, an 8x8 active-interposer footprint, chiplet router IDs `0..63`, interposer router IDs `64..127`, and deterministic boundary/VL endpoint mapping. The goal is topology construction and mapping inspectability only, not DeFT routing.
+
+Known result so far: T0005 mapped the relevant Noxim extension points. Topology construction is centered in `external/noxim/src/NoC.*` and `external/noxim/src/Tile.h`; router ports, directions, buffers, and VC state are centered in `external/noxim/src/Router.*`, `external/noxim/src/GlobalParams.h`, and `external/noxim/src/DataStructs.h`. T0006 documented the router ID and coordinate design in `docs/ARCHITECTURE.md`, including the required layer-aware helper surface and the current blocker that Noxim has no explicit `DIRECTION_UP` or `DIRECTION_DOWN`.
+
+Use `Extended_Proposal.pdf` as the primary project requirements source and the original DeFT paper at `docs/references/DeFT_A_Deadlock-Free_and_Fault-Tolerant_Routing_Algorithm_for_2.5D_Chiplet_Networks.pdf` as the primary algorithmic reference. Use `Proposal.pdf` only as initial context. Ignore the peer evaluation document completely.
+
+Before coding, produce a short implementation plan. Work only on the selected topology-construction task. Do not modify unrelated files. Clearly mark assumptions as `Assumption` and blockers as `Blocked`.
+
+Use only known validation commands. The baseline build command is documented as `./build.sh` from `external/noxim` in WSL Ubuntu. The baseline short simulation command is documented in `docs/VALIDATION.md`; only run a simulation if the implementation provides a documented minimal 2.5D configuration or another clearly valid invocation. Do not use `./regression.sh --update`.
+
+Update docs/ARCHITECTURE.md, docs/TASKS.md, docs/PROGRESS.md, docs/VALIDATION.md, and docs/PROMPTS.md with the result. If a durable implementation decision becomes clear, update docs/DECISIONS.md too.
+
+At the end, provide:
+
+1. Created files
+2. Modified files
+3. Whether any source code files changed
+4. Validation result
+5. Current project phase
+6. Next recommended task
+7. The next ready-to-send prompt
+8. Suggested branch name for the next task
+9. Suggested commit message
+10. Unknowns or blockers
+```
+
+- **Suggested branch name for next task:** None; continue on the existing branch.
+- **Suggested commit message:** `docs: design 2.5d router coordinate mapping`
+
+## 2026-05-05: Do Not Create Task Branches Automatically
+
+- **Date:** 2026-05-05
+- **Prompt summary:** The user instructed Codex not to create new branches for tasks ever again and to continue on the existing branch.
+- **Full prompt:**
+
+```text
+do not try to create new branches for tasks ever again. Continue on exiting one.
+```
+
+- **Result summary:** The instruction is recorded as ADR-0016. Future tasks must continue on the existing branch by default and must not create or switch task branches unless the user explicitly requests a branch operation in that future message.
