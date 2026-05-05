@@ -97,7 +97,8 @@ Notes:
 - The normal post-clone build command documented by `external/noxim/README.md` and `external/noxim/doc/Noxim_User_Guide.md` is `./build.sh`.
 - `external/noxim/build.sh` runs `other/setup/fix-dependencies.sh` and then `make -C bin`.
 - `external/noxim/bin/Makefile` builds C++11/SystemC sources with `g++` and links `bin/noxim`.
-- T0003 selected `./build.sh` from `external/noxim` as the baseline build command, but the command is not yet a validated project build command because it has not produced `bin/noxim` in the available environment.
+- T0003 selected `./build.sh` from `external/noxim` as the baseline build command and verified it in WSL Ubuntu on 2026-05-05.
+- T0024 recommends WSL Ubuntu on Windows 11 as the build-validation environment because native Windows PowerShell does not currently provide Bash, GNU Make, or `g++`.
 
 T0003 blocked result on 2026-05-04:
 
@@ -114,6 +115,33 @@ T0003 blocked result on 2026-05-04:
 - No Noxim source files were modified.
 - No DeFT behavior, routing logic, topology logic, VN logic, fault injection logic, or simulation behavior was modified.
 
+T0024 environment recommendation result on 2026-05-05:
+
+- `where.exe wsl` found `C:\Windows\System32\wsl.exe`.
+- `wsl --status` reported, in Windows system language, that Windows Subsystem for Linux is not installed and suggested installing it with `wsl.exe --install`; this result is recorded here in English.
+- `where.exe bash`, `where.exe make`, and `where.exe g++` found no matching tools in the Windows PATH.
+- Recommendation: use Windows 11 for editing and documentation, and use WSL Ubuntu for T0003 build validation, regression execution, and later Noxim simulation runs.
+- Native Windows PowerShell remains unverified for the documented Noxim build flow.
+- `git check-ignore -v docs/references/DeFT_A_Deadlock-Free_and_Fault-Tolerant_Routing_Algorithm_for_2.5D_Chiplet_Networks.pdf` confirmed that `.gitignore` line 2 ignores the copied paper.
+- `git status --short` showed modified project documentation, a new `.gitignore`, and a new tracked-reference README under `docs/references`; the copied PDF did not appear as an untracked file because it is ignored.
+
+T0003 completed result on 2026-05-05:
+
+- WSL Ubuntu is installed and available as a WSL2 distribution.
+- `wsl -u root -- apt-get update` completed successfully.
+- `wsl -u root -- apt-get install -y build-essential git cmake pkg-config ca-certificates` completed successfully; all requested packages were already installed.
+- First WSL run of `./build.sh` failed because Windows CRLF line endings made the script shebang resolve to `bash\r`.
+- Only Noxim build scripts and Makefiles were normalized to LF: `bin/Makefile`, `bin/Makefile.deps`, `build.sh`, `other/Makefile`, `other/run_tests.sh`, `other/setup/fedora.sh`, `other/setup/fix-dependencies.sh`, `other/setup/systemc.sh`, `other/setup/ubuntu.sh`, `other/setup/ubuntu_noboost.sh`, `other/setup/ubuntu_old.sh`, and `regression.sh`.
+- The Noxim submodule local Git config was set to `core.autocrlf=false`.
+- The documented command `./build.sh` was run from `external/noxim` in WSL Ubuntu and completed with exit code `0`.
+- Build output used local backup archives where available, built SystemC and yaml-cpp dependencies, and then built Noxim with `g++`.
+- The build created `external/noxim/bin/noxim`.
+- `wsl -u root -- bash -lc "cd /mnt/c/Projects/CMP-720-Project-Proposal/external/noxim && ls -l bin/noxim && file bin/noxim"` confirmed `bin/noxim` is an ELF 64-bit x86-64 Linux executable.
+- The build emitted compiler warnings from SystemC, yaml-cpp, and baseline Noxim code, but no fatal build errors.
+- `git -c safe.directory=C:/Projects/CMP-720-Project-Proposal/external/noxim -C external/noxim diff --name-only --ignore-space-at-eol` returned no file names, confirming the Noxim tracked changes are line-ending-only.
+- `git status --short` shows a dirty `external/noxim` submodule because of LF normalization in tracked build files.
+- No DeFT behavior, routing logic, topology logic, VN logic, fault injection logic, or simulation behavior was modified.
+
 ## Source Document Validation
 
 Purpose:
@@ -125,7 +153,7 @@ Known sources:
 
 - `Extended_Proposal.pdf`
 - `Proposal.pdf`
-- `C:/Users/9500203/Downloads/DeFT_A_Deadlock-Free_and_Fault-Tolerant_Routing_Algorithm_for_2.5D_Chiplet_Networks.pdf`
+- `docs/references/DeFT_A_Deadlock-Free_and_Fault-Tolerant_Routing_Algorithm_for_2.5D_Chiplet_Networks.pdf`
 
 Command:
 
@@ -134,8 +162,8 @@ Command:
 Notes:
 
 - T0002 confirmed that `Extended_Proposal.pdf`, `Proposal.pdf`, and `C:/Users/9500203/Downloads/DeFT_A_Deadlock-Free_and_Fault-Tolerant_Routing_Algorithm_for_2.5D_Chiplet_Networks.pdf` are available.
-- The original DeFT paper is currently outside the repository.
-- Future tasks should decide whether to copy it into the repository for reproducibility.
+- T0024 copied the original DeFT paper from `C:/Users/ysfth/OneDrive/Desktop/DeFT_A_Deadlock-Free_and_Fault-Tolerant_Routing_Algorithm_for_2.5D_Chiplet_Networks.pdf` to `docs/references/DeFT_A_Deadlock-Free_and_Fault-Tolerant_Routing_Algorithm_for_2.5D_Chiplet_Networks.pdf`.
+- `.gitignore` ignores that exact local PDF path so the paper is available in this workspace but not committed.
 
 ## Unit or Regression Tests
 
@@ -174,6 +202,7 @@ Notes:
 - Simulation commands must not be invented.
 - Baseline simulation must be confirmed before DeFT-specific changes are evaluated.
 - `external/noxim/doc/Noxim_User_Guide.md` includes documented sample simulator invocations, but T0004 must choose and verify the baseline simulation command after T0003 confirms the build.
+- T0003 confirmed the build on 2026-05-05, so T0004 is now ready to select and run a documented baseline simulation command.
 
 ## Experiment Validation
 

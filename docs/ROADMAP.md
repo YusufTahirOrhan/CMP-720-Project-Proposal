@@ -1,6 +1,6 @@
 # Project Roadmap
 
-This roadmap is based on `Extended_Proposal.pdf`, `Proposal.pdf`, and the original DeFT paper located at `C:/Users/9500203/Downloads/DeFT_A_Deadlock-Free_and_Fault-Tolerant_Routing_Algorithm_for_2.5D_Chiplet_Networks.pdf`.
+This roadmap is based on `Extended_Proposal.pdf`, `Proposal.pdf`, and the original DeFT paper, with a local ignored copy at `docs/references/DeFT_A_Deadlock-Free_and_Fault-Tolerant_Routing_Algorithm_for_2.5D_Chiplet_Networks.pdf`.
 
 `Extended_Proposal.pdf` is the primary project requirements source. The original DeFT paper is the primary algorithmic reference for DeFT routing, VN rules, and VL selection. `Proposal.pdf` is initial project context.
 
@@ -31,7 +31,7 @@ This roadmap is based on `Extended_Proposal.pdf`, `Proposal.pdf`, and the origin
 **Risks or assumptions:**
 
 - Assumption: The repository currently contains proposal artifacts only and does not contain Noxim source code.
-- Assumption: The original DeFT paper remains available at the provided local Downloads path unless it is later copied into the repository.
+- Assumption: The original DeFT paper is available as a local ignored reference copy under `docs/references`.
 
 ## Phase 1: Noxim Baseline Build and Validation
 

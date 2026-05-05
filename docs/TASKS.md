@@ -24,23 +24,23 @@ Statuses: `TODO`, `IN_PROGRESS`, `DONE`, `BLOCKED`.
 
 ## T0003: Establish Baseline Build Command
 
-- **Status:** BLOCKED
+- **Status:** DONE
 - **Objective:** Identify and document the actual Noxim build command.
 - **Relevant roadmap phase:** Phase 1
-- **Files changed:** `docs/PROGRESS.md`, `docs/TASKS.md`, `docs/VALIDATION.md`, `docs/PROMPTS.md`
-- **Acceptance criteria:** A real build command is documented and verified. Not yet met because the current environment cannot execute the documented Bash/GNU Make/G++ build flow.
+- **Files changed:** `docs/PROGRESS.md`, `docs/TASKS.md`, `docs/VALIDATION.md`, `docs/PROMPTS.md`, `docs/DECISIONS.md`, and LF-only changes to Noxim build scripts and Makefiles.
+- **Acceptance criteria:** A real build command is documented and verified.
 - **Validation command:** Documented baseline command from `external/noxim`: `./build.sh` from the Noxim repository root.
-- **Notes:** Blocked on 2026-05-04. `external/noxim/README.md`, `external/noxim/doc/Noxim_User_Guide.md`, and `external/noxim/build.sh` document `./build.sh` as the normal post-clone build command. `build.sh` runs `other/setup/fix-dependencies.sh` and then `make -C bin`; `bin/Makefile` builds `bin/noxim` with `g++`. The command was attempted from `external/noxim` in the current Windows PowerShell sandbox and returned exit code `0` with no output, but it did not create `bin/noxim`, `bin/libs`, or `bin/build`, so it is not accepted as verified. Environment checks found no `bash`, `make`, or `g++` in PATH. No Noxim source files or DeFT behavior were modified.
+- **Notes:** Completed on 2026-05-05 in WSL Ubuntu. `external/noxim/README.md`, `external/noxim/doc/Noxim_User_Guide.md`, and `external/noxim/build.sh` document `./build.sh` as the normal post-clone build command. `build.sh` runs `other/setup/fix-dependencies.sh` and then `make -C bin`; `bin/Makefile` builds `bin/noxim` with `g++`. The first WSL execution failed because the Windows checkout had CRLF line endings in Noxim shell scripts and Makefiles. Only Noxim build scripts and Makefiles were normalized to LF, and the submodule local Git config was set to `core.autocrlf=false`. The rerun of `./build.sh` completed with exit code `0`, built dependencies from local backups where available, and created `external/noxim/bin/noxim`. Compiler warnings were emitted, but the build completed. No DeFT behavior, routing logic, topology logic, VN logic, fault injection logic, or simulation behavior was modified.
 
 ## T0004: Run Baseline Noxim Simulation
 
-- **Status:** BLOCKED
+- **Status:** TODO
 - **Objective:** Run one unmodified baseline Noxim simulation and record the command and output summary.
 - **Relevant roadmap phase:** Phase 1
 - **Files likely to change:** `docs/VALIDATION.md`, `docs/PROGRESS.md`
 - **Acceptance criteria:** A baseline simulation command and result are documented.
 - **Validation command:** To be confirmed after repository inspection
-- **Notes:** Blocked until Noxim builds successfully. T0023 registered the Noxim source as the `external/noxim` submodule from `https://github.com/YusufTahirOrhan/noxim`. T0003 identified `./build.sh` as the documented baseline build command, but verification is blocked in the current environment because Bash, GNU Make, and `g++` are unavailable.
+- **Notes:** Ready to continue after T0003 completed on 2026-05-05. T0023 registered the Noxim source as the `external/noxim` submodule from `https://github.com/YusufTahirOrhan/noxim`. T0003 verified `./build.sh` in WSL Ubuntu and created `external/noxim/bin/noxim`. T0004 must choose a baseline simulation command from documented Noxim examples before running it.
 
 ## T0005: Map Noxim Extension Points
 
@@ -231,3 +231,13 @@ Statuses: `TODO`, `IN_PROGRESS`, `DONE`, `BLOCKED`.
 - **Acceptance criteria:** Noxim source availability is explicit, the top-level Noxim structure is documented, and the next task can inspect real build documentation without guessing.
 - **Validation command:** `git status --short`
 - **Notes:** Completed on 2026-05-04 and corrected on 2026-05-04 after the user reported that an accidental root-level Noxim submodule addition had been fixed. The intended Noxim source location is the `external/noxim` submodule, with URL `https://github.com/YusufTahirOrhan/noxim`. This submodule is the modifiable Noxim fork for the project. Noxim source must not be vendored directly into the main repository. `.gitmodules` contains only the `external/noxim` submodule entry for Noxim, and `git ls-files --stage` records `external/noxim` as a submodule gitlink at commit `d02fde4f3a07be5d15743f9b1993a292636133fb`. Top-level directories include `bin`, `config_examples`, `doc`, `other`, and `src`. Top-level files include `.gitignore`, `build.sh`, `README.md`, `regression.sh`, and `visualNoxim`. The detected build system is Bash wrapper scripts plus GNU Make: `build.sh` runs `other/setup/fix-dependencies.sh` and then `make -C bin`, while `bin/Makefile` builds C++11/SystemC sources with `g++` into `bin/noxim`. Documented build/setup commands include `./build.sh`, `./other/setup/fix-dependencies.sh`, and the legacy manual `make` flow from the `bin` directory. Documented regression commands include `./regression.sh`, `./regression.sh --list`, `./regression.sh --case mesh_8x8_buf4`, and `./regression.sh --update`. No Noxim source files or DeFT behavior were modified during this documentation correction.
+
+## T0024: Decide Windows 11 Development Environment and Persist Paper Reference
+
+- **Status:** DONE
+- **Objective:** Recommend the practical Windows 11 development environment for the Noxim build flow and place the original DeFT paper in a local ignored documentation reference path.
+- **Relevant roadmap phase:** Phase 1
+- **Files changed:** `.gitignore`, `AGENTS.md`, `docs/references/README.md`, `docs/ARCHITECTURE.md`, `docs/DECISIONS.md`, `docs/PROGRESS.md`, `docs/PROMPTS.md`, `docs/ROADMAP.md`, `docs/TASKS.md`, `docs/VALIDATION.md`
+- **Acceptance criteria:** The original paper is available locally under `docs/references`, the PDF path is ignored by Git, the Windows/WSL recommendation is documented, and no Noxim source files are modified.
+- **Validation command:** `git status --short`
+- **Notes:** Completed on 2026-05-05. The original DeFT paper was copied from `C:/Users/ysfth/OneDrive/Desktop/DeFT_A_Deadlock-Free_and_Fault-Tolerant_Routing_Algorithm_for_2.5D_Chiplet_Networks.pdf` to `docs/references/DeFT_A_Deadlock-Free_and_Fault-Tolerant_Routing_Algorithm_for_2.5D_Chiplet_Networks.pdf`. `.gitignore` ignores that exact local PDF path. Environment inspection found `wsl.exe`, but WSL is not installed. `bash`, `make`, and `g++` are not available in the Windows PATH. Recommendation: use Windows 11 for editing and WSL Ubuntu for T0003 build validation and later Noxim simulation work. No Noxim source files or DeFT behavior were modified.

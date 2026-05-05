@@ -5,7 +5,7 @@ This repository implements and evaluates DeFT: a Deadlock-Free and Fault-Toleran
 ## Source of Truth
 
 - `Extended_Proposal.pdf` is the primary project requirements source.
-- `C:/Users/9500203/Downloads/DeFT_A_Deadlock-Free_and_Fault-Tolerant_Routing_Algorithm_for_2.5D_Chiplet_Networks.pdf` is the primary DeFT algorithm and thesis reference source.
+- `docs/references/DeFT_A_Deadlock-Free_and_Fault-Tolerant_Routing_Algorithm_for_2.5D_Chiplet_Networks.pdf` is the local ignored copy of the primary DeFT algorithm and thesis reference source.
 - `Proposal.pdf` is initial project context.
 - The peer evaluation document is out of scope and must be ignored completely.
 - Stay within the scope of `Extended_Proposal.pdf`, `Proposal.pdf`, and the original DeFT paper.

@@ -537,3 +537,114 @@ Update docs/PROGRESS.md, docs/TASKS.md, docs/VALIDATION.md, and docs/PROMPTS.md 
 8. Suggested commit message
 9. Unknowns or blockers
 ```
+
+## 2026-05-05: Recommend Windows 11 Environment and Persist Original Paper
+
+- **Date:** 2026-05-05
+- **Prompt summary:** Recommend whether the project should continue on native Windows 11 or use WSL Ubuntu, and optionally copy the original DeFT paper into the project documentation folder while ignoring it in Git.
+- **Full prompt:**
+
+```text
+For this project, what do you suggest? We are working on Windows 11 right now, and we can only use Windows 11. If necessary, we can install WSL Ubuntu. All information needed is under docs. The original DeFT paper is attached and can be added to the project's docs folder, but it must be added to .gitignore. If needed, look at Proposal.pdf and Extended_Proposal.pdf.
+
+Referenced file:
+C:/Users/ysfth/OneDrive/Desktop/DeFT_A_Deadlock-Free_and_Fault-Tolerant_Routing_Algorithm_for_2.5D_Chiplet_Networks.pdf
+```
+
+- **Result summary:** T0024 completed. The original DeFT paper was copied to `docs/references/DeFT_A_Deadlock-Free_and_Fault-Tolerant_Routing_Algorithm_for_2.5D_Chiplet_Networks.pdf`, and `.gitignore` now ignores that exact PDF path. Environment inspection found `wsl.exe`, but WSL is not installed. `bash`, `make`, and `g++` are not available in the Windows PATH. The documented recommendation is to use Windows 11 for editing and repository work, and WSL Ubuntu for Noxim build validation, regressions, and simulator runs. No Noxim source files or DeFT behavior were modified.
+- **Follow-up tasks:** Install WSL Ubuntu if needed, then continue `T0003` inside WSL Ubuntu and verify the documented `./build.sh` command from `external/noxim`.
+- **Next ready-to-send prompt:**
+
+```text
+Continue task T0003: Establish baseline build command.
+
+Before starting, read AGENTS.md, docs/PROGRESS.md, docs/TASKS.md, docs/ROADMAP.md, docs/ARCHITECTURE.md, docs/VALIDATION.md, and docs/DECISIONS.md.
+
+Use the registered Noxim source tree at:
+external/noxim
+
+`external/noxim` is the Noxim submodule and modifiable project fork from:
+https://github.com/YusufTahirOrhan/noxim
+
+Do not implement DeFT behavior yet. Do not modify Noxim source files, routing logic, topology logic, VN logic, fault injection logic, or simulation behavior in this task.
+
+Goal: complete the blocked T0003 build validation by running the documented baseline Noxim build command in WSL Ubuntu on Windows 11.
+
+Use only commands explicitly documented in `external/noxim` documentation or build files. Do not invent download, build, test, validation, or simulation commands.
+
+Known result so far: `external/noxim/README.md`, `external/noxim/doc/Noxim_User_Guide.md`, and `external/noxim/build.sh` document `./build.sh` from the Noxim repository root as the normal post-clone build command. In Windows PowerShell, `./build.sh` returned exit code `0` with no output but did not create `bin/noxim`; `bash`, `make`, and `g++` were not available in PATH. T0024 confirmed `wsl.exe` exists, but WSL is not installed yet.
+
+If WSL Ubuntu is not installed, stop and record that T0003 remains blocked until WSL Ubuntu is installed. Do not treat native Windows PowerShell as the validated build environment.
+
+Run the documented baseline build command from `external/noxim`:
+
+./build.sh
+
+Verify whether it creates `external/noxim/bin/noxim`. If the command fails because dependencies, shell support, permissions, network access, or platform support are missing, record the exact failure and keep T0003 blocked. If sandbox/network approval is required by the environment, request it through the tool approval flow.
+
+Do not run DeFT experiments or modify any golden regression outputs in this task.
+
+Ignore the peer evaluation document completely.
+
+Update docs/PROGRESS.md, docs/TASKS.md, docs/VALIDATION.md, and docs/PROMPTS.md with the result. At the end, provide:
+
+1. Created files
+2. Modified files
+3. Whether any source code files changed
+4. Validation result
+5. Current project phase
+6. Next recommended task
+7. The next ready-to-send prompt
+8. Suggested commit message
+9. Unknowns or blockers
+```
+
+## 2026-05-05: Install WSL Toolchain and Verify Noxim Build
+
+- **Date:** 2026-05-05
+- **Prompt summary:** Continue after Ubuntu was installed through WSL, avoid sharing the user's Ubuntu password, install or verify the Linux build toolchain, and complete the Noxim baseline build validation.
+- **Full prompt:**
+
+```text
+The user asked whether Codex could enter the Ubuntu password after WSL installed Ubuntu, created a Linux user, and required a password. The response should not ask the user to share the password. Use WSL root access from Windows if available, then continue the Noxim setup.
+```
+
+- **Result summary:** T0003 completed. Codex accessed WSL Ubuntu as `root`, so the user did not need to share the Ubuntu password. `apt-get update` completed successfully. `build-essential`, `git`, `cmake`, `pkg-config`, and `ca-certificates` were already installed. The first `./build.sh` run failed because Windows CRLF line endings made WSL resolve the script shebang as `bash\r`. Only Noxim build scripts and Makefiles were normalized to LF, and the Noxim submodule local Git config was set to `core.autocrlf=false`. The documented command `./build.sh` then completed successfully in WSL Ubuntu and created `external/noxim/bin/noxim`. No DeFT behavior, routing logic, topology logic, VN logic, fault injection logic, or simulation behavior was modified.
+- **Follow-up tasks:** Start `T0004` to choose and run one unmodified baseline Noxim simulation command from documented Noxim examples.
+- **Next ready-to-send prompt:**
+
+```text
+Start task T0004: Run baseline Noxim simulation.
+
+Before starting, read AGENTS.md, docs/PROGRESS.md, docs/TASKS.md, docs/ROADMAP.md, docs/ARCHITECTURE.md, docs/VALIDATION.md, and docs/DECISIONS.md.
+
+Use the registered Noxim source tree at:
+external/noxim
+
+`external/noxim` is the Noxim submodule and modifiable project fork from:
+https://github.com/YusufTahirOrhan/noxim
+
+Do not implement DeFT behavior yet. Do not modify routing logic, topology logic, VN logic, fault injection logic, or simulation behavior in this task.
+
+Goal: choose and run one unmodified baseline Noxim simulation command from the Noxim documentation or example configuration files, then record the command and output summary.
+
+Known result so far: T0003 verified the documented build command `./build.sh` in WSL Ubuntu on 2026-05-05 and created `external/noxim/bin/noxim`. The first WSL build attempt required LF normalization of Noxim build scripts and Makefiles because the Windows checkout had CRLF line endings.
+
+Use WSL Ubuntu for the simulation run. Use only commands explicitly documented in `external/noxim` documentation, scripts, or example files. Do not invent simulation commands. Prefer a short baseline example suitable for smoke validation.
+
+Do not run DeFT experiments or modify any golden regression outputs in this task.
+
+Ignore the peer evaluation document completely.
+
+Update docs/PROGRESS.md, docs/TASKS.md, docs/VALIDATION.md, and docs/PROMPTS.md with the result. At the end, provide:
+
+1. Created files
+2. Modified files
+3. Whether any source code files changed
+4. Validation result
+5. Current project phase
+6. Next recommended task
+7. The next ready-to-send prompt
+8. Suggested commit message
+9. Unknowns or blockers
+```
