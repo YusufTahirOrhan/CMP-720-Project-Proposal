@@ -34,13 +34,13 @@ Statuses: `TODO`, `IN_PROGRESS`, `DONE`, `BLOCKED`.
 
 ## T0004: Run Baseline Noxim Simulation
 
-- **Status:** TODO
+- **Status:** DONE
 - **Objective:** Run one unmodified baseline Noxim simulation and record the command and output summary.
 - **Relevant roadmap phase:** Phase 1
-- **Files likely to change:** `docs/VALIDATION.md`, `docs/PROGRESS.md`
+- **Files changed:** `docs/PROGRESS.md`, `docs/TASKS.md`, `docs/VALIDATION.md`, `docs/PROMPTS.md`
 - **Acceptance criteria:** A baseline simulation command and result are documented.
-- **Validation command:** To be confirmed after repository inspection
-- **Notes:** Ready to continue after T0003 completed on 2026-05-05. T0023 registered the Noxim source as the `external/noxim` submodule from `https://github.com/YusufTahirOrhan/noxim`. T0003 verified `./build.sh` in WSL Ubuntu and created `external/noxim/bin/noxim`. T0004 must choose a baseline simulation command from documented Noxim examples before running it.
+- **Validation command:** Documented short deterministic example from `external/noxim/doc/Noxim_User_Guide.md`: `cd bin` then `./noxim -config ../config_examples/default_config.yaml -seed 0 -sim 20 -warmup 0`. In the current WSL environment, the successful run used the same simulator invocation with the local SystemC library directory provided through `LD_LIBRARY_PATH`.
+- **Notes:** Completed on 2026-05-05 in WSL Ubuntu. The selected command is the Noxim User Guide's short deterministic example. It uses `config_examples/default_config.yaml`, a 4x4 `MESH`, `XY` routing, `RANDOM` selection, `TRAFFIC_RANDOM`, one virtual channel, seed `0`, simulation time `20`, and warm-up `0`. The first exact simulator attempt failed because the WSL dynamic linker could not locate `libsystemc-2.3.1.so`; `ldd` verified that `external/noxim/bin/libs/systemc-2.3.1/lib-linux64` resolves the local SystemC library. The rerun completed with exit code `0` and reported `Noxim simulation completed. (1020 cycles executed)`, 1 received packet, 2 received flits, global average delay 6 cycles, network throughput 0.1 flits/cycle, and total energy `3.99398e-09` J. No DeFT behavior, routing logic, topology logic, VN logic, fault injection logic, simulation behavior, or golden regression outputs were modified.
 
 ## T0005: Map Noxim Extension Points
 
@@ -50,7 +50,7 @@ Statuses: `TODO`, `IN_PROGRESS`, `DONE`, `BLOCKED`.
 - **Files likely to change:** `docs/ARCHITECTURE.md`, `docs/TASKS.md`, `docs/PROGRESS.md`
 - **Acceptance criteria:** Extension points are documented with file paths.
 - **Validation command:** To be confirmed after baseline source inspection.
-- **Notes:** Unblocked by T0023 because `external/noxim` is now registered as the baseline Noxim source tree and modifiable project fork. Prefer completing T0003 and T0004 first so extension-point mapping is grounded in a validated baseline build and run.
+- **Notes:** Unblocked by T0023, T0003, and T0004 because `external/noxim` is now registered as the baseline Noxim source tree and modifiable project fork, the documented build command is verified, and a documented baseline simulation has completed. This should be a source-inspection and documentation task before any implementation.
 
 ## T0006: Design 2.5D Router ID and Coordinate Mapping
 

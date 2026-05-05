@@ -183,7 +183,7 @@ Notes:
 - `external/noxim/README.md`, `external/noxim/regression.sh`, and `external/noxim/doc/Noxim_User_Guide.md` document a deterministic regression suite.
 - `./regression.sh` rebuilds by default unless `--skip-build` is used.
 - Do not use `./regression.sh --update` unless intentionally refreshing golden outputs after planned simulator behavior changes.
-- T0003 should first establish the baseline build command. Regression execution can be selected after the build command is verified.
+- T0003 verified the baseline build command, and T0004 verified a short documented simulator smoke run. Regression execution can be selected in a future explicit validation task.
 
 ## Noxim Simulation Runs
 
@@ -195,14 +195,43 @@ Purpose:
 
 Command:
 
-- Baseline simulation command not yet selected or run.
+- Documented baseline simulator invocation from `external/noxim/doc/Noxim_User_Guide.md`, section "A short deterministic example":
+
+```bash
+cd bin
+./noxim -config ../config_examples/default_config.yaml -seed 0 -sim 20 -warmup 0
+```
+
+- Current WSL runtime wrapper needed for the local build artifact to find the local SystemC shared library:
+
+```bash
+cd /mnt/c/Projects/CMP-720-Project-Proposal/external/noxim/bin
+LD_LIBRARY_PATH=/mnt/c/Projects/CMP-720-Project-Proposal/external/noxim/bin/libs/systemc-2.3.1/lib-linux64 ./noxim -config ../config_examples/default_config.yaml -seed 0 -sim 20 -warmup 0
+```
 
 Notes:
 
 - Simulation commands must not be invented.
 - Baseline simulation must be confirmed before DeFT-specific changes are evaluated.
-- `external/noxim/doc/Noxim_User_Guide.md` includes documented sample simulator invocations, but T0004 must choose and verify the baseline simulation command after T0003 confirms the build.
-- T0003 confirmed the build on 2026-05-05, so T0004 is now ready to select and run a documented baseline simulation command.
+- `external/noxim/doc/Noxim_User_Guide.md` includes the selected short deterministic baseline invocation.
+- T0004 confirmed the selected baseline simulation on 2026-05-05 after T0003 confirmed the build.
+- Assumption: The `LD_LIBRARY_PATH` prefix is an environment setup requirement for the current local WSL build because the simulator dynamically links against the locally built SystemC shared library; it does not change the simulator invocation or simulator behavior.
+
+T0004 result on 2026-05-05:
+
+- Required startup reading was completed before task work: `AGENTS.md`, `docs/PROGRESS.md`, `docs/TASKS.md`, `docs/ROADMAP.md`, `docs/ARCHITECTURE.md`, `docs/VALIDATION.md`, and `docs/DECISIONS.md`.
+- The selected command is the Noxim User Guide's "A short deterministic example".
+- The baseline config is `external/noxim/config_examples/default_config.yaml`: 4x4 `MESH`, `XY` routing, `RANDOM` selection, `TRAFFIC_RANDOM`, one virtual channel, packet injection rate `0.01`, and 8-flit packets.
+- The first WSL execution of the exact documented simulator command failed with `./noxim: error while loading shared libraries: libsystemc-2.3.1.so: cannot open shared object file: No such file or directory`.
+- WSL-side inspection confirmed `external/noxim/bin/libs/systemc-2.3.1/lib-linux64/libsystemc-2.3.1.so` exists and is resolved by `ldd` when that directory is supplied through `LD_LIBRARY_PATH`.
+- The documented simulator invocation completed successfully in WSL Ubuntu with exit code `0` when the local SystemC library path was supplied through `LD_LIBRARY_PATH`.
+- Completion line: `Noxim simulation completed. (1020 cycles executed)`.
+- Important metrics: total received packets `1`; total received flits `2`; received/ideal flits ratio `0.078125`; average wireless utilization `0`; global average delay `6` cycles; max delay `6` cycles; network throughput `0.1` flits/cycle; average IP throughput `0.00625` flits/cycle/IP; total energy `3.99398e-09` J; dynamic energy `4.34792e-11` J; static energy `3.9505e-09` J.
+- No DeFT experiments were run.
+- No golden regression outputs were modified.
+- No DeFT behavior, routing logic, topology logic, VN logic, fault injection logic, or simulation behavior was modified.
+- Final status check showed only the requested documentation files modified in the parent project plus the already dirty `external/noxim` submodule from T0003 LF normalization.
+- `git -c safe.directory=C:/Projects/CMP-720-Project-Proposal/external/noxim -C external/noxim diff --name-only --ignore-space-at-eol` returned no file names, confirming there are no non-line-ending tracked Noxim changes.
 
 ## Experiment Validation
 

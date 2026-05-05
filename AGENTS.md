@@ -35,6 +35,7 @@ Before starting any new task, read:
 - Update project tracking documents after each completed task.
 - After each completed task, provide a ready-to-send prompt for the next recommended task.
 - After each completed task, provide a suggested commit message for the completed work.
+- After each completed task, provide a suggested branch name for the next recommended task.
 - Every future task should be traceable through `docs/TASKS.md`, `docs/PROGRESS.md`, `docs/PROMPTS.md`, and `docs/DECISIONS.md`.
 - Clearly mark assumptions as `Assumption`.
 - Clearly mark blockers as `Blocked`.

@@ -648,3 +648,103 @@ Update docs/PROGRESS.md, docs/TASKS.md, docs/VALIDATION.md, and docs/PROMPTS.md 
 8. Suggested commit message
 9. Unknowns or blockers
 ```
+
+## 2026-05-05: Start T0004 Baseline Noxim Simulation
+
+- **Date:** 2026-05-05
+- **Prompt summary:** Run one unmodified baseline Noxim simulation from documented Noxim examples in WSL Ubuntu, then record the command and output summary without implementing DeFT behavior.
+- **Full prompt:**
+
+```text
+Start task T0004: Run baseline Noxim simulation.
+
+Before starting, read AGENTS.md, docs/PROGRESS.md, docs/TASKS.md, docs/ROADMAP.md, docs/ARCHITECTURE.md, docs/VALIDATION.md, and docs/DECISIONS.md.
+
+Use the registered Noxim source tree at:
+external/noxim
+
+`external/noxim` is the Noxim submodule and modifiable project fork from:
+https://github.com/YusufTahirOrhan/noxim
+
+Use WSL Ubuntu for all Noxim commands.
+
+Do not implement DeFT behavior yet. Do not modify routing logic, topology logic, VN logic, fault injection logic, or simulation behavior in this task.
+
+Goal: choose and run one unmodified baseline Noxim simulation command from the Noxim documentation, scripts, or example configuration files, then record the command and output summary.
+
+Known result so far: T0003 verified the documented build command `./build.sh` in WSL Ubuntu on 2026-05-05 and created `external/noxim/bin/noxim`. The first WSL build attempt required LF normalization of Noxim build scripts and Makefiles because the Windows checkout had CRLF line endings.
+
+Use only commands explicitly documented in `external/noxim` documentation, scripts, or example files. Do not invent simulation commands. Prefer a short baseline example suitable for smoke validation.
+
+Do not run DeFT experiments.
+Do not modify any golden regression outputs.
+Do not use `./regression.sh --update`.
+Ignore the peer evaluation document completely.
+
+After the simulation, verify whether it completed successfully and summarize the important output lines or metrics.
+
+Update docs/PROGRESS.md, docs/TASKS.md, docs/VALIDATION.md, and docs/PROMPTS.md with the result.
+
+At the end, provide:
+
+1. Created files
+2. Modified files
+3. Whether any source code files changed
+4. Validation result
+5. Current project phase
+6. Next recommended task
+7. The next ready-to-send prompt
+8. Suggested commit message
+9. Unknowns or blockers
+```
+
+- **Result summary:** T0004 completed. The selected baseline command was the Noxim User Guide's short deterministic example: `cd bin` then `./noxim -config ../config_examples/default_config.yaml -seed 0 -sim 20 -warmup 0`. The first exact simulator attempt failed because WSL could not locate `libsystemc-2.3.1.so`; WSL dependency inspection confirmed the local SystemC library under `external/noxim/bin/libs/systemc-2.3.1/lib-linux64`. The simulator completed successfully when that local library directory was supplied through `LD_LIBRARY_PATH`, reporting `Noxim simulation completed. (1020 cycles executed)`, 1 received packet, 2 received flits, global average delay 6 cycles, network throughput 0.1 flits/cycle, and total energy `3.99398e-09` J. No DeFT behavior, routing logic, topology logic, VN logic, fault injection logic, simulation behavior, or golden regression outputs were modified.
+- **Follow-up tasks:** Start `T0005` to map Noxim extension points for topology construction, routing, selection, traffic generation, configuration, simulation control, statistics, and validation hooks before implementation.
+- **Next ready-to-send prompt:**
+
+```text
+Start task T0005: Map Noxim extension points.
+
+Before starting, read AGENTS.md, docs/PROGRESS.md, docs/TASKS.md, docs/ROADMAP.md, docs/ARCHITECTURE.md, docs/VALIDATION.md, and docs/DECISIONS.md.
+
+Use the registered Noxim source tree at:
+external/noxim
+
+`external/noxim` is the Noxim submodule and modifiable project fork from:
+https://github.com/YusufTahirOrhan/noxim
+
+Do not implement DeFT behavior yet. Do not modify routing logic, topology logic, VN logic, fault injection logic, fault injection behavior, simulator behavior, or golden regression outputs in this task.
+
+Goal: inspect the Noxim source tree and document the extension points responsible for topology construction, routing algorithms, selection strategies, traffic generation, configuration loading, simulation control, power/statistics reporting, and any existing regression or tracing hooks.
+
+Known result so far: T0003 verified the documented build command `./build.sh` in WSL Ubuntu on 2026-05-05 and created `external/noxim/bin/noxim`. T0004 verified the documented Noxim User Guide short deterministic baseline simulation command in WSL Ubuntu on 2026-05-05. The successful T0004 run used `LD_LIBRARY_PATH` for the local SystemC shared library and reported `Noxim simulation completed. (1020 cycles executed)`.
+
+This is a source-inspection and documentation task. Do not change Noxim source files. Read only the files needed to identify extension points. Keep findings traceable with file paths and concise responsibilities.
+
+Ignore the peer evaluation document completely.
+
+Update docs/ARCHITECTURE.md, docs/TASKS.md, docs/PROGRESS.md, docs/VALIDATION.md, and docs/PROMPTS.md with the result. If a durable implementation decision becomes clear, update docs/DECISIONS.md too.
+
+At the end, provide:
+
+1. Created files
+2. Modified files
+3. Whether any source code files changed
+4. Validation result
+5. Current project phase
+6. Next recommended task
+7. The next ready-to-send prompt
+8. Suggested branch name for the next task
+9. Suggested commit message
+10. Unknowns or blockers
+```
+
+- **Suggested branch name for next task:** `codex/t0005-map-noxim-extension-points`
+
+## 2026-05-05: Require Next Task Branch Names
+
+- **Date:** 2026-05-05
+- **Prompt summary:** Require Codex to provide a suggested branch name for the next recommended task after each completed task.
+- **Full prompt summary in English:** The user asked, in Turkish, to also provide the branch name for the next task from now on.
+- **Result summary:** Project rules and progress documentation were updated to require a suggested branch name for the next recommended task. The suggested branch for `T0005` is `codex/t0005-map-noxim-extension-points`.
+- **Follow-up tasks:** Include the next-task branch name in final task summaries and next ready-to-send prompts.

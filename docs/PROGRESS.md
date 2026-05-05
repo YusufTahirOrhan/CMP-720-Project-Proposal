@@ -9,6 +9,7 @@ Phase 1 - Noxim baseline source availability and validation setup
 - `T0001` - Repository analysis and documentation setup.
 - `T0002` - Confirm repository contents, Noxim availability, and source-document availability.
 - `T0003` - Establish baseline build command.
+- `T0004` - Run baseline Noxim simulation.
 - `T0023` - Add or register the Noxim source tree.
 - `T0024` - Decide Windows 11 development environment and persist paper reference.
 
@@ -24,21 +25,18 @@ No DeFT implementation task has been completed.
 
 ## Last Validation Result
 
-- T0003 baseline build validation completed on 2026-05-05.
-- Required startup reading was completed before task work: `AGENTS.md`, `docs/PROGRESS.md`, `docs/TASKS.md`, `docs/ROADMAP.md`, and `docs/ARCHITECTURE.md`.
-- WSL Ubuntu is installed and available as a WSL2 distribution.
-- `wsl -u root -- apt-get update` completed successfully.
-- `wsl -u root -- apt-get install -y build-essential git cmake pkg-config ca-certificates` completed successfully; all packages were already installed.
-- First WSL run of `./build.sh` failed because Windows CRLF line endings made the shebang resolve to `bash\r`.
-- Only Noxim build scripts and Makefiles were normalized to LF: `bin/Makefile`, `bin/Makefile.deps`, `build.sh`, `other/Makefile`, `other/run_tests.sh`, `other/setup/fedora.sh`, `other/setup/fix-dependencies.sh`, `other/setup/systemc.sh`, `other/setup/ubuntu.sh`, `other/setup/ubuntu_noboost.sh`, `other/setup/ubuntu_old.sh`, and `regression.sh`.
-- The Noxim submodule local Git config was set to `core.autocrlf=false` to prevent these build files from being converted back to CRLF.
-- The documented command `./build.sh` was run from `external/noxim` in WSL Ubuntu and completed with exit code `0`.
-- The build used local backup archives for dependencies where available and created `external/noxim/bin/libs`, `external/noxim/bin/build`, and `external/noxim/bin/noxim`.
-- `external/noxim/bin/noxim` exists and is an ELF 64-bit x86-64 Linux executable.
-- The build emitted compiler warnings from SystemC, yaml-cpp, and baseline Noxim code, but no fatal build errors.
-- `git -c safe.directory=C:/Projects/CMP-720-Project-Proposal/external/noxim -C external/noxim diff --name-only --ignore-space-at-eol` returned no file names, confirming the Noxim tracked changes are line-ending-only.
-- `git status --short` shows the parent project documentation changes, the new `.gitignore`, the new `docs/references` README, and a dirty `external/noxim` submodule because of LF normalization in tracked build files.
-- No DeFT behavior, routing logic, topology logic, VN logic, fault injection logic, or simulation behavior was modified.
+- T0004 baseline simulation validation completed on 2026-05-05.
+- Required startup reading was completed before task work: `AGENTS.md`, `docs/PROGRESS.md`, `docs/TASKS.md`, `docs/ROADMAP.md`, `docs/ARCHITECTURE.md`, `docs/VALIDATION.md`, and `docs/DECISIONS.md`.
+- The selected documented baseline simulator invocation came from `external/noxim/doc/Noxim_User_Guide.md`, section "A short deterministic example": `cd bin` then `./noxim -config ../config_examples/default_config.yaml -seed 0 -sim 20 -warmup 0`.
+- The selected configuration is `external/noxim/config_examples/default_config.yaml`, which describes a 4x4 `MESH`, `XY` routing, `RANDOM` selection, `TRAFFIC_RANDOM`, one virtual channel, packet injection rate `0.01`, and 8-flit packets.
+- The first exact WSL simulator attempt reached `external/noxim/bin/noxim` but failed with `error while loading shared libraries: libsystemc-2.3.1.so: cannot open shared object file`.
+- WSL-side dependency inspection confirmed that `external/noxim/bin/libs/systemc-2.3.1/lib-linux64/libsystemc-2.3.1.so` exists and is resolved by `ldd` when that directory is supplied through `LD_LIBRARY_PATH`.
+- The documented simulator invocation was rerun in WSL Ubuntu with the local SystemC library directory supplied through `LD_LIBRARY_PATH` and completed with exit code `0`.
+- Successful run command used from `external/noxim/bin`: `LD_LIBRARY_PATH=/mnt/c/Projects/CMP-720-Project-Proposal/external/noxim/bin/libs/systemc-2.3.1/lib-linux64 ./noxim -config ../config_examples/default_config.yaml -seed 0 -sim 20 -warmup 0`.
+- Important output: `Noxim simulation completed. (1020 cycles executed)`.
+- Reported metrics: total received packets `1`, total received flits `2`, received/ideal flits ratio `0.078125`, average wireless utilization `0`, global average delay `6` cycles, max delay `6` cycles, network throughput `0.1` flits/cycle, average IP throughput `0.00625` flits/cycle/IP, total energy `3.99398e-09` J, dynamic energy `4.34792e-11` J, and static energy `3.9505e-09` J.
+- No DeFT experiments were run, no golden regression outputs were modified, and no DeFT behavior, routing logic, topology logic, VN logic, fault injection logic, or simulation behavior was modified.
+- Final status check showed only the requested documentation files modified in the parent project plus the already dirty `external/noxim` submodule from T0003 LF normalization; `git -c safe.directory=C:/Projects/CMP-720-Project-Proposal/external/noxim -C external/noxim diff --name-only --ignore-space-at-eol` returned no file names.
 
 ## Important Changed Files
 
@@ -82,6 +80,13 @@ Files updated during `T0003` completed build validation:
 - `docs/VALIDATION.md`
 - `docs/PROMPTS.md`
 - `docs/DECISIONS.md`
+
+Files updated during `T0004` baseline simulation validation:
+
+- `docs/PROGRESS.md`
+- `docs/TASKS.md`
+- `docs/VALIDATION.md`
+- `docs/PROMPTS.md`
 
 Noxim build files LF-normalized during `T0003`:
 
@@ -133,6 +138,8 @@ External source tree registered during `T0023`:
 - Assumption: WSL Ubuntu is the recommended environment for Noxim builds, regressions, and simulation runs on this Windows 11 machine.
 - Assumption: Noxim build scripts and Makefiles should remain LF-normalized for WSL.
 - Assumption: The local backup archives under `external/noxim/other/deps-backup` can support dependency setup for SystemC and yaml-cpp in the current WSL environment.
+- Assumption: Supplying `LD_LIBRARY_PATH` for the local SystemC shared library is an environment setup requirement for the current WSL run, not a simulator behavior change.
+- Assumption: The documented Noxim User Guide short deterministic example is suitable as the initial smoke baseline simulation command.
 - Assumption: The implementation target remains a 4-chiplet 2.5D system with 4x4 mesh chiplets and four Vertical Links per chiplet.
 
 ## Open Questions
@@ -140,15 +147,16 @@ External source tree registered during `T0023`:
 - How should the active interposer dimensions and router mapping be represented?
 - Should Vertical Link fault percentages be counted over physical bidirectional links or directional links?
 - Are GEM5/PARSEC traces required for final delivery, or are synthetic traffic experiments sufficient?
+- Should WSL be configured persistently with `ldconfig` for the local SystemC library, or should future Noxim runs keep using a per-process `LD_LIBRARY_PATH`?
 
 ## Next Recommended Task
 
-Start `T0004` and run one unmodified baseline Noxim simulation using a command selected from the documented Noxim examples.
+Start `T0005` and map the Noxim extension points for topology construction, routing, traffic generation, configuration, and statistics.
 
 ## Next Ready-to-Send Prompt
 
 ```text
-Start task T0004: Run baseline Noxim simulation.
+Start task T0005: Map Noxim extension points.
 
 Before starting, read AGENTS.md, docs/PROGRESS.md, docs/TASKS.md, docs/ROADMAP.md, docs/ARCHITECTURE.md, docs/VALIDATION.md, and docs/DECISIONS.md.
 
@@ -158,19 +166,19 @@ external/noxim
 `external/noxim` is the Noxim submodule and modifiable project fork from:
 https://github.com/YusufTahirOrhan/noxim
 
-Do not implement DeFT behavior yet. Do not modify routing logic, topology logic, VN logic, fault injection logic, or simulation behavior in this task.
+Do not implement DeFT behavior yet. Do not modify routing logic, topology logic, VN logic, fault injection logic, fault injection behavior, simulator behavior, or golden regression outputs in this task.
 
-Goal: choose and run one unmodified baseline Noxim simulation command from the Noxim documentation or example configuration files, then record the command and output summary.
+Goal: inspect the Noxim source tree and document the extension points responsible for topology construction, routing algorithms, selection strategies, traffic generation, configuration loading, simulation control, power/statistics reporting, and any existing regression or tracing hooks.
 
-Known result so far: T0003 verified the documented build command `./build.sh` in WSL Ubuntu on 2026-05-05 and created `external/noxim/bin/noxim`. The first WSL build attempt required LF normalization of Noxim build scripts and Makefiles because the Windows checkout had CRLF line endings.
+Known result so far: T0003 verified the documented build command `./build.sh` in WSL Ubuntu on 2026-05-05 and created `external/noxim/bin/noxim`. T0004 verified the documented Noxim User Guide short deterministic baseline simulation command in WSL Ubuntu on 2026-05-05. The successful T0004 run used `LD_LIBRARY_PATH` for the local SystemC shared library and reported `Noxim simulation completed. (1020 cycles executed)`.
 
-Use WSL Ubuntu for the simulation run. Use only commands explicitly documented in `external/noxim` documentation, scripts, or example files. Do not invent simulation commands. Prefer a short baseline example suitable for smoke validation.
-
-Do not run DeFT experiments or modify any golden regression outputs in this task.
+This is a source-inspection and documentation task. Do not change Noxim source files. Read only the files needed to identify extension points. Keep findings traceable with file paths and concise responsibilities.
 
 Ignore the peer evaluation document completely.
 
-Update docs/PROGRESS.md, docs/TASKS.md, docs/VALIDATION.md, and docs/PROMPTS.md with the result. At the end, provide:
+Update docs/ARCHITECTURE.md, docs/TASKS.md, docs/PROGRESS.md, docs/VALIDATION.md, and docs/PROMPTS.md with the result. If a durable implementation decision becomes clear, update docs/DECISIONS.md too.
+
+At the end, provide:
 
 1. Created files
 2. Modified files
@@ -179,12 +187,19 @@ Update docs/PROGRESS.md, docs/TASKS.md, docs/VALIDATION.md, and docs/PROMPTS.md 
 5. Current project phase
 6. Next recommended task
 7. The next ready-to-send prompt
-8. Suggested commit message
-9. Unknowns or blockers
+8. Suggested branch name for the next task
+9. Suggested commit message
+10. Unknowns or blockers
+```
+
+## Suggested Branch Name for Next Task
+
+```text
+codex/t0005-map-noxim-extension-points
 ```
 
 ## Suggested Commit Message
 
 ```text
-docs: record verified Noxim WSL build
+docs: record baseline Noxim simulation
 ```
