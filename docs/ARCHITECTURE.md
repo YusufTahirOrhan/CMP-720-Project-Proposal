@@ -236,7 +236,39 @@ Future code should introduce a small 2.5D mapping helper instead of scattering I
 
 Assumption: The helper can initially be implemented as deterministic static functions or a small immutable topology-map object built during `NoC` construction. The implementation choice should be made in `T0007` after inspecting the smallest safe integration point.
 
-Blocked: The final physical port encoding for Up and Down movement is not decided in `T0006`. Existing Noxim has `DIRECTION_NORTH`, `DIRECTION_EAST`, `DIRECTION_SOUTH`, `DIRECTION_WEST`, `DIRECTION_LOCAL`, and `DIRECTION_HUB`, but no explicit `DIRECTION_UP` or `DIRECTION_DOWN`. `T0007` must choose a minimal topology-construction approach without changing DeFT routing behavior.
+Blocked: The final physical port encoding for Up and Down movement was not decided in `T0006`. Existing Noxim has `DIRECTION_NORTH`, `DIRECTION_EAST`, `DIRECTION_SOUTH`, `DIRECTION_WEST`, `DIRECTION_LOCAL`, and `DIRECTION_HUB`, but no explicit `DIRECTION_UP` or `DIRECTION_DOWN`. `T0007` uses `DIRECTION_HUB` only as a temporary topology-construction carrier; final DeFT Up/Down semantics remain a future routing/VN decision.
+
+## T0007 2.5D Topology Construction Implementation
+
+`T0007` adds the first source implementation of the T0006 topology shape. It does not implement DeFT routing behavior, VN assignment behavior, VN transition restrictions, VL fault injection behavior, VL LUT generation, experiment automation, golden regression updates, or DeFT evaluation metrics.
+
+Implemented source surface:
+
+- `external/noxim/src/DeftTopology.h` and `external/noxim/src/DeftTopology.cpp` define the layer-aware helper surface for router ID decoding, chiplet router IDs, interposer router IDs, boundary-router detection, and deterministic VL endpoint lookup.
+- `external/noxim/src/GlobalParams.h` adds the selectable topology name `DEFT_2_5D`.
+- `external/noxim/src/ConfigurationManager.cpp` accepts `DEFT_2_5D`, fixes the topology footprint to 8x8, sets the chiplet IP count to 64, and rejects Winoc hub mode for this topology in T0007.
+- `external/noxim/src/NoC.h` and `external/noxim/src/NoC.cpp` add `NoC::buildDeft2D()`.
+- `external/noxim/src/Router.cpp` disables buffers for disconnected ports in the constructed `DEFT_2_5D` graph.
+- `external/noxim/src/Utils.h`, `external/noxim/src/Main.cpp`, and `external/noxim/src/GlobalStats.cpp` add minimal topology-aware compatibility so the construction-only smoke configuration can instantiate and exit cleanly.
+
+Constructed graph:
+
+- Chiplet routers: 64, with IDs `0..63`.
+- Interposer routers: 64, with IDs `64..127`.
+- Total routers: 128.
+- Chiplet-local cardinal links: 96 physical bidirectional links across four isolated 4x4 meshes.
+- Interposer cardinal links: 112 physical bidirectional links across one 8x8 active-interposer mesh.
+- Vertical Links: 16 physical bidirectional links, using the T0006 endpoint table.
+
+Assumption: `DIRECTION_HUB` is used in T0007 only as a topology-construction carrier for each bidirectional chiplet-to-interposer VL. This is a temporary physical wiring choice so Noxim can instantiate the graph without increasing `DIRECTIONS` or changing existing router port arrays.
+
+Blocked: Explicit DeFT `Up` and `Down` movement semantics remain undecided. Future routing tasks must not treat the T0007 use of `DIRECTION_HUB` as the final DeFT movement-model decision without rechecking the original paper and the VN-transition rules.
+
+Inspectability:
+
+- `external/noxim/config_examples/deft_2_5d_topology.yaml` is a construction-only configuration.
+- `external/noxim/config_examples/deft_2_5d_no_traffic.txt` prevents packet generation during construction smoke runs.
+- The topology builder prints the router/link counts and all 16 VL endpoint records at startup.
 
 ## Router Model
 

@@ -128,6 +128,39 @@ T0006 result on 2026-05-05:
 - Final parent-project status after documentation updates showed only the requested tracking docs modified: `docs/ARCHITECTURE.md`, `docs/DECISIONS.md`, `docs/PROGRESS.md`, `docs/PROMPTS.md`, `docs/TASKS.md`, and `docs/VALIDATION.md`.
 - Final `external/noxim` status remained clean.
 
+## 2.5D Topology Construction
+
+Purpose:
+
+- Validate that Noxim can instantiate the T0006 2.5D topology shape.
+- Confirm the constructed router counts, cardinal-link counts, and deterministic VL endpoint table.
+- Confirm construction without invoking DeFT routing behavior, VN behavior, VL fault injection behavior, VL LUT generation, experiment automation, or golden regression updates.
+
+Known validation:
+
+- Build from the Noxim repository root in WSL Ubuntu: `./build.sh`
+- Construction smoke from `external/noxim/bin` in WSL Ubuntu:
+
+```bash
+LD_LIBRARY_PATH=/mnt/c/Projects/CMP-720-Project-Proposal/external/noxim/bin/libs/systemc-2.3.1/lib-linux64 ./noxim -config ../config_examples/deft_2_5d_topology.yaml -seed 0 -sim 20 -warmup 0
+```
+
+T0007 result on 2026-05-06:
+
+- Required startup reading was completed before task work: `AGENTS.md`, `docs/PROGRESS.md`, `docs/TASKS.md`, `docs/ROADMAP.md`, `docs/ARCHITECTURE.md`, `docs/VALIDATION.md`, and `docs/DECISIONS.md`.
+- Before implementation, `git status --short` in the parent repository returned no output.
+- Before implementation, `git -c safe.directory=C:/Projects/CMP-720-Project-Proposal/external/noxim -C external/noxim status --short` returned no output.
+- Required source documents were confirmed present: `Extended_Proposal.pdf`, `Proposal.pdf`, and `docs/references/DeFT_A_Deadlock-Free_and_Fault-Tolerant_Routing_Algorithm_for_2.5D_Chiplet_Networks.pdf`.
+- Short PDF text checks confirmed source occurrences for chiplets, an active interposer, Vertical Links, boundary terminology, and 4x4 topology references.
+- Implementation added selectable topology `DEFT_2_5D`, a layer-aware `DeftTopology` helper, `NoC::buildDeft2D()`, and a construction-only config/traffic pair.
+- The first final construction smoke attempt from the sandbox failed with WSL `E_ACCESSDENIED`; the same command was rerun with approved WSL escalation and completed successfully.
+- Final `./build.sh` from `external/noxim` completed with exit code `0`.
+- Final construction smoke completed with exit code `0` and printed `DEFT_2_5D topology constructed: chiplet_routers=64, interposer_routers=64, total_routers=128, chiplet_cardinal_links=96, interposer_cardinal_links=112, vertical_links=16`.
+- The printed VL endpoint table matched the T0006 canonical endpoint table, including `vl_id=0` endpoint `1 -> 65` and `vl_id=15` endpoint `52 -> 116`.
+- The construction smoke used `TRAFFIC_HARDCODED` with `external/noxim/config_examples/deft_2_5d_no_traffic.txt`, so it reported zero received packets and zero received flits. The `-nan` average-delay and wireless-utilization values are expected for a no-packet smoke run and are not experiment metrics.
+- `git -c safe.directory=C:/Projects/CMP-720-Project-Proposal/external/noxim -C external/noxim diff --check` completed with exit code `0`.
+- No DeFT routing behavior, VN behavior, VL fault injection behavior, VL LUT generation, experiment automation, golden regression output update, or DeFT experiment was run.
+
 ## Build Validation
 
 Purpose:

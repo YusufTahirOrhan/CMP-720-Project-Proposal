@@ -64,13 +64,13 @@ Statuses: `TODO`, `IN_PROGRESS`, `DONE`, `BLOCKED`.
 
 ## T0007: Implement 2.5D Topology Construction
 
-- **Status:** TODO
+- **Status:** DONE
 - **Objective:** Add the smallest code change required to instantiate the planned 2.5D topology.
 - **Relevant roadmap phase:** Phase 2
-- **Files likely to change:** To be confirmed after Noxim source inspection
+- **Files changed:** `external/noxim/src/DeftTopology.h`, `external/noxim/src/DeftTopology.cpp`, `external/noxim/src/GlobalParams.h`, `external/noxim/src/ConfigurationManager.cpp`, `external/noxim/src/NoC.h`, `external/noxim/src/NoC.cpp`, `external/noxim/src/Router.cpp`, `external/noxim/src/Utils.h`, `external/noxim/src/Main.cpp`, `external/noxim/src/GlobalStats.cpp`, `external/noxim/config_examples/deft_2_5d_topology.yaml`, `external/noxim/config_examples/deft_2_5d_no_traffic.txt`, `docs/ARCHITECTURE.md`, `docs/TASKS.md`, `docs/PROGRESS.md`, `docs/VALIDATION.md`, `docs/PROMPTS.md`, and `docs/DECISIONS.md`
 - **Acceptance criteria:** Simulator can construct the topology and report expected router/link counts.
-- **Validation command:** To be confirmed after repository inspection
-- **Notes:** Requires a short implementation plan before coding. Use the T0006 mapping in `docs/ARCHITECTURE.md`. Do not implement DeFT routing behavior, VN behavior, VL fault injection behavior, VL LUT generation, experiment automation, or golden-output updates in this task.
+- **Validation command:** From `external/noxim`: `./build.sh`. Construction smoke from `external/noxim/bin`: `LD_LIBRARY_PATH=/mnt/c/Projects/CMP-720-Project-Proposal/external/noxim/bin/libs/systemc-2.3.1/lib-linux64 ./noxim -config ../config_examples/deft_2_5d_topology.yaml -seed 0 -sim 20 -warmup 0`.
+- **Notes:** Completed on 2026-05-06. Added selectable `DEFT_2_5D` topology construction using the T0006 mapping. Startup output reports 64 chiplet routers, 64 interposer routers, 128 total routers, 96 chiplet-local cardinal links, 112 interposer cardinal links, and 16 physical bidirectional VLs with the expected endpoint table. Assumption: T0007 uses `DIRECTION_HUB` only as a temporary physical carrier for VL wiring. Blocked: final explicit Up/Down port semantics remain a future routing/VN task. No DeFT routing behavior, VN behavior, VL fault injection behavior, VL LUT generation, experiment automation, or golden regression outputs were added.
 
 ## T0008: Add Vertical Link Data Model
 
@@ -80,7 +80,7 @@ Statuses: `TODO`, `IN_PROGRESS`, `DONE`, `BLOCKED`.
 - **Files likely to change:** To be confirmed after Noxim source inspection
 - **Acceptance criteria:** Each chiplet has exactly four Vertical Links and mappings are inspectable.
 - **Validation command:** To be confirmed after repository inspection
-- **Notes:** Keep independent from fault injection behavior where possible.
+- **Notes:** Keep independent from fault injection behavior where possible. T0007 introduced static VL endpoint mapping for topology construction, but it did not add a mutable fault-state manager, fault-mask validation, or routing-facing fault query behavior.
 
 ## T0009: Add Boundary Router Identification
 

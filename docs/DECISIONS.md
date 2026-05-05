@@ -129,3 +129,19 @@ This document records project decisions that affect implementation, validation, 
 - **Context:** During T0006, an attempted branch creation for the supplied task branch failed with a `.git` ref permission error. The user then instructed Codex not to create new branches for tasks ever again and to continue on the existing branch.
 - **Decision:** Future tasks must not create or switch Git branches automatically, even when a prompt includes a suggested branch name. Work should continue on the currently checked-out branch unless the user explicitly asks for a branch operation in that future message.
 - **Consequences:** Final task summaries should report the next-task branch field as `None; continue on the existing branch` unless the user changes this instruction. This decision does not prohibit providing commit-message suggestions or using normal non-branch Git status validation.
+
+## ADR-0017: Add `DEFT_2_5D` as the Construction-Only Topology Mode
+
+- **Date:** 2026-05-06
+- **Status:** Accepted
+- **Context:** T0007 needed the smallest selectable Noxim topology mode that instantiates the T0006 four-chiplet plus active-interposer graph without implementing DeFT routing, VN behavior, VL fault behavior, or LUT selection.
+- **Decision:** Add a new Noxim topology string, `DEFT_2_5D`, backed by a layer-aware `DeftTopology` helper and `NoC::buildDeft2D()`. The mode constructs chiplet router IDs `0..63`, interposer router IDs `64..127`, four isolated 4x4 chiplet meshes, one 8x8 active-interposer mesh, and the 16 deterministic physical bidirectional VLs from T0006.
+- **Consequences:** Existing `MESH`, `BUTTERFLY`, `BASELINE`, and `OMEGA` topology behavior remains separate. Future DeFT routing tasks can select `DEFT_2_5D` without overloading ordinary `MESH` dimensions. T0007's topology-aware statistics compatibility exists only so construction smoke runs can exit cleanly; it is not final evaluation-metric work.
+
+## ADR-0018: Use `DIRECTION_HUB` as the Temporary VL Wiring Carrier
+
+- **Date:** 2026-05-06
+- **Status:** Accepted
+- **Context:** Noxim currently has four cardinal directions plus `DIRECTION_LOCAL` and `DIRECTION_HUB`; it has no explicit `DIRECTION_UP` or `DIRECTION_DOWN`. Adding new physical directions in T0007 would affect router arrays, buffers, NoP state, and routing behavior beyond topology construction.
+- **Decision:** For T0007 only, wire each physical bidirectional Vertical Link through the existing tile/router hub port. Winoc hub mode is rejected for `DEFT_2_5D` in this task to avoid sharing that port with radio-hub behavior.
+- **Consequences:** The 2.5D graph can be constructed and inspected without changing the router direction count. Future DeFT routing and VN-transition tasks must still decide and document final Up/Down semantics; they must not assume `DIRECTION_HUB` is the final algorithmic port representation.
