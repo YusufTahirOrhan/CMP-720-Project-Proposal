@@ -76,6 +76,32 @@ T0023 source registration result on 2026-05-04:
 - `git status --short` before the T0023 submodule documentation correction returned no output.
 - After the T0023 submodule documentation correction, `git status --short` showed only modified tracking docs: `docs/DECISIONS.md`, `docs/PROGRESS.md`, `docs/PROMPTS.md`, `docs/TASKS.md`, and `docs/VALIDATION.md`.
 
+## Noxim Source Inspection
+
+Purpose:
+
+- Identify existing Noxim extension points before implementation.
+- Keep future DeFT topology, routing, selection, traffic, statistics, and tracing work grounded in actual source files.
+- Confirm that documentation-only inspection does not modify Noxim source files or golden regression outputs.
+
+Known validation:
+
+- Parent repository status: `git status --short`
+- Noxim submodule status: `git -c safe.directory=C:/Projects/CMP-720-Project-Proposal/external/noxim -C external/noxim status --short`
+
+T0005 result on 2026-05-05:
+
+- Required startup reading was completed before task work: `AGENTS.md`, `docs/PROGRESS.md`, `docs/TASKS.md`, `docs/ROADMAP.md`, `docs/ARCHITECTURE.md`, `docs/VALIDATION.md`, and `docs/DECISIONS.md`.
+- Before source inspection, `git status --short` in the parent repository returned no output.
+- Before source inspection, `git -c safe.directory=C:/Projects/CMP-720-Project-Proposal/external/noxim -C external/noxim status --short` returned no output.
+- Because `external/noxim` was clean, the earlier LF-normalization changes appear to have been reverted or absorbed into the current submodule state; they were not reapplied.
+- Source inspection used read-only file listing and search commands, primarily `rg`, against `external/noxim/src`, `external/noxim/regression.sh`, `external/noxim/visualNoxim`, `external/noxim/other/regression`, and selected helper files under `external/noxim/other`.
+- Mapped extension-point owners include `ConfigurationManager.*`, `GlobalParams.*`, `Main.cpp`, `NoC.*`, `Tile.h`, `Router.*`, `DataStructs.h`, `routingAlgorithms/*`, `selectionStrategies/*`, `ProcessingElement.*`, `GlobalTrafficTable.*`, `GlobalTrafficHardcoding.*`, `Stats.*`, `GlobalStats.*`, `Power.*`, `Logger.*`, `Utils.h`, `regression.sh`, `visualNoxim`, and `other/noxim_trace_viewer.py`.
+- No build, simulation, or regression command was run because T0005 made no code change and introduced no new validated command.
+- No Noxim source files, DeFT behavior, routing logic, topology logic, VN logic, fault injection logic, simulator behavior, or golden regression outputs were modified.
+- Final parent-project status after documentation updates showed only the requested tracking docs modified: `docs/ARCHITECTURE.md`, `docs/DECISIONS.md`, `docs/PROGRESS.md`, `docs/PROMPTS.md`, `docs/TASKS.md`, and `docs/VALIDATION.md`.
+- Final `external/noxim` status remained clean.
+
 ## Build Validation
 
 Purpose:

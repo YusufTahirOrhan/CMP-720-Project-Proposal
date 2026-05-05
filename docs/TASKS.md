@@ -44,13 +44,13 @@ Statuses: `TODO`, `IN_PROGRESS`, `DONE`, `BLOCKED`.
 
 ## T0005: Map Noxim Extension Points
 
-- **Status:** TODO
+- **Status:** DONE
 - **Objective:** Identify Noxim files responsible for topology construction, routing, traffic generation, configuration, and statistics.
 - **Relevant roadmap phase:** Phase 1
-- **Files likely to change:** `docs/ARCHITECTURE.md`, `docs/TASKS.md`, `docs/PROGRESS.md`
+- **Files changed:** `docs/ARCHITECTURE.md`, `docs/TASKS.md`, `docs/PROGRESS.md`, `docs/VALIDATION.md`, `docs/PROMPTS.md`, `docs/DECISIONS.md`
 - **Acceptance criteria:** Extension points are documented with file paths.
-- **Validation command:** To be confirmed after baseline source inspection.
-- **Notes:** Unblocked by T0023, T0003, and T0004 because `external/noxim` is now registered as the baseline Noxim source tree and modifiable project fork, the documented build command is verified, and a documented baseline simulation has completed. This should be a source-inspection and documentation task before any implementation.
+- **Validation command:** `git status --short`; `git -c safe.directory=C:/Projects/CMP-720-Project-Proposal/external/noxim -C external/noxim status --short`
+- **Notes:** Completed on 2026-05-05 as a documentation-only source-inspection task. The parent repository and `external/noxim` both reported clean status before source inspection, so the earlier LF-normalization changes appear to have been reverted and were not reapplied. Extension points were mapped for configuration/global state, simulation control, topology construction, routing algorithms, selection strategies, traffic generation, statistics/power, logging, VCD tracing, visual trace viewing, regression assets, and legacy explorer hooks. No Noxim source files, routing logic, topology logic, VN logic, fault injection logic, simulator behavior, or golden regression outputs were changed.
 
 ## T0006: Design 2.5D Router ID and Coordinate Mapping
 
@@ -60,7 +60,7 @@ Statuses: `TODO`, `IN_PROGRESS`, `DONE`, `BLOCKED`.
 - **Files likely to change:** `docs/ARCHITECTURE.md`, `docs/DECISIONS.md`, `docs/PROGRESS.md`
 - **Acceptance criteria:** Mapping design is documented and assumptions are explicit.
 - **Validation command:** To be confirmed after repository inspection
-- **Notes:** Documentation task first; implementation should follow in a separate task. Check the original DeFT paper before finalizing mapping assumptions.
+- **Notes:** Documentation task first; implementation should follow in a separate task. Check the original DeFT paper before finalizing mapping assumptions. Use the T0005 extension point map in `docs/ARCHITECTURE.md`, especially the `NoC`, `Tile`, `Router`, `GlobalParams`, and `DataStructs` notes.
 
 ## T0007: Implement 2.5D Topology Construction
 
