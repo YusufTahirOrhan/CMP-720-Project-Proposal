@@ -270,6 +270,27 @@ Inspectability:
 - `external/noxim/config_examples/deft_2_5d_no_traffic.txt` prevents packet generation during construction smoke runs.
 - The topology builder prints the router/link counts and all 16 VL endpoint records at startup.
 
+## T0008 Vertical Link Data Model Implementation
+
+`T0008` extends the T0007 `DeftTopology` helper into the first centralized Vertical Link model/query surface. It does not implement startup-time fault injection behavior, fault-mask generation, fault-rate configuration, DeFT routing behavior, VN assignment behavior, VN transition restrictions, VL LUT generation, experiment automation, metrics changes, golden regression updates, or route-selection behavior.
+
+Implemented source surface:
+
+- `external/noxim/src/DeftTopology.h` and `external/noxim/src/DeftTopology.cpp` keep the deterministic 16 physical bidirectional VL records as the source of truth for VL identity and endpoints.
+- Each `VerticalLinkInfo` record represents one physical bidirectional VL with stable `vl_id`, `owner_chiplet_id`, `slot`, `chiplet_endpoint_router_id`, `interposer_endpoint_router_id`, footprint coordinate, and mutable `is_functional` state.
+- `DeftTopology::resetVerticalLinkStates()` restores every VL to the default functional state.
+- `DeftTopology::setVerticalLinkFunctional(vl_id, is_functional)` mutates only the central model state and returns whether the requested VL ID existed.
+- `DeftTopology::isVerticalLinkFunctional(vl_id)`, `functionalVerticalLinksForChiplet(chiplet_id)`, and `hasFunctionalVerticalLinkForChiplet(chiplet_id)` provide the minimal routing/fault-manager query contract needed by later tasks.
+- `DeftTopology::verticalLinkBetweenRouters(router_a_id, router_b_id)`, `chipletEndpointForVerticalLink(vl_id)`, and the existing endpoint queries make physical VLs inspectable from either endpoint direction.
+- `DeftTopology::validateVerticalLinkModel(error_message)` validates stable IDs, chiplet ownership, slot mapping, unique chiplet endpoints, unique interposer endpoints, same-footprint endpoint pairing, and exactly four VLs per chiplet.
+- `NoC::buildDeft2D()` validates the VL model before wiring the physical links and prints the default functional state for each startup endpoint record.
+
+Assumption: A Vertical Link remains modeled as one physical bidirectional connection with one functional/faulty state. If a later fault-accounting task needs directional failure states to match the paper's `total VLs=32` wording, it should add a derived directional view without replacing the physical VL identity model.
+
+Assumption: `validateVerticalLinkModel()` is structural validation for the VL inventory. Fault-mask validation, including the rule that no chiplet is fully disconnected, remains a future T0011 task.
+
+Blocked: No explicit `DIRECTION_UP` or `DIRECTION_DOWN` routing semantics exist yet. T0008 intentionally does not use VL functional state to alter link construction, routing, or packet movement.
+
 ## Router Model
 
 Planned router categories:
@@ -298,13 +319,14 @@ Planned:
 
 ## Vertical Link Concept
 
-Planned:
+Implemented foundation:
 
 - A Vertical Link connects one chiplet boundary router to one active interposer router.
 - Each Vertical Link has a stable ID.
 - Each Vertical Link belongs to exactly one chiplet.
 - Vertical Links are bidirectional in the system model.
-- Vertical Links can be marked functional or faulty by the Fault Injection Manager.
+- Vertical Links have centralized mutable functional state, defaulting to functional.
+- Future fault injection can mark Vertical Links functional or faulty through the centralized model.
 - DeFT deadlock-freedom must not depend on restricting Vertical Link choices.
 
 Assumption: Faults are represented at the Vertical Link level unless later code inspection requires directional link fault states.

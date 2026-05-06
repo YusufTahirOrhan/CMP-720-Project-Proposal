@@ -998,3 +998,59 @@ At the end, provide:
 - **Next ready-to-send prompt:** See `docs/PROGRESS.md`.
 - **Suggested branch name for next task:** None; continue on the existing branch.
 - **Suggested commit message:** `feat: add 2.5d topology construction`
+
+## 2026-05-06: Start T0008 Vertical Link Data Model
+
+- **Date:** 2026-05-06
+- **Prompt summary:** Add the smallest centralized Vertical Link data model/query surface after T0007, representing physical bidirectional VL identity, chiplet ownership, slot, endpoints, and default functional state without adding fault injection, routing, VN, LUT, metrics, experiment automation, or golden-output updates.
+- **Full prompt:**
+
+```text
+Start task T0008: Add Vertical Link Data Model.
+
+Before starting, read AGENTS.md, docs/PROGRESS.md, docs/TASKS.md, docs/ROADMAP.md, docs/ARCHITECTURE.md, docs/VALIDATION.md, and docs/DECISIONS.md.
+
+Continue on the existing Git branch. Do not create or switch task branches.
+
+Use the registered Noxim source tree at:
+external/noxim
+
+`external/noxim` is the Noxim submodule and modifiable project fork from:
+https://github.com/YusufTahirOrhan/noxim
+
+T0007 added selectable `DEFT_2_5D` topology construction, the static `DeftTopology` mapping helper, four isolated 4x4 chiplet meshes, an 8x8 active-interposer mesh, and the deterministic 16-VL endpoint table. The construction smoke config is:
+external/noxim/config_examples/deft_2_5d_topology.yaml
+
+Goal: add the smallest Vertical Link data model/query surface needed after T0007. Represent each physical bidirectional VL with stable ID, owner chiplet, slot, chiplet endpoint, interposer endpoint, and default functional state. Keep the model inspectable and reusable by later fault injection and routing tasks.
+
+Keep this task independent from startup-time fault injection behavior, fault-mask generation, fault-rate configuration, DeFT routing behavior, VN assignment behavior, VN transition restrictions, VL LUT generation, experiment automation, metrics changes, and golden regression output updates.
+
+Known result so far: T0007's `DeftTopology` helper already contains static endpoint records and `is_functional=true` in the construction table, but it does not yet provide a mutable or centralized fault-state model, validation API, or routing-facing query contract. T0008 should decide the smallest safe extension without changing route selection.
+
+Use `Extended_Proposal.pdf` as the primary project requirements source and the original DeFT paper at `docs/references/DeFT_A_Deadlock-Free_and_Fault-Tolerant_Routing_Algorithm_for_2.5D_Chiplet_Networks.pdf` as the primary algorithmic reference. Use `Proposal.pdf` only as initial context. Ignore the peer evaluation document completely.
+
+Before coding, produce a short implementation plan. Work only on the selected Vertical Link data-model task. Do not modify unrelated files. Clearly mark assumptions as `Assumption` and blockers as `Blocked`.
+
+Use only known validation commands. The baseline build command is documented as `./build.sh` from `external/noxim` in WSL Ubuntu. The T0007 construction smoke command is documented in `docs/VALIDATION.md`; only run a simulation if the task preserves the construction-only no-traffic invocation or provides another clearly valid invocation. Do not use `./regression.sh --update`.
+
+Update docs/ARCHITECTURE.md, docs/TASKS.md, docs/PROGRESS.md, docs/VALIDATION.md, and docs/PROMPTS.md with the result. If a durable implementation decision becomes clear, update docs/DECISIONS.md too.
+
+At the end, provide:
+
+1. Created files
+2. Modified files
+3. Whether any source code files changed
+4. Validation result
+5. Current project phase
+6. Next recommended task
+7. The next ready-to-send prompt
+8. Suggested branch name for the next task, which should be `None; continue on the existing branch`
+9. Suggested commit message
+10. Unknowns or blockers
+```
+
+- **Result summary:** T0008 completed. `DeftTopology` now owns the centralized physical VL model/query surface, with stable 16-VL identity and endpoint records, mutable default functional state, reset/set/query helpers, functional-link queries per chiplet, bidirectional endpoint lookup, chiplet endpoint lookup, and structural validation for stable IDs, ownership, slots, unique endpoints, same-footprint endpoints, and exactly four VLs per chiplet. `NoC::buildDeft2D()` validates the model and prints `functional=true` for all default VLs. No startup-time fault injection, fault-mask generation, fault-rate configuration, DeFT routing, VN behavior, VL LUT, experiment automation, metrics change, or golden regression output update was implemented.
+- **Follow-up tasks:** Start `T0009` to add or formalize the boundary-router identification/query surface needed by later DeFT routing and VN tasks.
+- **Next ready-to-send prompt:** See `docs/PROGRESS.md`.
+- **Suggested branch name for next task:** None; continue on the existing branch.
+- **Suggested commit message:** `feat: add vertical link data model`

@@ -74,13 +74,13 @@ Statuses: `TODO`, `IN_PROGRESS`, `DONE`, `BLOCKED`.
 
 ## T0008: Add Vertical Link Data Model
 
-- **Status:** TODO
+- **Status:** DONE
 - **Objective:** Represent Vertical Links with chiplet ownership, boundary router mapping, interposer endpoint, and active/faulty state.
 - **Relevant roadmap phase:** Phase 3
-- **Files likely to change:** To be confirmed after Noxim source inspection
+- **Files changed:** `external/noxim/src/DeftTopology.h`, `external/noxim/src/DeftTopology.cpp`, `external/noxim/src/NoC.cpp`, `docs/ARCHITECTURE.md`, `docs/TASKS.md`, `docs/PROGRESS.md`, `docs/VALIDATION.md`, `docs/PROMPTS.md`, and `docs/DECISIONS.md`
 - **Acceptance criteria:** Each chiplet has exactly four Vertical Links and mappings are inspectable.
-- **Validation command:** To be confirmed after repository inspection
-- **Notes:** Keep independent from fault injection behavior where possible. T0007 introduced static VL endpoint mapping for topology construction, but it did not add a mutable fault-state manager, fault-mask validation, or routing-facing fault query behavior.
+- **Validation command:** From `external/noxim`: `./build.sh`. Construction smoke from `external/noxim/bin`: `LD_LIBRARY_PATH=/mnt/c/Projects/CMP-720-Project-Proposal/external/noxim/bin/libs/systemc-2.3.1/lib-linux64 ./noxim -config ../config_examples/deft_2_5d_topology.yaml -seed 0 -sim 20 -warmup 0`.
+- **Notes:** Completed on 2026-05-06. Extended `DeftTopology` into the centralized Vertical Link model/query surface. The model preserves the deterministic 16 physical bidirectional VL records, exposes mutable functional state through reset/set/query helpers, provides functional-link queries per chiplet, provides endpoint lookup for both directions of a physical VL, and validates stable IDs, chiplet ownership, slots, unique endpoints, same-footprint chiplet/interposer endpoints, and exactly four VLs per chiplet. Construction output now prints `functional=true` for all default VLs. No startup-time fault injection behavior, fault-mask generation, fault-rate configuration, DeFT routing behavior, VN behavior, VL LUT generation, experiment automation, metrics changes, or golden regression output update was added.
 
 ## T0009: Add Boundary Router Identification
 

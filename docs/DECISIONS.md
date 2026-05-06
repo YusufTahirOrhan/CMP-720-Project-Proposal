@@ -145,3 +145,11 @@ This document records project decisions that affect implementation, validation, 
 - **Context:** Noxim currently has four cardinal directions plus `DIRECTION_LOCAL` and `DIRECTION_HUB`; it has no explicit `DIRECTION_UP` or `DIRECTION_DOWN`. Adding new physical directions in T0007 would affect router arrays, buffers, NoP state, and routing behavior beyond topology construction.
 - **Decision:** For T0007 only, wire each physical bidirectional Vertical Link through the existing tile/router hub port. Winoc hub mode is rejected for `DEFT_2_5D` in this task to avoid sharing that port with radio-hub behavior.
 - **Consequences:** The 2.5D graph can be constructed and inspected without changing the router direction count. Future DeFT routing and VN-transition tasks must still decide and document final Up/Down semantics; they must not assume `DIRECTION_HUB` is the final algorithmic port representation.
+
+## ADR-0019: Centralize Physical Vertical Link State in `DeftTopology`
+
+- **Date:** 2026-05-06
+- **Status:** Accepted
+- **Context:** T0008 needed the smallest reusable Vertical Link data model after T0007. The T0007 helper already owned deterministic VL endpoint records, but future fault injection and routing tasks need a central place to query and mutate functional state without changing route selection yet.
+- **Decision:** Keep each physical bidirectional VL as a `DeftTopology::VerticalLinkInfo` record and centralize default functional state, mutation helpers, functional-link queries, bidirectional endpoint lookup, and structural validation in `external/noxim/src/DeftTopology.*`.
+- **Consequences:** Later fault injection and routing tasks can reuse the same stable VL IDs, chiplet ownership, slots, endpoints, and functional-state queries. T0008 does not implement fault-rate configuration, startup-time random fault injection, fault-mask generation, DeFT route selection, VN behavior, or LUT generation. Fault-mask validation and any directional VL accounting remain future tasks.
