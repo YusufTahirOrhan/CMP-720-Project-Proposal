@@ -194,6 +194,40 @@ T0008 result on 2026-05-06:
 - `git -c safe.directory=C:/Projects/CMP-720-Project-Proposal/external/noxim -C external/noxim diff --check` completed with exit code `0`.
 - No startup-time fault injection behavior, fault-mask generation, fault-rate configuration, DeFT routing behavior, VN behavior, VL LUT generation, experiment automation, metrics change, golden regression output update, or DeFT experiment was run.
 
+## Boundary Router Identification
+
+Purpose:
+
+- Validate that the boundary-router inventory is derived from the centralized VL model rather than from a second endpoint table.
+- Confirm that the structural validation API accepts the deterministic 16-entry boundary-router inventory with exactly four boundary routers per chiplet.
+- Confirm that adding the boundary-router query surface does not change route selection, traffic generation, fault behavior, VN behavior, or simulation behavior beyond construction-time inspectability output.
+
+Known validation:
+
+- Build from the Noxim repository root in WSL Ubuntu: `./build.sh`
+- Construction smoke from `external/noxim/bin` in WSL Ubuntu:
+
+```bash
+LD_LIBRARY_PATH=/mnt/c/Projects/CMP-720-Project-Proposal/external/noxim/bin/libs/systemc-2.3.1/lib-linux64 ./noxim -config ../config_examples/deft_2_5d_topology.yaml -seed 0 -sim 20 -warmup 0
+```
+
+T0009 result on 2026-05-06:
+
+- Required startup reading was completed before task work: `AGENTS.md`, `docs/PROGRESS.md`, `docs/TASKS.md`, `docs/ROADMAP.md`, `docs/ARCHITECTURE.md`, `docs/VALIDATION.md`, and `docs/DECISIONS.md`.
+- Before implementation, `git status --short --branch` in the parent repository showed the current branch as `feat/map-noxim-extension-points...origin/feat/map-noxim-extension-points` and a modified `external/noxim` gitlink because the user changed the submodule branch.
+- Before implementation, `git -c safe.directory=C:/Projects/CMP-720-Project-Proposal/external/noxim -C external/noxim status --short --branch` showed the submodule branch as `feat/baseline-noxim...origin/feat/baseline-noxim` with no local file modifications.
+- T0009 added `BoundaryRouterInfo` as a derived boundary-router view over the centralized Vertical Link model, plus inventory, per-chiplet lookup, router-ID lookup, VL-ID lookup, and structural validation helpers.
+- `NoC::buildDeft2D()` now validates the boundary-router model and prints all 16 boundary-router records during construction smoke runs.
+- The first `./build.sh` attempt from `external/noxim` timed out after 124 seconds without reporting a compiler or linker error. The same documented command was rerun with a longer timeout and completed with exit code `0`.
+- The successful build emitted only pre-existing Noxim warnings.
+- The construction smoke command completed with exit code `0`.
+- Final construction smoke output reported `chiplet_routers=64`, `interposer_routers=64`, `total_routers=128`, `chiplet_cardinal_links=96`, `interposer_cardinal_links=112`, `vertical_links=16`, and `boundary_routers=16`.
+- The smoke output printed all 16 expected boundary-router records, from router `1` on chiplet `0` local `(1,0)` slot `NORTH` attached to `vl_id=0` and interposer endpoint `65`, through router `52` on chiplet `3` local `(0,2)` slot `WEST` attached to `vl_id=15` and interposer endpoint `116`.
+- The smoke output still printed all 16 expected VL endpoint records, each with `functional=true`.
+- The construction smoke intentionally used no traffic, so it reported zero received packets and zero received flits. The `-nan` average-delay and wireless-utilization values are expected for a no-packet construction smoke and are not experiment results.
+- `git -c safe.directory=C:/Projects/CMP-720-Project-Proposal/external/noxim -C external/noxim diff --check` completed with exit code `0`.
+- No startup-time fault injection behavior, fault-mask generation, fault-rate configuration, DeFT routing behavior, route selection, VN behavior, VL LUT generation, experiment automation, metrics change, golden regression output update, or DeFT experiment was run.
+
 ## Build Validation
 
 Purpose:

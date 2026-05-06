@@ -291,6 +291,24 @@ Assumption: `validateVerticalLinkModel()` is structural validation for the VL in
 
 Blocked: No explicit `DIRECTION_UP` or `DIRECTION_DOWN` routing semantics exist yet. T0008 intentionally does not use VL functional state to alter link construction, routing, or packet movement.
 
+## T0009 Boundary Router Identification Implementation
+
+`T0009` formalizes the boundary-router query surface needed by future DeFT routing and VN tasks. It does not implement startup-time fault injection behavior, fault-mask generation, fault-rate configuration, DeFT routing behavior, route selection, VN assignment behavior, VN transition restrictions, VL LUT generation, experiment automation, metrics changes, golden regression updates, or route-selection behavior.
+
+Implemented source surface:
+
+- `external/noxim/src/DeftTopology.h` and `external/noxim/src/DeftTopology.cpp` define `BoundaryRouterInfo` as a derived view over the centralized Vertical Link model rather than a second endpoint table.
+- Each `BoundaryRouterInfo` record exposes stable `router_id`, `owner_chiplet_id`, chiplet-local coordinate, VL slot, attached `vertical_link_id`, and attached `interposer_endpoint_router_id`.
+- `DeftTopology::boundaryRouters()` returns the deterministic 16-entry boundary-router inventory.
+- `DeftTopology::boundaryRoutersForChiplet(chiplet_id)` returns the four boundary routers owned by a chiplet.
+- `DeftTopology::boundaryRouterById(router_id)` and `DeftTopology::boundaryRouterForVerticalLink(vl_id)` provide routing-facing lookup by router ID or attached VL ID.
+- `DeftTopology::validateBoundaryRouterModel(error_message)` validates that the boundary-router inventory is structurally consistent with the centralized VL inventory, has unique router IDs and VL IDs, preserves chiplet ownership/local coordinates/slots, and has exactly four boundary routers per chiplet.
+- `NoC::buildDeft2D()` validates the boundary-router model before wiring VLs and prints the 16 boundary-router records during construction smoke runs.
+
+Assumption: Boundary-router identity is a derived view of the physical VL inventory. Future routing, VN, fault-injection, and LUT tasks should reuse this query surface instead of introducing a parallel boundary-router table.
+
+Blocked: No explicit `DIRECTION_UP` or `DIRECTION_DOWN` routing semantics exist yet. T0009 intentionally does not use boundary-router identity to alter link construction, routing, or packet movement.
+
 ## Router Model
 
 Planned router categories:

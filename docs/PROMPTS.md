@@ -1054,3 +1054,59 @@ At the end, provide:
 - **Next ready-to-send prompt:** See `docs/PROGRESS.md`.
 - **Suggested branch name for next task:** None; continue on the existing branch.
 - **Suggested commit message:** `feat: add vertical link data model`
+
+## 2026-05-06: Start T0009 Boundary Router Identification
+
+- **Date:** 2026-05-06
+- **Prompt summary:** Add the smallest boundary-router identification/query surface after T0008, representing each chiplet boundary router with stable router ID, owner chiplet, local coordinate, VL slot, attached VL ID, and attached interposer endpoint without adding fault injection, routing, VN, LUT, metrics, experiment automation, or golden-output updates.
+- **Full prompt:**
+
+```text
+Start task T0009: Add Boundary Router Identification.
+
+Before starting, read AGENTS.md, docs/PROGRESS.md, docs/TASKS.md, docs/ROADMAP.md, docs/ARCHITECTURE.md, docs/VALIDATION.md, and docs/DECISIONS.md.
+
+Continue on the existing Git branch. Do not create or switch task branches.
+
+Use the registered Noxim source tree at:
+external/noxim
+
+external/noxim is the Noxim submodule and modifiable project fork from:
+https://github.com/YusufTahirOrhan/noxim
+
+T0007 added selectable DEFT_2_5D topology construction, the DeftTopology mapping helper, four isolated 4x4 chiplet meshes, an 8x8 active-interposer mesh, and the deterministic 16-VL endpoint table. T0008 extended DeftTopology into the centralized physical Vertical Link model/query surface with stable VL IDs, chiplet ownership, slots, chiplet/interposer endpoints, default functional state, functional-state query/mutation helpers, and structural VL validation. The construction smoke config is:
+external/noxim/config_examples/deft_2_5d_topology.yaml
+
+Goal: add the smallest boundary-router identification/query surface needed after T0008. Represent each chiplet boundary router with stable router ID, owner chiplet, local coordinate, VL slot, attached VL ID, and attached interposer endpoint. Keep the model inspectable and reusable by later DeFT routing and VN tasks.
+
+Keep this task independent from startup-time fault injection behavior, fault-mask generation, fault-rate configuration, DeFT routing behavior, route selection, VN assignment behavior, VN transition restrictions, VL LUT generation, experiment automation, metrics changes, and golden regression output updates.
+
+Known result so far: T0007 already added DeftTopology::isBoundaryRouter(id), RouterInfo::boundary_router, and VL endpoint lookup. T0008 added centralized VL state and endpoint queries. T0009 should decide whether those existing surfaces are sufficient or whether a small explicit boundary-router inventory/query contract is needed. Do not duplicate data unnecessarily.
+
+Use Extended_Proposal.pdf as the primary project requirements source and the original DeFT paper at docs/references/DeFT_A_Deadlock-Free_and_Fault-Tolerant_Routing_Algorithm_for_2.5D_Chiplet_Networks.pdf as the primary algorithmic reference. Use Proposal.pdf only as initial context. Ignore the peer evaluation document completely.
+
+Before coding, produce a short implementation plan. Work only on the selected boundary-router identification task. Do not modify unrelated files. Clearly mark assumptions as Assumption and blockers as Blocked.
+
+Use only known validation commands. The baseline build command is documented as ./build.sh from external/noxim in WSL Ubuntu. The construction smoke command is documented in docs/VALIDATION.md; only run a simulation if the task preserves the construction-only no-traffic invocation or provides another clearly valid invocation. Do not use ./regression.sh --update.
+
+Update docs/ARCHITECTURE.md, docs/TASKS.md, docs/PROGRESS.md, docs/VALIDATION.md, and docs/PROMPTS.md with the result. If a durable implementation decision becomes clear, update docs/DECISIONS.md too.
+
+At the end, provide:
+
+1. Created files
+2. Modified files
+3. Whether any source code files changed
+4. Validation result
+5. Current project phase
+6. Next recommended task
+7. The next ready-to-send prompt
+8. Suggested branch name for the next task, which should be None; continue on the existing branch
+9. Suggested commit message
+10. Unknowns or blockers
+```
+
+- **Result summary:** T0009 completed. `DeftTopology` now exposes `BoundaryRouterInfo` as a derived view over the centralized VL model, with inventory, per-chiplet lookup, router-ID lookup, VL-ID lookup, and structural validation helpers. `NoC::buildDeft2D()` validates the boundary-router model and prints all 16 boundary-router records during construction smoke runs. Validation built successfully in WSL Ubuntu and the construction smoke reported `boundary_routers=16` with the expected router IDs, chiplet owners, local coordinates, slots, attached VL IDs, and interposer endpoints. No startup-time fault injection, fault-mask generation, fault-rate configuration, DeFT routing, route selection, VN behavior, VL LUT, experiment automation, metrics change, or golden regression output update was implemented.
+- **Follow-up tasks:** Start `T0010` to implement the centralized startup-time permanent Vertical Link fault injection manager using the existing VL and boundary-router query surfaces.
+- **Next ready-to-send prompt:** See `docs/PROGRESS.md`.
+- **Suggested branch name for next task:** None; continue on the existing branch.
+- **Suggested commit message:** `feat: add boundary router inventory`

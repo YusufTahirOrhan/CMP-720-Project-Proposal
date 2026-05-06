@@ -153,3 +153,11 @@ This document records project decisions that affect implementation, validation, 
 - **Context:** T0008 needed the smallest reusable Vertical Link data model after T0007. The T0007 helper already owned deterministic VL endpoint records, but future fault injection and routing tasks need a central place to query and mutate functional state without changing route selection yet.
 - **Decision:** Keep each physical bidirectional VL as a `DeftTopology::VerticalLinkInfo` record and centralize default functional state, mutation helpers, functional-link queries, bidirectional endpoint lookup, and structural validation in `external/noxim/src/DeftTopology.*`.
 - **Consequences:** Later fault injection and routing tasks can reuse the same stable VL IDs, chiplet ownership, slots, endpoints, and functional-state queries. T0008 does not implement fault-rate configuration, startup-time random fault injection, fault-mask generation, DeFT route selection, VN behavior, or LUT generation. Fault-mask validation and any directional VL accounting remain future tasks.
+
+## ADR-0020: Derive Boundary Router Inventory from the Vertical Link Model
+
+- **Date:** 2026-05-06
+- **Status:** Accepted
+- **Context:** T0009 needed a reusable boundary-router identification/query contract after T0008. The existing `DeftTopology` helper already knew which chiplet endpoint belonged to each physical VL, so creating a second independent boundary-router endpoint table would duplicate source-of-truth data.
+- **Decision:** Represent boundary routers through `DeftTopology::BoundaryRouterInfo` as a derived view of the centralized `VerticalLinkInfo` records. Provide inventory, per-chiplet lookup, router-ID lookup, VL-ID lookup, and structural validation helpers in `external/noxim/src/DeftTopology.*`.
+- **Consequences:** Future DeFT routing, VN assignment, and VL LUT tasks can query boundary-router identity without duplicating topology data. Boundary-router identity remains inspectable and stable, while physical VL identity and functional state remain centralized in the VL model. T0009 does not implement route selection, VN behavior, fault injection, or LUT generation.
