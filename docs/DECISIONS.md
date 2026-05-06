@@ -169,3 +169,11 @@ This document records project decisions that affect implementation, validation, 
 - **Context:** T0010 needed startup-time permanent VL fault-state setup after the centralized physical VL model and boundary-router inventory. The proposal and original paper still leave a project-level ambiguity between physical bidirectional VLs and directional VL accounting for percentage-based fault rates.
 - **Decision:** For T0010, configure startup faults directly over the current 16 physical bidirectional VL IDs. Support either an explicit `deft_faulty_vertical_links` list or a seed-controlled `deft_vl_fault_count`, and keep those modes mutually exclusive.
 - **Consequences:** T0010 avoids premature percentage conversion and directional accounting decisions while still enabling reproducible startup fault masks. Future fault-mask validation and experiment automation must decide how proposal-level percentages map onto physical or directional VL counts before final sweeps. T0010 does not alter physical VL wiring, DeFT routing behavior, route selection, VN behavior, or VL LUT behavior.
+
+## ADR-0022: Validate Fault Masks Against the Current Physical VL Model
+
+- **Date:** 2026-05-07
+- **Status:** Accepted
+- **Context:** T0011 needed the smallest validation surface after T0010 so explicit and generated startup fault masks are reproducible and rejected when invalid for the current physical VL model. The source documents still contain a physical-vs-directional ambiguity for final percentage accounting.
+- **Decision:** Validate T0011 masks over the existing 16 physical bidirectional VL IDs from `DeftTopology`. The validator normalizes masks, rejects duplicate/out-of-range/nonexistent IDs, rejects impossible mask sizes, rejects masks that disconnect any chiplet, and treats four physical VL faults as the current physical-model 25% validation target for inspectability.
+- **Consequences:** DeFT routing, VN behavior, VL LUT generation, metrics, experiments, and golden outputs remain unchanged. Future percentage-based experiment automation must still resolve whether final fault-rate sweeps use physical bidirectional VLs, directional VL channels, or another explicitly documented accounting basis.

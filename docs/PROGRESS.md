@@ -2,7 +2,7 @@
 
 ## Current Phase
 
-Phase 4 - Fault Mask Validation
+Phase 5 - DeFT VN Assignment Logic
 
 ## Completed Tasks
 
@@ -16,6 +16,7 @@ Phase 4 - Fault Mask Validation
 - `T0008` - Add Vertical Link data model.
 - `T0009` - Add Boundary Router Identification.
 - `T0010` - Implement Fault Injection Manager.
+- `T0011` - Add Fault Mask Validation.
 - `T0023` - Add or register the Noxim source tree.
 - `T0024` - Decide Windows 11 development environment and persist paper reference.
 
@@ -31,26 +32,28 @@ No DeFT routing, VN, VL LUT, experiment automation, or metrics task has been com
 
 ## Last Validation Result
 
-- T0010 Fault Injection Manager validation completed on 2026-05-07.
+- T0011 Fault Mask Validation completed on 2026-05-07.
 - Required startup reading was completed before task work: `AGENTS.md`, `docs/PROGRESS.md`, `docs/TASKS.md`, `docs/ROADMAP.md`, `docs/ARCHITECTURE.md`, `docs/VALIDATION.md`, `docs/DECISIONS.md`, and `docs/PROMPTS.md`.
 - Before implementation, `git status --short --branch` in the parent repository showed branch `feat/map-noxim-extension-points...origin/feat/map-noxim-extension-points`.
 - Before implementation, `git -c safe.directory=C:/Projects/CMP-720-Project-Proposal/external/noxim -C external/noxim status --short --branch` showed branch `feat/baseline-noxim...origin/feat/baseline-noxim` with no local file modifications.
 - Source document availability was confirmed for `Extended_Proposal.pdf`, `Proposal.pdf`, and `docs/references/DeFT_A_Deadlock-Free_and_Fault-Tolerant_Routing_Algorithm_for_2.5D_Chiplet_Networks.pdf`.
-- Short source-document checks found the proposal requirement for centralized permanent VL faults before routing, no-chiplet-disconnected fault constraints, and fault-rate targets up to 25%.
-- T0010 added `DeftFaultInjectionManager` as the centralized startup-time permanent physical VL fault-state setup path.
-- The manager supports explicit `deft_faulty_vertical_links` lists or seed-controlled `deft_vl_fault_count` random physical VL selection, using `GlobalParams::rnd_generator_seed`.
-- The manager resets VLs to functional before applying startup faults, mutates only the centralized `DeftTopology` functional-state model, and exposes scan-based faulty-VL and per-chiplet functional-count helpers.
-- The minimum T0010 guard rejects duplicate/out-of-range explicit fault IDs, rejects incompatible explicit/random selection modes, caps random fault count so a chiplet can remain connected, and rejects any applied mask that leaves a chiplet with zero functional VLs.
-- Assumption: T0010 counts configured faults over the current 16 physical bidirectional VLs. Percentage conversion and directional accounting remain future work.
-- Assumption: T0010 does not remove or disable physical VL wiring; all physical VL links are still constructed, and fault state is startup metadata for future routing and LUT tasks.
+- Short source-document checks found the proposal requirement for centralized permanent VL faults before routing, no-chiplet-disconnected fault constraints, and fault-rate targets up to 25%; the original paper check confirmed fault-scenario context including 25% examples and the reported 32 total VL wording.
+- T0011 added `DeftFaultInjection::validateFaultMask()` and `FaultMaskValidationReport` to the existing fault manager.
+- The validator normalizes explicit and generated masks, rejects duplicate/out-of-range/nonexistent physical VL IDs, rejects impossible connected-chiplet mask sizes, and rejects masks that leave any chiplet with zero functional physical VLs.
+- `DeftFaultInjection::applyStartupFaults()` now validates explicit and generated masks through the same helper before mutating the centralized `DeftTopology` functional-state model.
+- Construction output now reports `physical_faults`, `current_physical_25_percent_target`, per-chiplet fault counts, and per-chiplet functional counts.
+- Assumption: T0011 validates against the current 16 physical bidirectional VL IDs. Four faulty physical VLs out of 16 are treated as the current physical 25% validation target.
+- Assumption: T0011 does not add percentage-based configuration or directional VL accounting; those remain future work.
 - `./build.sh` from `external/noxim` completed with exit code `0` in WSL Ubuntu. It rebuilt the updated source and emitted only pre-existing Noxim warnings.
-- The default construction smoke completed with exit code `0`: `LD_LIBRARY_PATH=/mnt/c/Projects/CMP-720-Project-Proposal/external/noxim/bin/libs/systemc-2.3.1/lib-linux64 ./noxim -config ../config_examples/deft_2_5d_topology.yaml -seed 0 -sim 20 -warmup 0`.
-- Default smoke output reported `mode=none`, `requested_fault_count=0`, `faulty_vertical_links=[]`, and per-chiplet functional counts `4,4,4,4`.
-- The faulted construction smoke initially failed once with WSL sandbox `E_ACCESSDENIED`; the same command was rerun with approval and completed with exit code `0`.
-- Faulted smoke command: `LD_LIBRARY_PATH=/mnt/c/Projects/CMP-720-Project-Proposal/external/noxim/bin/libs/systemc-2.3.1/lib-linux64 ./noxim -config ../config_examples/deft_2_5d_topology.yaml -seed 0 -sim 20 -warmup 0 -deft_vl_fault_count 4`.
-- Faulted smoke output reported `mode=random`, `seed=0`, `requested_fault_count=4`, `faulty_vertical_links=[0,1,5,13]`, and per-chiplet functional counts `2,3,4,3`.
-- Faulted smoke output printed `functional=false` for VLs `0`, `1`, `5`, and `13`, and `functional=true` for the remaining VLs.
-- Both construction smoke runs intentionally used no traffic, so each reported zero received packets and zero received flits. The `-nan` average-delay and wireless-utilization values are expected for no-packet construction smokes and are not experiment results.
+- The first default construction smoke attempt failed once with WSL sandbox `E_ACCESSDENIED`; the same command was rerun with approval and completed with exit code `0`.
+- Default smoke output reported `mode=none`, `faulty_vertical_links=[]`, `physical_faults=0/16`, `current_physical_25_percent_target=false`, per-chiplet fault counts `0,0,0,0`, and per-chiplet functional counts `4,4,4,4`.
+- The generated four-fault construction smoke initially failed once with WSL sandbox `E_ACCESSDENIED`; the same command was rerun with approval and completed with exit code `0`.
+- Generated four-fault smoke output reported `mode=random`, `seed=0`, `faulty_vertical_links=[0,1,5,13]`, `physical_faults=4/16`, `current_physical_25_percent_target=true`, per-chiplet fault counts `2,1,0,1`, and per-chiplet functional counts `2,3,4,3`.
+- The explicit four-fault construction smoke initially failed once with WSL sandbox `E_ACCESSDENIED`; the same command was rerun with approval and completed with exit code `0`.
+- Explicit four-fault smoke output reported `mode=explicit`, `faulty_vertical_links=[0,4,8,12]`, `physical_faults=4/16`, `current_physical_25_percent_target=true`, per-chiplet fault counts `1,1,1,1`, and per-chiplet functional counts `3,3,3,3`.
+- The expected invalid-mask rejection smoke initially failed once with WSL sandbox `E_ACCESSDENIED`; the same command was rerun with approval and exited with expected code `1`.
+- Invalid-mask rejection output reported `Invalid DEFT_2_5D vertical link fault configuration: fault mask disconnects chiplet 0: 4 of 4 physical VLs are faulty`.
+- All construction smoke runs intentionally used no traffic. Successful smokes reported zero received packets and zero received flits, and their `-nan` average-delay and wireless-utilization values remain expected for no-packet construction smokes.
 - `git -c safe.directory=C:/Projects/CMP-720-Project-Proposal/external/noxim -C external/noxim diff --check` completed with exit code `0`.
 - No DeFT routing behavior, route selection, VN behavior, VN transition restriction, VL LUT generation, experiment automation, metrics change, golden regression output update, or DeFT experiment was run.
 
@@ -183,6 +186,18 @@ Files created or updated during `T0010` Fault Injection Manager:
 - `docs/PROMPTS.md`
 - `docs/DECISIONS.md`
 
+Files updated during `T0011` Fault Mask Validation:
+
+- `external/noxim/src/DeftFaultInjectionManager.h`
+- `external/noxim/src/DeftFaultInjectionManager.cpp`
+- `external/noxim/src/NoC.cpp`
+- `docs/ARCHITECTURE.md`
+- `docs/TASKS.md`
+- `docs/PROGRESS.md`
+- `docs/VALIDATION.md`
+- `docs/PROMPTS.md`
+- `docs/DECISIONS.md`
+
 Noxim build files LF-normalized during `T0003`:
 
 - `external/noxim/bin/Makefile`
@@ -249,11 +264,13 @@ External source tree registered during `T0023`:
 - Assumption: T0009 derives boundary-router identity from the centralized VL inventory; future DeFT routing, VN, and VL LUT tasks should use the boundary-router query surface instead of introducing a parallel boundary-router endpoint table.
 - Assumption: A Vertical Link is represented as one physical bidirectional connection with one mutable functional state by default.
 - Assumption: Directional VL channel accounting can be derived later if needed, but it should not replace the physical VL identity model without a new decision.
-- Assumption: T0008 structural validation is not fault-mask validation; T0010 adds only the minimum no-chiplet-disconnected startup guard, while broader fault-mask validation remains T0011.
+- Assumption: T0008 structural validation checks the VL inventory; T0011 fault-mask validation checks explicit and generated masks against the current physical VL model before startup fault state is applied.
 - Assumption: The construction-only `DEFT_2_5D` smoke configuration is valid for topology instantiation checks, but not for DeFT performance evaluation because it intentionally generates no packets.
 - Assumption: Future tasks must continue on the existing Git branch by default; Codex must not create or switch task branches unless the user explicitly asks for that operation.
 - Assumption: T0010 fault configuration is counted over the current 16 physical bidirectional VLs. Final percentage conversion and directional VL accounting remain future work.
 - Assumption: Startup fault state is metadata for future routing and LUT tasks in T0010; physical VL wiring is still constructed for all VLs, and route selection does not yet avoid faulty VLs.
+- Assumption: T0011 treats four faulty physical bidirectional VLs out of 16 as the current physical 25% validation target for inspectability only.
+- Assumption: T0011 does not resolve final percentage conversion or directional VL accounting for experiment automation.
 
 ## Open Questions
 
@@ -266,14 +283,14 @@ External source tree registered during `T0023`:
 
 ## Next Recommended Task
 
-Start `T0011` and add focused fault-mask validation for the T0010 manager, especially explicit/generated masks up to the proposal's 25% target, without changing DeFT route selection or VN behavior.
+Start `T0012` and design how VN.0 and VN.1 state will be represented in Noxim packet/flit/router metadata before implementing any VN assignment behavior.
 
 ## Next Ready-to-Send Prompt
 
 ```text
-Start task T0011: Add Fault Mask Validation.
+Start task T0012: Design VN State Representation.
 
-Before starting, read AGENTS.md, docs/PROGRESS.md, docs/TASKS.md, docs/ROADMAP.md, docs/ARCHITECTURE.md, docs/VALIDATION.md, and docs/DECISIONS.md.
+Before starting, read AGENTS.md, docs/PROGRESS.md, docs/TASKS.md, docs/ROADMAP.md, docs/ARCHITECTURE.md, docs/VALIDATION.md, docs/DECISIONS.md, and docs/PROMPTS.md.
 
 Continue on the existing Git branch. Do not create or switch task branches.
 
@@ -283,20 +300,19 @@ external/noxim
 `external/noxim` is the Noxim submodule and modifiable project fork from:
 https://github.com/YusufTahirOrhan/noxim
 
-T0007 added selectable `DEFT_2_5D` topology construction, the `DeftTopology` mapping helper, four isolated 4x4 chiplet meshes, an 8x8 active-interposer mesh, and the deterministic 16-VL endpoint table. T0008 extended `DeftTopology` into the centralized physical Vertical Link model/query surface. T0009 added the derived boundary-router inventory/query surface. T0010 added `DeftFaultInjectionManager`, `deft_faulty_vertical_links`, `deft_vl_fault_count`, seed-controlled random physical VL fault selection, startup fault-state application, inspectability output, and the minimum guard that no chiplet is left with zero functional VLs. The construction smoke config is:
-external/noxim/config_examples/deft_2_5d_topology.yaml
+T0007 added selectable `DEFT_2_5D` topology construction and the `DeftTopology` mapping helper. T0008 centralized the physical Vertical Link model and functional state. T0009 added the derived boundary-router inventory. T0010 added startup-time permanent physical VL fault injection. T0011 added focused explicit/generated fault-mask validation and inspectability against the current 16 physical bidirectional VL model.
 
-Goal: add the smallest focused fault-mask validation layer needed after T0010. Validate explicit and generated fault masks for the current physical VL model, especially masks corresponding to the proposal's 25% target, while keeping the task focused on validation and inspectability only.
+Goal: design the smallest safe VN state representation for future DeFT VN assignment and transition-restriction tasks. Decide where VN.0/VN.1 state should live in the current Noxim data path, how it should map to the existing virtual-channel structures, and which metadata fields or helper APIs future implementation should use.
 
-Keep this task independent from DeFT routing behavior, route selection, VN assignment behavior, VN transition restrictions, VL LUT generation, experiment automation, metrics changes, and golden regression output updates.
+Keep this task documentation-first and independent from implementation of VN assignment behavior, VN transition restrictions, route selection, VL LUT generation, experiment automation, metrics changes, and golden regression output updates. Do not change simulator behavior in this task unless source inspection proves that a tiny compile-only metadata scaffold is required; if so, justify it before editing.
 
-Known result so far: T0010 counts configured faults over the current 16 physical bidirectional VLs and leaves percentage conversion/directional accounting as future work. Decide the smallest validation surface that keeps explicit/generated masks reproducible and rejects masks that are invalid for the current physical VL model. Do not introduce a parallel VL or boundary-router inventory.
+Known result so far: Noxim already has `n_virtual_channels`, flit/packet structs in `external/noxim/src/DataStructs.h`, router pipeline logic in `external/noxim/src/Router.*`, route data in the routing algorithm interface, and `DEFT_2_5D` topology/boundary/VL/fault-state query surfaces. T0012 should inspect these surfaces and document a design that preserves exactly two DeFT VNs without disrupting baseline routing.
 
 Use `Extended_Proposal.pdf` as the primary project requirements source and the original DeFT paper at `docs/references/DeFT_A_Deadlock-Free_and_Fault-Tolerant_Routing_Algorithm_for_2.5D_Chiplet_Networks.pdf` as the primary algorithmic reference. Use `Proposal.pdf` only as initial context. Ignore the peer evaluation document completely.
 
-Before coding, produce a short implementation plan. Work only on the selected fault-mask-validation task. Do not modify unrelated files. Clearly mark assumptions as `Assumption` and blockers as `Blocked`.
+Before editing, produce a short implementation plan. Work only on the selected VN state representation design task. Do not modify unrelated files. Clearly mark assumptions as `Assumption` and blockers as `Blocked`.
 
-Use only known validation commands. The baseline build command is documented as `./build.sh` from `external/noxim` in WSL Ubuntu. The construction smoke command and the T0010 faulted construction smoke command are documented in `docs/VALIDATION.md`; only run simulations if they preserve construction-only no-traffic invocation or provide another clearly valid invocation. Do not use `./regression.sh --update`.
+Use only known validation commands. For a documentation-only task, use repository and submodule status checks unless a source change is explicitly justified. Do not run simulations unless the design task unexpectedly changes source code and the existing construction-only no-traffic invocation remains valid. Do not use `./regression.sh --update`.
 
 Update docs/ARCHITECTURE.md, docs/TASKS.md, docs/PROGRESS.md, docs/VALIDATION.md, and docs/PROMPTS.md with the result. If a durable implementation decision becomes clear, update docs/DECISIONS.md too.
 
@@ -323,5 +339,5 @@ None; continue on the existing branch.
 ## Suggested Commit Message
 
 ```text
-feat: add vertical link fault injection manager
+feat: add fault mask validation
 ```

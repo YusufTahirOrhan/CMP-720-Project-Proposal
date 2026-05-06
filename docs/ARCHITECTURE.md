@@ -287,7 +287,7 @@ Implemented source surface:
 
 Assumption: A Vertical Link remains modeled as one physical bidirectional connection with one functional/faulty state. If a later fault-accounting task needs directional failure states to match the paper's `total VLs=32` wording, it should add a derived directional view without replacing the physical VL identity model.
 
-Assumption: `validateVerticalLinkModel()` is structural validation for the VL inventory. It did not provide fault-mask validation in T0008; T0010 later adds only the minimum no-chiplet-disconnected startup guard, while broader fault-mask validation remains T0011.
+Assumption: `validateVerticalLinkModel()` is structural validation for the VL inventory. Fault-mask validation is handled separately by the T0011 fault-mask validator in `DeftFaultInjectionManager`.
 
 Blocked: No explicit `DIRECTION_UP` or `DIRECTION_DOWN` routing semantics exist yet. T0008 intentionally does not use VL functional state to alter link construction, routing, or packet movement.
 
@@ -329,7 +329,27 @@ Assumption: T0010 counts configured faults over the current 16 physical bidirect
 
 Assumption: In T0010, physical VL wiring is still constructed for all VLs. Fault state is startup metadata for future routing and LUT tasks; route selection does not yet exclude faulty VLs.
 
-Blocked: Fault-mask validation beyond the no-chiplet-disconnected guard remains T0011. Explicit DeFT `Up` and `Down` movement semantics also remain future work.
+Blocked: Explicit DeFT `Up` and `Down` movement semantics remain future work.
+
+## T0011 Fault Mask Validation Implementation
+
+`T0011` adds the focused fault-mask validation layer on top of the T0010 startup fault manager. It does not implement DeFT routing behavior, route selection, VN assignment behavior, VN transition restrictions, VL LUT generation, experiment automation, metrics changes, golden regression updates, or DeFT experiment logic.
+
+Implemented source surface:
+
+- `external/noxim/src/DeftFaultInjectionManager.h` and `external/noxim/src/DeftFaultInjectionManager.cpp` expose `DeftFaultInjection::validateFaultMask()` and `FaultMaskValidationReport`.
+- The validator normalizes explicit and generated masks by sorting physical VL IDs before application.
+- The validator rejects duplicate, out-of-range, or missing physical VL IDs against the centralized `DeftTopology` physical VL model.
+- The validator rejects masks with more faults than can preserve at least one functional physical VL per chiplet.
+- The validator reports per-chiplet faulty and functional VL counts and rejects any mask that leaves a chiplet with zero functional physical VLs.
+- `DeftFaultInjection::applyStartupFaults()` now validates explicit and generated masks through the same helper before mutating `DeftTopology` functional state.
+- `NoC::buildDeft2D()` exits cleanly for invalid fault masks and prints mask-validation inspectability output during construction smokes.
+
+Assumption: T0011 validates masks against the current 16 physical bidirectional Vertical Link IDs. Under this current physical model, the 25% validation target is four faulty physical VLs out of 16.
+
+Assumption: The `current_physical_25_percent_target` output is an inspectability flag for the current physical model only. It does not add percentage-based configuration and does not resolve the proposal/paper ambiguity around directional VL accounting.
+
+Blocked: Directional fault accounting and final percentage-to-mask conversion remain future experiment-automation work.
 
 ## Router Model
 
@@ -378,8 +398,10 @@ Implemented foundation:
 - Runs before the first simulation cycle.
 - Reads explicit physical VL fault IDs or a seed-controlled physical VL fault count.
 - Selects permanent faulty Vertical Links using the centralized VL model.
+- Validates explicit and generated masks against the centralized physical VL model before mutating fault state.
 - Ensures at least one functional Vertical Link remains per chiplet.
 - Exposes current fault state through `DeftTopology` query helpers and `DeftFaultInjectionManager` scan helpers.
+- Exposes normalized mask inspectability including physical fault count, per-chiplet fault counts, per-chiplet functional counts, and whether a mask matches the current physical 25% target.
 
 Planned future work:
 
@@ -460,6 +482,7 @@ Planned:
 - Static Vertical Link faults injected at simulation startup.
 - Fault rates up to 25%.
 - No chiplet may be completely disconnected from the interposer.
+- Current implementation validates masks over 16 physical bidirectional VL IDs and flags four faulty physical VLs as the current physical 25% target.
 
 Assumption: The proposal contains ambiguity around whether percentages are counted over physical bidirectional Vertical Links or directional links. The original paper reports 32 total Vertical Links for the four-chiplet fault analysis, which suggests directional or endpoint-level counting. This must be resolved before final experiment automation.
 

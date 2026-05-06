@@ -274,6 +274,68 @@ T0010 result on 2026-05-07:
 - `git -c safe.directory=C:/Projects/CMP-720-Project-Proposal/external/noxim -C external/noxim diff --check` completed with exit code `0`.
 - No DeFT routing behavior, route selection, VN behavior, VN transition restriction, VL LUT generation, experiment automation, metrics change, golden regression output update, or DeFT experiment was run.
 
+## Fault Mask Validation
+
+Purpose:
+
+- Validate explicit and generated DeFT VL fault masks against the current 16 physical bidirectional VL model.
+- Confirm that masks corresponding to the current physical 25% target are accepted and inspectable.
+- Confirm that invalid masks are rejected before fault state can be consumed by future routing or LUT tasks.
+- Confirm that validation does not implement route selection, VN behavior, VL LUT lookup, traffic changes, metrics changes, or golden output updates.
+
+Known validation:
+
+- Build from the Noxim repository root in WSL Ubuntu: `./build.sh`
+- Default construction smoke from `external/noxim/bin` in WSL Ubuntu:
+
+```bash
+LD_LIBRARY_PATH=/mnt/c/Projects/CMP-720-Project-Proposal/external/noxim/bin/libs/systemc-2.3.1/lib-linux64 ./noxim -config ../config_examples/deft_2_5d_topology.yaml -seed 0 -sim 20 -warmup 0
+```
+
+- Generated current-physical-25% construction smoke from `external/noxim/bin` in WSL Ubuntu:
+
+```bash
+LD_LIBRARY_PATH=/mnt/c/Projects/CMP-720-Project-Proposal/external/noxim/bin/libs/systemc-2.3.1/lib-linux64 ./noxim -config ../config_examples/deft_2_5d_topology.yaml -seed 0 -sim 20 -warmup 0 -deft_vl_fault_count 4
+```
+
+- Explicit current-physical-25% construction smoke from `external/noxim/bin` in WSL Ubuntu:
+
+```bash
+LD_LIBRARY_PATH=/mnt/c/Projects/CMP-720-Project-Proposal/external/noxim/bin/libs/systemc-2.3.1/lib-linux64 ./noxim -config ../config_examples/deft_2_5d_topology.yaml -seed 0 -sim 20 -warmup 0 -deft_faulty_vls 0,4,8,12
+```
+
+- Expected invalid-mask rejection smoke from `external/noxim/bin` in WSL Ubuntu:
+
+```bash
+LD_LIBRARY_PATH=/mnt/c/Projects/CMP-720-Project-Proposal/external/noxim/bin/libs/systemc-2.3.1/lib-linux64 ./noxim -config ../config_examples/deft_2_5d_topology.yaml -seed 0 -sim 20 -warmup 0 -deft_faulty_vls 0,1,2,3
+```
+
+T0011 result on 2026-05-07:
+
+- Required startup reading was completed before task work: `AGENTS.md`, `docs/PROGRESS.md`, `docs/TASKS.md`, `docs/ROADMAP.md`, `docs/ARCHITECTURE.md`, `docs/VALIDATION.md`, `docs/DECISIONS.md`, and `docs/PROMPTS.md`.
+- Before implementation, `git status --short --branch` in the parent repository showed branch `feat/map-noxim-extension-points...origin/feat/map-noxim-extension-points`.
+- Before implementation, `git -c safe.directory=C:/Projects/CMP-720-Project-Proposal/external/noxim -C external/noxim status --short --branch` showed branch `feat/baseline-noxim...origin/feat/baseline-noxim` with no local file modifications.
+- Required source documents were confirmed present: `Extended_Proposal.pdf`, `Proposal.pdf`, and `docs/references/DeFT_A_Deadlock-Free_and_Fault-Tolerant_Routing_Algorithm_for_2.5D_Chiplet_Networks.pdf`.
+- Short source-document checks found the proposal target of fault rates up to 25%, centralized permanent VL fault injection before routing, no-chiplet-disconnected constraint, and the original paper's fault-scenario context with 25% fault-injection examples.
+- T0011 added `DeftFaultInjection::validateFaultMask()` and `FaultMaskValidationReport`.
+- The validator normalizes masks, rejects duplicate/out-of-range/nonexistent physical VL IDs, rejects impossible connected-chiplet mask sizes, and rejects masks that leave any chiplet with zero functional physical VLs.
+- Explicit and generated masks are validated through the same helper before `DeftTopology` functional state is mutated.
+- Construction output now reports `physical_faults`, `current_physical_25_percent_target`, per-chiplet faulty VL counts, and per-chiplet functional VL counts.
+- Assumption: T0011 validates against the current 16 physical bidirectional VL IDs. Four faulty physical VLs out of 16 are treated as the current physical 25% validation target.
+- Assumption: T0011 does not add percentage-based configuration or directional VL accounting; those remain future work.
+- `./build.sh` from `external/noxim` completed with exit code `0` in WSL Ubuntu and emitted only pre-existing Noxim warnings.
+- The first default construction smoke attempt failed once with WSL sandbox `E_ACCESSDENIED`; the same command was rerun with approval and completed with exit code `0`.
+- Default smoke output reported `mode=none`, `faulty_vertical_links=[]`, `physical_faults=0/16`, `current_physical_25_percent_target=false`, per-chiplet fault counts `0,0,0,0`, and per-chiplet functional counts `4,4,4,4`.
+- The generated four-fault construction smoke initially failed once with WSL sandbox `E_ACCESSDENIED`; the same command was rerun with approval and completed with exit code `0`.
+- Generated four-fault smoke output reported `mode=random`, `seed=0`, `faulty_vertical_links=[0,1,5,13]`, `physical_faults=4/16`, `current_physical_25_percent_target=true`, per-chiplet fault counts `2,1,0,1`, and per-chiplet functional counts `2,3,4,3`.
+- The explicit four-fault construction smoke initially failed once with WSL sandbox `E_ACCESSDENIED`; the same command was rerun with approval and completed with exit code `0`.
+- Explicit four-fault smoke output reported `mode=explicit`, `faulty_vertical_links=[0,4,8,12]`, `physical_faults=4/16`, `current_physical_25_percent_target=true`, per-chiplet fault counts `1,1,1,1`, and per-chiplet functional counts `3,3,3,3`.
+- The expected invalid-mask rejection smoke initially failed once with WSL sandbox `E_ACCESSDENIED`; the same command was rerun with approval and exited with expected code `1`.
+- Invalid-mask rejection output reported `Invalid DEFT_2_5D vertical link fault configuration: fault mask disconnects chiplet 0: 4 of 4 physical VLs are faulty`.
+- All construction smoke runs intentionally used no traffic. Successful smokes reported zero received packets and zero received flits, and their `-nan` average-delay and wireless-utilization values remain expected for no-packet construction smokes.
+- `git -c safe.directory=C:/Projects/CMP-720-Project-Proposal/external/noxim -C external/noxim diff --check` completed with exit code `0`.
+- No DeFT routing behavior, route selection, VN behavior, VN transition restriction, VL LUT generation, experiment automation, metrics change, golden regression output update, or DeFT experiment was run.
+
 ## Build Validation
 
 Purpose:

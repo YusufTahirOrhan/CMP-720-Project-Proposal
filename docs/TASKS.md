@@ -104,13 +104,13 @@ Statuses: `TODO`, `IN_PROGRESS`, `DONE`, `BLOCKED`.
 
 ## T0011: Add Fault Mask Validation
 
-- **Status:** TODO
-- **Objective:** Validate generated fault masks for rates up to 25%.
+- **Status:** DONE
+- **Objective:** Validate explicit and generated fault masks for the current physical Vertical Link model.
 - **Relevant roadmap phase:** Phase 4
-- **Files likely to change:** To be confirmed after Noxim source inspection
-- **Acceptance criteria:** Invalid masks are rejected or regenerated.
-- **Validation command:** To be confirmed after repository inspection
-- **Notes:** This task should be completed before DeFT routing uses fault state.
+- **Files changed:** `external/noxim/src/DeftFaultInjectionManager.h`, `external/noxim/src/DeftFaultInjectionManager.cpp`, `external/noxim/src/NoC.cpp`, `docs/ARCHITECTURE.md`, `docs/TASKS.md`, `docs/PROGRESS.md`, `docs/VALIDATION.md`, `docs/PROMPTS.md`, and `docs/DECISIONS.md`
+- **Acceptance criteria:** Invalid masks are rejected before routing uses fault state, and generated masks are validated against the same current physical VL model as explicit masks.
+- **Validation command:** From `external/noxim`: `./build.sh`. Construction smokes from `external/noxim/bin`: default no-fault smoke, generated four-fault smoke with `-deft_vl_fault_count 4`, explicit four-fault smoke with `-deft_faulty_vls 0,4,8,12`, and expected invalid-mask rejection with `-deft_faulty_vls 0,1,2,3`.
+- **Notes:** Completed on 2026-05-07. Added a focused `DeftFaultInjection::validateFaultMask()` layer that normalizes masks, rejects duplicate/out-of-range/nonexistent physical VL IDs, rejects impossible fault counts, and rejects any mask that leaves a chiplet with zero functional physical VLs. Explicit and generated masks now share this validation path before startup fault state is applied. Construction output reports physical fault count over 16 current physical VLs, a `current_physical_25_percent_target` flag, per-chiplet fault counts, and per-chiplet functional counts. Assumption: the T0011 current physical 25% validation target is four faulty physical bidirectional VLs out of 16; directional accounting and percentage-based configuration remain future work. No DeFT routing behavior, route selection, VN behavior, VN transition restriction, VL LUT generation, experiment automation, metrics change, or golden regression output update was added.
 
 ## T0012: Design VN State Representation
 

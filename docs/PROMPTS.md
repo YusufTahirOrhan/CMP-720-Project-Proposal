@@ -1166,3 +1166,59 @@ At the end, provide:
 - **Next ready-to-send prompt:** See `docs/PROGRESS.md`.
 - **Suggested branch name for next task:** None; continue on the existing branch.
 - **Suggested commit message:** `feat: add vertical link fault injection manager`
+
+## 2026-05-07: Start T0011 Fault Mask Validation
+
+- **Date:** 2026-05-07
+- **Prompt summary:** Add focused validation for explicit and generated DeFT Vertical Link fault masks against the current physical VL model, especially masks corresponding to the proposal's 25% target, without changing routing, VN behavior, LUT generation, metrics, experiments, or golden outputs.
+- **Full prompt:**
+
+```text
+Start task T0011: Add Fault Mask Validation.
+
+Before starting, read AGENTS.md, docs/PROGRESS.md, docs/TASKS.md, docs/ROADMAP.md, docs/ARCHITECTURE.md, docs/VALIDATION.md, and docs/DECISIONS.md.
+
+Continue on the existing Git branch. Do not create or switch task branches.
+
+Use the registered Noxim source tree at:
+external/noxim
+
+external/noxim is the Noxim submodule and modifiable project fork from:
+https://github.com/YusufTahirOrhan/noxim
+
+T0007 added selectable DEFT_2_5D topology construction, the DeftTopology mapping helper, four isolated 4x4 chiplet meshes, an 8x8 active-interposer mesh, and the deterministic 16-VL endpoint table. T0008 extended DeftTopology into the centralized physical Vertical Link model/query surface. T0009 added the derived boundary-router inventory/query surface. T0010 added DeftFaultInjectionManager, deft_faulty_vertical_links, deft_vl_fault_count, seed-controlled random physical VL fault selection, startup fault-state application, inspectability output, and the minimum guard that no chiplet is left with zero functional VLs. The construction smoke config is:
+external/noxim/config_examples/deft_2_5d_topology.yaml
+
+Goal: add the smallest focused fault-mask validation layer needed after T0010. Validate explicit and generated fault masks for the current physical VL model, especially masks corresponding to the proposal's 25% target, while keeping the task focused on validation and inspectability only.
+
+Keep this task independent from DeFT routing behavior, route selection, VN assignment behavior, VN transition restrictions, VL LUT generation, experiment automation, metrics changes, and golden regression output updates.
+
+Known result so far: T0010 counts configured faults over the current 16 physical bidirectional VLs and leaves percentage conversion/directional accounting as future work. Decide the smallest validation surface that keeps explicit/generated masks reproducible and rejects masks that are invalid for the current physical VL model. Do not introduce a parallel VL or boundary-router inventory.
+
+Use Extended_Proposal.pdf as the primary project requirements source and the original DeFT paper at docs/references/DeFT_A_Deadlock-Free_and_Fault-Tolerant_Routing_Algorithm_for_2.5D_Chiplet_Networks.pdf as the primary algorithmic reference. Use Proposal.pdf only as initial context. Ignore the peer evaluation document completely.
+
+Before coding, produce a short implementation plan. Work only on the selected fault-mask-validation task. Do not modify unrelated files. Clearly mark assumptions as Assumption and blockers as Blocked.
+
+Use only known validation commands. The baseline build command is documented as ./build.sh from external/noxim in WSL Ubuntu. The construction smoke command and the T0010 faulted construction smoke command are documented in docs/VALIDATION.md; only run simulations if they preserve construction-only no-traffic invocation or provide another clearly valid invocation. Do not use ./regression.sh --update.
+
+Update docs/ARCHITECTURE.md, docs/TASKS.md, docs/PROGRESS.md, docs/VALIDATION.md, and docs/PROMPTS.md with the result. If a durable implementation decision becomes clear, update docs/DECISIONS.md too.
+
+At the end, provide:
+
+1. Created files
+2. Modified files
+3. Whether any source code files changed
+4. Validation result
+5. Current project phase
+6. Next recommended task
+7. The next ready-to-send prompt
+8. Suggested branch name for the next task, which should be None; continue on the existing branch
+9. Suggested commit message
+10. Unknowns or blockers
+```
+
+- **Result summary:** T0011 completed. `DeftFaultInjection::validateFaultMask()` now normalizes explicit and generated masks, rejects duplicate/out-of-range/nonexistent physical VL IDs, rejects impossible connected-chiplet mask sizes, and rejects masks that leave any chiplet with zero functional physical VLs. Startup fault application validates both selection modes before mutating `DeftTopology` state. Construction output now reports physical fault count over 16 current physical VLs, a `current_physical_25_percent_target` flag, per-chiplet faulty counts, and per-chiplet functional counts. Validation built successfully, accepted generated and explicit four-fault current-physical-25% masks, and rejected an explicit mask that disconnected chiplet 0. No routing, VN, LUT, metrics, experiment automation, or golden-output work was added.
+- **Follow-up tasks:** Start `T0012` to design the VN.0/VN.1 state representation before implementing VN assignment or transition restrictions.
+- **Next ready-to-send prompt:** See `docs/PROGRESS.md`.
+- **Suggested branch name for next task:** None; continue on the existing branch.
+- **Suggested commit message:** `feat: add fault mask validation`
