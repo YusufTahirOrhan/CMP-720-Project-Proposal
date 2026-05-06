@@ -336,6 +336,34 @@ T0011 result on 2026-05-07:
 - `git -c safe.directory=C:/Projects/CMP-720-Project-Proposal/external/noxim -C external/noxim diff --check` completed with exit code `0`.
 - No DeFT routing behavior, route selection, VN behavior, VN transition restriction, VL LUT generation, experiment automation, metrics change, golden regression output update, or DeFT experiment was run.
 
+## VN State Representation Design
+
+Purpose:
+
+- Validate documentation-only VN state design against the source documents and the current Noxim VC data path.
+- Confirm that the design does not change simulator behavior, route selection, traffic generation, fault behavior, metrics, or golden regression outputs.
+- Confirm that source-code validation is not required when no source code is changed.
+
+Known validation:
+
+- Parent repository status: `git status --short --branch`
+- Noxim submodule status: `git -c safe.directory=C:/Projects/CMP-720-Project-Proposal/external/noxim -C external/noxim status --short --branch`
+
+T0012 result on 2026-05-07:
+
+- Required startup reading was completed before task work: `AGENTS.md`, `docs/PROGRESS.md`, `docs/TASKS.md`, `docs/ROADMAP.md`, `docs/ARCHITECTURE.md`, `docs/VALIDATION.md`, `docs/DECISIONS.md`, and `docs/PROMPTS.md`.
+- Before documentation edits, `git status --short --branch` in the parent repository showed branch `feat/map-noxim-extension-points...origin/feat/map-noxim-extension-points` with no local file modifications.
+- Before documentation edits, `git -c safe.directory=C:/Projects/CMP-720-Project-Proposal/external/noxim -C external/noxim status --short --branch` showed branch `feat/baseline-noxim...origin/feat/baseline-noxim` with no local file modifications.
+- Required source documents were confirmed present: `Extended_Proposal.pdf`, `Proposal.pdf`, and `docs/references/DeFT_A_Deadlock-Free_and_Fault-Tolerant_Routing_Algorithm_for_2.5D_Chiplet_Networks.pdf`.
+- Short source-document checks confirmed the project requirement of exactly two VCs, one for VN.0 and one for VN.1, and the original paper's one-VC-per-VN evaluation model.
+- Source inspection covered `external/noxim/src/DataStructs.h`, `external/noxim/src/ProcessingElement.cpp`, `external/noxim/src/Router.*`, `external/noxim/src/ReservationTable.*`, `external/noxim/src/routingAlgorithms/RoutingAlgorithm.h`, `external/noxim/src/GlobalParams.*`, `external/noxim/src/ConfigurationManager.cpp`, and the DeFT topology/fault query surfaces.
+- T0012 documented that DeFT VN state should be represented by the existing Noxim `vc_id`: VC 0 is VN.0 and VC 1 is VN.1.
+- T0012 documented that no separate `vn_id` field should be added unless future implementation proves it necessary.
+- T0012 documented that future DeFT-enabled runs should require exactly two configured VCs.
+- T0012 documented a future implementation risk: the current router reservation path assumes input VC and output VC are the same index, so boundary-router VN reassignment must use output-VC-aware reservation/forwarding.
+- No build, simulation, or regression command was run because the task changed only documentation.
+- No Noxim source files, simulator behavior, routing behavior, route selection, VN assignment behavior, VN transition restriction, VL LUT generation, experiment automation, metrics, or golden regression output was changed.
+
 ## Build Validation
 
 Purpose:

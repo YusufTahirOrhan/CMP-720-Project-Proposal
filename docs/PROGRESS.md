@@ -17,10 +17,11 @@ Phase 5 - DeFT VN Assignment Logic
 - `T0009` - Add Boundary Router Identification.
 - `T0010` - Implement Fault Injection Manager.
 - `T0011` - Add Fault Mask Validation.
+- `T0012` - Design VN State Representation.
 - `T0023` - Add or register the Noxim source tree.
 - `T0024` - Decide Windows 11 development environment and persist paper reference.
 
-No DeFT routing, VN, VL LUT, experiment automation, or metrics task has been completed.
+No DeFT routing behavior, VN assignment behavior, VN transition restriction, VL LUT, experiment automation, or metrics task has been implemented.
 
 ## In-Progress Tasks
 
@@ -32,30 +33,24 @@ No DeFT routing, VN, VL LUT, experiment automation, or metrics task has been com
 
 ## Last Validation Result
 
-- T0011 Fault Mask Validation completed on 2026-05-07.
+- T0012 VN State Representation Design completed on 2026-05-07.
 - Required startup reading was completed before task work: `AGENTS.md`, `docs/PROGRESS.md`, `docs/TASKS.md`, `docs/ROADMAP.md`, `docs/ARCHITECTURE.md`, `docs/VALIDATION.md`, `docs/DECISIONS.md`, and `docs/PROMPTS.md`.
-- Before implementation, `git status --short --branch` in the parent repository showed branch `feat/map-noxim-extension-points...origin/feat/map-noxim-extension-points`.
-- Before implementation, `git -c safe.directory=C:/Projects/CMP-720-Project-Proposal/external/noxim -C external/noxim status --short --branch` showed branch `feat/baseline-noxim...origin/feat/baseline-noxim` with no local file modifications.
+- Before documentation edits, `git status --short --branch` in the parent repository showed branch `feat/map-noxim-extension-points...origin/feat/map-noxim-extension-points` with no local file modifications.
+- Before documentation edits, `git -c safe.directory=C:/Projects/CMP-720-Project-Proposal/external/noxim -C external/noxim status --short --branch` showed branch `feat/baseline-noxim...origin/feat/baseline-noxim` with no local file modifications.
 - Source document availability was confirmed for `Extended_Proposal.pdf`, `Proposal.pdf`, and `docs/references/DeFT_A_Deadlock-Free_and_Fault-Tolerant_Routing_Algorithm_for_2.5D_Chiplet_Networks.pdf`.
-- Short source-document checks found the proposal requirement for centralized permanent VL faults before routing, no-chiplet-disconnected fault constraints, and fault-rate targets up to 25%; the original paper check confirmed fault-scenario context including 25% examples and the reported 32 total VL wording.
-- T0011 added `DeftFaultInjection::validateFaultMask()` and `FaultMaskValidationReport` to the existing fault manager.
-- The validator normalizes explicit and generated masks, rejects duplicate/out-of-range/nonexistent physical VL IDs, rejects impossible connected-chiplet mask sizes, and rejects masks that leave any chiplet with zero functional physical VLs.
-- `DeftFaultInjection::applyStartupFaults()` now validates explicit and generated masks through the same helper before mutating the centralized `DeftTopology` functional-state model.
-- Construction output now reports `physical_faults`, `current_physical_25_percent_target`, per-chiplet fault counts, and per-chiplet functional counts.
-- Assumption: T0011 validates against the current 16 physical bidirectional VL IDs. Four faulty physical VLs out of 16 are treated as the current physical 25% validation target.
-- Assumption: T0011 does not add percentage-based configuration or directional VL accounting; those remain future work.
-- `./build.sh` from `external/noxim` completed with exit code `0` in WSL Ubuntu. It rebuilt the updated source and emitted only pre-existing Noxim warnings.
-- The first default construction smoke attempt failed once with WSL sandbox `E_ACCESSDENIED`; the same command was rerun with approval and completed with exit code `0`.
-- Default smoke output reported `mode=none`, `faulty_vertical_links=[]`, `physical_faults=0/16`, `current_physical_25_percent_target=false`, per-chiplet fault counts `0,0,0,0`, and per-chiplet functional counts `4,4,4,4`.
-- The generated four-fault construction smoke initially failed once with WSL sandbox `E_ACCESSDENIED`; the same command was rerun with approval and completed with exit code `0`.
-- Generated four-fault smoke output reported `mode=random`, `seed=0`, `faulty_vertical_links=[0,1,5,13]`, `physical_faults=4/16`, `current_physical_25_percent_target=true`, per-chiplet fault counts `2,1,0,1`, and per-chiplet functional counts `2,3,4,3`.
-- The explicit four-fault construction smoke initially failed once with WSL sandbox `E_ACCESSDENIED`; the same command was rerun with approval and completed with exit code `0`.
-- Explicit four-fault smoke output reported `mode=explicit`, `faulty_vertical_links=[0,4,8,12]`, `physical_faults=4/16`, `current_physical_25_percent_target=true`, per-chiplet fault counts `1,1,1,1`, and per-chiplet functional counts `3,3,3,3`.
-- The expected invalid-mask rejection smoke initially failed once with WSL sandbox `E_ACCESSDENIED`; the same command was rerun with approval and exited with expected code `1`.
-- Invalid-mask rejection output reported `Invalid DEFT_2_5D vertical link fault configuration: fault mask disconnects chiplet 0: 4 of 4 physical VLs are faulty`.
-- All construction smoke runs intentionally used no traffic. Successful smokes reported zero received packets and zero received flits, and their `-nan` average-delay and wireless-utilization values remain expected for no-packet construction smokes.
-- `git -c safe.directory=C:/Projects/CMP-720-Project-Proposal/external/noxim -C external/noxim diff --check` completed with exit code `0`.
-- No DeFT routing behavior, route selection, VN behavior, VN transition restriction, VL LUT generation, experiment automation, metrics change, golden regression output update, or DeFT experiment was run.
+- Short source-document checks found the proposal requirement for exactly two VCs, one for VN.0 and one for VN.1, and the VN transition restrictions. The original paper check confirmed one VC per VN for the evaluated design, VN.0 to VN.1 monotonic transition, VN.1 to VN.0 prohibition, Up/Down/Horizontal movement definitions, and round-robin assignment when either VN is legal.
+- Source inspection confirmed that Noxim already carries `vc_id` in `Packet`, `Flit`, and `RouteData`, and that router buffers and downstream full-status masks are indexed by VC.
+- T0012 design decision: DeFT VN state should be represented directly by the existing Noxim `vc_id`, where VC 0 is VN.0 and VC 1 is VN.1 for DeFT-enabled runs.
+- T0012 design decision: no separate `vn_id` metadata field should be added unless a future implementation task proves it necessary.
+- T0012 design decision: future DeFT-enabled routing runs should require exactly two configured VCs, while non-DeFT modes and current construction-only smokes should preserve existing VC behavior.
+- Source inspection found that the current router reservation path assumes the input VC and output VC are the same index. Future boundary-router reassignment must therefore add output-VC-aware reservation and forwarding behavior instead of only mutating `Flit::vc_id`.
+- Assumption: The implementation target remains one VC per DeFT VN, matching the project requirement and paper evaluation model.
+- Assumption: The current construction-only no-traffic configuration may remain at one VC until T0013 starts implementing VN assignment behavior because T0012 intentionally makes no simulator behavior change.
+- Blocked: No T0012 work is blocked. Final Up/Down movement enforcement and output-VC remapping remain future implementation work.
+- No build, simulation, or regression command was run because T0012 made no source-code change and introduced no behavior change.
+- Final parent-project status after documentation updates showed only the requested tracking docs modified: `docs/ARCHITECTURE.md`, `docs/DECISIONS.md`, `docs/PROGRESS.md`, `docs/PROMPTS.md`, `docs/TASKS.md`, and `docs/VALIDATION.md`.
+- Final `external/noxim` status remained clean.
+- No Noxim source file, DeFT routing behavior, route selection, VN assignment behavior, VN transition restriction, VL LUT generation, experiment automation, metrics change, golden regression output update, or DeFT experiment was changed.
 
 ## Important Changed Files
 
@@ -198,6 +193,15 @@ Files updated during `T0011` Fault Mask Validation:
 - `docs/PROMPTS.md`
 - `docs/DECISIONS.md`
 
+Files updated during `T0012` VN State Representation Design:
+
+- `docs/ARCHITECTURE.md`
+- `docs/TASKS.md`
+- `docs/PROGRESS.md`
+- `docs/VALIDATION.md`
+- `docs/PROMPTS.md`
+- `docs/DECISIONS.md`
+
 Noxim build files LF-normalized during `T0003`:
 
 - `external/noxim/bin/Makefile`
@@ -271,6 +275,10 @@ External source tree registered during `T0023`:
 - Assumption: Startup fault state is metadata for future routing and LUT tasks in T0010; physical VL wiring is still constructed for all VLs, and route selection does not yet avoid faulty VLs.
 - Assumption: T0011 treats four faulty physical bidirectional VLs out of 16 as the current physical 25% validation target for inspectability only.
 - Assumption: T0011 does not resolve final percentage conversion or directional VL accounting for experiment automation.
+- Assumption: T0012 maps DeFT VN state directly to Noxim VC IDs: VC 0 is VN.0 and VC 1 is VN.1 for DeFT-enabled runs.
+- Assumption: DeFT-enabled routing should require exactly two configured VCs, while current non-DeFT and construction-only validation can preserve existing VC configuration until VN assignment is implemented.
+- Assumption: A separate packet/flit `vn_id` field is unnecessary and should not be added unless future implementation proves the existing `vc_id` cannot safely carry DeFT VN state.
+- Assumption: Future VN reassignment must make the router reservation and forwarding path output-VC-aware; changing only `Flit::vc_id` without matching downstream full-status checks would be unsafe.
 
 ## Open Questions
 
@@ -278,17 +286,17 @@ External source tree registered during `T0023`:
 - Are GEM5/PARSEC traces required for final delivery, or are synthetic traffic experiments sufficient?
 - Should WSL be configured persistently with `ldconfig` for the local SystemC library, or should future Noxim runs keep using a per-process `LD_LIBRARY_PATH`?
 - What exact algorithmic representation should carry chiplet-to-interposer Down movement and interposer-to-chiplet Up movement in DeFT routing and VN-transition logic?
-- Which packet, flit, or route metadata fields should carry DeFT layer/VN context without disrupting baseline routing behavior?
+- Should T0013 extend the router reservation table with an explicit output VC, or use a narrower route-result object that carries output direction plus output VC only for DeFT routing?
 - Why did Git fail to create task branch refs in the current Windows worktree? This is no longer operationally important because user instruction now forbids automatic task branch creation.
 
 ## Next Recommended Task
 
-Start `T0012` and design how VN.0 and VN.1 state will be represented in Noxim packet/flit/router metadata before implementing any VN assignment behavior.
+Start `T0013` and implement DeFT VN assignment rules using the T0012 VC-ID mapping, while preserving baseline routing behavior outside DeFT-enabled runs.
 
 ## Next Ready-to-Send Prompt
 
 ```text
-Start task T0012: Design VN State Representation.
+Start task T0013: Implement VN Assignment Rules.
 
 Before starting, read AGENTS.md, docs/PROGRESS.md, docs/TASKS.md, docs/ROADMAP.md, docs/ARCHITECTURE.md, docs/VALIDATION.md, docs/DECISIONS.md, and docs/PROMPTS.md.
 
@@ -301,18 +309,19 @@ external/noxim
 https://github.com/YusufTahirOrhan/noxim
 
 T0007 added selectable `DEFT_2_5D` topology construction and the `DeftTopology` mapping helper. T0008 centralized the physical Vertical Link model and functional state. T0009 added the derived boundary-router inventory. T0010 added startup-time permanent physical VL fault injection. T0011 added focused explicit/generated fault-mask validation and inspectability against the current 16 physical bidirectional VL model.
+T0012 designed the DeFT VN state representation: for DeFT-enabled runs, VC 0 is VN.0 and VC 1 is VN.1. Do not add a parallel `vn_id` field unless source inspection proves it is necessary. Future DeFT-enabled routing should require exactly two configured VCs. T0012 also found that the current router reservation path assumes input VC equals output VC, so any boundary-router VN reassignment must make downstream full-status checks and forwarded `Flit::vc_id` agree on the selected output VC.
 
-Goal: design the smallest safe VN state representation for future DeFT VN assignment and transition-restriction tasks. Decide where VN.0/VN.1 state should live in the current Noxim data path, how it should map to the existing virtual-channel structures, and which metadata fields or helper APIs future implementation should use.
+Goal: implement the smallest safe DeFT VN assignment behavior for source routers and boundary routers using the T0012 mapping. Inter-chiplet traffic from non-boundary source routers should start in VN.0. Cases where either VN is legal should use round-robin assignment or reassignment. Traffic coming from the interposer into a destination chiplet should go to or remain in VN.1. Preserve existing baseline routing behavior outside DeFT-enabled runs.
 
-Keep this task documentation-first and independent from implementation of VN assignment behavior, VN transition restrictions, route selection, VL LUT generation, experiment automation, metrics changes, and golden regression output updates. Do not change simulator behavior in this task unless source inspection proves that a tiny compile-only metadata scaffold is required; if so, justify it before editing.
+Keep this task independent from VN transition-restriction enforcement beyond assignment monotonicity, VL LUT generation, experiment automation, metrics changes, and golden regression output updates. Do not implement final VL selection or DeFT performance experiments in this task. If safe VN reassignment requires a small output-VC-aware router pipeline change, keep it narrowly scoped and justify it before editing.
 
-Known result so far: Noxim already has `n_virtual_channels`, flit/packet structs in `external/noxim/src/DataStructs.h`, router pipeline logic in `external/noxim/src/Router.*`, route data in the routing algorithm interface, and `DEFT_2_5D` topology/boundary/VL/fault-state query surfaces. T0012 should inspect these surfaces and document a design that preserves exactly two DeFT VNs without disrupting baseline routing.
+Known result so far: `Packet::vc_id`, `Flit::vc_id`, and `RouteData::vc_id` are the VN/VC state carrier. `ProcessingElement` currently assigns packet VCs randomly. `Router::txProcess()` currently reserves and forwards using the input-buffer VC index. `DeftTopology` provides layer, boundary-router, VL, and fault-state query surfaces needed to classify DeFT assignment contexts.
 
 Use `Extended_Proposal.pdf` as the primary project requirements source and the original DeFT paper at `docs/references/DeFT_A_Deadlock-Free_and_Fault-Tolerant_Routing_Algorithm_for_2.5D_Chiplet_Networks.pdf` as the primary algorithmic reference. Use `Proposal.pdf` only as initial context. Ignore the peer evaluation document completely.
 
-Before editing, produce a short implementation plan. Work only on the selected VN state representation design task. Do not modify unrelated files. Clearly mark assumptions as `Assumption` and blockers as `Blocked`.
+Before coding, produce a short implementation plan. Work only on the selected VN assignment task. Do not modify unrelated files. Clearly mark assumptions as `Assumption` and blockers as `Blocked`.
 
-Use only known validation commands. For a documentation-only task, use repository and submodule status checks unless a source change is explicitly justified. Do not run simulations unless the design task unexpectedly changes source code and the existing construction-only no-traffic invocation remains valid. Do not use `./regression.sh --update`.
+Use only known validation commands. The baseline build command is documented as `./build.sh` from `external/noxim` in WSL Ubuntu. The construction-only no-traffic smoke command is documented in `docs/VALIDATION.md`; only run simulations that preserve that known invocation shape unless a new command is discovered from source documentation. Do not use `./regression.sh --update`.
 
 Update docs/ARCHITECTURE.md, docs/TASKS.md, docs/PROGRESS.md, docs/VALIDATION.md, and docs/PROMPTS.md with the result. If a durable implementation decision becomes clear, update docs/DECISIONS.md too.
 
@@ -339,5 +348,5 @@ None; continue on the existing branch.
 ## Suggested Commit Message
 
 ```text
-feat: add fault mask validation
+docs: design DeFT VN state representation
 ```

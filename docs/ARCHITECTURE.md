@@ -351,6 +351,64 @@ Assumption: The `current_physical_25_percent_target` output is an inspectability
 
 Blocked: Directional fault accounting and final percentage-to-mask conversion remain future experiment-automation work.
 
+## T0012 VN State Representation Design
+
+`T0012` records the smallest safe VN.0/VN.1 state representation before implementing assignment or transition-restriction behavior. It is documentation-only and does not change Noxim source, simulator behavior, configuration behavior, route selection, VL selection, metrics, experiment automation, or golden outputs.
+
+Source alignment:
+
+- `Extended_Proposal.pdf` requires DeFT inter-chiplet routing to use exactly two Virtual Channels, one for VN.0 and one for VN.1, with 4 flits of buffering per VC.
+- `Extended_Proposal.pdf` lists the required VN restrictions: VN.1 to VN.0 is forbidden, Up-to-Horizontal is forbidden in VN.0, and Horizontal-to-Down is forbidden in VN.1.
+- The original DeFT paper states that DeFT uses two VNs for deadlock freedom, assumes one VC per VN for the evaluated design, allows VN.0 to VN.1 transitions, forbids VN.1 to VN.0 transitions, and uses round-robin assignment when either VN is legal.
+- The original DeFT paper defines Down as chiplet-to-interposer movement, Up as interposer-to-chiplet movement, and Horizontal as North, East, South, and West movement within either the chiplet layer or the interposer layer.
+
+Existing Noxim grounding:
+
+- `external/noxim/src/DataStructs.h` already carries `vc_id` in `Packet`, `Flit`, and `RouteData`.
+- `external/noxim/src/ProcessingElement.cpp` assigns `Packet::vc_id` at packet creation and copies it to every generated `Flit::vc_id`.
+- `external/noxim/src/Router.cpp` stores incoming flits in `buffer[input_direction][received_flit.vc_id]`, passes the head flit's `vc_id` into `RouteData`, checks downstream backpressure through `buffer_full_status_tx[output_direction].mask[vc]`, and forwards the flit with its existing `vc_id`.
+- `external/noxim/src/ReservationTable.*` currently treats the reservation VC as the same VC index read from the input buffer. It does not yet distinguish input VC from output VC.
+- `GlobalParams::n_virtual_channels` configures the number of physical VC buffer banks. Existing configuration validation permits two VCs, but rejects `NOP`, `BUFFER_LEVEL`, and wireless sleep power-manager modes when more than one VC is configured.
+- The current construction-only `external/noxim/config_examples/deft_2_5d_topology.yaml` still uses `n_virtual_channels: 1` because no DeFT VN behavior has been implemented yet.
+
+Design decision:
+
+- DeFT VN state should be represented directly by the existing Noxim VC ID in DeFT-enabled runs.
+- `vc_id == 0` means VN.0.
+- `vc_id == 1` means VN.1.
+- No separate `vn_id`, packet tag, flit tag, or router-side shadow VN field should be added unless a later implementation task proves that the existing VC ID cannot safely carry the state.
+- For DeFT-enabled routing runs, exactly two physical VCs must be configured: `GlobalParams::n_virtual_channels == 2`.
+- For non-DeFT routing modes and documentation/construction-only smokes, existing baseline VC behavior should remain unchanged.
+
+Metadata ownership:
+
+- `Packet::vc_id` is the injected packet's initial VN/VC assignment.
+- `Flit::vc_id` is the authoritative in-flight VN/VC state because router input buffers, downstream full-status masks, and the receiving router all use this field.
+- `RouteData::vc_id` is a read-only snapshot of the head flit's current input VN/VC for route and assignment decisions.
+- `GlobalParams::n_virtual_channels` is resource configuration, not per-packet state.
+- Round-robin balance state should not live in packet or flit metadata. Future assignment work should keep any round-robin counters in a DeFT-specific helper or router-local assignment surface.
+
+Future helper API guidance:
+
+- Add a small DeFT VN helper only when implementation begins, for example `DeftVirtualNetwork.*`.
+- The helper should expose constants or an enum for VN.0 and VN.1, plus conversion helpers between DeFT VN names and VC IDs.
+- The helper should validate DeFT VC IDs with `isValidDeftVirtualNetwork(vc_id)`.
+- The helper should validate monotonic VN transitions with `canTransition(from_vn, to_vn)`, allowing only same-VN transitions and VN.0 to VN.1 transitions.
+- Movement classification should be derived from `DeftTopology` and router IDs, not from raw port numbers alone. `DIRECTION_HUB` is still only the current physical carrier for VL wiring; DeFT movement should classify chiplet-to-interposer traversal as Down and interposer-to-chiplet traversal as Up by comparing endpoint layers through `DeftTopology::verticalLinkBetweenRouters()` or equivalent topology helpers.
+- A future assignment result should include both the selected output direction and the selected output VN/VC when a router can reassign VN state.
+
+Future router-pipeline implication:
+
+- The current Noxim router path can preserve a flit's VC ID, but it cannot safely remap from input VC 0 to output VC 1 with the existing reservation data alone.
+- Future T0013 implementation must not mutate only `Flit::vc_id` while still reserving and checking downstream fullness with the old input-buffer VC index. That would make the upstream backpressure check and downstream receiving VC disagree.
+- A safe VN reassignment implementation needs output-VC-aware reservation and forwarding metadata, or an equivalent narrowly scoped mechanism that checks downstream availability for the selected output VC and forwards the flit with that same selected VC ID.
+
+Assumption: The DeFT implementation target remains exactly one VC per VN, so two VCs total are sufficient for VN.0 and VN.1.
+
+Assumption: The current construction-only no-traffic configuration may stay at one VC until T0013 starts implementing DeFT VN assignment behavior, because T0012 intentionally does not alter simulator behavior.
+
+Blocked: No T0012 work is blocked. Final Up/Down movement enforcement and output-VC remapping are future implementation work for T0013 and T0014.
+
 ## Router Model
 
 Planned router categories:

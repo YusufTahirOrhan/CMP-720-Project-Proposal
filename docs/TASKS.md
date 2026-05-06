@@ -114,23 +114,23 @@ Statuses: `TODO`, `IN_PROGRESS`, `DONE`, `BLOCKED`.
 
 ## T0012: Design VN State Representation
 
-- **Status:** TODO
+- **Status:** DONE
 - **Objective:** Document how VN.0 and VN.1 state will be represented in packet or flit metadata.
 - **Relevant roadmap phase:** Phase 5
-- **Files likely to change:** `docs/ARCHITECTURE.md`, `docs/DECISIONS.md`, `docs/PROGRESS.md`
+- **Files changed:** `docs/ARCHITECTURE.md`, `docs/DECISIONS.md`, `docs/PROGRESS.md`, `docs/TASKS.md`, `docs/VALIDATION.md`, `docs/PROMPTS.md`
 - **Acceptance criteria:** VN state design and transition assumptions are recorded.
-- **Validation command:** To be confirmed after repository inspection
-- **Notes:** Documentation task before implementation. VN behavior must be checked against the original DeFT paper.
+- **Validation command:** Parent status: `git status --short --branch`. Submodule status: `git -c safe.directory=C:/Projects/CMP-720-Project-Proposal/external/noxim -C external/noxim status --short --branch`.
+- **Notes:** Completed on 2026-05-07 as a documentation-only design task. DeFT VN state is designed to use the existing Noxim `vc_id` directly: VC 0 is VN.0 and VC 1 is VN.1 for DeFT-enabled runs. No separate `vn_id` field should be added unless future implementation proves it necessary. Future DeFT runs should require exactly two configured VCs. Source inspection also found that the current router reservation path assumes input VC equals output VC, so future VN reassignment must add output-VC-aware reservation/forwarding rather than mutating `Flit::vc_id` alone. No simulator behavior, VN assignment behavior, VN transition restriction, route selection, VL LUT generation, experiment automation, metrics change, golden regression output update, or Noxim source code was changed.
 
 ## T0013: Implement VN Assignment Rules
 
 - **Status:** TODO
 - **Objective:** Implement DeFT VN assignment behavior for source routers and boundary routers.
 - **Relevant roadmap phase:** Phase 5
-- **Files likely to change:** To be confirmed after Noxim source inspection
+- **Files likely to change:** `external/noxim/src/DataStructs.h`, `external/noxim/src/Router.*`, `external/noxim/src/ProcessingElement.*`, `external/noxim/src/GlobalParams.*`, `external/noxim/src/ConfigurationManager.cpp`, possibly a new DeFT VN helper under `external/noxim/src`, DeFT construction config, and tracking docs.
 - **Acceptance criteria:** Inter-chiplet traffic follows the proposal's VN assignment rules.
 - **Validation command:** To be confirmed after repository inspection
-- **Notes:** Must preserve exactly two VCs.
+- **Notes:** Must preserve exactly two VCs. Use the T0012 mapping: VC 0 is VN.0 and VC 1 is VN.1. Do not add a parallel `vn_id` field. If implementing boundary-router reassignment, make the router path output-VC-aware so downstream full-status checks and forwarded `Flit::vc_id` agree.
 
 ## T0014: Enforce VN Transition Restrictions
 

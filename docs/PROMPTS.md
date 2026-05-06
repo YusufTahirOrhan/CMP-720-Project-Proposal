@@ -1222,3 +1222,58 @@ At the end, provide:
 - **Next ready-to-send prompt:** See `docs/PROGRESS.md`.
 - **Suggested branch name for next task:** None; continue on the existing branch.
 - **Suggested commit message:** `feat: add fault mask validation`
+
+## 2026-05-07: Start T0012 VN State Representation Design
+
+- **Date:** 2026-05-07
+- **Prompt summary:** Design the smallest safe representation for DeFT VN.0/VN.1 state in Noxim, deciding how it maps to existing virtual-channel structures without implementing VN assignment behavior, transition restrictions, route selection, VL LUT generation, metrics, experiments, or source-code changes.
+- **Full prompt:**
+
+```text
+Start task T0012: Design VN State Representation.
+
+Before starting, read AGENTS.md, docs/PROGRESS.md, docs/TASKS.md, docs/ROADMAP.md, docs/ARCHITECTURE.md, docs/VALIDATION.md, docs/DECISIONS.md, and docs/PROMPTS.md.
+
+Continue on the existing Git branch. Do not create or switch task branches.
+
+Use the registered Noxim source tree at:
+external/noxim
+
+external/noxim is the Noxim submodule and modifiable project fork from:
+https://github.com/YusufTahirOrhan/noxim
+
+T0007 added selectable DEFT_2_5D topology construction and the DeftTopology mapping helper. T0008 centralized the physical Vertical Link model and functional state. T0009 added the derived boundary-router inventory. T0010 added startup-time permanent physical VL fault injection. T0011 added focused explicit/generated fault-mask validation and inspectability against the current 16 physical bidirectional VL model.
+
+Goal: design the smallest safe VN state representation for future DeFT VN assignment and transition-restriction tasks. Decide where VN.0/VN.1 state should live in the current Noxim data path, how it should map to the existing virtual-channel structures, and which metadata fields or helper APIs future implementation should use.
+
+Keep this task documentation-first and independent from implementation of VN assignment behavior, VN transition restrictions, route selection, VL LUT generation, experiment automation, metrics changes, and golden regression output updates. Do not change simulator behavior in this task unless source inspection proves that a tiny compile-only metadata scaffold is required; if so, justify it before editing.
+
+Known result so far: Noxim already has n_virtual_channels, flit/packet structs in external/noxim/src/DataStructs.h, router pipeline logic in external/noxim/src/Router.*, route data in the routing algorithm interface, and DEFT_2_5D topology/boundary/VL/fault-state query surfaces. T0012 should inspect these surfaces and document a design that preserves exactly two DeFT VNs without disrupting baseline routing.
+
+Use Extended_Proposal.pdf as the primary project requirements source and the original DeFT paper at docs/references/DeFT_A_Deadlock-Free_and_Fault-Tolerant_Routing_Algorithm_for_2.5D_Chiplet_Networks.pdf as the primary algorithmic reference. Use Proposal.pdf only as initial context. Ignore the peer evaluation document completely.
+
+Before editing, produce a short implementation plan. Work only on the selected VN state representation design task. Do not modify unrelated files. Clearly mark assumptions as Assumption and blockers as Blocked.
+
+Use only known validation commands. For a documentation-only task, use repository and submodule status checks unless a source change is explicitly justified. Do not run simulations unless the design task unexpectedly changes source code and the existing construction-only no-traffic invocation remains valid. Do not use ./regression.sh --update.
+
+Update docs/ARCHITECTURE.md, docs/TASKS.md, docs/PROGRESS.md, docs/VALIDATION.md, and docs/PROMPTS.md with the result. If a durable implementation decision becomes clear, update docs/DECISIONS.md too.
+
+At the end, provide:
+
+1. Created files
+2. Modified files
+3. Whether any source code files changed
+4. Validation result
+5. Current project phase
+6. Next recommended task
+7. The next ready-to-send prompt
+8. Suggested branch name for the next task, which should be None; continue on the existing branch
+9. Suggested commit message
+10. Unknowns or blockers
+```
+
+- **Result summary:** T0012 completed as a documentation-only design task. The selected representation maps DeFT VN state directly onto Noxim VC IDs: VC 0 is VN.0 and VC 1 is VN.1 for DeFT-enabled runs. No separate `vn_id` field should be added unless a future implementation task proves it necessary. Future DeFT-enabled routing should require exactly two configured VCs. Source inspection found that the current router reservation path assumes input VC and output VC are the same index, so future boundary-router reassignment must make downstream full-status checks and forwarded `Flit::vc_id` agree on the selected output VC. No Noxim source files or simulator behavior were changed.
+- **Follow-up tasks:** Start `T0013` to implement DeFT VN assignment rules using the T0012 VC-ID mapping.
+- **Next ready-to-send prompt:** See `docs/PROGRESS.md`.
+- **Suggested branch name for next task:** None; continue on the existing branch.
+- **Suggested commit message:** `docs: design DeFT VN state representation`
