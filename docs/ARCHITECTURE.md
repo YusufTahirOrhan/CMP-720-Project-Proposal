@@ -287,7 +287,7 @@ Implemented source surface:
 
 Assumption: A Vertical Link remains modeled as one physical bidirectional connection with one functional/faulty state. If a later fault-accounting task needs directional failure states to match the paper's `total VLs=32` wording, it should add a derived directional view without replacing the physical VL identity model.
 
-Assumption: `validateVerticalLinkModel()` is structural validation for the VL inventory. Fault-mask validation, including the rule that no chiplet is fully disconnected, remains a future T0011 task.
+Assumption: `validateVerticalLinkModel()` is structural validation for the VL inventory. It did not provide fault-mask validation in T0008; T0010 later adds only the minimum no-chiplet-disconnected startup guard, while broader fault-mask validation remains T0011.
 
 Blocked: No explicit `DIRECTION_UP` or `DIRECTION_DOWN` routing semantics exist yet. T0008 intentionally does not use VL functional state to alter link construction, routing, or packet movement.
 
@@ -308,6 +308,28 @@ Implemented source surface:
 Assumption: Boundary-router identity is a derived view of the physical VL inventory. Future routing, VN, fault-injection, and LUT tasks should reuse this query surface instead of introducing a parallel boundary-router table.
 
 Blocked: No explicit `DIRECTION_UP` or `DIRECTION_DOWN` routing semantics exist yet. T0009 intentionally does not use boundary-router identity to alter link construction, routing, or packet movement.
+
+## T0010 Fault Injection Manager Implementation
+
+`T0010` adds the first centralized startup-time permanent Vertical Link fault injection manager. It does not implement DeFT routing behavior, route selection, VN assignment behavior, VN transition restrictions, VL LUT generation, experiment automation, metrics changes, golden regression updates, or DeFT experiment logic.
+
+Implemented source surface:
+
+- `external/noxim/src/DeftFaultInjectionManager.h` and `external/noxim/src/DeftFaultInjectionManager.cpp` define the fault manager.
+- The manager resets all VLs to functional, selects the requested permanent faulty physical VLs, marks them faulty through `DeftTopology::setVerticalLinkFunctional()`, and exposes scan-based inspectability helpers over the centralized VL model.
+- Configuration is added through `GlobalParams` and `ConfigurationManager`:
+  - `deft_faulty_vertical_links`: explicit physical VL IDs to mark faulty.
+  - `deft_vl_fault_count`: seed-controlled random physical VL fault count.
+- The two fault-selection modes are mutually exclusive. Random selection uses `GlobalParams::rnd_generator_seed` with a local deterministic generator, so startup fault selection does not consume Noxim's global traffic PRNG state.
+- The minimum T0010 guard rejects out-of-range or duplicate fault IDs, rejects incompatible configuration, caps random fault count so at least one VL can remain per chiplet, and rejects any applied mask that fully disconnects a chiplet.
+- `NoC::buildDeft2D()` applies startup fault state after structural VL validation and before the construction smoke output is printed.
+- Construction output now prints the fault-injection mode, seed, requested fault count, selected faulty VL IDs, and functional VL count per chiplet.
+
+Assumption: T0010 counts configured faults over the current 16 physical bidirectional Vertical Links. Percentage/rate conversion and any directional VL accounting remain future work.
+
+Assumption: In T0010, physical VL wiring is still constructed for all VLs. Fault state is startup metadata for future routing and LUT tasks; route selection does not yet exclude faulty VLs.
+
+Blocked: Fault-mask validation beyond the no-chiplet-disconnected guard remains T0011. Explicit DeFT `Up` and `Down` movement semantics also remain future work.
 
 ## Router Model
 
@@ -351,13 +373,18 @@ Assumption: Faults are represented at the Vertical Link level unless later code 
 
 ## Fault Injection Manager
 
-Planned:
+Implemented foundation:
 
 - Runs before the first simulation cycle.
-- Reads fault-rate configuration and random seed.
-- Selects permanent faulty Vertical Links.
+- Reads explicit physical VL fault IDs or a seed-controlled physical VL fault count.
+- Selects permanent faulty Vertical Links using the centralized VL model.
 - Ensures at least one functional Vertical Link remains per chiplet.
-- Exposes current fault state to routing and LUT lookup logic.
+- Exposes current fault state through `DeftTopology` query helpers and `DeftFaultInjectionManager` scan helpers.
+
+Planned future work:
+
+- Convert experiment fault percentages into masks after the physical-vs-directional accounting ambiguity is resolved.
+- Make DeFT route selection and LUT lookup exclude faulty Vertical Links.
 
 Assumption: Faults model permanent microbump or Vertical Link defects, not transient failures.
 

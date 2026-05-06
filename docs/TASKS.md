@@ -94,13 +94,13 @@ Statuses: `TODO`, `IN_PROGRESS`, `DONE`, `BLOCKED`.
 
 ## T0010: Implement Fault Injection Manager
 
-- **Status:** TODO
+- **Status:** DONE
 - **Objective:** Add centralized startup-time permanent Vertical Link fault injection.
 - **Relevant roadmap phase:** Phase 4
-- **Files likely to change:** To be confirmed after Noxim source inspection
+- **Files changed:** `external/noxim/src/DeftFaultInjectionManager.h`, `external/noxim/src/DeftFaultInjectionManager.cpp`, `external/noxim/src/GlobalParams.h`, `external/noxim/src/GlobalParams.cpp`, `external/noxim/src/ConfigurationManager.cpp`, `external/noxim/src/NoC.cpp`, `external/noxim/config_examples/deft_2_5d_topology.yaml`, `docs/ARCHITECTURE.md`, `docs/TASKS.md`, `docs/PROGRESS.md`, `docs/VALIDATION.md`, `docs/PROMPTS.md`, and `docs/DECISIONS.md`
 - **Acceptance criteria:** Fault masks are seed-controlled and do not fully disconnect any chiplet.
-- **Validation command:** To be confirmed after repository inspection
-- **Notes:** Fault-rate ambiguity must be resolved or explicitly parameterized.
+- **Validation command:** From `external/noxim`: `./build.sh`. Construction smoke from `external/noxim/bin`: `LD_LIBRARY_PATH=/mnt/c/Projects/CMP-720-Project-Proposal/external/noxim/bin/libs/systemc-2.3.1/lib-linux64 ./noxim -config ../config_examples/deft_2_5d_topology.yaml -seed 0 -sim 20 -warmup 0`. Faulted construction smoke from `external/noxim/bin`: `LD_LIBRARY_PATH=/mnt/c/Projects/CMP-720-Project-Proposal/external/noxim/bin/libs/systemc-2.3.1/lib-linux64 ./noxim -config ../config_examples/deft_2_5d_topology.yaml -seed 0 -sim 20 -warmup 0 -deft_vl_fault_count 4`.
+- **Notes:** Completed on 2026-05-07. Added `DeftFaultInjectionManager` as the centralized startup-time permanent VL fault-state setup path. The manager reuses `DeftTopology` reset/set/query helpers, supports explicit physical VL ID lists or seed-controlled random physical VL fault counts, rejects incompatible modes, rejects duplicate/out-of-range fault IDs, and prevents any chiplet from being left with zero functional VLs. Construction output reports the selected fault mask and per-chiplet functional VL counts. Assumption: T0010 counts configured faults over the current 16 physical bidirectional VLs; percentage conversion and directional accounting remain future work. No DeFT routing behavior, route selection, VN behavior, VN transition restriction, VL LUT generation, experiment automation, metrics change, or golden regression output update was added.
 
 ## T0011: Add Fault Mask Validation
 

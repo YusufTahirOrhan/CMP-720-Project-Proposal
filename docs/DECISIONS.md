@@ -161,3 +161,11 @@ This document records project decisions that affect implementation, validation, 
 - **Context:** T0009 needed a reusable boundary-router identification/query contract after T0008. The existing `DeftTopology` helper already knew which chiplet endpoint belonged to each physical VL, so creating a second independent boundary-router endpoint table would duplicate source-of-truth data.
 - **Decision:** Represent boundary routers through `DeftTopology::BoundaryRouterInfo` as a derived view of the centralized `VerticalLinkInfo` records. Provide inventory, per-chiplet lookup, router-ID lookup, VL-ID lookup, and structural validation helpers in `external/noxim/src/DeftTopology.*`.
 - **Consequences:** Future DeFT routing, VN assignment, and VL LUT tasks can query boundary-router identity without duplicating topology data. Boundary-router identity remains inspectable and stable, while physical VL identity and functional state remain centralized in the VL model. T0009 does not implement route selection, VN behavior, fault injection, or LUT generation.
+
+## ADR-0021: Configure T0010 Faults Over Physical Vertical Link IDs
+
+- **Date:** 2026-05-07
+- **Status:** Accepted
+- **Context:** T0010 needed startup-time permanent VL fault-state setup after the centralized physical VL model and boundary-router inventory. The proposal and original paper still leave a project-level ambiguity between physical bidirectional VLs and directional VL accounting for percentage-based fault rates.
+- **Decision:** For T0010, configure startup faults directly over the current 16 physical bidirectional VL IDs. Support either an explicit `deft_faulty_vertical_links` list or a seed-controlled `deft_vl_fault_count`, and keep those modes mutually exclusive.
+- **Consequences:** T0010 avoids premature percentage conversion and directional accounting decisions while still enabling reproducible startup fault masks. Future fault-mask validation and experiment automation must decide how proposal-level percentages map onto physical or directional VL counts before final sweeps. T0010 does not alter physical VL wiring, DeFT routing behavior, route selection, VN behavior, or VL LUT behavior.

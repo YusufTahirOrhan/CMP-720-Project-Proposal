@@ -1110,3 +1110,59 @@ At the end, provide:
 - **Next ready-to-send prompt:** See `docs/PROGRESS.md`.
 - **Suggested branch name for next task:** None; continue on the existing branch.
 - **Suggested commit message:** `feat: add boundary router inventory`
+
+## 2026-05-07: Start T0010 Fault Injection Manager
+
+- **Date:** 2026-05-07
+- **Prompt summary:** Implement the smallest centralized startup-time permanent Vertical Link fault injection manager after T0009, using the centralized physical VL model and boundary-router query surfaces, while keeping routing, VN behavior, LUT generation, metrics, experiment automation, and golden outputs out of scope.
+- **Full prompt:**
+
+```text
+Start task T0010: Implement Fault Injection Manager.
+
+Before starting, read AGENTS.md, docs/PROGRESS.md, docs/TASKS.md, docs/ROADMAP.md, docs/ARCHITECTURE.md, docs/VALIDATION.md, and docs/DECISIONS.md.
+
+Continue on the existing Git branch. Do not create or switch task branches.
+
+Use the registered Noxim source tree at:
+external/noxim
+
+external/noxim is the Noxim submodule and modifiable project fork from:
+https://github.com/YusufTahirOrhan/noxim
+
+T0007 added selectable DEFT_2_5D topology construction, the DeftTopology mapping helper, four isolated 4x4 chiplet meshes, an 8x8 active-interposer mesh, and the deterministic 16-VL endpoint table. T0008 extended DeftTopology into the centralized physical Vertical Link model/query surface with stable VL IDs, chiplet ownership, slots, chiplet/interposer endpoints, default functional state, functional-state query/mutation helpers, and structural VL validation. T0009 added the derived boundary-router inventory/query surface with stable router ID, owner chiplet, local coordinate, VL slot, attached VL ID, and attached interposer endpoint. The construction smoke config is:
+external/noxim/config_examples/deft_2_5d_topology.yaml
+
+Goal: add the smallest centralized startup-time permanent Vertical Link fault injection manager needed after T0009. The manager should use the existing physical VL model and mutation helpers to mark selected VLs functional or faulty before simulation traffic runs. Keep the task focused on fault-state setup and inspectability only.
+
+Keep this task independent from DeFT routing behavior, route selection, VN assignment behavior, VN transition restrictions, VL LUT generation, experiment automation, metrics changes, and golden regression output updates. Do not implement T0011 fault-mask validation beyond the smallest guard needed to avoid fully disconnecting any chiplet if the selected T0010 design requires it.
+
+Known result so far: T0008 provides resetVerticalLinkStates(), setVerticalLinkFunctional(), isVerticalLinkFunctional(), functionalVerticalLinksForChiplet(chiplet_id), hasFunctionalVerticalLinkForChiplet(chiplet_id), and structural VL validation. T0009 provides boundary-router inventory and lookup helpers. T0010 should reuse these surfaces and should not introduce a parallel VL or boundary-router inventory.
+
+Use Extended_Proposal.pdf as the primary project requirements source and the original DeFT paper at docs/references/DeFT_A_Deadlock-Free_and_Fault-Tolerant_Routing_Algorithm_for_2.5D_Chiplet_Networks.pdf as the primary algorithmic reference. Use Proposal.pdf only as initial context. Ignore the peer evaluation document completely.
+
+Before coding, produce a short implementation plan. Work only on the selected fault-injection-manager task. Do not modify unrelated files. Clearly mark assumptions as Assumption and blockers as Blocked.
+
+Use only known validation commands. The baseline build command is documented as ./build.sh from external/noxim in WSL Ubuntu. The construction smoke command is documented in docs/VALIDATION.md; only run a simulation if the task preserves the construction-only no-traffic invocation or provides another clearly valid invocation. Do not use ./regression.sh --update.
+
+Update docs/ARCHITECTURE.md, docs/TASKS.md, docs/PROGRESS.md, docs/VALIDATION.md, and docs/PROMPTS.md with the result. If a durable implementation decision becomes clear, update docs/DECISIONS.md too.
+
+At the end, provide:
+
+1. Created files
+2. Modified files
+3. Whether any source code files changed
+4. Validation result
+5. Current project phase
+6. Next recommended task
+7. The next ready-to-send prompt
+8. Suggested branch name for the next task, which should be None; continue on the existing branch
+9. Suggested commit message
+10. Unknowns or blockers
+```
+
+- **Result summary:** T0010 completed. `DeftFaultInjectionManager` now applies startup permanent physical VL fault state through the centralized `DeftTopology` model. The configuration surface supports `deft_faulty_vertical_links` for explicit physical VL IDs and `deft_vl_fault_count` for seed-controlled random physical VL fault selection. The manager rejects incompatible modes, duplicate/out-of-range IDs, and masks that leave any chiplet with zero functional VLs. Construction output reports the selected fault mask and per-chiplet functional counts. Validation built successfully, the default construction smoke reported no faults, and a seed-0 four-fault smoke selected VLs `[0,1,5,13]` with functional per-chiplet counts `2,3,4,3`. No routing, VN, LUT, metrics, experiment automation, or golden-output work was added.
+- **Follow-up tasks:** Start `T0011` to add focused fault-mask validation for explicit/generated masks up to the proposal target without changing routing or VN behavior.
+- **Next ready-to-send prompt:** See `docs/PROGRESS.md`.
+- **Suggested branch name for next task:** None; continue on the existing branch.
+- **Suggested commit message:** `feat: add vertical link fault injection manager`

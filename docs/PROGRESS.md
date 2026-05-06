@@ -2,7 +2,7 @@
 
 ## Current Phase
 
-Phase 4 - Fault Injection Manager
+Phase 4 - Fault Mask Validation
 
 ## Completed Tasks
 
@@ -15,10 +15,11 @@ Phase 4 - Fault Injection Manager
 - `T0007` - Implement 2.5D topology construction.
 - `T0008` - Add Vertical Link data model.
 - `T0009` - Add Boundary Router Identification.
+- `T0010` - Implement Fault Injection Manager.
 - `T0023` - Add or register the Noxim source tree.
 - `T0024` - Decide Windows 11 development environment and persist paper reference.
 
-No DeFT routing, VN, startup-time VL fault injection, VL LUT, experiment automation, or metrics task has been completed.
+No DeFT routing, VN, VL LUT, experiment automation, or metrics task has been completed.
 
 ## In-Progress Tasks
 
@@ -30,26 +31,28 @@ No DeFT routing, VN, startup-time VL fault injection, VL LUT, experiment automat
 
 ## Last Validation Result
 
-- T0009 Boundary Router Identification validation completed on 2026-05-06.
-- Required startup reading was completed before task work: `AGENTS.md`, `docs/PROGRESS.md`, `docs/TASKS.md`, `docs/ROADMAP.md`, `docs/ARCHITECTURE.md`, `docs/VALIDATION.md`, and `docs/DECISIONS.md`.
-- Before implementation, `git status --short --branch` in the parent repository showed branch `feat/map-noxim-extension-points...origin/feat/map-noxim-extension-points` and a modified `external/noxim` gitlink because the user changed the submodule branch.
+- T0010 Fault Injection Manager validation completed on 2026-05-07.
+- Required startup reading was completed before task work: `AGENTS.md`, `docs/PROGRESS.md`, `docs/TASKS.md`, `docs/ROADMAP.md`, `docs/ARCHITECTURE.md`, `docs/VALIDATION.md`, `docs/DECISIONS.md`, and `docs/PROMPTS.md`.
+- Before implementation, `git status --short --branch` in the parent repository showed branch `feat/map-noxim-extension-points...origin/feat/map-noxim-extension-points`.
 - Before implementation, `git -c safe.directory=C:/Projects/CMP-720-Project-Proposal/external/noxim -C external/noxim status --short --branch` showed branch `feat/baseline-noxim...origin/feat/baseline-noxim` with no local file modifications.
-- T0009 added `BoundaryRouterInfo` as a derived boundary-router view over the centralized Vertical Link model.
-- The new query surface provides `boundaryRouters()`, `boundaryRoutersForChiplet(chiplet_id)`, `boundaryRouterById(router_id)`, `boundaryRouterForVerticalLink(vl_id)`, and `validateBoundaryRouterModel(error_message)`.
-- Each boundary-router record exposes stable router ID, owner chiplet, chiplet-local coordinate, VL slot, attached VL ID, and attached interposer endpoint.
-- `NoC::buildDeft2D()` validates the boundary-router model before wiring VLs and prints the boundary-router inventory during construction smoke runs.
-- Assumption: Boundary-router identity is derived from the physical VL inventory and should not become a parallel endpoint source of truth.
-- Blocked: Explicit `DIRECTION_UP` and `DIRECTION_DOWN` semantics remain undecided for future DeFT routing and VN-transition tasks.
-- The first documented build command attempt, `./build.sh` from `external/noxim`, timed out after 124 seconds without reporting a compiler or linker error.
-- The same documented build command was rerun with a longer timeout and completed with exit code `0` in WSL Ubuntu.
-- The build emitted only pre-existing Noxim warnings.
-- The construction smoke command completed with exit code `0`: `LD_LIBRARY_PATH=/mnt/c/Projects/CMP-720-Project-Proposal/external/noxim/bin/libs/systemc-2.3.1/lib-linux64 ./noxim -config ../config_examples/deft_2_5d_topology.yaml -seed 0 -sim 20 -warmup 0`.
-- Construction smoke output reported `chiplet_routers=64`, `interposer_routers=64`, `total_routers=128`, `chiplet_cardinal_links=96`, `interposer_cardinal_links=112`, `vertical_links=16`, and `boundary_routers=16`.
-- The smoke output printed all 16 expected boundary-router records, from router `1` on chiplet `0` local `(1,0)` slot `NORTH` attached to `vl_id=0` and interposer endpoint `65`, through router `52` on chiplet `3` local `(0,2)` slot `WEST` attached to `vl_id=15` and interposer endpoint `116`.
-- The smoke output still printed all 16 expected VL endpoint records, each with `functional=true`.
-- The construction smoke intentionally used no traffic, so it reported zero received packets and zero received flits. The `-nan` average-delay and wireless-utilization values are expected for a no-packet construction smoke and are not experiment results.
+- Source document availability was confirmed for `Extended_Proposal.pdf`, `Proposal.pdf`, and `docs/references/DeFT_A_Deadlock-Free_and_Fault-Tolerant_Routing_Algorithm_for_2.5D_Chiplet_Networks.pdf`.
+- Short source-document checks found the proposal requirement for centralized permanent VL faults before routing, no-chiplet-disconnected fault constraints, and fault-rate targets up to 25%.
+- T0010 added `DeftFaultInjectionManager` as the centralized startup-time permanent physical VL fault-state setup path.
+- The manager supports explicit `deft_faulty_vertical_links` lists or seed-controlled `deft_vl_fault_count` random physical VL selection, using `GlobalParams::rnd_generator_seed`.
+- The manager resets VLs to functional before applying startup faults, mutates only the centralized `DeftTopology` functional-state model, and exposes scan-based faulty-VL and per-chiplet functional-count helpers.
+- The minimum T0010 guard rejects duplicate/out-of-range explicit fault IDs, rejects incompatible explicit/random selection modes, caps random fault count so a chiplet can remain connected, and rejects any applied mask that leaves a chiplet with zero functional VLs.
+- Assumption: T0010 counts configured faults over the current 16 physical bidirectional VLs. Percentage conversion and directional accounting remain future work.
+- Assumption: T0010 does not remove or disable physical VL wiring; all physical VL links are still constructed, and fault state is startup metadata for future routing and LUT tasks.
+- `./build.sh` from `external/noxim` completed with exit code `0` in WSL Ubuntu. It rebuilt the updated source and emitted only pre-existing Noxim warnings.
+- The default construction smoke completed with exit code `0`: `LD_LIBRARY_PATH=/mnt/c/Projects/CMP-720-Project-Proposal/external/noxim/bin/libs/systemc-2.3.1/lib-linux64 ./noxim -config ../config_examples/deft_2_5d_topology.yaml -seed 0 -sim 20 -warmup 0`.
+- Default smoke output reported `mode=none`, `requested_fault_count=0`, `faulty_vertical_links=[]`, and per-chiplet functional counts `4,4,4,4`.
+- The faulted construction smoke initially failed once with WSL sandbox `E_ACCESSDENIED`; the same command was rerun with approval and completed with exit code `0`.
+- Faulted smoke command: `LD_LIBRARY_PATH=/mnt/c/Projects/CMP-720-Project-Proposal/external/noxim/bin/libs/systemc-2.3.1/lib-linux64 ./noxim -config ../config_examples/deft_2_5d_topology.yaml -seed 0 -sim 20 -warmup 0 -deft_vl_fault_count 4`.
+- Faulted smoke output reported `mode=random`, `seed=0`, `requested_fault_count=4`, `faulty_vertical_links=[0,1,5,13]`, and per-chiplet functional counts `2,3,4,3`.
+- Faulted smoke output printed `functional=false` for VLs `0`, `1`, `5`, and `13`, and `functional=true` for the remaining VLs.
+- Both construction smoke runs intentionally used no traffic, so each reported zero received packets and zero received flits. The `-nan` average-delay and wireless-utilization values are expected for no-packet construction smokes and are not experiment results.
 - `git -c safe.directory=C:/Projects/CMP-720-Project-Proposal/external/noxim -C external/noxim diff --check` completed with exit code `0`.
-- No startup-time fault injection behavior, fault-mask generation, fault-rate configuration, DeFT routing behavior, route selection, VN behavior, VL LUT generation, experiment automation, metrics change, golden regression output update, or DeFT experiment was run.
+- No DeFT routing behavior, route selection, VN behavior, VN transition restriction, VL LUT generation, experiment automation, metrics change, golden regression output update, or DeFT experiment was run.
 
 ## Important Changed Files
 
@@ -164,6 +167,22 @@ Files updated during `T0009` Boundary Router Identification:
 - `docs/PROMPTS.md`
 - `docs/DECISIONS.md`
 
+Files created or updated during `T0010` Fault Injection Manager:
+
+- `external/noxim/src/DeftFaultInjectionManager.h`
+- `external/noxim/src/DeftFaultInjectionManager.cpp`
+- `external/noxim/src/GlobalParams.h`
+- `external/noxim/src/GlobalParams.cpp`
+- `external/noxim/src/ConfigurationManager.cpp`
+- `external/noxim/src/NoC.cpp`
+- `external/noxim/config_examples/deft_2_5d_topology.yaml`
+- `docs/ARCHITECTURE.md`
+- `docs/TASKS.md`
+- `docs/PROGRESS.md`
+- `docs/VALIDATION.md`
+- `docs/PROMPTS.md`
+- `docs/DECISIONS.md`
+
 Noxim build files LF-normalized during `T0003`:
 
 - `external/noxim/bin/Makefile`
@@ -230,13 +249,15 @@ External source tree registered during `T0023`:
 - Assumption: T0009 derives boundary-router identity from the centralized VL inventory; future DeFT routing, VN, and VL LUT tasks should use the boundary-router query surface instead of introducing a parallel boundary-router endpoint table.
 - Assumption: A Vertical Link is represented as one physical bidirectional connection with one mutable functional state by default.
 - Assumption: Directional VL channel accounting can be derived later if needed, but it should not replace the physical VL identity model without a new decision.
-- Assumption: T0008 structural validation is not fault-mask validation; no-chiplet-disconnected checks remain a future fault-validation task.
+- Assumption: T0008 structural validation is not fault-mask validation; T0010 adds only the minimum no-chiplet-disconnected startup guard, while broader fault-mask validation remains T0011.
 - Assumption: The construction-only `DEFT_2_5D` smoke configuration is valid for topology instantiation checks, but not for DeFT performance evaluation because it intentionally generates no packets.
 - Assumption: Future tasks must continue on the existing Git branch by default; Codex must not create or switch task branches unless the user explicitly asks for that operation.
+- Assumption: T0010 fault configuration is counted over the current 16 physical bidirectional VLs. Final percentage conversion and directional VL accounting remain future work.
+- Assumption: Startup fault state is metadata for future routing and LUT tasks in T0010; physical VL wiring is still constructed for all VLs, and route selection does not yet avoid faulty VLs.
 
 ## Open Questions
 
-- Should Vertical Link fault percentages be counted over physical bidirectional links or directional links?
+- For final experiment automation, should Vertical Link fault percentages be converted from physical bidirectional links or directional links?
 - Are GEM5/PARSEC traces required for final delivery, or are synthetic traffic experiments sufficient?
 - Should WSL be configured persistently with `ldconfig` for the local SystemC library, or should future Noxim runs keep using a per-process `LD_LIBRARY_PATH`?
 - What exact algorithmic representation should carry chiplet-to-interposer Down movement and interposer-to-chiplet Up movement in DeFT routing and VN-transition logic?
@@ -245,12 +266,12 @@ External source tree registered during `T0023`:
 
 ## Next Recommended Task
 
-Start `T0010` and implement the centralized startup-time permanent Vertical Link fault injection manager, using the T0008 VL model and T0009 boundary-router query surface without changing DeFT route selection or VN behavior.
+Start `T0011` and add focused fault-mask validation for the T0010 manager, especially explicit/generated masks up to the proposal's 25% target, without changing DeFT route selection or VN behavior.
 
 ## Next Ready-to-Send Prompt
 
 ```text
-Start task T0010: Implement Fault Injection Manager.
+Start task T0011: Add Fault Mask Validation.
 
 Before starting, read AGENTS.md, docs/PROGRESS.md, docs/TASKS.md, docs/ROADMAP.md, docs/ARCHITECTURE.md, docs/VALIDATION.md, and docs/DECISIONS.md.
 
@@ -262,20 +283,20 @@ external/noxim
 `external/noxim` is the Noxim submodule and modifiable project fork from:
 https://github.com/YusufTahirOrhan/noxim
 
-T0007 added selectable `DEFT_2_5D` topology construction, the `DeftTopology` mapping helper, four isolated 4x4 chiplet meshes, an 8x8 active-interposer mesh, and the deterministic 16-VL endpoint table. T0008 extended `DeftTopology` into the centralized physical Vertical Link model/query surface with stable VL IDs, chiplet ownership, slots, chiplet/interposer endpoints, default functional state, functional-state query/mutation helpers, and structural VL validation. T0009 added the derived boundary-router inventory/query surface with stable router ID, owner chiplet, local coordinate, VL slot, attached VL ID, and attached interposer endpoint. The construction smoke config is:
+T0007 added selectable `DEFT_2_5D` topology construction, the `DeftTopology` mapping helper, four isolated 4x4 chiplet meshes, an 8x8 active-interposer mesh, and the deterministic 16-VL endpoint table. T0008 extended `DeftTopology` into the centralized physical Vertical Link model/query surface. T0009 added the derived boundary-router inventory/query surface. T0010 added `DeftFaultInjectionManager`, `deft_faulty_vertical_links`, `deft_vl_fault_count`, seed-controlled random physical VL fault selection, startup fault-state application, inspectability output, and the minimum guard that no chiplet is left with zero functional VLs. The construction smoke config is:
 external/noxim/config_examples/deft_2_5d_topology.yaml
 
-Goal: add the smallest centralized startup-time permanent Vertical Link fault injection manager needed after T0009. The manager should use the existing physical VL model and mutation helpers to mark selected VLs functional or faulty before simulation traffic runs. Keep the task focused on fault-state setup and inspectability only.
+Goal: add the smallest focused fault-mask validation layer needed after T0010. Validate explicit and generated fault masks for the current physical VL model, especially masks corresponding to the proposal's 25% target, while keeping the task focused on validation and inspectability only.
 
-Keep this task independent from DeFT routing behavior, route selection, VN assignment behavior, VN transition restrictions, VL LUT generation, experiment automation, metrics changes, and golden regression output updates. Do not implement T0011 fault-mask validation beyond the smallest guard needed to avoid fully disconnecting any chiplet if the selected T0010 design requires it.
+Keep this task independent from DeFT routing behavior, route selection, VN assignment behavior, VN transition restrictions, VL LUT generation, experiment automation, metrics changes, and golden regression output updates.
 
-Known result so far: T0008 provides `resetVerticalLinkStates()`, `setVerticalLinkFunctional()`, `isVerticalLinkFunctional()`, `functionalVerticalLinksForChiplet(chiplet_id)`, `hasFunctionalVerticalLinkForChiplet(chiplet_id)`, and structural VL validation. T0009 provides boundary-router inventory and lookup helpers. T0010 should reuse these surfaces and should not introduce a parallel VL or boundary-router inventory.
+Known result so far: T0010 counts configured faults over the current 16 physical bidirectional VLs and leaves percentage conversion/directional accounting as future work. Decide the smallest validation surface that keeps explicit/generated masks reproducible and rejects masks that are invalid for the current physical VL model. Do not introduce a parallel VL or boundary-router inventory.
 
 Use `Extended_Proposal.pdf` as the primary project requirements source and the original DeFT paper at `docs/references/DeFT_A_Deadlock-Free_and_Fault-Tolerant_Routing_Algorithm_for_2.5D_Chiplet_Networks.pdf` as the primary algorithmic reference. Use `Proposal.pdf` only as initial context. Ignore the peer evaluation document completely.
 
-Before coding, produce a short implementation plan. Work only on the selected fault-injection-manager task. Do not modify unrelated files. Clearly mark assumptions as `Assumption` and blockers as `Blocked`.
+Before coding, produce a short implementation plan. Work only on the selected fault-mask-validation task. Do not modify unrelated files. Clearly mark assumptions as `Assumption` and blockers as `Blocked`.
 
-Use only known validation commands. The baseline build command is documented as `./build.sh` from `external/noxim` in WSL Ubuntu. The construction smoke command is documented in `docs/VALIDATION.md`; only run a simulation if the task preserves the construction-only no-traffic invocation or provides another clearly valid invocation. Do not use `./regression.sh --update`.
+Use only known validation commands. The baseline build command is documented as `./build.sh` from `external/noxim` in WSL Ubuntu. The construction smoke command and the T0010 faulted construction smoke command are documented in `docs/VALIDATION.md`; only run simulations if they preserve construction-only no-traffic invocation or provide another clearly valid invocation. Do not use `./regression.sh --update`.
 
 Update docs/ARCHITECTURE.md, docs/TASKS.md, docs/PROGRESS.md, docs/VALIDATION.md, and docs/PROMPTS.md with the result. If a durable implementation decision becomes clear, update docs/DECISIONS.md too.
 
@@ -302,5 +323,5 @@ None; continue on the existing branch.
 ## Suggested Commit Message
 
 ```text
-feat: add boundary router inventory
+feat: add vertical link fault injection manager
 ```

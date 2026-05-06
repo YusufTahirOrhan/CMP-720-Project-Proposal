@@ -228,6 +228,52 @@ T0009 result on 2026-05-06:
 - `git -c safe.directory=C:/Projects/CMP-720-Project-Proposal/external/noxim -C external/noxim diff --check` completed with exit code `0`.
 - No startup-time fault injection behavior, fault-mask generation, fault-rate configuration, DeFT routing behavior, route selection, VN behavior, VL LUT generation, experiment automation, metrics change, golden regression output update, or DeFT experiment was run.
 
+## Fault Injection Manager
+
+Purpose:
+
+- Validate that startup-time permanent VL fault state is applied through the centralized `DeftTopology` physical VL model.
+- Confirm default construction still starts with no faulty VLs.
+- Confirm seed-controlled random physical VL fault selection is reproducible for a given seed and keeps at least one functional VL per chiplet.
+- Confirm fault-state setup does not implement route selection, VN behavior, VL LUT lookup, traffic changes, metrics changes, or golden output updates.
+
+Known validation:
+
+- Build from the Noxim repository root in WSL Ubuntu: `./build.sh`
+- Default construction smoke from `external/noxim/bin` in WSL Ubuntu:
+
+```bash
+LD_LIBRARY_PATH=/mnt/c/Projects/CMP-720-Project-Proposal/external/noxim/bin/libs/systemc-2.3.1/lib-linux64 ./noxim -config ../config_examples/deft_2_5d_topology.yaml -seed 0 -sim 20 -warmup 0
+```
+
+- Faulted construction smoke from `external/noxim/bin` in WSL Ubuntu:
+
+```bash
+LD_LIBRARY_PATH=/mnt/c/Projects/CMP-720-Project-Proposal/external/noxim/bin/libs/systemc-2.3.1/lib-linux64 ./noxim -config ../config_examples/deft_2_5d_topology.yaml -seed 0 -sim 20 -warmup 0 -deft_vl_fault_count 4
+```
+
+T0010 result on 2026-05-07:
+
+- Required startup reading was completed before task work: `AGENTS.md`, `docs/PROGRESS.md`, `docs/TASKS.md`, `docs/ROADMAP.md`, `docs/ARCHITECTURE.md`, `docs/VALIDATION.md`, `docs/DECISIONS.md`, and `docs/PROMPTS.md`.
+- Before implementation, `git status --short --branch` in the parent repository showed branch `feat/map-noxim-extension-points...origin/feat/map-noxim-extension-points`.
+- Before implementation, `git -c safe.directory=C:/Projects/CMP-720-Project-Proposal/external/noxim -C external/noxim status --short --branch` showed branch `feat/baseline-noxim...origin/feat/baseline-noxim` with no local file modifications.
+- Required source documents were confirmed present: `Extended_Proposal.pdf`, `Proposal.pdf`, and `docs/references/DeFT_A_Deadlock-Free_and_Fault-Tolerant_Routing_Algorithm_for_2.5D_Chiplet_Networks.pdf`.
+- Short source-document checks found the centralized permanent VL fault requirement, the no-chiplet-disconnected constraint, and 25% fault-rate target context.
+- T0010 added `DeftFaultInjectionManager` for startup-time permanent physical VL fault-state setup.
+- The manager supports `deft_faulty_vertical_links` for explicit physical VL IDs and `deft_vl_fault_count` for seed-controlled random physical VL selection.
+- The manager reuses `DeftTopology::resetVerticalLinkStates()`, `setVerticalLinkFunctional()`, `functionalVerticalLinksForChiplet()`, and `hasFunctionalVerticalLinkForChiplet()` instead of introducing a parallel VL inventory.
+- The minimum guard rejects duplicate/out-of-range explicit fault IDs, incompatible explicit/random modes, and masks that would fully disconnect a chiplet.
+- Assumption: T0010 counts configured faults over the 16 physical bidirectional VLs. Percentage conversion and directional VL accounting remain future work.
+- Assumption: Fault state is startup metadata in T0010. All physical VL links are still constructed; route selection does not yet avoid faulty VLs.
+- `./build.sh` from `external/noxim` completed with exit code `0` in WSL Ubuntu and emitted only pre-existing Noxim warnings.
+- The default construction smoke completed with exit code `0` and reported `mode=none`, `requested_fault_count=0`, `faulty_vertical_links=[]`, and per-chiplet functional VL counts `4,4,4,4`.
+- The faulted construction smoke initially failed once with WSL sandbox `E_ACCESSDENIED`; the same command was rerun with approval and completed with exit code `0`.
+- The faulted construction smoke reported `mode=random`, `seed=0`, `requested_fault_count=4`, `faulty_vertical_links=[0,1,5,13]`, and per-chiplet functional VL counts `2,3,4,3`.
+- The faulted construction smoke printed `functional=false` for VLs `0`, `1`, `5`, and `13`, and `functional=true` for the remaining VLs.
+- Both construction smoke runs intentionally used no traffic, so each reported zero received packets and zero received flits. The `-nan` average-delay and wireless-utilization values are expected for no-packet construction smokes and are not experiment results.
+- `git -c safe.directory=C:/Projects/CMP-720-Project-Proposal/external/noxim -C external/noxim diff --check` completed with exit code `0`.
+- No DeFT routing behavior, route selection, VN behavior, VN transition restriction, VL LUT generation, experiment automation, metrics change, golden regression output update, or DeFT experiment was run.
+
 ## Build Validation
 
 Purpose:
