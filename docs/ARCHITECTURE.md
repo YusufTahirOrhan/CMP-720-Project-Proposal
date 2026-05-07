@@ -572,6 +572,177 @@ Assumption: A practical LUT key should include at least fault state, source chip
 
 Assumption: The implementation should support the original paper's intended model of offline analysis with runtime lookup under observed fault state.
 
+## T0015 Offline VL LUT Format Design
+
+`T0015` defines the offline Vertical Link LUT schema before generator or runtime lookup implementation. It does not create LUT artifacts, implement exhaustive search, load tables at simulator startup, change final VL selection, alter metrics, update golden regression outputs, or run DeFT performance experiments.
+
+Source alignment:
+
+- `Extended_Proposal.pdf` requires offline VL selection that minimizes a cost combining Manhattan distance and load imbalance, with `rho = 0.01`.
+- The original DeFT paper uses a design-time search across VL-fault scenarios and stores the resulting selections in router lookup tables for runtime use.
+- The original DeFT paper requires two VL-related selections for each inter-chiplet packet: one source-chiplet exit VL and one destination-side entry VL from the interposer toward the destination chiplet.
+- The current implementation foundation models 16 physical bidirectional VL IDs through `DeftTopology`, with fault masks validated over those same physical IDs by `DeftFaultInjection`.
+
+### Canonical Storage
+
+The LUT artifact should be a YAML file using a restricted, deterministic subset that can be parsed by the existing Noxim YAML dependency:
+
+- File format: YAML mapping and sequence subset only.
+- Schema identifier: `schema: deft_vl_lut.v1`.
+- Top-level ordering: `schema`, `topology`, `topology_signature`, `generation`, `fault_scenarios`, `entries`.
+- No YAML anchors, aliases, implicit dates, or implementation-specific tags.
+- Integer IDs are written in decimal except `fault_mask_id`, which is a quoted fixed-width hexadecimal bitset string.
+- Floating-point cost fields are written with a deterministic generator-owned precision.
+
+Recommended filename pattern:
+
+```text
+deft_vl_lut.<topology>.<traffic_profile_id>.yaml
+```
+
+Example top-level shape:
+
+```yaml
+schema: deft_vl_lut.v1
+topology: DEFT_2_5D
+topology_signature:
+  chiplet_count: 4
+  chiplet_router_count: 64
+  interposer_router_count: 64
+  physical_vertical_link_count: 16
+  vertical_links_per_chiplet: 4
+generation:
+  objective: rho_distance_plus_load_imbalance
+  rho: 0.01
+  traffic_profile_id: synthetic-uniform-example
+fault_scenarios:
+  - fault_mask_id: "0x0000"
+    faulty_vl_ids: []
+    functional_vl_ids: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
+entries:
+  - key:
+      fault_mask_id: "0x0000"
+      source_chiplet_id: 0
+      source_router_id: 0
+      destination_chiplet_id: 1
+    value:
+      source_exit:
+        selected_vl_id: 0
+        boundary_router_id: 1
+        interposer_endpoint_router_id: 65
+        ranked_vl_ids: [0, 1, 2, 3]
+      destination_entry:
+        selected_vl_id: 4
+        boundary_router_id: 5
+        interposer_endpoint_router_id: 69
+        ranked_vl_ids: [4, 5, 6, 7]
+      cost:
+        source_exit_total: 0.0
+        destination_entry_total: 0.0
+```
+
+The example is structural only; it is not a generated optimum and must not be used as golden routing data.
+
+### Fault Mask Key
+
+`fault_mask_id` is the canonical runtime fault-state key. In schema v1 it is a quoted hexadecimal bitset over the current 16 physical bidirectional VL IDs:
+
+```text
+bit vl_id = 1 means physical VL vl_id is faulty
+bit vl_id = 0 means physical VL vl_id is functional
+```
+
+Examples:
+
+| Faulty physical VL IDs | `fault_mask_id` |
+| --- | --- |
+| `[]` | `"0x0000"` |
+| `[0]` | `"0x0001"` |
+| `[0,4,8,12]` | `"0x1111"` |
+| `[15]` | `"0x8000"` |
+
+The artifact keeps both `fault_mask_id` and the sorted `faulty_vl_ids` list. The string is the compact lookup key, while the list is the human-readable and validation-facing representation.
+
+Assumption: Schema v1 intentionally follows T0010/T0011 by using physical bidirectional VL IDs `0..15`, not directional VL endpoints.
+
+Assumption: The no-fault mask must be present even though the original paper's example fault-combination count focuses on nonzero local fault cases, because the simulator supports a 0% fault scenario and later comparisons need it.
+
+Blocked: Final experiment percentage accounting over physical versus directional VLs remains unresolved and should not change schema v1 without a new decision.
+
+### Entry Key
+
+Each LUT entry key is a tuple:
+
+| Field | Meaning | Runtime source |
+| --- | --- | --- |
+| `fault_mask_id` | Current permanent startup VL fault state | Derived from `DeftTopology::verticalLinks()` or `DeftFaultInjection::faultyVerticalLinkIds()` |
+| `source_chiplet_id` | Owner chiplet of the original packet source router | `DeftTopology::decodeRouterId(RouteData::src_id).chiplet_id` |
+| `source_router_id` | Original packet source router ID on the chiplet layer | `RouteData::src_id` |
+| `destination_chiplet_id` | Owner chiplet of the final packet destination router | `DeftTopology::decodeRouterId(RouteData::dst_id).chiplet_id` |
+
+Validation requirements for a schema v1 entry:
+
+- `source_router_id` must be a chiplet router ID in `0..63`.
+- `source_chiplet_id` must match the decoded chiplet owner of `source_router_id`.
+- `destination_chiplet_id` must be in `0..3`.
+- `source_chiplet_id` and `destination_chiplet_id` must differ, because intra-chiplet packets do not use the VL LUT.
+- The referenced `fault_mask_id` must exist in `fault_scenarios`.
+- The selected source-exit VL must belong to `source_chiplet_id` and must be functional under the referenced fault mask.
+- The selected destination-entry VL must belong to `destination_chiplet_id` and must be functional under the referenced fault mask.
+
+Assumption: `destination_router_id` is not part of schema v1 because the current task requires destination-chiplet traceability and the proposal's mathematical formulation is chiplet-local. A later generator task may add destination-router-granular entries only through a schema version bump or an explicitly optional field.
+
+### Entry Value
+
+Each entry stores the two runtime selections needed by one inter-chiplet packet context:
+
+- `source_exit`: the physical VL to route toward while the packet is still on the source chiplet.
+- `destination_entry`: the physical VL endpoint on the destination chiplet footprint that the interposer route should target before moving up into the destination chiplet.
+
+Required value fields:
+
+| Field | Meaning |
+| --- | --- |
+| `selected_vl_id` | Stable physical bidirectional VL ID from `DeftTopology::VerticalLinkInfo::vl_id` |
+| `boundary_router_id` | Chiplet-layer boundary router endpoint for the selected VL |
+| `interposer_endpoint_router_id` | Interposer-layer router endpoint for the selected VL |
+| `ranked_vl_ids` | Deterministically ordered functional candidate VL IDs for inspectability and future fallback policy design |
+
+Optional cost fields may be included under `cost` for debug and validation:
+
+- `source_exit_total`.
+- `source_exit_distance`.
+- `source_exit_load_imbalance`.
+- `destination_entry_total`.
+- `destination_entry_distance`.
+- `destination_entry_load_imbalance`.
+
+Runtime schema v1 should use only `selected_vl_id` and derived endpoints for final routing. `ranked_vl_ids` and cost fields are inspectability data unless a later task explicitly designs fallback behavior.
+
+### Deterministic Ordering
+
+Generator output must be byte-stable for the same topology, traffic profile, fault scenarios, and generator version:
+
+- `fault_scenarios` sorted by numeric `fault_mask_id`.
+- `faulty_vl_ids`, `functional_vl_ids`, and all `ranked_vl_ids` sorted by deterministic generator rules.
+- `entries` sorted lexicographically by `(fault_mask_id numeric value, source_chiplet_id, source_router_id, destination_chiplet_id)`.
+- Candidate ranking ties resolved by `(total_cost, load_imbalance_cost, distance_cost, selected_vl_id)` unless T0016 documents a better source-aligned tie-breaker.
+- Every selected VL must also appear as the first item in its corresponding `ranked_vl_ids`.
+
+### Runtime Lookup Contract
+
+Future runtime lookup should:
+
+1. Ignore the LUT for intra-chiplet packets.
+2. Build the current `fault_mask_id` from the active physical VL functional states after startup fault injection.
+3. Derive `source_chiplet_id`, `source_router_id`, and `destination_chiplet_id` from existing `RouteData::src_id` and `RouteData::dst_id`.
+4. Require an exact LUT entry match.
+5. Use `source_exit.selected_vl_id` while routing on the source chiplet toward the interposer.
+6. Use `destination_entry.interposer_endpoint_router_id` as the destination-side intermediate target while routing across the interposer.
+7. Use `destination_entry.selected_vl_id` to move up through a functional destination-side physical VL.
+
+Blocked: Runtime LUT loading, route-data intermediate-destination state, final VL selection behavior, and any fallback when an exact entry is missing are future tasks.
+
 ## Synthetic Traffic Models
 
 Planned:

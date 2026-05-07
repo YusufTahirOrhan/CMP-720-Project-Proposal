@@ -2,7 +2,7 @@
 
 ## Current Phase
 
-Phase 6 - Offline VL LUT Format Design
+Phase 6 - Offline VL LUT Generator Implementation
 
 ## Completed Tasks
 
@@ -20,10 +20,11 @@ Phase 6 - Offline VL LUT Format Design
 - `T0012` - Design VN State Representation.
 - `T0013` - Implement VN Assignment Rules.
 - `T0014` - Enforce VN Transition Restrictions.
+- `T0015` - Design Offline VL LUT Format.
 - `T0023` - Add or register the Noxim source tree.
 - `T0024` - Decide Windows 11 development environment and persist paper reference.
 
-DeFT VN assignment behavior and the first VN movement-transition restriction enforcement layer have been implemented for `DEFT_2_5D`. Full DeFT routing behavior, fault-aware VL LUT generation/use, experiment automation, and metrics tasks have not been implemented.
+DeFT VN assignment behavior, the first VN movement-transition restriction enforcement layer, and the offline VL LUT schema have been documented for `DEFT_2_5D`. Full DeFT routing behavior, fault-aware VL LUT generation/use, experiment automation, and metrics tasks have not been implemented.
 
 ## In-Progress Tasks
 
@@ -35,26 +36,27 @@ DeFT VN assignment behavior and the first VN movement-transition restriction enf
 
 ## Last Validation Result
 
-- T0014 VN Transition Restrictions completed on 2026-05-07.
+- T0015 Offline VL LUT Format Design completed on 2026-05-07 as a documentation-only task.
 - Required startup reading was completed before task work: `AGENTS.md`, `docs/PROGRESS.md`, `docs/TASKS.md`, `docs/ROADMAP.md`, `docs/ARCHITECTURE.md`, `docs/VALIDATION.md`, `docs/DECISIONS.md`, and `docs/PROMPTS.md`.
-- Before implementation, `git status --short --branch` in the parent repository showed branch `feat/map-noxim-extension-points...origin/feat/map-noxim-extension-points` with no local file modifications.
-- Before implementation, `git -c safe.directory=C:/Projects/CMP-720-Project-Proposal/external/noxim -C external/noxim status --short --branch` showed branch `feat/baseline-noxim...origin/feat/baseline-noxim` with no local file modifications.
+- Before documentation edits, `git status --short --branch` in the parent repository showed branch `feat/map-noxim-extension-points...origin/feat/map-noxim-extension-points` with no local file modifications.
+- Before documentation edits, `git -c safe.directory=C:/Projects/CMP-720-Project-Proposal/external/noxim -C external/noxim status --short --branch` showed branch `feat/baseline-noxim...origin/feat/baseline-noxim` with no local file modifications.
 - Source document availability was confirmed for `Extended_Proposal.pdf`, `Proposal.pdf`, and `docs/references/DeFT_A_Deadlock-Free_and_Fault-Tolerant_Routing_Algorithm_for_2.5D_Chiplet_Networks.pdf`.
-- Short source-document checks found the Extended Proposal's three VN restriction requirements and the original DeFT paper's rules forbidding VN.1 to VN.0, Up-to-Horizontal in VN.0, and Horizontal-to-Down in VN.1.
-- T0014 added `DeftVirtualNetwork::isOutputDirectionAllowed()` as a DeFT-only output-direction filtering helper.
-- T0014 derives Up/Down/Horizontal movement from `RouteData::dir_in`, the candidate output direction, current router layer, and boundary-router status without adding packet/flit movement-history metadata.
-- Router selection now filters illegal DeFT output candidates before reservation and skips reservation when no legal candidate exists.
-- VN.1 to VN.0 remains forbidden by `DeftVirtualNetwork::canTransition()`.
-- Up-to-Horizontal in VN.0 is avoided by forcing interposer-to-chiplet entry traffic to VN.1 before horizontal forwarding.
-- Horizontal-to-Down in VN.1 is rejected; Horizontal-to-Down in VN.0 preserves VN.0 instead of consuming boundary round-robin state.
-- `./build.sh` from `external/noxim` completed with exit code `0` in WSL Ubuntu.
-- The construction-only no-traffic smoke completed with exit code `0`, reported the expected 128-router topology, 16 boundary routers, 16 functional physical VLs, no faults, zero received packets, and zero received flits.
-- The construction smoke still reports `-nan` average delay and wireless utilization because it intentionally injects no traffic; these are not experiment metrics.
-- `git -c safe.directory=C:/Projects/CMP-720-Project-Proposal/external/noxim -C external/noxim diff --check` completed with exit code `0`.
-- Assumption: `DEFT_2_5D` is the current DeFT-enabled mode because no separate DeFT routing-mode flag exists yet.
-- Assumption: `DIRECTION_HUB` remains the current physical carrier for Vertical Link traversal; T0014 classifies chiplet-boundary hub input as Up and chiplet-boundary hub output as Down only for `DEFT_2_5D` transition checks.
-- Blocked: Full DeFT route selection and fault-aware VL choices remain future work, so T0014 cannot prove alternate legal route availability when the current routing algorithm offers only illegal candidates.
-- No final VL selection, LUT generation, experiment automation, metrics change, golden regression output update, or DeFT performance experiment was run.
+- Short source-document checks found the Extended Proposal's offline VL-selection formulation using Manhattan distance, load imbalance, exhaustive search, LUTs, and `rho = 0.01`.
+- Short source-document checks found the original DeFT paper's design-time VL-fault scenario analysis, runtime lookup-table use, and requirement for two VL selections per inter-chiplet packet.
+- Source inspection was limited to existing documentation-support surfaces in `external/noxim`: `DeftTopology.*`, `DeftFaultInjectionManager.*`, `DeftVirtualNetwork.*`, `DataStructs.h`, `Router.cpp`, `Routing_XY.cpp`, and the construction-only `deft_2_5d_topology.yaml`.
+- T0015 documented `deft_vl_lut.v1`, a restricted deterministic YAML format keyed by quoted physical fault-mask bitset, source chiplet ID, source router ID, and destination chiplet ID.
+- T0015 defined paired `source_exit` and `destination_entry` values with selected physical VL IDs, boundary router endpoints, interposer endpoint router IDs, ranked functional candidate VL IDs, and optional cost fields for inspectability.
+- T0015 defines `fault_mask_id` as a fixed-width hexadecimal bitset over current physical bidirectional VL IDs `0..15`; bit `vl_id` set means that physical VL is faulty.
+- T0015 records that the no-fault mask must be generated for 0% fault scenarios.
+- ADR-0026 records the durable schema decision.
+- After documentation updates, `git status --short --branch` in the parent repository showed only the expected modified documentation files: `docs/ARCHITECTURE.md`, `docs/DECISIONS.md`, `docs/PROGRESS.md`, `docs/PROMPTS.md`, `docs/TASKS.md`, and `docs/VALIDATION.md`.
+- After documentation updates, `git diff --name-only` in the parent repository showed the same six documentation files only.
+- After documentation updates, `git -c safe.directory=C:/Projects/CMP-720-Project-Proposal/external/noxim -C external/noxim status --short --branch` remained clean on branch `feat/baseline-noxim...origin/feat/baseline-noxim`.
+- After documentation updates, `git -c safe.directory=C:/Projects/CMP-720-Project-Proposal/external/noxim -C external/noxim diff --name-only` returned no files.
+- Assumption: Schema v1 follows the T0010/T0011 physical bidirectional VL model, not directional endpoint accounting.
+- Assumption: `destination_router_id` is not part of schema v1; a future task can add destination-router-granular entries only through a schema version bump or an explicitly optional field.
+- Blocked: Generator implementation, runtime LUT loading, exact miss handling, route-data intermediate-destination state, final VL selection behavior, and physical-vs-directional experiment percentage accounting remain future work.
+- No Noxim source files, simulator behavior, route selection, experiment automation, metrics, simulations, regression commands, golden regression outputs, or DeFT performance experiments were changed or run.
 
 ## Important Changed Files
 
@@ -235,6 +237,15 @@ Files updated during `T0014` VN Transition Restrictions:
 - `docs/PROMPTS.md`
 - `docs/DECISIONS.md`
 
+Files updated during `T0015` Offline VL LUT Format Design:
+
+- `docs/ARCHITECTURE.md`
+- `docs/TASKS.md`
+- `docs/PROGRESS.md`
+- `docs/VALIDATION.md`
+- `docs/PROMPTS.md`
+- `docs/DECISIONS.md`
+
 Noxim build files LF-normalized during `T0003`:
 
 - `external/noxim/bin/Makefile`
@@ -314,6 +325,12 @@ External source tree registered during `T0023`:
 - Assumption: T0013's output-VC-aware reservation and forwarding path is the required foundation for safe VN reassignment; changing only `Flit::vc_id` without matching downstream full-status checks would be unsafe.
 - Assumption: T0014 uses `DIRECTION_HUB` only as the current physical VL traversal carrier and derives Up/Down semantics from `DeftTopology` layer and boundary-router context.
 - Assumption: T0014 does not need additional packet/flit movement-history metadata because the current input port is sufficient for the enforced Up-to-Horizontal and Horizontal-to-Down restrictions.
+- Assumption: T0015 schema v1 uses a restricted deterministic YAML format named `deft_vl_lut.v1`.
+- Assumption: T0015 keys runtime LUT entries by physical fault mask, source chiplet ID, source router ID, and destination chiplet ID.
+- Assumption: T0015 uses a quoted fixed-width hexadecimal `fault_mask_id` over current physical bidirectional VL IDs `0..15`, where bit `vl_id` set means the physical VL is faulty.
+- Assumption: T0015 stores paired `source_exit` and `destination_entry` selections because each inter-chiplet packet needs one VL choice on the source chiplet and one destination-side entry choice from the interposer.
+- Assumption: T0015 keeps `destination_router_id` out of schema v1; a future schema can add destination-router granularity only through a version bump or explicitly optional field.
+- Assumption: T0015 includes the no-fault mask so 0% fault scenarios can use the same lookup path.
 
 ## Open Questions
 
@@ -325,12 +342,12 @@ External source tree registered during `T0023`:
 
 ## Next Recommended Task
 
-Start `T0015` and design the offline VL LUT format before implementing generation or runtime lookup.
+Start `T0016` and implement the offline VL LUT generator that emits the documented `deft_vl_lut.v1` schema.
 
 ## Next Ready-to-Send Prompt
 
 ```text
-Start task T0015: Design Offline VL LUT Format.
+Start task T0016: Implement Offline VL LUT Generator.
 
 Before starting, read AGENTS.md, docs/PROGRESS.md, docs/TASKS.md, docs/ROADMAP.md, docs/ARCHITECTURE.md, docs/VALIDATION.md, docs/DECISIONS.md, and docs/PROMPTS.md.
 
@@ -342,17 +359,17 @@ external/noxim
 `external/noxim` is the Noxim submodule and modifiable project fork from:
 https://github.com/YusufTahirOrhan/noxim
 
-T0007 added selectable `DEFT_2_5D` topology construction and the `DeftTopology` mapping helper. T0008 centralized the physical Vertical Link model and functional state. T0009 added the derived boundary-router inventory. T0010 added startup-time permanent physical VL fault injection. T0011 added focused explicit/generated fault-mask validation and inspectability against the current 16 physical bidirectional VL model. T0012 mapped DeFT VN state directly onto Noxim VC IDs. T0013 implemented VN assignment and output-VC-aware reservation/forwarding. T0014 added DeFT-only VN transition-restriction filtering without packet/flit movement-history metadata.
+T0007 added selectable `DEFT_2_5D` topology construction and the `DeftTopology` mapping helper. T0008 centralized the physical Vertical Link model and functional state. T0009 added the derived boundary-router inventory. T0010 added startup-time permanent physical VL fault injection. T0011 added focused explicit/generated fault-mask validation and inspectability against the current 16 physical bidirectional VL model. T0012 mapped DeFT VN state directly onto Noxim VC IDs. T0013 implemented VN assignment and output-VC-aware reservation/forwarding. T0014 added DeFT-only VN transition-restriction filtering without packet/flit movement-history metadata. T0015 designed the offline VL LUT format: `deft_vl_lut.v1`, a restricted deterministic YAML schema keyed by physical fault-mask bitset, source chiplet ID, source router ID, and destination chiplet ID, with paired `source_exit` and `destination_entry` values over current physical VL IDs.
 
-Goal: design the offline Vertical Link LUT format before implementing generation or runtime lookup. Define the lookup keys, values, storage format, deterministic ordering, and how the schema maps to current physical VL IDs, fault masks, source chiplet/router context, destination chiplet, and future runtime selection.
+Goal: implement the smallest focused offline Vertical Link LUT generator that emits the T0015 `deft_vl_lut.v1` schema. Generate deterministic fault-aware source-exit and destination-entry VL selections using the proposal's cost formulation: Manhattan distance plus load imbalance with `rho = 0.01`, unless source inspection proves a narrowly documented adjustment is required.
 
-Keep this task documentation-first and independent from LUT generator implementation, runtime LUT loading, final VL selection, experiment automation, metrics changes, golden regression output updates, and DeFT performance experiments. Do not modify Noxim source code unless source inspection proves a tiny documentation-support scaffold is required; justify any such change before editing.
+Keep this task independent from runtime LUT loading, final route selection, experiment automation, metrics changes, golden regression output updates, and DeFT performance experiments. Do not change router runtime behavior in this task. If source code changes are needed, keep them limited to generator support and justify the chosen location before editing.
 
 Use `Extended_Proposal.pdf` as the primary project requirements source and the original DeFT paper at `docs/references/DeFT_A_Deadlock-Free_and_Fault-Tolerant_Routing_Algorithm_for_2.5D_Chiplet_Networks.pdf` as the primary algorithmic reference. Use `Proposal.pdf` only as initial context. Ignore the peer evaluation document completely.
 
-Before editing, produce a short implementation plan. Work only on the selected offline VL LUT format design task. Do not modify unrelated files. Clearly mark assumptions as `Assumption` and blockers as `Blocked`.
+Before coding, produce a short implementation plan. Work only on the selected offline VL LUT generator task. Do not modify unrelated files. Clearly mark assumptions as `Assumption` and blockers as `Blocked`.
 
-Use only known validation commands. For a documentation-only task, use repository and submodule status checks unless a source change is explicitly justified. Do not run simulations unless source code changes and the existing construction-only no-traffic invocation remains valid. Do not use `./regression.sh --update`.
+Use only known validation commands. If the generator is implemented in Noxim C++ or touches build-integrated source, use the documented `./build.sh` from `external/noxim` in WSL Ubuntu and any existing construction-only no-traffic smoke only when the invocation remains valid. If the generator is a standalone script or documentation artifact, validate with deterministic output checks and repository/submodule status checks; do not invent simulator commands. Do not use `./regression.sh --update`.
 
 Update docs/ARCHITECTURE.md, docs/TASKS.md, docs/PROGRESS.md, docs/VALIDATION.md, and docs/PROMPTS.md with the result. If a durable implementation decision becomes clear, update docs/DECISIONS.md too.
 
@@ -379,5 +396,5 @@ None; continue on the existing branch.
 ## Suggested Commit Message
 
 ```text
-feat: enforce DeFT VN transition restrictions
+docs: design offline VL LUT format
 ```

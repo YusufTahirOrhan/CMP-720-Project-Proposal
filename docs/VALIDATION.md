@@ -433,6 +433,40 @@ T0014 result on 2026-05-07:
 - Blocked: Final DeFT route selection and fault-aware VL choices remain future work, so T0014 cannot prove alternate legal route availability when the current routing algorithm offers only illegal candidates.
 - No final VL selection, LUT generation, experiment automation, metrics change, golden regression output update, or DeFT performance experiment was run.
 
+## Offline VL LUT Format Design
+
+Purpose:
+
+- Validate that T0015 remains documentation-only.
+- Confirm the offline LUT schema is traceable to the source documents, current physical VL IDs, fault-mask model, source router context, and destination chiplet context.
+- Confirm no generator implementation, runtime LUT loading, route selection, metrics, simulations, regression outputs, or Noxim source files are changed.
+
+Known validation:
+
+- Parent repository status: `git status --short --branch`
+- Noxim submodule status: `git -c safe.directory=C:/Projects/CMP-720-Project-Proposal/external/noxim -C external/noxim status --short --branch`
+
+T0015 result on 2026-05-07:
+
+- Required startup reading was completed before task work: `AGENTS.md`, `docs/PROGRESS.md`, `docs/TASKS.md`, `docs/ROADMAP.md`, `docs/ARCHITECTURE.md`, `docs/VALIDATION.md`, `docs/DECISIONS.md`, and `docs/PROMPTS.md`.
+- Before documentation edits, `git status --short --branch` in the parent repository showed branch `feat/map-noxim-extension-points...origin/feat/map-noxim-extension-points` with no local file modifications.
+- Before documentation edits, `git -c safe.directory=C:/Projects/CMP-720-Project-Proposal/external/noxim -C external/noxim status --short --branch` showed branch `feat/baseline-noxim...origin/feat/baseline-noxim` with no local file modifications.
+- Required source documents were confirmed present: `Extended_Proposal.pdf`, `Proposal.pdf`, and `docs/references/DeFT_A_Deadlock-Free_and_Fault-Tolerant_Routing_Algorithm_for_2.5D_Chiplet_Networks.pdf`.
+- `pdftotext` was not available in the current environment. The bundled Python runtime with `pypdf` was used to inspect short source-document snippets in memory. No extracted text files were created.
+- Short source-document checks confirmed the Extended Proposal's offline VL-selection formulation using Manhattan distance, load imbalance, exhaustive search, LUTs, and `rho = 0.01`.
+- Short source-document checks confirmed the original DeFT paper's design-time analysis over VL-fault scenarios, runtime lookup-table use, and two VL selections per inter-chiplet packet.
+- Source inspection was limited to existing documentation-support surfaces in `external/noxim`: `DeftTopology.*`, `DeftFaultInjectionManager.*`, `DeftVirtualNetwork.*`, `DataStructs.h`, `Router.cpp`, `Routing_XY.cpp`, and `config_examples/deft_2_5d_topology.yaml`.
+- T0015 documented `deft_vl_lut.v1`, a restricted deterministic YAML schema keyed by physical fault-mask bitset, source chiplet ID, source router ID, and destination chiplet ID.
+- T0015 defines `fault_mask_id` as a quoted fixed-width hexadecimal bitset over the current 16 physical bidirectional VL IDs, and records that the no-fault mask must be included.
+- T0015 stores paired `source_exit` and `destination_entry` values with selected physical VL ID, boundary router endpoint, interposer endpoint router ID, ranked functional candidate VL IDs, and optional cost fields for inspectability.
+- ADR-0026 records the durable LUT schema decision.
+- After documentation updates, `git status --short --branch` in the parent repository showed only the expected modified documentation files: `docs/ARCHITECTURE.md`, `docs/DECISIONS.md`, `docs/PROGRESS.md`, `docs/PROMPTS.md`, `docs/TASKS.md`, and `docs/VALIDATION.md`.
+- After documentation updates, `git diff --name-only` in the parent repository showed the same six documentation files only.
+- After documentation updates, `git -c safe.directory=C:/Projects/CMP-720-Project-Proposal/external/noxim -C external/noxim status --short --branch` remained clean on branch `feat/baseline-noxim...origin/feat/baseline-noxim`.
+- After documentation updates, `git -c safe.directory=C:/Projects/CMP-720-Project-Proposal/external/noxim -C external/noxim diff --name-only` returned no files.
+- No build, simulation, regression, or `./regression.sh --update` command was run because T0015 made no source-code change.
+- No Noxim source files, simulator behavior, route selection, experiment automation, metrics, DeFT performance experiments, or golden regression outputs were changed.
+
 ## Build Validation
 
 Purpose:

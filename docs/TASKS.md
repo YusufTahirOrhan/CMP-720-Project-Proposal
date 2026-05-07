@@ -144,13 +144,13 @@ Statuses: `TODO`, `IN_PROGRESS`, `DONE`, `BLOCKED`.
 
 ## T0015: Design Offline VL LUT Format
 
-- **Status:** TODO
+- **Status:** DONE
 - **Objective:** Define the lookup table keys, values, and storage format before implementing generation.
 - **Relevant roadmap phase:** Phase 6
-- **Files likely to change:** `docs/ARCHITECTURE.md`, `docs/DECISIONS.md`, `docs/PROGRESS.md`
+- **Files changed:** `docs/ARCHITECTURE.md`, `docs/DECISIONS.md`, `docs/PROGRESS.md`, `docs/TASKS.md`, `docs/VALIDATION.md`, `docs/PROMPTS.md`
 - **Acceptance criteria:** LUT schema is documented and traceable to fault masks and destination chiplets.
 - **Validation command:** Parent status: `git status --short --branch`. Submodule status: `git -c safe.directory=C:/Projects/CMP-720-Project-Proposal/external/noxim -C external/noxim status --short --branch`.
-- **Notes:** Do not implement the generator in this task. LUT design must be checked against the original DeFT paper.
+- **Notes:** Completed on 2026-05-07 as a documentation-only design task. The schema is `deft_vl_lut.v1`, a restricted deterministic YAML format keyed by quoted physical fault-mask bitset, source chiplet ID, source router ID, and destination chiplet ID. Entry values store paired source-exit and destination-entry physical VL selections, including selected VL ID, boundary endpoint, interposer endpoint, and ranked functional candidate IDs. Fault masks map to the current 16 physical bidirectional VL IDs, and the no-fault mask is included for 0% fault runs. Assumption: schema v1 intentionally follows the T0010/T0011 physical VL model, not directional endpoint accounting. Blocked: generator implementation, runtime loading, exact miss handling, intermediate-destination state, final VL selection behavior, and physical-vs-directional experiment percentage accounting remain future work. No Noxim source files, simulator behavior, route selection, experiment automation, metrics, simulations, or golden regression outputs were changed.
 
 ## T0016: Implement Offline VL LUT Generator
 
@@ -160,7 +160,7 @@ Statuses: `TODO`, `IN_PROGRESS`, `DONE`, `BLOCKED`.
 - **Files likely to change:** To be confirmed after repository inspection
 - **Acceptance criteria:** Generated LUT excludes faulty Vertical Links and is deterministic.
 - **Validation command:** To be confirmed after repository inspection
-- **Notes:** Cost function should use the proposal's formulation with documented assumptions.
+- **Notes:** Cost function should use the proposal's formulation with documented assumptions and emit the `deft_vl_lut.v1` schema from T0015. The generator should not implement runtime LUT loading or final route selection.
 
 ## T0017: Load and Use VL LUT at Boundary Routers
 
