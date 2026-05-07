@@ -124,13 +124,13 @@ Statuses: `TODO`, `IN_PROGRESS`, `DONE`, `BLOCKED`.
 
 ## T0013: Implement VN Assignment Rules
 
-- **Status:** TODO
+- **Status:** DONE
 - **Objective:** Implement DeFT VN assignment behavior for source routers and boundary routers.
 - **Relevant roadmap phase:** Phase 5
-- **Files likely to change:** `external/noxim/src/DataStructs.h`, `external/noxim/src/Router.*`, `external/noxim/src/ProcessingElement.*`, `external/noxim/src/GlobalParams.*`, `external/noxim/src/ConfigurationManager.cpp`, possibly a new DeFT VN helper under `external/noxim/src`, DeFT construction config, and tracking docs.
+- **Files changed:** `external/noxim/src/DeftVirtualNetwork.h`, `external/noxim/src/DeftVirtualNetwork.cpp`, `external/noxim/src/ProcessingElement.cpp`, `external/noxim/src/Router.cpp`, `external/noxim/src/ReservationTable.h`, `external/noxim/src/ReservationTable.cpp`, `external/noxim/src/ConfigurationManager.cpp`, `external/noxim/config_examples/deft_2_5d_topology.yaml`, `docs/ARCHITECTURE.md`, `docs/TASKS.md`, `docs/PROGRESS.md`, `docs/VALIDATION.md`, `docs/PROMPTS.md`, and `docs/DECISIONS.md`
 - **Acceptance criteria:** Inter-chiplet traffic follows the proposal's VN assignment rules.
-- **Validation command:** To be confirmed after repository inspection
-- **Notes:** Must preserve exactly two VCs. Use the T0012 mapping: VC 0 is VN.0 and VC 1 is VN.1. Do not add a parallel `vn_id` field. If implementing boundary-router reassignment, make the router path output-VC-aware so downstream full-status checks and forwarded `Flit::vc_id` agree.
+- **Validation command:** From `external/noxim`: `./build.sh`. Construction smoke from `external/noxim/bin`: `LD_LIBRARY_PATH=/mnt/c/Projects/CMP-720-Project-Proposal/external/noxim/bin/libs/systemc-2.3.1/lib-linux64 ./noxim -config ../config_examples/deft_2_5d_topology.yaml -seed 0 -sim 20 -warmup 0`.
+- **Notes:** Completed on 2026-05-07. Added `DeftVirtualNetwork` as the small VN/VC mapping and assignment helper. `DEFT_2_5D` now requires exactly two configured VCs. Source packet injection assigns VC 0/VN.0 for inter-chiplet traffic from non-boundary source routers and round-robins cases where either VN is legal. Boundary-router reassignment now selects an output VC, preserves monotonicity, round-robins legal VN.0/VN.1 reassignment when leaving a source chiplet for the interposer, and forces traffic entering a destination chiplet from the interposer to VN.1. The router reservation path now keeps input VC and output VC separate for downstream full-status checks and forwarded `Flit::vc_id`; existing hub reservation users keep the old input-VC behavior. No final VL selection, full VN transition-restriction enforcement, experiment automation, metrics change, or golden regression update was added.
 
 ## T0014: Enforce VN Transition Restrictions
 

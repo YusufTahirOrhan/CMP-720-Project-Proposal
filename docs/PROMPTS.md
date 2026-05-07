@@ -1277,3 +1277,58 @@ At the end, provide:
 - **Next ready-to-send prompt:** See `docs/PROGRESS.md`.
 - **Suggested branch name for next task:** None; continue on the existing branch.
 - **Suggested commit message:** `docs: design DeFT VN state representation`
+
+## 2026-05-07: Start T0013 VN Assignment Rules
+
+- **Date:** 2026-05-07
+- **Prompt summary:** Implement the smallest safe DeFT VN assignment behavior for source routers and boundary routers using VC 0 as VN.0 and VC 1 as VN.1, preserving baseline behavior outside DeFT-enabled runs and keeping final transition enforcement, VL LUT work, experiments, metrics, and golden outputs out of scope.
+- **Full prompt:**
+
+```text
+Start task T0013: Implement VN Assignment Rules.
+
+Before starting, read AGENTS.md, docs/PROGRESS.md, docs/TASKS.md, docs/ROADMAP.md, docs/ARCHITECTURE.md, docs/VALIDATION.md, docs/DECISIONS.md, and docs/PROMPTS.md.
+
+Continue on the existing Git branch. Do not create or switch task branches.
+
+Use the registered Noxim source tree at:
+external/noxim
+
+external/noxim is the Noxim submodule and modifiable project fork from:
+https://github.com/YusufTahirOrhan/noxim
+
+T0007 added selectable DEFT_2_5D topology construction and the DeftTopology mapping helper. T0008 centralized the physical Vertical Link model and functional state. T0009 added the derived boundary-router inventory. T0010 added startup-time permanent physical VL fault injection. T0011 added focused explicit/generated fault-mask validation and inspectability against the current 16 physical bidirectional VL model. T0012 designed the DeFT VN state representation: for DeFT-enabled runs, VC 0 is VN.0 and VC 1 is VN.1. Do not add a parallel vn_id field unless source inspection proves it is necessary.
+
+Goal: implement the smallest safe DeFT VN assignment behavior for source routers and boundary routers using the T0012 mapping. Inter-chiplet traffic from non-boundary source routers should start in VN.0. Cases where either VN is legal should use round-robin assignment or reassignment. Traffic coming from the interposer into a destination chiplet should go to or remain in VN.1. Preserve existing baseline routing behavior outside DeFT-enabled runs.
+
+Known risk: the current router reservation path assumes input VC equals output VC. If boundary-router VN reassignment requires output-VC-aware reservation/forwarding, keep that change narrowly scoped and make downstream full-status checks and forwarded Flit::vc_id agree on the selected output VC.
+
+Keep this task independent from VN transition-restriction enforcement beyond assignment monotonicity, VL LUT generation, experiment automation, metrics changes, and golden regression output updates. Do not implement final VL selection or DeFT performance experiments in this task.
+
+Use Extended_Proposal.pdf as the primary project requirements source and the original DeFT paper at docs/references/DeFT_A_Deadlock-Free_and_Fault-Tolerant_Routing_Algorithm_for_2.5D_Chiplet_Networks.pdf as the primary algorithmic reference. Use Proposal.pdf only as initial context. Ignore the peer evaluation document completely.
+
+Before coding, produce a short implementation plan. Work only on the selected VN assignment task. Do not modify unrelated files. Clearly mark assumptions as Assumption and blockers as Blocked.
+
+Use only known validation commands. The baseline build command is documented as ./build.sh from external/noxim in WSL Ubuntu. The construction-only no-traffic smoke command is documented in docs/VALIDATION.md; only run simulations that preserve that known invocation shape unless a new command is discovered from source documentation. Do not use ./regression.sh --update.
+
+Update docs/ARCHITECTURE.md, docs/TASKS.md, docs/PROGRESS.md, docs/VALIDATION.md, and docs/PROMPTS.md with the result. If a durable implementation decision becomes clear, update docs/DECISIONS.md too.
+
+At the end, provide:
+
+1. Created files
+2. Modified files
+3. Whether any source code files changed
+4. Validation result
+5. Current project phase
+6. Next recommended task
+7. The next ready-to-send prompt
+8. Suggested branch name for the next task, which should be None; continue on the existing branch
+9. Suggested commit message
+10. Unknowns or blockers
+```
+
+- **Result summary:** T0013 completed. `DeftVirtualNetwork` now maps DeFT VN.0/VN.1 to VC 0/VC 1, assigns source packets according to DeFT source rules, and selects boundary output VCs for reassignment. `DEFT_2_5D` now requires exactly two VCs. The router reservation/forwarding path now carries selected output-VC metadata so downstream full-status checks and forwarded `Flit::vc_id` agree. Validation built successfully and the documented construction-only no-traffic smoke completed with the expected topology and zero traffic. No final VL selection, full movement-transition enforcement, experiment automation, metrics change, golden output update, or DeFT performance experiment was added.
+- **Follow-up tasks:** Start `T0014` to enforce VN movement-transition restrictions after the T0013 assignment foundation.
+- **Next ready-to-send prompt:** See `docs/PROGRESS.md`.
+- **Suggested branch name for next task:** None; continue on the existing branch.
+- **Suggested commit message:** `feat: implement DeFT VN assignment`

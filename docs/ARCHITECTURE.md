@@ -369,7 +369,7 @@ Existing Noxim grounding:
 - `external/noxim/src/Router.cpp` stores incoming flits in `buffer[input_direction][received_flit.vc_id]`, passes the head flit's `vc_id` into `RouteData`, checks downstream backpressure through `buffer_full_status_tx[output_direction].mask[vc]`, and forwards the flit with its existing `vc_id`.
 - `external/noxim/src/ReservationTable.*` currently treats the reservation VC as the same VC index read from the input buffer. It does not yet distinguish input VC from output VC.
 - `GlobalParams::n_virtual_channels` configures the number of physical VC buffer banks. Existing configuration validation permits two VCs, but rejects `NOP`, `BUFFER_LEVEL`, and wireless sleep power-manager modes when more than one VC is configured.
-- The current construction-only `external/noxim/config_examples/deft_2_5d_topology.yaml` still uses `n_virtual_channels: 1` because no DeFT VN behavior has been implemented yet.
+- During T0012, the construction-only `external/noxim/config_examples/deft_2_5d_topology.yaml` still used `n_virtual_channels: 1` because no DeFT VN behavior had been implemented yet.
 
 Design decision:
 
@@ -400,14 +400,38 @@ Future helper API guidance:
 Future router-pipeline implication:
 
 - The current Noxim router path can preserve a flit's VC ID, but it cannot safely remap from input VC 0 to output VC 1 with the existing reservation data alone.
-- Future T0013 implementation must not mutate only `Flit::vc_id` while still reserving and checking downstream fullness with the old input-buffer VC index. That would make the upstream backpressure check and downstream receiving VC disagree.
-- A safe VN reassignment implementation needs output-VC-aware reservation and forwarding metadata, or an equivalent narrowly scoped mechanism that checks downstream availability for the selected output VC and forwards the flit with that same selected VC ID.
+- T0013 must not mutate only `Flit::vc_id` while still reserving and checking downstream fullness with the old input-buffer VC index. That would make the upstream backpressure check and downstream receiving VC disagree.
+- T0013 implemented output-VC-aware reservation and forwarding metadata so downstream availability is checked for the selected output VC and the flit is forwarded with that same selected VC ID.
 
 Assumption: The DeFT implementation target remains exactly one VC per VN, so two VCs total are sufficient for VN.0 and VN.1.
 
-Assumption: The current construction-only no-traffic configuration may stay at one VC until T0013 starts implementing DeFT VN assignment behavior, because T0012 intentionally does not alter simulator behavior.
+Assumption: The construction-only no-traffic configuration used one VC during T0012 because T0012 intentionally made no simulator behavior change.
 
-Blocked: No T0012 work is blocked. Final Up/Down movement enforcement and output-VC remapping are future implementation work for T0013 and T0014.
+Blocked: No T0012 work is blocked. Final Up/Down movement enforcement remains future implementation work for T0014.
+
+## T0013 VN Assignment Rules Implementation
+
+`T0013` adds the first DeFT VN assignment behavior. It does not implement final VL selection, full VN transition-restriction enforcement, route-performance experiments, metrics changes, experiment automation, or golden regression output updates.
+
+Implemented source surface:
+
+- `external/noxim/src/DeftVirtualNetwork.h` and `external/noxim/src/DeftVirtualNetwork.cpp` define VN constants, DeFT-enabled detection, VC/VN validation, monotonic VN transition validation, source assignment, boundary output-VC selection, and round-robin state.
+- `external/noxim/src/ProcessingElement.cpp` now overrides random packet VC assignment only for `DEFT_2_5D`: inter-chiplet packets from non-boundary source routers start in VC 0/VN.0, while source cases where either VN is legal use round-robin assignment.
+- `external/noxim/src/Router.cpp` now asks `DeftVirtualNetwork` for a selected output VC during head-flit reservation. Chiplet boundary routers going to the interposer can round-robin from VN.0 to VN.0/VN.1, VN.1 is preserved to maintain monotonicity, and traffic entering a destination chiplet from the interposer is forced to VC 1/VN.1.
+- `external/noxim/src/ReservationTable.h` and `external/noxim/src/ReservationTable.cpp` now support explicit output-VC reservation metadata while preserving the old input-VC reservation view for existing hub users.
+- `external/noxim/src/ConfigurationManager.cpp` requires exactly two VCs for `DEFT_2_5D`, and `external/noxim/config_examples/deft_2_5d_topology.yaml` now sets `n_virtual_channels: 2`.
+
+Assignment model:
+
+- VC 0 remains VN.0 and VC 1 remains VN.1.
+- `DEFT_2_5D` is the current DeFT-enabled mode because no separate DeFT routing-mode flag exists yet.
+- Source boundary packets use the source-assignment branch and are not reassigned again in the same source router.
+- Boundary reassignment commits its round-robin step only when a new reservation is successfully created.
+- Router forwarding reads the original input buffer VC, checks downstream fullness for the selected output VC, forwards the flit with that selected `Flit::vc_id`, and releases the reservation on the tail flit.
+
+Assumption: `DIRECTION_HUB` remains the current physical carrier for Vertical Link traversal. T0013 classifies chiplet-boundary-to-interposer hub output as Down-like assignment context and interposer-to-chiplet hub output or boundary-router hub input as Up-like assignment context, but it does not make `DIRECTION_HUB` the final semantic port model.
+
+Blocked: Full movement-transition enforcement, including Up-to-Horizontal in VN.0 and Horizontal-to-Down in VN.1, remains T0014 work.
 
 ## Router Model
 
@@ -484,7 +508,7 @@ Planned high-level pipeline:
 
 ## VN.0 / VN.1 Assignment Rules
 
-Planned:
+Implemented foundation:
 
 - If the current router is the source:
   - If the source is in the interposer, destination chiplet, or boundary set, use round-robin assignment between VN.0 and VN.1.
@@ -494,7 +518,7 @@ Planned:
   - If the packet is coming from the interposer, go to or remain in VN.1.
 - Otherwise, preserve the previously assigned VN.
 
-Assumption: The exact interpretation of "source in destination chiplet or boundaries" must be mapped carefully to Noxim packet and router metadata during implementation.
+T0013 maps these rules onto Noxim by assigning source packets in `ProcessingElement` and selecting output VCs in `Router::txProcess()`. Inter-chiplet traffic from non-boundary source routers starts in VN.0. Intra-chiplet traffic and source-boundary cases use round-robin source assignment. Boundary reassignment preserves monotonicity, so an input flit already in VN.1 cannot be reassigned to VN.0.
 
 Paper alignment note: The original DeFT paper also states that intra-chiplet packets may use both VNs because they do not use vertical ports.
 
