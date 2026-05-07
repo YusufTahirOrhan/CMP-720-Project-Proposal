@@ -154,13 +154,13 @@ Statuses: `TODO`, `IN_PROGRESS`, `DONE`, `BLOCKED`.
 
 ## T0016: Implement Offline VL LUT Generator
 
-- **Status:** TODO
+- **Status:** DONE
 - **Objective:** Generate fault-aware Vertical Link selection tables using distance and load imbalance cost.
 - **Relevant roadmap phase:** Phase 6
-- **Files likely to change:** To be confirmed after repository inspection
+- **Files changed:** `external/noxim/other/deft_vl_lut_generator.py`, `docs/ARCHITECTURE.md`, `docs/TASKS.md`, `docs/PROGRESS.md`, `docs/VALIDATION.md`, `docs/PROMPTS.md`, `docs/DECISIONS.md`
 - **Acceptance criteria:** Generated LUT excludes faulty Vertical Links and is deterministic.
-- **Validation command:** To be confirmed after repository inspection
-- **Notes:** Cost function should use the proposal's formulation with documented assumptions and emit the `deft_vl_lut.v1` schema from T0015. The generator should not implement runtime LUT loading or final route selection.
+- **Validation command:** Syntax check with `python -m py_compile external/noxim/other/deft_vl_lut_generator.py`; CLI help check; deterministic in-memory generation check for masks `0x0000` and `0x1111`; invalid connected-chiplet mask rejection with `--fault-mask 0x000f`; parent and submodule status/diff checks.
+- **Notes:** Completed on 2026-05-07. Added a standalone Python generator under `external/noxim/other` that emits the T0015 `deft_vl_lut.v1` schema without touching Noxim router runtime behavior or build-integrated C++ source. The generator mirrors the current 16 physical VL model, supports explicit and enumerated connected-chiplet fault masks, uses deterministic exact dynamic programming for the proposal's Manhattan-distance plus load-imbalance objective with `rho = 0.01`, and records the schema-v1 destination-entry adjustment caused by the absence of `destination_router_id`. Assumption: T0016 uses uniform unit inter-chiplet demand until traffic-profile-specific LUT generation is designed. Blocked: runtime loading and final route selection remain future work.
 
 ## T0017: Load and Use VL LUT at Boundary Routers
 
@@ -170,7 +170,7 @@ Statuses: `TODO`, `IN_PROGRESS`, `DONE`, `BLOCKED`.
 - **Files likely to change:** To be confirmed after Noxim source inspection
 - **Acceptance criteria:** Boundary routers select functional Vertical Links using the current fault vector.
 - **Validation command:** To be confirmed after repository inspection
-- **Notes:** Should run after generator validation.
+- **Notes:** Should run after T0016 generator validation. Keep runtime loading and route selection narrowly scoped to consuming `deft_vl_lut.v1`; do not add experiment automation, metrics changes, or golden-output updates in this task.
 
 ## T0018: Configure XY Baseline Modes
 

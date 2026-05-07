@@ -743,6 +743,32 @@ Future runtime lookup should:
 
 Blocked: Runtime LUT loading, route-data intermediate-destination state, final VL selection behavior, and any fallback when an exact entry is missing are future tasks.
 
+## T0016 Offline VL LUT Generator Implementation
+
+`T0016` adds the first standalone offline generator for the T0015 `deft_vl_lut.v1` schema. It does not load LUTs into Noxim, change router runtime behavior, alter final route selection, add experiment automation, change metrics, update golden regression outputs, or run DeFT performance experiments.
+
+Implemented source surface:
+
+- `external/noxim/other/deft_vl_lut_generator.py` is a Python standard-library generator placed with the existing Noxim helper tools under `external/noxim/other`.
+- The generator mirrors the current `DEFT_2_5D` topology constants from `DeftTopology`: four 4x4 chiplets, an 8x8 interposer footprint, chiplet routers `0..63`, interposer routers `64..127`, and 16 physical bidirectional VL IDs.
+- The generator accepts repeated `--fault-mask` values, repeated `--faulty-vls` comma-list values, or `--max-fault-count` to enumerate every valid connected-chiplet mask up to a physical fault count. With no scenario option, it emits the no-fault mask.
+- Fault-mask validation rejects masks that disconnect any chiplet, matching the T0011 connected-chiplet rule over current physical VL IDs.
+- Output is deterministic restricted YAML with top-level `schema`, `topology`, `topology_signature`, `generation`, `fault_scenarios`, and `entries` sections.
+
+Selection model:
+
+- The source-exit selection uses the proposal and paper objective exactly for the current uniform task scope: Manhattan distance plus load imbalance with `rho = 0.01`.
+- The implementation uses exact dynamic programming over assignment count states instead of naive brute-force enumeration. This is equivalent to exhaustive search for the current uniform unit-demand model, but avoids enumerating every raw assignment string.
+- For source-side selection, demand points are the 16 routers on a source chiplet and candidates are the functional VLs on that same chiplet.
+- For destination-entry selection, schema v1 has no `destination_router_id`. T0016 therefore uses the same distance-plus-load objective over interposer-entry contexts: demand points are `(source_chiplet_id, source_router_id)` contexts positioned at their selected source-exit interposer endpoint, and candidates are the functional VL interposer endpoints on the destination chiplet.
+- Every selected source-exit and destination-entry VL is functional under the entry's `fault_mask_id`, and every selected VL appears first in its `ranked_vl_ids`.
+
+Assumption: T0016 uses uniform unit inter-chiplet demand because the project has not yet implemented or registered final traffic-profile inputs for LUT generation.
+
+Assumption: The destination-entry interposer-context model is a narrow schema-v1 adjustment. A future schema that includes `destination_router_id` can optimize destination entry directly against destination-router demand.
+
+Blocked: Runtime LUT loading, route-data intermediate-destination state, final DeFT route selection, exact missing-entry handling, traffic-profile-specific LUT generation, and experiment-scale generated artifacts remain future work.
+
 ## Synthetic Traffic Models
 
 Planned:
