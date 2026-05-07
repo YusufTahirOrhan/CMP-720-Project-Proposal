@@ -134,13 +134,13 @@ Statuses: `TODO`, `IN_PROGRESS`, `DONE`, `BLOCKED`.
 
 ## T0014: Enforce VN Transition Restrictions
 
-- **Status:** TODO
+- **Status:** DONE
 - **Objective:** Enforce VN.1-to-VN.0 ban, Up-to-Horizontal ban in VN.0, and Horizontal-to-Down ban in VN.1.
 - **Relevant roadmap phase:** Phase 5
-- **Files likely to change:** To be confirmed after Noxim source inspection
+- **Files changed:** `external/noxim/src/DeftVirtualNetwork.h`, `external/noxim/src/DeftVirtualNetwork.cpp`, `external/noxim/src/Router.cpp`, `docs/ARCHITECTURE.md`, `docs/TASKS.md`, `docs/PROGRESS.md`, `docs/VALIDATION.md`, `docs/PROMPTS.md`, and `docs/DECISIONS.md`
 - **Acceptance criteria:** Forbidden transitions are rejected or avoided by route selection.
-- **Validation command:** To be confirmed after repository inspection
-- **Notes:** High-risk deadlock-freedom task.
+- **Validation command:** From `external/noxim`: `./build.sh`. Construction smoke from `external/noxim/bin`: `LD_LIBRARY_PATH=/mnt/c/Projects/CMP-720-Project-Proposal/external/noxim/bin/libs/systemc-2.3.1/lib-linux64 ./noxim -config ../config_examples/deft_2_5d_topology.yaml -seed 0 -sim 20 -warmup 0`.
+- **Notes:** Completed on 2026-05-07. Added DeFT-only output-direction filtering and movement classification without adding packet/flit metadata. VN.1 to VN.0 remains forbidden by `canTransition()`. Up-to-Horizontal in VN.0 is avoided by forcing interposer-to-chiplet entry output to VN.1 before horizontal movement. Horizontal-to-Down in VN.1 is rejected; VN.0 Horizontal-to-Down preserves VN.0 instead of consuming the boundary round-robin state. No final VL selection, LUT generation, experiment automation, metrics change, or golden regression output update was added.
 
 ## T0015: Design Offline VL LUT Format
 
@@ -149,7 +149,7 @@ Statuses: `TODO`, `IN_PROGRESS`, `DONE`, `BLOCKED`.
 - **Relevant roadmap phase:** Phase 6
 - **Files likely to change:** `docs/ARCHITECTURE.md`, `docs/DECISIONS.md`, `docs/PROGRESS.md`
 - **Acceptance criteria:** LUT schema is documented and traceable to fault masks and destination chiplets.
-- **Validation command:** To be confirmed after repository inspection
+- **Validation command:** Parent status: `git status --short --branch`. Submodule status: `git -c safe.directory=C:/Projects/CMP-720-Project-Proposal/external/noxim -C external/noxim status --short --branch`.
 - **Notes:** Do not implement the generator in this task. LUT design must be checked against the original DeFT paper.
 
 ## T0016: Implement Offline VL LUT Generator

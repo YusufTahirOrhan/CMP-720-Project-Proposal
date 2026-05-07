@@ -398,6 +398,41 @@ T0013 result on 2026-05-07:
 - `git -c safe.directory=C:/Projects/CMP-720-Project-Proposal/external/noxim -C external/noxim diff --check` completed with exit code `0`.
 - No final VL selection, full VN transition-restriction enforcement beyond assignment monotonicity, experiment automation, metrics change, golden regression output update, or DeFT performance experiment was run.
 
+## VN Transition Restrictions
+
+Purpose:
+
+- Validate that T0014 DeFT VN transition-restriction code builds.
+- Confirm the existing `DEFT_2_5D` construction-only no-traffic smoke still instantiates with exactly two VCs.
+- Confirm that no final VL selection, LUT generation, experiment automation, metrics change, or golden regression output update is introduced.
+
+Known validation:
+
+- Build from the Noxim repository root in WSL Ubuntu: `./build.sh`
+- Construction smoke from `external/noxim/bin` in WSL Ubuntu:
+
+```bash
+LD_LIBRARY_PATH=/mnt/c/Projects/CMP-720-Project-Proposal/external/noxim/bin/libs/systemc-2.3.1/lib-linux64 ./noxim -config ../config_examples/deft_2_5d_topology.yaml -seed 0 -sim 20 -warmup 0
+```
+
+T0014 result on 2026-05-07:
+
+- Required startup reading was completed before task work: `AGENTS.md`, `docs/PROGRESS.md`, `docs/TASKS.md`, `docs/ROADMAP.md`, `docs/ARCHITECTURE.md`, `docs/VALIDATION.md`, `docs/DECISIONS.md`, and `docs/PROMPTS.md`.
+- Before implementation, `git status --short --branch` in the parent repository showed branch `feat/map-noxim-extension-points...origin/feat/map-noxim-extension-points` with no local file modifications.
+- Before implementation, `git -c safe.directory=C:/Projects/CMP-720-Project-Proposal/external/noxim -C external/noxim status --short --branch` showed branch `feat/baseline-noxim...origin/feat/baseline-noxim` with no local file modifications.
+- Required source documents were confirmed present: `Extended_Proposal.pdf`, `Proposal.pdf`, and `docs/references/DeFT_A_Deadlock-Free_and_Fault-Tolerant_Routing_Algorithm_for_2.5D_Chiplet_Networks.pdf`.
+- Short source-document checks confirmed the Extended Proposal's three VN restriction requirements and the original DeFT paper's Rule 1, Rule 2, and Rule 3 wording for VN.1-to-VN.0, Up-to-Horizontal in VN.0, and Horizontal-to-Down in VN.1.
+- T0014 added DeFT-only output-direction filtering in `DeftVirtualNetwork::isOutputDirectionAllowed()`.
+- T0014 derives Up/Down/Horizontal movement from `RouteData::dir_in`, candidate output direction, current router layer, and boundary-router status without adding packet/flit movement-history metadata.
+- T0014 updated router selection to filter illegal DeFT output candidates before reservation and to skip reservation when no legal candidate exists.
+- `./build.sh` from `external/noxim` completed with exit code `0` in WSL Ubuntu.
+- The construction-only no-traffic smoke completed with exit code `0`, reported the expected 128-router topology, 16 boundary routers, 16 functional physical VLs, no faults, zero received packets, and zero received flits.
+- The construction smoke still reports `-nan` average delay and wireless utilization because it intentionally injects no traffic; these are not experiment metrics.
+- `git -c safe.directory=C:/Projects/CMP-720-Project-Proposal/external/noxim -C external/noxim diff --check` completed with exit code `0`.
+- Assumption: T0014 treats chiplet-boundary hub input as Up and chiplet-boundary hub output as Down while `DIRECTION_HUB` remains the current physical VL carrier.
+- Blocked: Final DeFT route selection and fault-aware VL choices remain future work, so T0014 cannot prove alternate legal route availability when the current routing algorithm offers only illegal candidates.
+- No final VL selection, LUT generation, experiment automation, metrics change, golden regression output update, or DeFT performance experiment was run.
+
 ## Build Validation
 
 Purpose:

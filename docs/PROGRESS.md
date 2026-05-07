@@ -2,7 +2,7 @@
 
 ## Current Phase
 
-Phase 5 - DeFT VN Transition Restrictions
+Phase 6 - Offline VL LUT Format Design
 
 ## Completed Tasks
 
@@ -19,10 +19,11 @@ Phase 5 - DeFT VN Transition Restrictions
 - `T0011` - Add Fault Mask Validation.
 - `T0012` - Design VN State Representation.
 - `T0013` - Implement VN Assignment Rules.
+- `T0014` - Enforce VN Transition Restrictions.
 - `T0023` - Add or register the Noxim source tree.
 - `T0024` - Decide Windows 11 development environment and persist paper reference.
 
-DeFT VN assignment behavior has been implemented for source and boundary-router assignment contexts. Full DeFT routing behavior, VN movement-transition restriction enforcement, VL LUT, experiment automation, and metrics tasks have not been implemented.
+DeFT VN assignment behavior and the first VN movement-transition restriction enforcement layer have been implemented for `DEFT_2_5D`. Full DeFT routing behavior, fault-aware VL LUT generation/use, experiment automation, and metrics tasks have not been implemented.
 
 ## In-Progress Tasks
 
@@ -34,27 +35,26 @@ DeFT VN assignment behavior has been implemented for source and boundary-router 
 
 ## Last Validation Result
 
-- T0013 VN Assignment Rules completed on 2026-05-07.
+- T0014 VN Transition Restrictions completed on 2026-05-07.
 - Required startup reading was completed before task work: `AGENTS.md`, `docs/PROGRESS.md`, `docs/TASKS.md`, `docs/ROADMAP.md`, `docs/ARCHITECTURE.md`, `docs/VALIDATION.md`, `docs/DECISIONS.md`, and `docs/PROMPTS.md`.
 - Before implementation, `git status --short --branch` in the parent repository showed branch `feat/map-noxim-extension-points...origin/feat/map-noxim-extension-points` with no local file modifications.
 - Before implementation, `git -c safe.directory=C:/Projects/CMP-720-Project-Proposal/external/noxim -C external/noxim status --short --branch` showed branch `feat/baseline-noxim...origin/feat/baseline-noxim` with no local file modifications.
 - Source document availability was confirmed for `Extended_Proposal.pdf`, `Proposal.pdf`, and `docs/references/DeFT_A_Deadlock-Free_and_Fault-Tolerant_Routing_Algorithm_for_2.5D_Chiplet_Networks.pdf`.
-- Short source-document checks found the Extended Proposal VN assignment pseudocode and the original DeFT paper's one-VC-per-VN evaluation model, monotonic VN.0 to VN.1 transition, round-robin assignment when either VN is legal, and destination-chiplet entry behavior.
-- T0013 added `external/noxim/src/DeftVirtualNetwork.h` and `external/noxim/src/DeftVirtualNetwork.cpp`.
-- T0013 maps VC 0 to VN.0 and VC 1 to VN.1 without adding a parallel `vn_id` field.
-- T0013 treats `DEFT_2_5D` as the current DeFT-enabled mode and now requires exactly two configured VCs for that topology.
-- Source packet creation now assigns inter-chiplet traffic from non-boundary source routers to VN.0 and uses round-robin assignment for source cases where either VN is legal.
-- Boundary-router reassignment now selects an output VC, preserves monotonicity, round-robins legal VN.0/VN.1 reassignment when leaving a source chiplet toward the interposer, and sends traffic entering a destination chiplet from the interposer to VN.1.
-- The router reservation path now stores output-VC metadata, checks downstream full status for the selected output VC, and forwards `Flit::vc_id` with that same selected output VC. Existing hub reservation users preserve the old input-VC view.
-- `external/noxim/config_examples/deft_2_5d_topology.yaml` now uses `n_virtual_channels: 2`.
-- `./build.sh` from `external/noxim` completed with exit code `0` in WSL Ubuntu and emitted only pre-existing Noxim warnings.
+- Short source-document checks found the Extended Proposal's three VN restriction requirements and the original DeFT paper's rules forbidding VN.1 to VN.0, Up-to-Horizontal in VN.0, and Horizontal-to-Down in VN.1.
+- T0014 added `DeftVirtualNetwork::isOutputDirectionAllowed()` as a DeFT-only output-direction filtering helper.
+- T0014 derives Up/Down/Horizontal movement from `RouteData::dir_in`, the candidate output direction, current router layer, and boundary-router status without adding packet/flit movement-history metadata.
+- Router selection now filters illegal DeFT output candidates before reservation and skips reservation when no legal candidate exists.
+- VN.1 to VN.0 remains forbidden by `DeftVirtualNetwork::canTransition()`.
+- Up-to-Horizontal in VN.0 is avoided by forcing interposer-to-chiplet entry traffic to VN.1 before horizontal forwarding.
+- Horizontal-to-Down in VN.1 is rejected; Horizontal-to-Down in VN.0 preserves VN.0 instead of consuming boundary round-robin state.
+- `./build.sh` from `external/noxim` completed with exit code `0` in WSL Ubuntu.
 - The construction-only no-traffic smoke completed with exit code `0`, reported the expected 128-router topology, 16 boundary routers, 16 functional physical VLs, no faults, zero received packets, and zero received flits.
 - The construction smoke still reports `-nan` average delay and wireless utilization because it intentionally injects no traffic; these are not experiment metrics.
 - `git -c safe.directory=C:/Projects/CMP-720-Project-Proposal/external/noxim -C external/noxim diff --check` completed with exit code `0`.
 - Assumption: `DEFT_2_5D` is the current DeFT-enabled mode because no separate DeFT routing-mode flag exists yet.
-- Assumption: `DIRECTION_HUB` remains the temporary physical carrier for Vertical Link traversal; T0013 uses topology context to classify assignment cases but does not decide final Up/Down port semantics.
-- Blocked: Full movement-transition enforcement, including Up-to-Horizontal in VN.0 and Horizontal-to-Down in VN.1, remains T0014 work.
-- No final VL selection, full VN transition-restriction enforcement beyond assignment monotonicity, experiment automation, metrics change, golden regression output update, or DeFT performance experiment was run.
+- Assumption: `DIRECTION_HUB` remains the current physical carrier for Vertical Link traversal; T0014 classifies chiplet-boundary hub input as Up and chiplet-boundary hub output as Down only for `DEFT_2_5D` transition checks.
+- Blocked: Full DeFT route selection and fault-aware VL choices remain future work, so T0014 cannot prove alternate legal route availability when the current routing algorithm offers only illegal candidates.
+- No final VL selection, LUT generation, experiment automation, metrics change, golden regression output update, or DeFT performance experiment was run.
 
 ## Important Changed Files
 
@@ -223,6 +223,18 @@ Files created or updated during `T0013` VN Assignment Rules:
 - `docs/PROMPTS.md`
 - `docs/DECISIONS.md`
 
+Files updated during `T0014` VN Transition Restrictions:
+
+- `external/noxim/src/DeftVirtualNetwork.h`
+- `external/noxim/src/DeftVirtualNetwork.cpp`
+- `external/noxim/src/Router.cpp`
+- `docs/ARCHITECTURE.md`
+- `docs/TASKS.md`
+- `docs/PROGRESS.md`
+- `docs/VALIDATION.md`
+- `docs/PROMPTS.md`
+- `docs/DECISIONS.md`
+
 Noxim build files LF-normalized during `T0003`:
 
 - `external/noxim/bin/Makefile`
@@ -300,25 +312,25 @@ External source tree registered during `T0023`:
 - Assumption: T0013 treats `DEFT_2_5D` as the current DeFT-enabled mode and requires exactly two configured VCs for that topology.
 - Assumption: A separate packet/flit `vn_id` field is unnecessary and should not be added unless future implementation proves the existing `vc_id` cannot safely carry DeFT VN state.
 - Assumption: T0013's output-VC-aware reservation and forwarding path is the required foundation for safe VN reassignment; changing only `Flit::vc_id` without matching downstream full-status checks would be unsafe.
-- Assumption: T0013 uses `DIRECTION_HUB` only as the current physical VL traversal carrier for assignment classification; final Up/Down movement semantics remain T0014 work.
+- Assumption: T0014 uses `DIRECTION_HUB` only as the current physical VL traversal carrier and derives Up/Down semantics from `DeftTopology` layer and boundary-router context.
+- Assumption: T0014 does not need additional packet/flit movement-history metadata because the current input port is sufficient for the enforced Up-to-Horizontal and Horizontal-to-Down restrictions.
 
 ## Open Questions
 
 - For final experiment automation, should Vertical Link fault percentages be converted from physical bidirectional links or directional links?
 - Are GEM5/PARSEC traces required for final delivery, or are synthetic traffic experiments sufficient?
 - Should WSL be configured persistently with `ldconfig` for the local SystemC library, or should future Noxim runs keep using a per-process `LD_LIBRARY_PATH`?
-- What exact algorithmic representation should carry chiplet-to-interposer Down movement and interposer-to-chiplet Up movement in DeFT routing and VN-transition logic?
-- How should T0014 represent previous movement state for enforcing Up-to-Horizontal in VN.0 and Horizontal-to-Down in VN.1 without adding unnecessary packet metadata?
+- Should final DeFT routing keep using `DIRECTION_HUB` as the physical Vertical Link carrier, or introduce explicit semantic Up/Down ports after the LUT design is complete?
 - Why did Git fail to create task branch refs in the current Windows worktree? This is no longer operationally important because user instruction now forbids automatic task branch creation.
 
 ## Next Recommended Task
 
-Start `T0014` and enforce DeFT VN transition restrictions using the T0013 VN assignment and output-VC-aware reservation foundation.
+Start `T0015` and design the offline VL LUT format before implementing generation or runtime lookup.
 
 ## Next Ready-to-Send Prompt
 
 ```text
-Start task T0014: Enforce VN Transition Restrictions.
+Start task T0015: Design Offline VL LUT Format.
 
 Before starting, read AGENTS.md, docs/PROGRESS.md, docs/TASKS.md, docs/ROADMAP.md, docs/ARCHITECTURE.md, docs/VALIDATION.md, docs/DECISIONS.md, and docs/PROMPTS.md.
 
@@ -330,19 +342,17 @@ external/noxim
 `external/noxim` is the Noxim submodule and modifiable project fork from:
 https://github.com/YusufTahirOrhan/noxim
 
-T0007 added selectable `DEFT_2_5D` topology construction and the `DeftTopology` mapping helper. T0008 centralized the physical Vertical Link model and functional state. T0009 added the derived boundary-router inventory. T0010 added startup-time permanent physical VL fault injection. T0011 added focused explicit/generated fault-mask validation and inspectability against the current 16 physical bidirectional VL model. T0012 mapped DeFT VN state directly onto Noxim VC IDs: VC 0 is VN.0 and VC 1 is VN.1. T0013 implemented the first VN assignment behavior and output-VC-aware reservation/forwarding: `DEFT_2_5D` now requires exactly two VCs, source assignment uses VN.0 or round-robin where legal, boundary reassignment preserves monotonicity, and interposer-to-destination-chiplet traffic goes to VN.1.
+T0007 added selectable `DEFT_2_5D` topology construction and the `DeftTopology` mapping helper. T0008 centralized the physical Vertical Link model and functional state. T0009 added the derived boundary-router inventory. T0010 added startup-time permanent physical VL fault injection. T0011 added focused explicit/generated fault-mask validation and inspectability against the current 16 physical bidirectional VL model. T0012 mapped DeFT VN state directly onto Noxim VC IDs. T0013 implemented VN assignment and output-VC-aware reservation/forwarding. T0014 added DeFT-only VN transition-restriction filtering without packet/flit movement-history metadata.
 
-Goal: implement the smallest safe DeFT VN transition-restriction enforcement after T0013. Enforce the DeFT restrictions needed for deadlock freedom: VN.1 to VN.0 is forbidden, Up-to-Horizontal movement in VN.0 is forbidden, and Horizontal-to-Down movement in VN.1 is forbidden. Preserve existing baseline routing behavior outside `DEFT_2_5D`.
+Goal: design the offline Vertical Link LUT format before implementing generation or runtime lookup. Define the lookup keys, values, storage format, deterministic ordering, and how the schema maps to current physical VL IDs, fault masks, source chiplet/router context, destination chiplet, and future runtime selection.
 
-Keep this task independent from final VL LUT generation, experiment automation, metrics changes, golden regression output updates, and DeFT performance experiments. Do not implement final VL selection in this task. Keep any movement-state metadata or route filtering narrowly scoped and justify it before editing.
-
-Known result so far: `Packet::vc_id`, `Flit::vc_id`, and `RouteData::vc_id` are the VN/VC state carrier. `DeftVirtualNetwork` exposes VN constants, `canTransition()`, source assignment, boundary output-VC selection, and boundary round-robin state. `Router::txProcess()` now has selected output-VC metadata in reservations, and forwarded `Flit::vc_id` agrees with downstream full-status checks. `DeftTopology` provides layer, boundary-router, and VL endpoint query surfaces. `DIRECTION_HUB` is still the current physical carrier for Vertical Link traversal, not a final semantic Up/Down port model.
+Keep this task documentation-first and independent from LUT generator implementation, runtime LUT loading, final VL selection, experiment automation, metrics changes, golden regression output updates, and DeFT performance experiments. Do not modify Noxim source code unless source inspection proves a tiny documentation-support scaffold is required; justify any such change before editing.
 
 Use `Extended_Proposal.pdf` as the primary project requirements source and the original DeFT paper at `docs/references/DeFT_A_Deadlock-Free_and_Fault-Tolerant_Routing_Algorithm_for_2.5D_Chiplet_Networks.pdf` as the primary algorithmic reference. Use `Proposal.pdf` only as initial context. Ignore the peer evaluation document completely.
 
-Before coding, produce a short implementation plan. Work only on the selected VN transition-restriction task. Do not modify unrelated files. Clearly mark assumptions as `Assumption` and blockers as `Blocked`.
+Before editing, produce a short implementation plan. Work only on the selected offline VL LUT format design task. Do not modify unrelated files. Clearly mark assumptions as `Assumption` and blockers as `Blocked`.
 
-Use only known validation commands. The baseline build command is documented as `./build.sh` from `external/noxim` in WSL Ubuntu. The construction-only no-traffic smoke command is documented in `docs/VALIDATION.md`; only run simulations that preserve that known invocation shape unless a new command is discovered from source documentation. Do not use `./regression.sh --update`.
+Use only known validation commands. For a documentation-only task, use repository and submodule status checks unless a source change is explicitly justified. Do not run simulations unless source code changes and the existing construction-only no-traffic invocation remains valid. Do not use `./regression.sh --update`.
 
 Update docs/ARCHITECTURE.md, docs/TASKS.md, docs/PROGRESS.md, docs/VALIDATION.md, and docs/PROMPTS.md with the result. If a durable implementation decision becomes clear, update docs/DECISIONS.md too.
 
@@ -369,5 +379,5 @@ None; continue on the existing branch.
 ## Suggested Commit Message
 
 ```text
-feat: implement DeFT VN assignment
+feat: enforce DeFT VN transition restrictions
 ```

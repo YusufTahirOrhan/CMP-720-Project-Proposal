@@ -431,7 +431,30 @@ Assignment model:
 
 Assumption: `DIRECTION_HUB` remains the current physical carrier for Vertical Link traversal. T0013 classifies chiplet-boundary-to-interposer hub output as Down-like assignment context and interposer-to-chiplet hub output or boundary-router hub input as Up-like assignment context, but it does not make `DIRECTION_HUB` the final semantic port model.
 
-Blocked: Full movement-transition enforcement, including Up-to-Horizontal in VN.0 and Horizontal-to-Down in VN.1, remains T0014 work.
+T0014 completes the first movement-transition enforcement layer on top of this assignment foundation.
+
+## T0014 VN Transition Restrictions Implementation
+
+`T0014` adds the smallest DeFT movement-transition restriction enforcement after T0013. It does not implement final VL selection, offline VL LUT generation, experiment automation, metrics changes, golden regression output updates, or DeFT performance experiments.
+
+Implemented source surface:
+
+- `external/noxim/src/DeftVirtualNetwork.h` and `external/noxim/src/DeftVirtualNetwork.cpp` now expose `isOutputDirectionAllowed(route_data, output_direction)` for DeFT-only output-direction filtering.
+- `DeftVirtualNetwork` derives movement context from `RouteData::dir_in`, the selected output direction, and `DeftTopology::decodeRouterId()`.
+- No packet, flit, or route-data movement-history metadata was added. The current input port is the only previous-movement state used for this task.
+- `external/noxim/src/Router.cpp::selectionFunction()` filters candidate output directions only when `DEFT_2_5D` is enabled.
+- `external/noxim/src/Router.cpp::route()` returns `NOT_VALID` if DeFT filtering removes every candidate, and `Router::txProcess()` skips reservation in that case.
+
+Restriction model:
+
+- VN.1 to VN.0 remains forbidden through `DeftVirtualNetwork::canTransition()`.
+- Up-to-Horizontal in VN.0 is avoided by classifying chiplet-boundary `dir_in == DIRECTION_HUB` as an Up input and forcing the output VC to VN.1 before horizontal forwarding.
+- Horizontal-to-Down in VN.1 is rejected by filtering chiplet-boundary horizontal-input to `DIRECTION_HUB` output candidates when the selected output VN would be VN.1.
+- Horizontal-to-Down in VN.0 preserves VN.0 and does not consume the boundary reassignment round-robin state. This prevents the round-robin from getting stuck on an illegal VN.1 reassignment choice.
+
+Assumption: In the current implementation, `DIRECTION_HUB` is still only the physical carrier for Vertical Link traversal. For T0014, DeFT Up and Down semantics are inferred from the current router layer and boundary-router status: chiplet-boundary hub input is Up, and chiplet-boundary hub output is Down.
+
+Blocked: Full DeFT route selection and final fault-aware VL choices remain future work. T0014 can reject an illegal transition but cannot guarantee an alternate legal route if the current routing algorithm supplies only illegal candidates.
 
 ## Router Model
 
@@ -524,14 +547,14 @@ Paper alignment note: The original DeFT paper also states that intra-chiplet pac
 
 ## VN Transition Restrictions
 
-Planned:
+Implemented foundation:
 
 - VN.1 to VN.0 transition is forbidden.
 - Up-to-Horizontal movement in VN.0 is forbidden.
 - Horizontal-to-Down movement in VN.1 is forbidden.
 - The implementation must preserve exactly two VCs: one for VN.0 and one for VN.1.
 
-These restrictions are high risk because they are central to the deadlock-freedom guarantee.
+T0014 enforces these restrictions for `DEFT_2_5D` by filtering router output candidates using the selected output VN/VC. Baseline topologies keep the existing routing and selection behavior.
 
 ## Offline VL Selection LUT
 
