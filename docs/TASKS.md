@@ -164,13 +164,13 @@ Statuses: `TODO`, `IN_PROGRESS`, `DONE`, `BLOCKED`.
 
 ## T0017: Load and Use VL LUT at Boundary Routers
 
-- **Status:** TODO
+- **Status:** DONE
 - **Objective:** Integrate LUT selection into inter-chiplet routing at boundary routers.
 - **Relevant roadmap phase:** Phase 6
-- **Files likely to change:** To be confirmed after Noxim source inspection
+- **Files changed:** `external/noxim/src/DeftVerticalLinkLut.h`, `external/noxim/src/DeftVerticalLinkLut.cpp`, `external/noxim/src/routingAlgorithms/Routing_DEFT.h`, `external/noxim/src/routingAlgorithms/Routing_DEFT.cpp`, `external/noxim/src/GlobalParams.h`, `external/noxim/src/GlobalParams.cpp`, `external/noxim/src/ConfigurationManager.cpp`, `external/noxim/src/NoC.cpp`, `external/noxim/bin/power.yaml`, `external/noxim/config_examples/deft_2_5d_topology.yaml`, `docs/ARCHITECTURE.md`, `docs/TASKS.md`, `docs/PROGRESS.md`, `docs/VALIDATION.md`, `docs/PROMPTS.md`, and `docs/DECISIONS.md`
 - **Acceptance criteria:** Boundary routers select functional Vertical Links using the current fault vector.
-- **Validation command:** To be confirmed after repository inspection
-- **Notes:** Should run after T0016 generator validation. Keep runtime loading and route selection narrowly scoped to consuming `deft_vl_lut.v1`; do not add experiment automation, metrics changes, or golden-output updates in this task.
+- **Validation command:** From `external/noxim`: `./build.sh`. Existing construction-only no-traffic smoke from `external/noxim/bin`: `LD_LIBRARY_PATH=/mnt/c/Projects/CMP-720-Project-Proposal/external/noxim/bin/libs/systemc-2.3.1/lib-linux64 ./noxim -config ../config_examples/deft_2_5d_topology.yaml -seed 0 -sim 20 -warmup 0`. Runtime LUT load smoke used the same no-traffic configuration with a temporary generator-produced no-fault LUT and `-routing DEFT -deft_vl_lut deft_vl_lut_runtime_smoke.yaml`.
+- **Notes:** Completed on 2026-05-07. Added `DeftVerticalLinkLut` as the runtime loader/validator for `deft_vl_lut.v1`, registered a new `DEFT` routing algorithm, and added `deft_vl_lut_filename` / `-deft_vl_lut` configuration. The runtime key is derived from active physical VL functional state after startup fault injection plus source chiplet, source router, and destination chiplet. The `DEFT` route path uses `source_exit` on the source chiplet, `destination_entry` on the interposer, and fails closed when a table is missing or selected VLs are not functional. Assumption: No `RouteData` intermediate-destination fields are needed for schema v1. Blocked: Packet-carrying inter-chiplet validation remains future work.
 
 ## T0018: Configure XY Baseline Modes
 
