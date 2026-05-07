@@ -748,3 +748,642 @@ At the end, provide:
 - **Full prompt summary in English:** The user asked, in Turkish, to also provide the branch name for the next task from now on.
 - **Result summary:** Project rules and progress documentation were updated to require a suggested branch name for the next recommended task. The suggested branch for `T0005` is `codex/t0005-map-noxim-extension-points`.
 - **Follow-up tasks:** Include the next-task branch name in final task summaries and next ready-to-send prompts.
+
+## 2026-05-05: Start T0005 Noxim Extension Point Mapping
+
+- **Date:** 2026-05-05
+- **Prompt summary:** Inspect the registered Noxim source tree and document extension points for topology, routing, selection, traffic, configuration, simulation control, statistics, power, regression, and tracing without changing simulator behavior.
+- **Full prompt:**
+
+```text
+Start task T0005: Map Noxim extension points.
+
+Suggested branch name:
+codex/t0005-map-noxim-extension-points
+
+Before starting, read AGENTS.md, docs/PROGRESS.md, docs/TASKS.md, docs/ROADMAP.md, docs/ARCHITECTURE.md, docs/VALIDATION.md, and docs/DECISIONS.md.
+
+Use the registered Noxim source tree at:
+external/noxim
+
+`external/noxim` is the Noxim submodule and modifiable project fork from:
+https://github.com/YusufTahirOrhan/noxim
+
+Do not implement DeFT behavior yet. Do not modify routing logic, topology logic, VN logic, fault injection logic, fault injection behavior, simulator behavior, or golden regression outputs in this task.
+
+Goal: inspect the Noxim source tree and document the extension points responsible for topology construction, routing algorithms, selection strategies, traffic generation, configuration loading, simulation control, power/statistics reporting, and any existing regression or tracing hooks.
+
+Known result so far: T0003 verified the documented build command `./build.sh` in WSL Ubuntu on 2026-05-05 and created `external/noxim/bin/noxim`. T0004 verified the documented Noxim User Guide short deterministic baseline simulation command in WSL Ubuntu on 2026-05-05. The successful T0004 run used `LD_LIBRARY_PATH` for the local SystemC shared library and reported `Noxim simulation completed. (1020 cycles executed)`.
+
+Before source inspection, verify the current `external/noxim` working tree status. If the previous LF-normalization changes were reverted, do not reapply them unless a documented WSL command fails and the failure confirms the line-ending issue.
+
+This is a source-inspection and documentation task. Do not change Noxim source files. Read only the files needed to identify extension points. Keep findings traceable with file paths and concise responsibilities.
+
+Ignore the peer evaluation document completely.
+
+Update docs/ARCHITECTURE.md, docs/TASKS.md, docs/PROGRESS.md, docs/VALIDATION.md, and docs/PROMPTS.md with the result. If a durable implementation decision becomes clear, update docs/DECISIONS.md too.
+
+At the end, provide:
+
+1. Created files
+2. Modified files
+3. Whether any source code files changed
+4. Validation result
+5. Current project phase
+6. Next recommended task
+7. The next ready-to-send prompt
+8. Suggested branch name for the next task
+9. Suggested commit message
+10. Unknowns or blockers
+```
+
+- **Result summary:** T0005 completed as a documentation-only source-inspection task. The parent repository and `external/noxim` both reported clean status before source inspection, so the earlier LF-normalization changes were not reapplied. The extension point map was recorded in `docs/ARCHITECTURE.md`, covering configuration/global state, simulation control, topology construction, routing algorithms, selection strategies, traffic generation, statistics/power, logging, VCD tracing, visual trace viewing, deterministic regression assets, and legacy explorer helpers. No Noxim source files, DeFT behavior, routing logic, topology logic, VN logic, fault injection logic, simulator behavior, or golden regression outputs were changed.
+- **Follow-up tasks:** Start `T0006` to design the 2.5D router ID and coordinate mapping before implementation.
+- **Next ready-to-send prompt:**
+
+```text
+Start task T0006: Design 2.5D Router ID and Coordinate Mapping.
+
+Before starting, read AGENTS.md, docs/PROGRESS.md, docs/TASKS.md, docs/ROADMAP.md, docs/ARCHITECTURE.md, docs/VALIDATION.md, and docs/DECISIONS.md.
+
+Use the registered Noxim source tree at:
+external/noxim
+
+`external/noxim` is the Noxim submodule and modifiable project fork from:
+https://github.com/YusufTahirOrhan/noxim
+
+Do not implement DeFT behavior yet. Do not modify Noxim source files, routing logic, topology logic, VN logic, fault injection logic, fault injection behavior, simulator behavior, or golden regression outputs in this task.
+
+Goal: produce a small, reviewable design for router IDs and coordinates for the 2.5D chiplet topology before coding. The design must cover four 4x4 chiplets, active-interposer routers, boundary routers, Vertical Link endpoints, chiplet ownership, and how these concepts map onto or extend the existing Noxim node ID and coordinate model.
+
+Known result so far: T0005 mapped the relevant Noxim extension points. Topology construction is centered in `external/noxim/src/NoC.*` and `external/noxim/src/Tile.h`; router ports, directions, buffers, and VC state are centered in `external/noxim/src/Router.*`, `external/noxim/src/GlobalParams.h`, and `external/noxim/src/DataStructs.h`; routing and selection extensions use registered strategy folders under `external/noxim/src/routingAlgorithms` and `external/noxim/src/selectionStrategies`.
+
+Use `Extended_Proposal.pdf` as the primary project requirements source and the original DeFT paper at `docs/references/DeFT_A_Deadlock-Free_and_Fault-Tolerant_Routing_Algorithm_for_2.5D_Chiplet_Networks.pdf` as the primary algorithmic reference. Use `Proposal.pdf` only as initial context. Ignore the peer evaluation document completely.
+
+This is a documentation-design task. Read only the project sources and the Noxim files needed to ground the mapping. Clearly mark assumptions as `Assumption` and blockers as `Blocked`.
+
+Update docs/ARCHITECTURE.md, docs/TASKS.md, docs/PROGRESS.md, docs/VALIDATION.md, and docs/PROMPTS.md with the result. If a durable mapping decision becomes clear, update docs/DECISIONS.md too.
+
+At the end, provide:
+
+1. Created files
+2. Modified files
+3. Whether any source code files changed
+4. Validation result
+5. Current project phase
+6. Next recommended task
+7. The next ready-to-send prompt
+8. Suggested branch name for the next task
+9. Suggested commit message
+10. Unknowns or blockers
+```
+
+- **Suggested branch name for next task:** `codex/t0006-design-router-coordinate-mapping`
+
+## 2026-05-05: Start T0006 Router ID and Coordinate Mapping Design
+
+- **Date:** 2026-05-05
+- **Prompt summary:** Design the 2.5D router ID and coordinate mapping for four 4x4 chiplets, active-interposer routers, boundary routers, VL endpoints, and chiplet ownership before implementation.
+- **Full prompt:**
+
+```text
+Start task T0006: Design 2.5D Router ID and Coordinate Mapping.
+
+Suggested branch name:
+feat/t0006-design-router-coordinate-mapping
+
+Before starting, read AGENTS.md, docs/PROGRESS.md, docs/TASKS.md, docs/ROADMAP.md, docs/ARCHITECTURE.md, docs/VALIDATION.md, and docs/DECISIONS.md.
+
+Use the registered Noxim source tree at:
+external/noxim
+
+`external/noxim` is the Noxim submodule and modifiable project fork from:
+https://github.com/YusufTahirOrhan/noxim
+
+Do not implement DeFT behavior yet. Do not modify Noxim source files, routing logic, topology logic, VN logic, fault injection logic, fault injection behavior, simulator behavior, or golden regression outputs in this task.
+
+Goal: produce a small, reviewable design for router IDs and coordinates for the 2.5D chiplet topology before coding. The design must cover four 4x4 chiplets, active-interposer routers, boundary routers, Vertical Link endpoints, chiplet ownership, and how these concepts map onto or extend the existing Noxim node ID and coordinate model.
+
+Known result so far: T0005 mapped the relevant Noxim extension points. Topology construction is centered in `external/noxim/src/NoC.*` and `external/noxim/src/Tile.h`; router ports, directions, buffers, and VC state are centered in `external/noxim/src/Router.*`, `external/noxim/src/GlobalParams.h`, and `external/noxim/src/DataStructs.h`; routing and selection extensions use registered strategy folders under `external/noxim/src/routingAlgorithms` and `external/noxim/src/selectionStrategies`.
+
+Use `Extended_Proposal.pdf` as the primary project requirements source and the original DeFT paper at `docs/references/DeFT_A_Deadlock-Free_and_Fault-Tolerant_Routing_Algorithm_for_2.5D_Chiplet_Networks.pdf` as the primary algorithmic reference. Use `Proposal.pdf` only as initial context. Ignore the peer evaluation document completely.
+
+This is a documentation-design task. Read only the project sources and the Noxim files needed to ground the mapping. Clearly mark assumptions as `Assumption` and blockers as `Blocked`.
+
+Update docs/ARCHITECTURE.md, docs/TASKS.md, docs/PROGRESS.md, docs/VALIDATION.md, and docs/PROMPTS.md with the result. If a durable mapping decision becomes clear, update docs/DECISIONS.md too.
+
+At the end, provide:
+
+1. Created files
+2. Modified files
+3. Whether any source code files changed
+4. Validation result
+5. Current project phase
+6. Next recommended task
+7. The next ready-to-send prompt
+8. Suggested branch name for the next task
+9. Suggested commit message
+10. Unknowns or blockers
+```
+
+- **Result summary:** T0006 completed as a documentation-only design task. The mapping design records chiplet router IDs `0..63` as an 8x8 global chiplet footprint, active-interposer router IDs `64..127` as the same footprint offset by 64, chiplet ownership derived from global footprint coordinates, deterministic boundary-router slots for each chiplet, and physical bidirectional VL IDs `0..15` with chiplet and interposer endpoints. The design records the assumption that 16 physical bidirectional VLs can derive 32 directional VL channels or endpoint directions for later paper-aligned fault accounting. No Noxim source files or simulator behavior were changed.
+- **Follow-up tasks:** Start `T0007` to implement the smallest 2.5D topology construction change using the T0006 mapping, without implementing DeFT routing behavior.
+- **Next ready-to-send prompt:**
+
+```text
+Start task T0007: Implement 2.5D Topology Construction.
+
+Before starting, read AGENTS.md, docs/PROGRESS.md, docs/TASKS.md, docs/ROADMAP.md, docs/ARCHITECTURE.md, docs/VALIDATION.md, and docs/DECISIONS.md.
+
+Continue on the existing Git branch. Do not create or switch task branches.
+
+Use the registered Noxim source tree at:
+external/noxim
+
+`external/noxim` is the Noxim submodule and modifiable project fork from:
+https://github.com/YusufTahirOrhan/noxim
+
+This is the first explicit 2.5D topology implementation task. Keep the change as small as possible. Do not implement DeFT routing behavior, VN assignment behavior, VN transition restrictions, VL fault injection behavior, VL LUT generation, experiment automation, metrics changes, simulator behavior outside topology construction, or golden regression output updates in this task.
+
+Goal: add the smallest code change needed for Noxim to instantiate the planned 2.5D topology shape from the T0006 design, using four 4x4 chiplets, an 8x8 active-interposer footprint, chiplet router IDs `0..63`, interposer router IDs `64..127`, and deterministic boundary/VL endpoint mapping. The goal is topology construction and mapping inspectability only, not DeFT routing.
+
+Known result so far: T0005 mapped the relevant Noxim extension points. Topology construction is centered in `external/noxim/src/NoC.*` and `external/noxim/src/Tile.h`; router ports, directions, buffers, and VC state are centered in `external/noxim/src/Router.*`, `external/noxim/src/GlobalParams.h`, and `external/noxim/src/DataStructs.h`. T0006 documented the router ID and coordinate design in `docs/ARCHITECTURE.md`, including the required layer-aware helper surface and the current blocker that Noxim has no explicit `DIRECTION_UP` or `DIRECTION_DOWN`.
+
+Use `Extended_Proposal.pdf` as the primary project requirements source and the original DeFT paper at `docs/references/DeFT_A_Deadlock-Free_and_Fault-Tolerant_Routing_Algorithm_for_2.5D_Chiplet_Networks.pdf` as the primary algorithmic reference. Use `Proposal.pdf` only as initial context. Ignore the peer evaluation document completely.
+
+Before coding, produce a short implementation plan. Work only on the selected topology-construction task. Do not modify unrelated files. Clearly mark assumptions as `Assumption` and blockers as `Blocked`.
+
+Use only known validation commands. The baseline build command is documented as `./build.sh` from `external/noxim` in WSL Ubuntu. The baseline short simulation command is documented in `docs/VALIDATION.md`; only run a simulation if the implementation provides a documented minimal 2.5D configuration or another clearly valid invocation. Do not use `./regression.sh --update`.
+
+Update docs/ARCHITECTURE.md, docs/TASKS.md, docs/PROGRESS.md, docs/VALIDATION.md, and docs/PROMPTS.md with the result. If a durable implementation decision becomes clear, update docs/DECISIONS.md too.
+
+At the end, provide:
+
+1. Created files
+2. Modified files
+3. Whether any source code files changed
+4. Validation result
+5. Current project phase
+6. Next recommended task
+7. The next ready-to-send prompt
+8. Suggested branch name for the next task
+9. Suggested commit message
+10. Unknowns or blockers
+```
+
+- **Suggested branch name for next task:** None; continue on the existing branch.
+- **Suggested commit message:** `docs: design 2.5d router coordinate mapping`
+
+## 2026-05-05: Do Not Create Task Branches Automatically
+
+- **Date:** 2026-05-05
+- **Prompt summary:** The user instructed Codex not to create new branches for tasks ever again and to continue on the existing branch.
+- **Full prompt:**
+
+```text
+do not try to create new branches for tasks ever again. Continue on exiting one.
+```
+
+- **Result summary:** The instruction is recorded as ADR-0016. Future tasks must continue on the existing branch by default and must not create or switch task branches unless the user explicitly requests a branch operation in that future message.
+
+## 2026-05-06: Start T0007 2.5D Topology Construction
+
+- **Date:** 2026-05-06
+- **Prompt summary:** Implement the smallest Noxim source change needed to instantiate the T0006 2.5D topology shape, with four 4x4 chiplets, an 8x8 active-interposer footprint, router IDs `0..127`, and deterministic VL endpoint mapping, without implementing DeFT routing or fault behavior.
+- **Full prompt:**
+
+```text
+Start task T0007: Implement 2.5D Topology Construction.
+
+Before starting, read AGENTS.md, docs/PROGRESS.md, docs/TASKS.md, docs/ROADMAP.md, docs/ARCHITECTURE.md, docs/VALIDATION.md, and docs/DECISIONS.md.
+
+Continue on the existing Git branch. Do not create or switch task branches.
+
+Use the registered Noxim source tree at:
+external/noxim
+
+`external/noxim` is the Noxim submodule and modifiable project fork from:
+https://github.com/YusufTahirOrhan/noxim
+
+This is the first explicit 2.5D topology implementation task. Keep the change as small as possible. Do not implement DeFT routing behavior, VN assignment behavior, VN transition restrictions, VL fault injection behavior, VL LUT generation, experiment automation, metrics changes, simulator behavior outside topology construction, or golden regression output updates in this task.
+
+Goal: add the smallest code change needed for Noxim to instantiate the planned 2.5D topology shape from the T0006 design, using four 4x4 chiplets, an 8x8 active-interposer footprint, chiplet router IDs `0..63`, interposer router IDs `64..127`, and deterministic boundary/VL endpoint mapping. The goal is topology construction and mapping inspectability only, not DeFT routing.
+
+Known result so far: T0005 mapped the relevant Noxim extension points. Topology construction is centered in `external/noxim/src/NoC.*` and `external/noxim/src/Tile.h`; router ports, directions, buffers, and VC state are centered in `external/noxim/src/Router.*`, `external/noxim/src/GlobalParams.h`, and `external/noxim/src/DataStructs.h`. T0006 documented the router ID and coordinate design in `docs/ARCHITECTURE.md`, including the required layer-aware helper surface and the current blocker that Noxim has no explicit `DIRECTION_UP` or `DIRECTION_DOWN`.
+
+Use `Extended_Proposal.pdf` as the primary project requirements source and the original DeFT paper at `docs/references/DeFT_A_Deadlock-Free_and_Fault-Tolerant_Routing_Algorithm_for_2.5D_Chiplet_Networks.pdf` as the primary algorithmic reference. Use `Proposal.pdf` only as initial context. Ignore the peer evaluation document completely.
+
+Before coding, produce a short implementation plan. Work only on the selected topology-construction task. Do not modify unrelated files. Clearly mark assumptions as `Assumption` and blockers as `Blocked`.
+
+Use only known validation commands. The baseline build command is documented as `./build.sh` from `external/noxim` in WSL Ubuntu. The baseline short simulation command is documented in `docs/VALIDATION.md`; only run a simulation if the implementation provides a documented minimal 2.5D configuration or another clearly valid invocation. Do not use `./regression.sh --update`.
+
+Update docs/ARCHITECTURE.md, docs/TASKS.md, docs/PROGRESS.md, docs/VALIDATION.md, and docs/PROMPTS.md with the result. If a durable implementation decision becomes clear, update docs/DECISIONS.md too.
+
+At the end, provide:
+
+1. Created files
+2. Modified files
+3. Whether any source code files changed
+4. Validation result
+5. Current project phase
+6. Next recommended task
+7. The next ready-to-send prompt
+8. Suggested branch name for the next task, which should be `None; continue on the existing branch`
+9. Suggested commit message
+10. Unknowns or blockers
+```
+
+- **Result summary:** T0007 completed. Noxim now has a selectable `DEFT_2_5D` topology, a layer-aware `DeftTopology` helper, a `NoC::buildDeft2D()` construction path, and a no-traffic construction smoke config. Validation built successfully in WSL Ubuntu and the construction smoke reported 64 chiplet routers, 64 interposer routers, 128 total routers, 96 chiplet-local cardinal links, 112 interposer cardinal links, and 16 physical bidirectional VLs with the expected endpoint table. No DeFT routing, VN, fault injection, VL LUT, experiment automation, or golden regression output update was implemented.
+- **Follow-up tasks:** Start `T0008` to add the Vertical Link data model/query surface needed by later fault injection and routing tasks, while keeping fault injection behavior out of scope.
+- **Next ready-to-send prompt:** See `docs/PROGRESS.md`.
+- **Suggested branch name for next task:** None; continue on the existing branch.
+- **Suggested commit message:** `feat: add 2.5d topology construction`
+
+## 2026-05-06: Start T0008 Vertical Link Data Model
+
+- **Date:** 2026-05-06
+- **Prompt summary:** Add the smallest centralized Vertical Link data model/query surface after T0007, representing physical bidirectional VL identity, chiplet ownership, slot, endpoints, and default functional state without adding fault injection, routing, VN, LUT, metrics, experiment automation, or golden-output updates.
+- **Full prompt:**
+
+```text
+Start task T0008: Add Vertical Link Data Model.
+
+Before starting, read AGENTS.md, docs/PROGRESS.md, docs/TASKS.md, docs/ROADMAP.md, docs/ARCHITECTURE.md, docs/VALIDATION.md, and docs/DECISIONS.md.
+
+Continue on the existing Git branch. Do not create or switch task branches.
+
+Use the registered Noxim source tree at:
+external/noxim
+
+`external/noxim` is the Noxim submodule and modifiable project fork from:
+https://github.com/YusufTahirOrhan/noxim
+
+T0007 added selectable `DEFT_2_5D` topology construction, the static `DeftTopology` mapping helper, four isolated 4x4 chiplet meshes, an 8x8 active-interposer mesh, and the deterministic 16-VL endpoint table. The construction smoke config is:
+external/noxim/config_examples/deft_2_5d_topology.yaml
+
+Goal: add the smallest Vertical Link data model/query surface needed after T0007. Represent each physical bidirectional VL with stable ID, owner chiplet, slot, chiplet endpoint, interposer endpoint, and default functional state. Keep the model inspectable and reusable by later fault injection and routing tasks.
+
+Keep this task independent from startup-time fault injection behavior, fault-mask generation, fault-rate configuration, DeFT routing behavior, VN assignment behavior, VN transition restrictions, VL LUT generation, experiment automation, metrics changes, and golden regression output updates.
+
+Known result so far: T0007's `DeftTopology` helper already contains static endpoint records and `is_functional=true` in the construction table, but it does not yet provide a mutable or centralized fault-state model, validation API, or routing-facing query contract. T0008 should decide the smallest safe extension without changing route selection.
+
+Use `Extended_Proposal.pdf` as the primary project requirements source and the original DeFT paper at `docs/references/DeFT_A_Deadlock-Free_and_Fault-Tolerant_Routing_Algorithm_for_2.5D_Chiplet_Networks.pdf` as the primary algorithmic reference. Use `Proposal.pdf` only as initial context. Ignore the peer evaluation document completely.
+
+Before coding, produce a short implementation plan. Work only on the selected Vertical Link data-model task. Do not modify unrelated files. Clearly mark assumptions as `Assumption` and blockers as `Blocked`.
+
+Use only known validation commands. The baseline build command is documented as `./build.sh` from `external/noxim` in WSL Ubuntu. The T0007 construction smoke command is documented in `docs/VALIDATION.md`; only run a simulation if the task preserves the construction-only no-traffic invocation or provides another clearly valid invocation. Do not use `./regression.sh --update`.
+
+Update docs/ARCHITECTURE.md, docs/TASKS.md, docs/PROGRESS.md, docs/VALIDATION.md, and docs/PROMPTS.md with the result. If a durable implementation decision becomes clear, update docs/DECISIONS.md too.
+
+At the end, provide:
+
+1. Created files
+2. Modified files
+3. Whether any source code files changed
+4. Validation result
+5. Current project phase
+6. Next recommended task
+7. The next ready-to-send prompt
+8. Suggested branch name for the next task, which should be `None; continue on the existing branch`
+9. Suggested commit message
+10. Unknowns or blockers
+```
+
+- **Result summary:** T0008 completed. `DeftTopology` now owns the centralized physical VL model/query surface, with stable 16-VL identity and endpoint records, mutable default functional state, reset/set/query helpers, functional-link queries per chiplet, bidirectional endpoint lookup, chiplet endpoint lookup, and structural validation for stable IDs, ownership, slots, unique endpoints, same-footprint endpoints, and exactly four VLs per chiplet. `NoC::buildDeft2D()` validates the model and prints `functional=true` for all default VLs. No startup-time fault injection, fault-mask generation, fault-rate configuration, DeFT routing, VN behavior, VL LUT, experiment automation, metrics change, or golden regression output update was implemented.
+- **Follow-up tasks:** Start `T0009` to add or formalize the boundary-router identification/query surface needed by later DeFT routing and VN tasks.
+- **Next ready-to-send prompt:** See `docs/PROGRESS.md`.
+- **Suggested branch name for next task:** None; continue on the existing branch.
+- **Suggested commit message:** `feat: add vertical link data model`
+
+## 2026-05-06: Start T0009 Boundary Router Identification
+
+- **Date:** 2026-05-06
+- **Prompt summary:** Add the smallest boundary-router identification/query surface after T0008, representing each chiplet boundary router with stable router ID, owner chiplet, local coordinate, VL slot, attached VL ID, and attached interposer endpoint without adding fault injection, routing, VN, LUT, metrics, experiment automation, or golden-output updates.
+- **Full prompt:**
+
+```text
+Start task T0009: Add Boundary Router Identification.
+
+Before starting, read AGENTS.md, docs/PROGRESS.md, docs/TASKS.md, docs/ROADMAP.md, docs/ARCHITECTURE.md, docs/VALIDATION.md, and docs/DECISIONS.md.
+
+Continue on the existing Git branch. Do not create or switch task branches.
+
+Use the registered Noxim source tree at:
+external/noxim
+
+external/noxim is the Noxim submodule and modifiable project fork from:
+https://github.com/YusufTahirOrhan/noxim
+
+T0007 added selectable DEFT_2_5D topology construction, the DeftTopology mapping helper, four isolated 4x4 chiplet meshes, an 8x8 active-interposer mesh, and the deterministic 16-VL endpoint table. T0008 extended DeftTopology into the centralized physical Vertical Link model/query surface with stable VL IDs, chiplet ownership, slots, chiplet/interposer endpoints, default functional state, functional-state query/mutation helpers, and structural VL validation. The construction smoke config is:
+external/noxim/config_examples/deft_2_5d_topology.yaml
+
+Goal: add the smallest boundary-router identification/query surface needed after T0008. Represent each chiplet boundary router with stable router ID, owner chiplet, local coordinate, VL slot, attached VL ID, and attached interposer endpoint. Keep the model inspectable and reusable by later DeFT routing and VN tasks.
+
+Keep this task independent from startup-time fault injection behavior, fault-mask generation, fault-rate configuration, DeFT routing behavior, route selection, VN assignment behavior, VN transition restrictions, VL LUT generation, experiment automation, metrics changes, and golden regression output updates.
+
+Known result so far: T0007 already added DeftTopology::isBoundaryRouter(id), RouterInfo::boundary_router, and VL endpoint lookup. T0008 added centralized VL state and endpoint queries. T0009 should decide whether those existing surfaces are sufficient or whether a small explicit boundary-router inventory/query contract is needed. Do not duplicate data unnecessarily.
+
+Use Extended_Proposal.pdf as the primary project requirements source and the original DeFT paper at docs/references/DeFT_A_Deadlock-Free_and_Fault-Tolerant_Routing_Algorithm_for_2.5D_Chiplet_Networks.pdf as the primary algorithmic reference. Use Proposal.pdf only as initial context. Ignore the peer evaluation document completely.
+
+Before coding, produce a short implementation plan. Work only on the selected boundary-router identification task. Do not modify unrelated files. Clearly mark assumptions as Assumption and blockers as Blocked.
+
+Use only known validation commands. The baseline build command is documented as ./build.sh from external/noxim in WSL Ubuntu. The construction smoke command is documented in docs/VALIDATION.md; only run a simulation if the task preserves the construction-only no-traffic invocation or provides another clearly valid invocation. Do not use ./regression.sh --update.
+
+Update docs/ARCHITECTURE.md, docs/TASKS.md, docs/PROGRESS.md, docs/VALIDATION.md, and docs/PROMPTS.md with the result. If a durable implementation decision becomes clear, update docs/DECISIONS.md too.
+
+At the end, provide:
+
+1. Created files
+2. Modified files
+3. Whether any source code files changed
+4. Validation result
+5. Current project phase
+6. Next recommended task
+7. The next ready-to-send prompt
+8. Suggested branch name for the next task, which should be None; continue on the existing branch
+9. Suggested commit message
+10. Unknowns or blockers
+```
+
+- **Result summary:** T0009 completed. `DeftTopology` now exposes `BoundaryRouterInfo` as a derived view over the centralized VL model, with inventory, per-chiplet lookup, router-ID lookup, VL-ID lookup, and structural validation helpers. `NoC::buildDeft2D()` validates the boundary-router model and prints all 16 boundary-router records during construction smoke runs. Validation built successfully in WSL Ubuntu and the construction smoke reported `boundary_routers=16` with the expected router IDs, chiplet owners, local coordinates, slots, attached VL IDs, and interposer endpoints. No startup-time fault injection, fault-mask generation, fault-rate configuration, DeFT routing, route selection, VN behavior, VL LUT, experiment automation, metrics change, or golden regression output update was implemented.
+- **Follow-up tasks:** Start `T0010` to implement the centralized startup-time permanent Vertical Link fault injection manager using the existing VL and boundary-router query surfaces.
+- **Next ready-to-send prompt:** See `docs/PROGRESS.md`.
+- **Suggested branch name for next task:** None; continue on the existing branch.
+- **Suggested commit message:** `feat: add boundary router inventory`
+
+## 2026-05-07: Start T0010 Fault Injection Manager
+
+- **Date:** 2026-05-07
+- **Prompt summary:** Implement the smallest centralized startup-time permanent Vertical Link fault injection manager after T0009, using the centralized physical VL model and boundary-router query surfaces, while keeping routing, VN behavior, LUT generation, metrics, experiment automation, and golden outputs out of scope.
+- **Full prompt:**
+
+```text
+Start task T0010: Implement Fault Injection Manager.
+
+Before starting, read AGENTS.md, docs/PROGRESS.md, docs/TASKS.md, docs/ROADMAP.md, docs/ARCHITECTURE.md, docs/VALIDATION.md, and docs/DECISIONS.md.
+
+Continue on the existing Git branch. Do not create or switch task branches.
+
+Use the registered Noxim source tree at:
+external/noxim
+
+external/noxim is the Noxim submodule and modifiable project fork from:
+https://github.com/YusufTahirOrhan/noxim
+
+T0007 added selectable DEFT_2_5D topology construction, the DeftTopology mapping helper, four isolated 4x4 chiplet meshes, an 8x8 active-interposer mesh, and the deterministic 16-VL endpoint table. T0008 extended DeftTopology into the centralized physical Vertical Link model/query surface with stable VL IDs, chiplet ownership, slots, chiplet/interposer endpoints, default functional state, functional-state query/mutation helpers, and structural VL validation. T0009 added the derived boundary-router inventory/query surface with stable router ID, owner chiplet, local coordinate, VL slot, attached VL ID, and attached interposer endpoint. The construction smoke config is:
+external/noxim/config_examples/deft_2_5d_topology.yaml
+
+Goal: add the smallest centralized startup-time permanent Vertical Link fault injection manager needed after T0009. The manager should use the existing physical VL model and mutation helpers to mark selected VLs functional or faulty before simulation traffic runs. Keep the task focused on fault-state setup and inspectability only.
+
+Keep this task independent from DeFT routing behavior, route selection, VN assignment behavior, VN transition restrictions, VL LUT generation, experiment automation, metrics changes, and golden regression output updates. Do not implement T0011 fault-mask validation beyond the smallest guard needed to avoid fully disconnecting any chiplet if the selected T0010 design requires it.
+
+Known result so far: T0008 provides resetVerticalLinkStates(), setVerticalLinkFunctional(), isVerticalLinkFunctional(), functionalVerticalLinksForChiplet(chiplet_id), hasFunctionalVerticalLinkForChiplet(chiplet_id), and structural VL validation. T0009 provides boundary-router inventory and lookup helpers. T0010 should reuse these surfaces and should not introduce a parallel VL or boundary-router inventory.
+
+Use Extended_Proposal.pdf as the primary project requirements source and the original DeFT paper at docs/references/DeFT_A_Deadlock-Free_and_Fault-Tolerant_Routing_Algorithm_for_2.5D_Chiplet_Networks.pdf as the primary algorithmic reference. Use Proposal.pdf only as initial context. Ignore the peer evaluation document completely.
+
+Before coding, produce a short implementation plan. Work only on the selected fault-injection-manager task. Do not modify unrelated files. Clearly mark assumptions as Assumption and blockers as Blocked.
+
+Use only known validation commands. The baseline build command is documented as ./build.sh from external/noxim in WSL Ubuntu. The construction smoke command is documented in docs/VALIDATION.md; only run a simulation if the task preserves the construction-only no-traffic invocation or provides another clearly valid invocation. Do not use ./regression.sh --update.
+
+Update docs/ARCHITECTURE.md, docs/TASKS.md, docs/PROGRESS.md, docs/VALIDATION.md, and docs/PROMPTS.md with the result. If a durable implementation decision becomes clear, update docs/DECISIONS.md too.
+
+At the end, provide:
+
+1. Created files
+2. Modified files
+3. Whether any source code files changed
+4. Validation result
+5. Current project phase
+6. Next recommended task
+7. The next ready-to-send prompt
+8. Suggested branch name for the next task, which should be None; continue on the existing branch
+9. Suggested commit message
+10. Unknowns or blockers
+```
+
+- **Result summary:** T0010 completed. `DeftFaultInjectionManager` now applies startup permanent physical VL fault state through the centralized `DeftTopology` model. The configuration surface supports `deft_faulty_vertical_links` for explicit physical VL IDs and `deft_vl_fault_count` for seed-controlled random physical VL fault selection. The manager rejects incompatible modes, duplicate/out-of-range IDs, and masks that leave any chiplet with zero functional VLs. Construction output reports the selected fault mask and per-chiplet functional counts. Validation built successfully, the default construction smoke reported no faults, and a seed-0 four-fault smoke selected VLs `[0,1,5,13]` with functional per-chiplet counts `2,3,4,3`. No routing, VN, LUT, metrics, experiment automation, or golden-output work was added.
+- **Follow-up tasks:** Start `T0011` to add focused fault-mask validation for explicit/generated masks up to the proposal target without changing routing or VN behavior.
+- **Next ready-to-send prompt:** See `docs/PROGRESS.md`.
+- **Suggested branch name for next task:** None; continue on the existing branch.
+- **Suggested commit message:** `feat: add vertical link fault injection manager`
+
+## 2026-05-07: Start T0011 Fault Mask Validation
+
+- **Date:** 2026-05-07
+- **Prompt summary:** Add focused validation for explicit and generated DeFT Vertical Link fault masks against the current physical VL model, especially masks corresponding to the proposal's 25% target, without changing routing, VN behavior, LUT generation, metrics, experiments, or golden outputs.
+- **Full prompt:**
+
+```text
+Start task T0011: Add Fault Mask Validation.
+
+Before starting, read AGENTS.md, docs/PROGRESS.md, docs/TASKS.md, docs/ROADMAP.md, docs/ARCHITECTURE.md, docs/VALIDATION.md, and docs/DECISIONS.md.
+
+Continue on the existing Git branch. Do not create or switch task branches.
+
+Use the registered Noxim source tree at:
+external/noxim
+
+external/noxim is the Noxim submodule and modifiable project fork from:
+https://github.com/YusufTahirOrhan/noxim
+
+T0007 added selectable DEFT_2_5D topology construction, the DeftTopology mapping helper, four isolated 4x4 chiplet meshes, an 8x8 active-interposer mesh, and the deterministic 16-VL endpoint table. T0008 extended DeftTopology into the centralized physical Vertical Link model/query surface. T0009 added the derived boundary-router inventory/query surface. T0010 added DeftFaultInjectionManager, deft_faulty_vertical_links, deft_vl_fault_count, seed-controlled random physical VL fault selection, startup fault-state application, inspectability output, and the minimum guard that no chiplet is left with zero functional VLs. The construction smoke config is:
+external/noxim/config_examples/deft_2_5d_topology.yaml
+
+Goal: add the smallest focused fault-mask validation layer needed after T0010. Validate explicit and generated fault masks for the current physical VL model, especially masks corresponding to the proposal's 25% target, while keeping the task focused on validation and inspectability only.
+
+Keep this task independent from DeFT routing behavior, route selection, VN assignment behavior, VN transition restrictions, VL LUT generation, experiment automation, metrics changes, and golden regression output updates.
+
+Known result so far: T0010 counts configured faults over the current 16 physical bidirectional VLs and leaves percentage conversion/directional accounting as future work. Decide the smallest validation surface that keeps explicit/generated masks reproducible and rejects masks that are invalid for the current physical VL model. Do not introduce a parallel VL or boundary-router inventory.
+
+Use Extended_Proposal.pdf as the primary project requirements source and the original DeFT paper at docs/references/DeFT_A_Deadlock-Free_and_Fault-Tolerant_Routing_Algorithm_for_2.5D_Chiplet_Networks.pdf as the primary algorithmic reference. Use Proposal.pdf only as initial context. Ignore the peer evaluation document completely.
+
+Before coding, produce a short implementation plan. Work only on the selected fault-mask-validation task. Do not modify unrelated files. Clearly mark assumptions as Assumption and blockers as Blocked.
+
+Use only known validation commands. The baseline build command is documented as ./build.sh from external/noxim in WSL Ubuntu. The construction smoke command and the T0010 faulted construction smoke command are documented in docs/VALIDATION.md; only run simulations if they preserve construction-only no-traffic invocation or provide another clearly valid invocation. Do not use ./regression.sh --update.
+
+Update docs/ARCHITECTURE.md, docs/TASKS.md, docs/PROGRESS.md, docs/VALIDATION.md, and docs/PROMPTS.md with the result. If a durable implementation decision becomes clear, update docs/DECISIONS.md too.
+
+At the end, provide:
+
+1. Created files
+2. Modified files
+3. Whether any source code files changed
+4. Validation result
+5. Current project phase
+6. Next recommended task
+7. The next ready-to-send prompt
+8. Suggested branch name for the next task, which should be None; continue on the existing branch
+9. Suggested commit message
+10. Unknowns or blockers
+```
+
+- **Result summary:** T0011 completed. `DeftFaultInjection::validateFaultMask()` now normalizes explicit and generated masks, rejects duplicate/out-of-range/nonexistent physical VL IDs, rejects impossible connected-chiplet mask sizes, and rejects masks that leave any chiplet with zero functional physical VLs. Startup fault application validates both selection modes before mutating `DeftTopology` state. Construction output now reports physical fault count over 16 current physical VLs, a `current_physical_25_percent_target` flag, per-chiplet faulty counts, and per-chiplet functional counts. Validation built successfully, accepted generated and explicit four-fault current-physical-25% masks, and rejected an explicit mask that disconnected chiplet 0. No routing, VN, LUT, metrics, experiment automation, or golden-output work was added.
+- **Follow-up tasks:** Start `T0012` to design the VN.0/VN.1 state representation before implementing VN assignment or transition restrictions.
+- **Next ready-to-send prompt:** See `docs/PROGRESS.md`.
+- **Suggested branch name for next task:** None; continue on the existing branch.
+- **Suggested commit message:** `feat: add fault mask validation`
+
+## 2026-05-07: Start T0012 VN State Representation Design
+
+- **Date:** 2026-05-07
+- **Prompt summary:** Design the smallest safe representation for DeFT VN.0/VN.1 state in Noxim, deciding how it maps to existing virtual-channel structures without implementing VN assignment behavior, transition restrictions, route selection, VL LUT generation, metrics, experiments, or source-code changes.
+- **Full prompt:**
+
+```text
+Start task T0012: Design VN State Representation.
+
+Before starting, read AGENTS.md, docs/PROGRESS.md, docs/TASKS.md, docs/ROADMAP.md, docs/ARCHITECTURE.md, docs/VALIDATION.md, docs/DECISIONS.md, and docs/PROMPTS.md.
+
+Continue on the existing Git branch. Do not create or switch task branches.
+
+Use the registered Noxim source tree at:
+external/noxim
+
+external/noxim is the Noxim submodule and modifiable project fork from:
+https://github.com/YusufTahirOrhan/noxim
+
+T0007 added selectable DEFT_2_5D topology construction and the DeftTopology mapping helper. T0008 centralized the physical Vertical Link model and functional state. T0009 added the derived boundary-router inventory. T0010 added startup-time permanent physical VL fault injection. T0011 added focused explicit/generated fault-mask validation and inspectability against the current 16 physical bidirectional VL model.
+
+Goal: design the smallest safe VN state representation for future DeFT VN assignment and transition-restriction tasks. Decide where VN.0/VN.1 state should live in the current Noxim data path, how it should map to the existing virtual-channel structures, and which metadata fields or helper APIs future implementation should use.
+
+Keep this task documentation-first and independent from implementation of VN assignment behavior, VN transition restrictions, route selection, VL LUT generation, experiment automation, metrics changes, and golden regression output updates. Do not change simulator behavior in this task unless source inspection proves that a tiny compile-only metadata scaffold is required; if so, justify it before editing.
+
+Known result so far: Noxim already has n_virtual_channels, flit/packet structs in external/noxim/src/DataStructs.h, router pipeline logic in external/noxim/src/Router.*, route data in the routing algorithm interface, and DEFT_2_5D topology/boundary/VL/fault-state query surfaces. T0012 should inspect these surfaces and document a design that preserves exactly two DeFT VNs without disrupting baseline routing.
+
+Use Extended_Proposal.pdf as the primary project requirements source and the original DeFT paper at docs/references/DeFT_A_Deadlock-Free_and_Fault-Tolerant_Routing_Algorithm_for_2.5D_Chiplet_Networks.pdf as the primary algorithmic reference. Use Proposal.pdf only as initial context. Ignore the peer evaluation document completely.
+
+Before editing, produce a short implementation plan. Work only on the selected VN state representation design task. Do not modify unrelated files. Clearly mark assumptions as Assumption and blockers as Blocked.
+
+Use only known validation commands. For a documentation-only task, use repository and submodule status checks unless a source change is explicitly justified. Do not run simulations unless the design task unexpectedly changes source code and the existing construction-only no-traffic invocation remains valid. Do not use ./regression.sh --update.
+
+Update docs/ARCHITECTURE.md, docs/TASKS.md, docs/PROGRESS.md, docs/VALIDATION.md, and docs/PROMPTS.md with the result. If a durable implementation decision becomes clear, update docs/DECISIONS.md too.
+
+At the end, provide:
+
+1. Created files
+2. Modified files
+3. Whether any source code files changed
+4. Validation result
+5. Current project phase
+6. Next recommended task
+7. The next ready-to-send prompt
+8. Suggested branch name for the next task, which should be None; continue on the existing branch
+9. Suggested commit message
+10. Unknowns or blockers
+```
+
+- **Result summary:** T0012 completed as a documentation-only design task. The selected representation maps DeFT VN state directly onto Noxim VC IDs: VC 0 is VN.0 and VC 1 is VN.1 for DeFT-enabled runs. No separate `vn_id` field should be added unless a future implementation task proves it necessary. Future DeFT-enabled routing should require exactly two configured VCs. Source inspection found that the current router reservation path assumes input VC and output VC are the same index, so future boundary-router reassignment must make downstream full-status checks and forwarded `Flit::vc_id` agree on the selected output VC. No Noxim source files or simulator behavior were changed.
+- **Follow-up tasks:** Start `T0013` to implement DeFT VN assignment rules using the T0012 VC-ID mapping.
+- **Next ready-to-send prompt:** See `docs/PROGRESS.md`.
+- **Suggested branch name for next task:** None; continue on the existing branch.
+- **Suggested commit message:** `docs: design DeFT VN state representation`
+
+## 2026-05-07: Start T0013 VN Assignment Rules
+
+- **Date:** 2026-05-07
+- **Prompt summary:** Implement the smallest safe DeFT VN assignment behavior for source routers and boundary routers using VC 0 as VN.0 and VC 1 as VN.1, preserving baseline behavior outside DeFT-enabled runs and keeping final transition enforcement, VL LUT work, experiments, metrics, and golden outputs out of scope.
+- **Full prompt:**
+
+```text
+Start task T0013: Implement VN Assignment Rules.
+
+Before starting, read AGENTS.md, docs/PROGRESS.md, docs/TASKS.md, docs/ROADMAP.md, docs/ARCHITECTURE.md, docs/VALIDATION.md, docs/DECISIONS.md, and docs/PROMPTS.md.
+
+Continue on the existing Git branch. Do not create or switch task branches.
+
+Use the registered Noxim source tree at:
+external/noxim
+
+external/noxim is the Noxim submodule and modifiable project fork from:
+https://github.com/YusufTahirOrhan/noxim
+
+T0007 added selectable DEFT_2_5D topology construction and the DeftTopology mapping helper. T0008 centralized the physical Vertical Link model and functional state. T0009 added the derived boundary-router inventory. T0010 added startup-time permanent physical VL fault injection. T0011 added focused explicit/generated fault-mask validation and inspectability against the current 16 physical bidirectional VL model. T0012 designed the DeFT VN state representation: for DeFT-enabled runs, VC 0 is VN.0 and VC 1 is VN.1. Do not add a parallel vn_id field unless source inspection proves it is necessary.
+
+Goal: implement the smallest safe DeFT VN assignment behavior for source routers and boundary routers using the T0012 mapping. Inter-chiplet traffic from non-boundary source routers should start in VN.0. Cases where either VN is legal should use round-robin assignment or reassignment. Traffic coming from the interposer into a destination chiplet should go to or remain in VN.1. Preserve existing baseline routing behavior outside DeFT-enabled runs.
+
+Known risk: the current router reservation path assumes input VC equals output VC. If boundary-router VN reassignment requires output-VC-aware reservation/forwarding, keep that change narrowly scoped and make downstream full-status checks and forwarded Flit::vc_id agree on the selected output VC.
+
+Keep this task independent from VN transition-restriction enforcement beyond assignment monotonicity, VL LUT generation, experiment automation, metrics changes, and golden regression output updates. Do not implement final VL selection or DeFT performance experiments in this task.
+
+Use Extended_Proposal.pdf as the primary project requirements source and the original DeFT paper at docs/references/DeFT_A_Deadlock-Free_and_Fault-Tolerant_Routing_Algorithm_for_2.5D_Chiplet_Networks.pdf as the primary algorithmic reference. Use Proposal.pdf only as initial context. Ignore the peer evaluation document completely.
+
+Before coding, produce a short implementation plan. Work only on the selected VN assignment task. Do not modify unrelated files. Clearly mark assumptions as Assumption and blockers as Blocked.
+
+Use only known validation commands. The baseline build command is documented as ./build.sh from external/noxim in WSL Ubuntu. The construction-only no-traffic smoke command is documented in docs/VALIDATION.md; only run simulations that preserve that known invocation shape unless a new command is discovered from source documentation. Do not use ./regression.sh --update.
+
+Update docs/ARCHITECTURE.md, docs/TASKS.md, docs/PROGRESS.md, docs/VALIDATION.md, and docs/PROMPTS.md with the result. If a durable implementation decision becomes clear, update docs/DECISIONS.md too.
+
+At the end, provide:
+
+1. Created files
+2. Modified files
+3. Whether any source code files changed
+4. Validation result
+5. Current project phase
+6. Next recommended task
+7. The next ready-to-send prompt
+8. Suggested branch name for the next task, which should be None; continue on the existing branch
+9. Suggested commit message
+10. Unknowns or blockers
+```
+
+- **Result summary:** T0013 completed. `DeftVirtualNetwork` now maps DeFT VN.0/VN.1 to VC 0/VC 1, assigns source packets according to DeFT source rules, and selects boundary output VCs for reassignment. `DEFT_2_5D` now requires exactly two VCs. The router reservation/forwarding path now carries selected output-VC metadata so downstream full-status checks and forwarded `Flit::vc_id` agree. Validation built successfully and the documented construction-only no-traffic smoke completed with the expected topology and zero traffic. No final VL selection, full movement-transition enforcement, experiment automation, metrics change, golden output update, or DeFT performance experiment was added.
+- **Follow-up tasks:** Start `T0014` to enforce VN movement-transition restrictions after the T0013 assignment foundation.
+- **Next ready-to-send prompt:** See `docs/PROGRESS.md`.
+- **Suggested branch name for next task:** None; continue on the existing branch.
+- **Suggested commit message:** `feat: implement DeFT VN assignment`
+
+## 2026-05-07: Start T0014 VN Transition Restrictions
+
+- **Date:** 2026-05-07
+- **Prompt summary:** Enforce the smallest safe DeFT VN transition restrictions after T0013: forbid VN.1 to VN.0, Up-to-Horizontal in VN.0, and Horizontal-to-Down in VN.1, while preserving baseline behavior outside `DEFT_2_5D` and keeping VL LUT, experiments, metrics, and golden outputs out of scope.
+- **Full prompt:**
+
+```text
+Start task T0014: Enforce VN Transition Restrictions.
+
+Before starting, read AGENTS.md, docs/PROGRESS.md, docs/TASKS.md, docs/ROADMAP.md, docs/ARCHITECTURE.md, docs/VALIDATION.md, docs/DECISIONS.md, and docs/PROMPTS.md.
+
+Continue on the existing Git branch. Do not create or switch task branches.
+
+Use the registered Noxim source tree at:
+external/noxim
+
+`external/noxim` is the Noxim submodule and modifiable project fork from:
+https://github.com/YusufTahirOrhan/noxim
+
+T0007 added selectable `DEFT_2_5D` topology construction and the `DeftTopology` mapping helper. T0008 centralized the physical Vertical Link model and functional state. T0009 added the derived boundary-router inventory. T0010 added startup-time permanent physical VL fault injection. T0011 added focused explicit/generated fault-mask validation and inspectability against the current 16 physical bidirectional VL model. T0012 mapped DeFT VN state directly onto Noxim VC IDs: VC 0 is VN.0 and VC 1 is VN.1. T0013 implemented the first VN assignment behavior and output-VC-aware reservation/forwarding: `DEFT_2_5D` now requires exactly two VCs, source assignment uses VN.0 or round-robin where legal, boundary reassignment preserves monotonicity, and interposer-to-destination-chiplet traffic goes to VN.1.
+
+Goal: implement the smallest safe DeFT VN transition-restriction enforcement after T0013. Enforce the DeFT restrictions needed for deadlock freedom: VN.1 to VN.0 is forbidden, Up-to-Horizontal movement in VN.0 is forbidden, and Horizontal-to-Down movement in VN.1 is forbidden. Preserve existing baseline routing behavior outside `DEFT_2_5D`.
+
+Keep this task independent from final VL LUT generation, experiment automation, metrics changes, golden regression output updates, and DeFT performance experiments. Do not implement final VL selection in this task. Keep any movement-state metadata or route filtering narrowly scoped and justify it before editing.
+
+Known result so far: `Packet::vc_id`, `Flit::vc_id`, and `RouteData::vc_id` are the VN/VC state carrier. `DeftVirtualNetwork` exposes VN constants, `canTransition()`, source assignment, boundary output-VC selection, and boundary round-robin state. `Router::txProcess()` now has selected output-VC metadata in reservations, and forwarded `Flit::vc_id` agrees with downstream full-status checks. `DeftTopology` provides layer, boundary-router, and VL endpoint query surfaces. `DIRECTION_HUB` is still the current physical carrier for Vertical Link traversal, not a final semantic Up/Down port model.
+
+Use `Extended_Proposal.pdf` as the primary project requirements source and the original DeFT paper at `docs/references/DeFT_A_Deadlock-Free_and_Fault-Tolerant_Routing_Algorithm_for_2.5D_Chiplet_Networks.pdf` as the primary algorithmic reference. Use `Proposal.pdf` only as initial context. Ignore the peer evaluation document completely.
+
+Before coding, produce a short implementation plan. Work only on the selected VN transition-restriction task. Do not modify unrelated files. Clearly mark assumptions as `Assumption` and blockers as `Blocked`.
+
+Use only known validation commands. The baseline build command is documented as `./build.sh` from `external/noxim` in WSL Ubuntu. The construction-only no-traffic smoke command is documented in `docs/VALIDATION.md`; only run simulations that preserve that known invocation shape unless a new command is discovered from source documentation. Do not use `./regression.sh --update`.
+
+Update docs/ARCHITECTURE.md, docs/TASKS.md, docs/PROGRESS.md, docs/VALIDATION.md, and docs/PROMPTS.md with the result. If a durable implementation decision becomes clear, update docs/DECISIONS.md too.
+
+At the end, provide:
+
+1. Created files
+2. Modified files
+3. Whether any source code files changed
+4. Validation result
+5. Current project phase
+6. Next recommended task
+7. The next ready-to-send prompt
+8. Suggested branch name for the next task, which should be `None; continue on the existing branch`
+9. Suggested commit message
+10. Unknowns or blockers
+```
+
+- **Result summary:** T0014 completed. `DeftVirtualNetwork` now filters DeFT output directions using movement context derived from the input port, candidate output direction, router layer, and boundary-router status. `Router::selectionFunction()` applies that filtering only for `DEFT_2_5D`, and `Router::txProcess()` skips reservation if no legal DeFT output candidate exists. VN.1 to VN.0 remains forbidden through `canTransition()`. Up-to-Horizontal in VN.0 is avoided by forcing output VC VN.1 before horizontal forwarding after an Up input. Horizontal-to-Down in VN.1 is rejected, while Horizontal-to-Down in VN.0 preserves VN.0 and avoids consuming boundary round-robin state. Validation built successfully and the documented construction-only no-traffic smoke completed with the expected topology and zero traffic. No final VL selection, LUT generation, experiment automation, metrics change, golden output update, or DeFT performance experiment was added.
+- **Follow-up tasks:** Start `T0015` to design the offline VL LUT format before implementing generation or runtime lookup.
+- **Next ready-to-send prompt:** See `docs/PROGRESS.md`.
+- **Suggested branch name for next task:** None; continue on the existing branch.
+- **Suggested commit message:** `feat: enforce DeFT VN transition restrictions`

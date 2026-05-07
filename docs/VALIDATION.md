@@ -76,6 +76,363 @@ T0023 source registration result on 2026-05-04:
 - `git status --short` before the T0023 submodule documentation correction returned no output.
 - After the T0023 submodule documentation correction, `git status --short` showed only modified tracking docs: `docs/DECISIONS.md`, `docs/PROGRESS.md`, `docs/PROMPTS.md`, `docs/TASKS.md`, and `docs/VALIDATION.md`.
 
+## Noxim Source Inspection
+
+Purpose:
+
+- Identify existing Noxim extension points before implementation.
+- Keep future DeFT topology, routing, selection, traffic, statistics, and tracing work grounded in actual source files.
+- Confirm that documentation-only inspection does not modify Noxim source files or golden regression outputs.
+
+Known validation:
+
+- Parent repository status: `git status --short`
+- Noxim submodule status: `git -c safe.directory=C:/Projects/CMP-720-Project-Proposal/external/noxim -C external/noxim status --short`
+
+T0005 result on 2026-05-05:
+
+- Required startup reading was completed before task work: `AGENTS.md`, `docs/PROGRESS.md`, `docs/TASKS.md`, `docs/ROADMAP.md`, `docs/ARCHITECTURE.md`, `docs/VALIDATION.md`, and `docs/DECISIONS.md`.
+- Before source inspection, `git status --short` in the parent repository returned no output.
+- Before source inspection, `git -c safe.directory=C:/Projects/CMP-720-Project-Proposal/external/noxim -C external/noxim status --short` returned no output.
+- Because `external/noxim` was clean, the earlier LF-normalization changes appear to have been reverted or absorbed into the current submodule state; they were not reapplied.
+- Source inspection used read-only file listing and search commands, primarily `rg`, against `external/noxim/src`, `external/noxim/regression.sh`, `external/noxim/visualNoxim`, `external/noxim/other/regression`, and selected helper files under `external/noxim/other`.
+- Mapped extension-point owners include `ConfigurationManager.*`, `GlobalParams.*`, `Main.cpp`, `NoC.*`, `Tile.h`, `Router.*`, `DataStructs.h`, `routingAlgorithms/*`, `selectionStrategies/*`, `ProcessingElement.*`, `GlobalTrafficTable.*`, `GlobalTrafficHardcoding.*`, `Stats.*`, `GlobalStats.*`, `Power.*`, `Logger.*`, `Utils.h`, `regression.sh`, `visualNoxim`, and `other/noxim_trace_viewer.py`.
+- No build, simulation, or regression command was run because T0005 made no code change and introduced no new validated command.
+- No Noxim source files, DeFT behavior, routing logic, topology logic, VN logic, fault injection logic, simulator behavior, or golden regression outputs were modified.
+- Final parent-project status after documentation updates showed only the requested tracking docs modified: `docs/ARCHITECTURE.md`, `docs/DECISIONS.md`, `docs/PROGRESS.md`, `docs/PROMPTS.md`, `docs/TASKS.md`, and `docs/VALIDATION.md`.
+- Final `external/noxim` status remained clean.
+
+## Topology Mapping Design
+
+Purpose:
+
+- Validate documentation-only topology mapping work against the source documents and the relevant Noxim ID/coordinate code.
+- Confirm that no Noxim source files, simulator behavior, or golden regression outputs are changed during pre-implementation design tasks.
+
+Known validation:
+
+- Parent repository status: `git status --short`
+- Noxim submodule status: `git -c safe.directory=C:/Projects/CMP-720-Project-Proposal/external/noxim -C external/noxim status --short`
+
+T0006 result on 2026-05-05:
+
+- Required startup reading was completed before task work: `AGENTS.md`, `docs/PROGRESS.md`, `docs/TASKS.md`, `docs/ROADMAP.md`, `docs/ARCHITECTURE.md`, `docs/VALIDATION.md`, and `docs/DECISIONS.md`.
+- Before source inspection, `git status --short` in the parent repository returned no output.
+- Before source inspection, `git -c safe.directory=C:/Projects/CMP-720-Project-Proposal/external/noxim -C external/noxim status --short` returned no output.
+- Required source documents were confirmed present: `Extended_Proposal.pdf`, `Proposal.pdf`, and `docs/references/DeFT_A_Deadlock-Free_and_Fault-Tolerant_Routing_Algorithm_for_2.5D_Chiplet_Networks.pdf`.
+- `pdftotext` was not available in the current environment. The bundled Python runtime with `pypdf` was used to inspect short source-document snippets. No extracted text files were created.
+- Noxim source inspection was limited to ID, coordinate, topology-construction, routing, traffic, and stats surfaces needed to ground the design: `DataStructs.h`, `Utils.h`, `NoC.*`, `Tile.h`, `Router.*`, `GlobalParams.*`, `ProcessingElement.*`, `GlobalStats.*`, and `routingAlgorithms/Routing_XY.cpp`.
+- T0006 documented a deterministic 2.5D mapping: chiplet router IDs `0..63`, interposer router IDs `64..127`, a 2x2 chiplet grid, 4x4 chiplet-local meshes, an 8x8 active-interposer footprint, four boundary-router slots per chiplet, and physical bidirectional VL IDs `0..15`.
+- No build, simulation, or regression command was run because T0006 made no code change and introduced no new validated command.
+- No Noxim source files, DeFT behavior, routing logic, topology logic, VN logic, fault injection logic, simulator behavior, or golden regression outputs were modified.
+- Final parent-project status after documentation updates showed only the requested tracking docs modified: `docs/ARCHITECTURE.md`, `docs/DECISIONS.md`, `docs/PROGRESS.md`, `docs/PROMPTS.md`, `docs/TASKS.md`, and `docs/VALIDATION.md`.
+- Final `external/noxim` status remained clean.
+
+## 2.5D Topology Construction
+
+Purpose:
+
+- Validate that Noxim can instantiate the T0006 2.5D topology shape.
+- Confirm the constructed router counts, cardinal-link counts, and deterministic VL endpoint table.
+- Confirm construction without invoking DeFT routing behavior, VN behavior, VL fault injection behavior, VL LUT generation, experiment automation, or golden regression updates.
+
+Known validation:
+
+- Build from the Noxim repository root in WSL Ubuntu: `./build.sh`
+- Construction smoke from `external/noxim/bin` in WSL Ubuntu:
+
+```bash
+LD_LIBRARY_PATH=/mnt/c/Projects/CMP-720-Project-Proposal/external/noxim/bin/libs/systemc-2.3.1/lib-linux64 ./noxim -config ../config_examples/deft_2_5d_topology.yaml -seed 0 -sim 20 -warmup 0
+```
+
+T0007 result on 2026-05-06:
+
+- Required startup reading was completed before task work: `AGENTS.md`, `docs/PROGRESS.md`, `docs/TASKS.md`, `docs/ROADMAP.md`, `docs/ARCHITECTURE.md`, `docs/VALIDATION.md`, and `docs/DECISIONS.md`.
+- Before implementation, `git status --short` in the parent repository returned no output.
+- Before implementation, `git -c safe.directory=C:/Projects/CMP-720-Project-Proposal/external/noxim -C external/noxim status --short` returned no output.
+- Required source documents were confirmed present: `Extended_Proposal.pdf`, `Proposal.pdf`, and `docs/references/DeFT_A_Deadlock-Free_and_Fault-Tolerant_Routing_Algorithm_for_2.5D_Chiplet_Networks.pdf`.
+- Short PDF text checks confirmed source occurrences for chiplets, an active interposer, Vertical Links, boundary terminology, and 4x4 topology references.
+- Implementation added selectable topology `DEFT_2_5D`, a layer-aware `DeftTopology` helper, `NoC::buildDeft2D()`, and a construction-only config/traffic pair.
+- The first final construction smoke attempt from the sandbox failed with WSL `E_ACCESSDENIED`; the same command was rerun with approved WSL escalation and completed successfully.
+- Final `./build.sh` from `external/noxim` completed with exit code `0`.
+- Final construction smoke completed with exit code `0` and printed `DEFT_2_5D topology constructed: chiplet_routers=64, interposer_routers=64, total_routers=128, chiplet_cardinal_links=96, interposer_cardinal_links=112, vertical_links=16`.
+- The printed VL endpoint table matched the T0006 canonical endpoint table, including `vl_id=0` endpoint `1 -> 65` and `vl_id=15` endpoint `52 -> 116`.
+- The construction smoke used `TRAFFIC_HARDCODED` with `external/noxim/config_examples/deft_2_5d_no_traffic.txt`, so it reported zero received packets and zero received flits. The `-nan` average-delay and wireless-utilization values are expected for a no-packet smoke run and are not experiment metrics.
+- `git -c safe.directory=C:/Projects/CMP-720-Project-Proposal/external/noxim -C external/noxim diff --check` completed with exit code `0`.
+- No DeFT routing behavior, VN behavior, VL fault injection behavior, VL LUT generation, experiment automation, golden regression output update, or DeFT experiment was run.
+
+## Vertical Link Data Model
+
+Purpose:
+
+- Validate that the centralized VL model preserves the deterministic T0007 physical endpoint table.
+- Confirm that the structural validation API accepts the 16-VL inventory with exactly four VLs per chiplet.
+- Confirm that adding mutable default functional state does not change route selection, traffic generation, or simulation behavior.
+
+Known validation:
+
+- Build from the Noxim repository root in WSL Ubuntu: `./build.sh`
+- Construction smoke from `external/noxim/bin` in WSL Ubuntu:
+
+```bash
+LD_LIBRARY_PATH=/mnt/c/Projects/CMP-720-Project-Proposal/external/noxim/bin/libs/systemc-2.3.1/lib-linux64 ./noxim -config ../config_examples/deft_2_5d_topology.yaml -seed 0 -sim 20 -warmup 0
+```
+
+T0008 result on 2026-05-06:
+
+- Required startup reading was completed before task work: `AGENTS.md`, `docs/PROGRESS.md`, `docs/TASKS.md`, `docs/ROADMAP.md`, `docs/ARCHITECTURE.md`, `docs/VALIDATION.md`, and `docs/DECISIONS.md`.
+- Before implementation, `git status --short` in the parent repository showed unrelated untracked `.vs/`; this task did not modify it.
+- Before implementation, `git -c safe.directory=C:/Projects/CMP-720-Project-Proposal/external/noxim -C external/noxim status --short` returned no output.
+- Required source documents were confirmed present and short PDF text checks found relevant references to chiplets, active interposers, Vertical Links, boundary routers, and bidirectional VLs.
+- T0008 extended `DeftTopology` with centralized mutable VL functional state, reset/set/query helpers, functional-link queries by chiplet, bidirectional endpoint lookup, chiplet endpoint lookup, and structural model validation.
+- `NoC::buildDeft2D()` now validates the VL model before wiring physical VLs and prints `functional=true` for all default VLs in the construction smoke output.
+- `./build.sh` from `external/noxim` completed with exit code `0` in WSL Ubuntu. It rebuilt `DeftTopology.cpp` and `NoC.cpp`; only pre-existing Noxim warnings were emitted.
+- The first construction smoke attempt from the sandbox failed with WSL access denied; this is a sandbox permission failure and not a simulator failure. The same documented command was rerun with approved WSL escalation and completed with exit code `0`.
+- Final construction smoke output reported `chiplet_routers=64`, `interposer_routers=64`, `total_routers=128`, `chiplet_cardinal_links=96`, `interposer_cardinal_links=112`, and `vertical_links=16`.
+- The smoke output printed all 16 expected VL endpoint records, from `vl_id=0` endpoint `1 -> 65` through `vl_id=15` endpoint `52 -> 116`, each with `functional=true`.
+- The construction smoke intentionally used no traffic, so it reported zero received packets and zero received flits. The `-nan` average-delay and wireless-utilization values are expected for a no-packet construction smoke and are not experiment results.
+- `git -c safe.directory=C:/Projects/CMP-720-Project-Proposal/external/noxim -C external/noxim diff --check` completed with exit code `0`.
+- No startup-time fault injection behavior, fault-mask generation, fault-rate configuration, DeFT routing behavior, VN behavior, VL LUT generation, experiment automation, metrics change, golden regression output update, or DeFT experiment was run.
+
+## Boundary Router Identification
+
+Purpose:
+
+- Validate that the boundary-router inventory is derived from the centralized VL model rather than from a second endpoint table.
+- Confirm that the structural validation API accepts the deterministic 16-entry boundary-router inventory with exactly four boundary routers per chiplet.
+- Confirm that adding the boundary-router query surface does not change route selection, traffic generation, fault behavior, VN behavior, or simulation behavior beyond construction-time inspectability output.
+
+Known validation:
+
+- Build from the Noxim repository root in WSL Ubuntu: `./build.sh`
+- Construction smoke from `external/noxim/bin` in WSL Ubuntu:
+
+```bash
+LD_LIBRARY_PATH=/mnt/c/Projects/CMP-720-Project-Proposal/external/noxim/bin/libs/systemc-2.3.1/lib-linux64 ./noxim -config ../config_examples/deft_2_5d_topology.yaml -seed 0 -sim 20 -warmup 0
+```
+
+T0009 result on 2026-05-06:
+
+- Required startup reading was completed before task work: `AGENTS.md`, `docs/PROGRESS.md`, `docs/TASKS.md`, `docs/ROADMAP.md`, `docs/ARCHITECTURE.md`, `docs/VALIDATION.md`, and `docs/DECISIONS.md`.
+- Before implementation, `git status --short --branch` in the parent repository showed the current branch as `feat/map-noxim-extension-points...origin/feat/map-noxim-extension-points` and a modified `external/noxim` gitlink because the user changed the submodule branch.
+- Before implementation, `git -c safe.directory=C:/Projects/CMP-720-Project-Proposal/external/noxim -C external/noxim status --short --branch` showed the submodule branch as `feat/baseline-noxim...origin/feat/baseline-noxim` with no local file modifications.
+- T0009 added `BoundaryRouterInfo` as a derived boundary-router view over the centralized Vertical Link model, plus inventory, per-chiplet lookup, router-ID lookup, VL-ID lookup, and structural validation helpers.
+- `NoC::buildDeft2D()` now validates the boundary-router model and prints all 16 boundary-router records during construction smoke runs.
+- The first `./build.sh` attempt from `external/noxim` timed out after 124 seconds without reporting a compiler or linker error. The same documented command was rerun with a longer timeout and completed with exit code `0`.
+- The successful build emitted only pre-existing Noxim warnings.
+- The construction smoke command completed with exit code `0`.
+- Final construction smoke output reported `chiplet_routers=64`, `interposer_routers=64`, `total_routers=128`, `chiplet_cardinal_links=96`, `interposer_cardinal_links=112`, `vertical_links=16`, and `boundary_routers=16`.
+- The smoke output printed all 16 expected boundary-router records, from router `1` on chiplet `0` local `(1,0)` slot `NORTH` attached to `vl_id=0` and interposer endpoint `65`, through router `52` on chiplet `3` local `(0,2)` slot `WEST` attached to `vl_id=15` and interposer endpoint `116`.
+- The smoke output still printed all 16 expected VL endpoint records, each with `functional=true`.
+- The construction smoke intentionally used no traffic, so it reported zero received packets and zero received flits. The `-nan` average-delay and wireless-utilization values are expected for a no-packet construction smoke and are not experiment results.
+- `git -c safe.directory=C:/Projects/CMP-720-Project-Proposal/external/noxim -C external/noxim diff --check` completed with exit code `0`.
+- No startup-time fault injection behavior, fault-mask generation, fault-rate configuration, DeFT routing behavior, route selection, VN behavior, VL LUT generation, experiment automation, metrics change, golden regression output update, or DeFT experiment was run.
+
+## Fault Injection Manager
+
+Purpose:
+
+- Validate that startup-time permanent VL fault state is applied through the centralized `DeftTopology` physical VL model.
+- Confirm default construction still starts with no faulty VLs.
+- Confirm seed-controlled random physical VL fault selection is reproducible for a given seed and keeps at least one functional VL per chiplet.
+- Confirm fault-state setup does not implement route selection, VN behavior, VL LUT lookup, traffic changes, metrics changes, or golden output updates.
+
+Known validation:
+
+- Build from the Noxim repository root in WSL Ubuntu: `./build.sh`
+- Default construction smoke from `external/noxim/bin` in WSL Ubuntu:
+
+```bash
+LD_LIBRARY_PATH=/mnt/c/Projects/CMP-720-Project-Proposal/external/noxim/bin/libs/systemc-2.3.1/lib-linux64 ./noxim -config ../config_examples/deft_2_5d_topology.yaml -seed 0 -sim 20 -warmup 0
+```
+
+- Faulted construction smoke from `external/noxim/bin` in WSL Ubuntu:
+
+```bash
+LD_LIBRARY_PATH=/mnt/c/Projects/CMP-720-Project-Proposal/external/noxim/bin/libs/systemc-2.3.1/lib-linux64 ./noxim -config ../config_examples/deft_2_5d_topology.yaml -seed 0 -sim 20 -warmup 0 -deft_vl_fault_count 4
+```
+
+T0010 result on 2026-05-07:
+
+- Required startup reading was completed before task work: `AGENTS.md`, `docs/PROGRESS.md`, `docs/TASKS.md`, `docs/ROADMAP.md`, `docs/ARCHITECTURE.md`, `docs/VALIDATION.md`, `docs/DECISIONS.md`, and `docs/PROMPTS.md`.
+- Before implementation, `git status --short --branch` in the parent repository showed branch `feat/map-noxim-extension-points...origin/feat/map-noxim-extension-points`.
+- Before implementation, `git -c safe.directory=C:/Projects/CMP-720-Project-Proposal/external/noxim -C external/noxim status --short --branch` showed branch `feat/baseline-noxim...origin/feat/baseline-noxim` with no local file modifications.
+- Required source documents were confirmed present: `Extended_Proposal.pdf`, `Proposal.pdf`, and `docs/references/DeFT_A_Deadlock-Free_and_Fault-Tolerant_Routing_Algorithm_for_2.5D_Chiplet_Networks.pdf`.
+- Short source-document checks found the centralized permanent VL fault requirement, the no-chiplet-disconnected constraint, and 25% fault-rate target context.
+- T0010 added `DeftFaultInjectionManager` for startup-time permanent physical VL fault-state setup.
+- The manager supports `deft_faulty_vertical_links` for explicit physical VL IDs and `deft_vl_fault_count` for seed-controlled random physical VL selection.
+- The manager reuses `DeftTopology::resetVerticalLinkStates()`, `setVerticalLinkFunctional()`, `functionalVerticalLinksForChiplet()`, and `hasFunctionalVerticalLinkForChiplet()` instead of introducing a parallel VL inventory.
+- The minimum guard rejects duplicate/out-of-range explicit fault IDs, incompatible explicit/random modes, and masks that would fully disconnect a chiplet.
+- Assumption: T0010 counts configured faults over the 16 physical bidirectional VLs. Percentage conversion and directional VL accounting remain future work.
+- Assumption: Fault state is startup metadata in T0010. All physical VL links are still constructed; route selection does not yet avoid faulty VLs.
+- `./build.sh` from `external/noxim` completed with exit code `0` in WSL Ubuntu and emitted only pre-existing Noxim warnings.
+- The default construction smoke completed with exit code `0` and reported `mode=none`, `requested_fault_count=0`, `faulty_vertical_links=[]`, and per-chiplet functional VL counts `4,4,4,4`.
+- The faulted construction smoke initially failed once with WSL sandbox `E_ACCESSDENIED`; the same command was rerun with approval and completed with exit code `0`.
+- The faulted construction smoke reported `mode=random`, `seed=0`, `requested_fault_count=4`, `faulty_vertical_links=[0,1,5,13]`, and per-chiplet functional VL counts `2,3,4,3`.
+- The faulted construction smoke printed `functional=false` for VLs `0`, `1`, `5`, and `13`, and `functional=true` for the remaining VLs.
+- Both construction smoke runs intentionally used no traffic, so each reported zero received packets and zero received flits. The `-nan` average-delay and wireless-utilization values are expected for no-packet construction smokes and are not experiment results.
+- `git -c safe.directory=C:/Projects/CMP-720-Project-Proposal/external/noxim -C external/noxim diff --check` completed with exit code `0`.
+- No DeFT routing behavior, route selection, VN behavior, VN transition restriction, VL LUT generation, experiment automation, metrics change, golden regression output update, or DeFT experiment was run.
+
+## Fault Mask Validation
+
+Purpose:
+
+- Validate explicit and generated DeFT VL fault masks against the current 16 physical bidirectional VL model.
+- Confirm that masks corresponding to the current physical 25% target are accepted and inspectable.
+- Confirm that invalid masks are rejected before fault state can be consumed by future routing or LUT tasks.
+- Confirm that validation does not implement route selection, VN behavior, VL LUT lookup, traffic changes, metrics changes, or golden output updates.
+
+Known validation:
+
+- Build from the Noxim repository root in WSL Ubuntu: `./build.sh`
+- Default construction smoke from `external/noxim/bin` in WSL Ubuntu:
+
+```bash
+LD_LIBRARY_PATH=/mnt/c/Projects/CMP-720-Project-Proposal/external/noxim/bin/libs/systemc-2.3.1/lib-linux64 ./noxim -config ../config_examples/deft_2_5d_topology.yaml -seed 0 -sim 20 -warmup 0
+```
+
+- Generated current-physical-25% construction smoke from `external/noxim/bin` in WSL Ubuntu:
+
+```bash
+LD_LIBRARY_PATH=/mnt/c/Projects/CMP-720-Project-Proposal/external/noxim/bin/libs/systemc-2.3.1/lib-linux64 ./noxim -config ../config_examples/deft_2_5d_topology.yaml -seed 0 -sim 20 -warmup 0 -deft_vl_fault_count 4
+```
+
+- Explicit current-physical-25% construction smoke from `external/noxim/bin` in WSL Ubuntu:
+
+```bash
+LD_LIBRARY_PATH=/mnt/c/Projects/CMP-720-Project-Proposal/external/noxim/bin/libs/systemc-2.3.1/lib-linux64 ./noxim -config ../config_examples/deft_2_5d_topology.yaml -seed 0 -sim 20 -warmup 0 -deft_faulty_vls 0,4,8,12
+```
+
+- Expected invalid-mask rejection smoke from `external/noxim/bin` in WSL Ubuntu:
+
+```bash
+LD_LIBRARY_PATH=/mnt/c/Projects/CMP-720-Project-Proposal/external/noxim/bin/libs/systemc-2.3.1/lib-linux64 ./noxim -config ../config_examples/deft_2_5d_topology.yaml -seed 0 -sim 20 -warmup 0 -deft_faulty_vls 0,1,2,3
+```
+
+T0011 result on 2026-05-07:
+
+- Required startup reading was completed before task work: `AGENTS.md`, `docs/PROGRESS.md`, `docs/TASKS.md`, `docs/ROADMAP.md`, `docs/ARCHITECTURE.md`, `docs/VALIDATION.md`, `docs/DECISIONS.md`, and `docs/PROMPTS.md`.
+- Before implementation, `git status --short --branch` in the parent repository showed branch `feat/map-noxim-extension-points...origin/feat/map-noxim-extension-points`.
+- Before implementation, `git -c safe.directory=C:/Projects/CMP-720-Project-Proposal/external/noxim -C external/noxim status --short --branch` showed branch `feat/baseline-noxim...origin/feat/baseline-noxim` with no local file modifications.
+- Required source documents were confirmed present: `Extended_Proposal.pdf`, `Proposal.pdf`, and `docs/references/DeFT_A_Deadlock-Free_and_Fault-Tolerant_Routing_Algorithm_for_2.5D_Chiplet_Networks.pdf`.
+- Short source-document checks found the proposal target of fault rates up to 25%, centralized permanent VL fault injection before routing, no-chiplet-disconnected constraint, and the original paper's fault-scenario context with 25% fault-injection examples.
+- T0011 added `DeftFaultInjection::validateFaultMask()` and `FaultMaskValidationReport`.
+- The validator normalizes masks, rejects duplicate/out-of-range/nonexistent physical VL IDs, rejects impossible connected-chiplet mask sizes, and rejects masks that leave any chiplet with zero functional physical VLs.
+- Explicit and generated masks are validated through the same helper before `DeftTopology` functional state is mutated.
+- Construction output now reports `physical_faults`, `current_physical_25_percent_target`, per-chiplet faulty VL counts, and per-chiplet functional VL counts.
+- Assumption: T0011 validates against the current 16 physical bidirectional VL IDs. Four faulty physical VLs out of 16 are treated as the current physical 25% validation target.
+- Assumption: T0011 does not add percentage-based configuration or directional VL accounting; those remain future work.
+- `./build.sh` from `external/noxim` completed with exit code `0` in WSL Ubuntu and emitted only pre-existing Noxim warnings.
+- The first default construction smoke attempt failed once with WSL sandbox `E_ACCESSDENIED`; the same command was rerun with approval and completed with exit code `0`.
+- Default smoke output reported `mode=none`, `faulty_vertical_links=[]`, `physical_faults=0/16`, `current_physical_25_percent_target=false`, per-chiplet fault counts `0,0,0,0`, and per-chiplet functional counts `4,4,4,4`.
+- The generated four-fault construction smoke initially failed once with WSL sandbox `E_ACCESSDENIED`; the same command was rerun with approval and completed with exit code `0`.
+- Generated four-fault smoke output reported `mode=random`, `seed=0`, `faulty_vertical_links=[0,1,5,13]`, `physical_faults=4/16`, `current_physical_25_percent_target=true`, per-chiplet fault counts `2,1,0,1`, and per-chiplet functional counts `2,3,4,3`.
+- The explicit four-fault construction smoke initially failed once with WSL sandbox `E_ACCESSDENIED`; the same command was rerun with approval and completed with exit code `0`.
+- Explicit four-fault smoke output reported `mode=explicit`, `faulty_vertical_links=[0,4,8,12]`, `physical_faults=4/16`, `current_physical_25_percent_target=true`, per-chiplet fault counts `1,1,1,1`, and per-chiplet functional counts `3,3,3,3`.
+- The expected invalid-mask rejection smoke initially failed once with WSL sandbox `E_ACCESSDENIED`; the same command was rerun with approval and exited with expected code `1`.
+- Invalid-mask rejection output reported `Invalid DEFT_2_5D vertical link fault configuration: fault mask disconnects chiplet 0: 4 of 4 physical VLs are faulty`.
+- All construction smoke runs intentionally used no traffic. Successful smokes reported zero received packets and zero received flits, and their `-nan` average-delay and wireless-utilization values remain expected for no-packet construction smokes.
+- `git -c safe.directory=C:/Projects/CMP-720-Project-Proposal/external/noxim -C external/noxim diff --check` completed with exit code `0`.
+- No DeFT routing behavior, route selection, VN behavior, VN transition restriction, VL LUT generation, experiment automation, metrics change, golden regression output update, or DeFT experiment was run.
+
+## VN State Representation Design
+
+Purpose:
+
+- Validate documentation-only VN state design against the source documents and the current Noxim VC data path.
+- Confirm that the design does not change simulator behavior, route selection, traffic generation, fault behavior, metrics, or golden regression outputs.
+- Confirm that source-code validation is not required when no source code is changed.
+
+Known validation:
+
+- Parent repository status: `git status --short --branch`
+- Noxim submodule status: `git -c safe.directory=C:/Projects/CMP-720-Project-Proposal/external/noxim -C external/noxim status --short --branch`
+
+T0012 result on 2026-05-07:
+
+- Required startup reading was completed before task work: `AGENTS.md`, `docs/PROGRESS.md`, `docs/TASKS.md`, `docs/ROADMAP.md`, `docs/ARCHITECTURE.md`, `docs/VALIDATION.md`, `docs/DECISIONS.md`, and `docs/PROMPTS.md`.
+- Before documentation edits, `git status --short --branch` in the parent repository showed branch `feat/map-noxim-extension-points...origin/feat/map-noxim-extension-points` with no local file modifications.
+- Before documentation edits, `git -c safe.directory=C:/Projects/CMP-720-Project-Proposal/external/noxim -C external/noxim status --short --branch` showed branch `feat/baseline-noxim...origin/feat/baseline-noxim` with no local file modifications.
+- Required source documents were confirmed present: `Extended_Proposal.pdf`, `Proposal.pdf`, and `docs/references/DeFT_A_Deadlock-Free_and_Fault-Tolerant_Routing_Algorithm_for_2.5D_Chiplet_Networks.pdf`.
+- Short source-document checks confirmed the project requirement of exactly two VCs, one for VN.0 and one for VN.1, and the original paper's one-VC-per-VN evaluation model.
+- Source inspection covered `external/noxim/src/DataStructs.h`, `external/noxim/src/ProcessingElement.cpp`, `external/noxim/src/Router.*`, `external/noxim/src/ReservationTable.*`, `external/noxim/src/routingAlgorithms/RoutingAlgorithm.h`, `external/noxim/src/GlobalParams.*`, `external/noxim/src/ConfigurationManager.cpp`, and the DeFT topology/fault query surfaces.
+- T0012 documented that DeFT VN state should be represented by the existing Noxim `vc_id`: VC 0 is VN.0 and VC 1 is VN.1.
+- T0012 documented that no separate `vn_id` field should be added unless future implementation proves it necessary.
+- T0012 documented that future DeFT-enabled runs should require exactly two configured VCs.
+- T0012 documented a future implementation risk: the current router reservation path assumes input VC and output VC are the same index, so boundary-router VN reassignment must use output-VC-aware reservation/forwarding.
+- No build, simulation, or regression command was run because the task changed only documentation.
+- No Noxim source files, simulator behavior, routing behavior, route selection, VN assignment behavior, VN transition restriction, VL LUT generation, experiment automation, metrics, or golden regression output was changed.
+
+## VN Assignment Rules
+
+Purpose:
+
+- Validate that T0013 DeFT VN assignment code builds.
+- Confirm the existing `DEFT_2_5D` construction-only no-traffic smoke still instantiates with exactly two VCs.
+- Confirm that no final VL selection, full VN transition-restriction enforcement, experiment automation, metrics change, or golden regression output update is introduced.
+
+Known validation:
+
+- Build from the Noxim repository root in WSL Ubuntu: `./build.sh`
+- Construction smoke from `external/noxim/bin` in WSL Ubuntu:
+
+```bash
+LD_LIBRARY_PATH=/mnt/c/Projects/CMP-720-Project-Proposal/external/noxim/bin/libs/systemc-2.3.1/lib-linux64 ./noxim -config ../config_examples/deft_2_5d_topology.yaml -seed 0 -sim 20 -warmup 0
+```
+
+T0013 result on 2026-05-07:
+
+- Required startup reading was completed before task work: `AGENTS.md`, `docs/PROGRESS.md`, `docs/TASKS.md`, `docs/ROADMAP.md`, `docs/ARCHITECTURE.md`, `docs/VALIDATION.md`, `docs/DECISIONS.md`, and `docs/PROMPTS.md`.
+- Before implementation, `git status --short --branch` in the parent repository showed branch `feat/map-noxim-extension-points...origin/feat/map-noxim-extension-points` with no local file modifications.
+- Before implementation, `git -c safe.directory=C:/Projects/CMP-720-Project-Proposal/external/noxim -C external/noxim status --short --branch` showed branch `feat/baseline-noxim...origin/feat/baseline-noxim` with no local file modifications.
+- Required source documents were confirmed present: `Extended_Proposal.pdf`, `Proposal.pdf`, and `docs/references/DeFT_A_Deadlock-Free_and_Fault-Tolerant_Routing_Algorithm_for_2.5D_Chiplet_Networks.pdf`.
+- Short source-document checks confirmed the Extended Proposal's VN assignment pseudocode and the original paper's one-VC-per-VN model, monotonic VN.0 to VN.1 transition, round-robin assignment when either VN is legal, and VN.1-only destination-chiplet entry behavior.
+- T0013 added `DeftVirtualNetwork` as the VN/VC helper and assignment surface.
+- T0013 updated source packet creation so `DEFT_2_5D` inter-chiplet traffic from non-boundary source routers starts in VC 0/VN.0, while legal source cases use round-robin assignment.
+- T0013 made router reservation and forwarding output-VC-aware for DeFT boundary reassignment, including downstream full-status checks and forwarded `Flit::vc_id`.
+- T0013 updated the construction-only `DEFT_2_5D` config to `n_virtual_channels: 2`, and configuration validation now rejects any other VC count for `DEFT_2_5D`.
+- `./build.sh` from `external/noxim` completed with exit code `0` in WSL Ubuntu and emitted only pre-existing Noxim warnings.
+- The construction-only no-traffic smoke completed with exit code `0`, reported the expected 128-router topology, 16 boundary routers, 16 functional physical VLs, no faults, zero received packets, and zero received flits.
+- The construction smoke still reports `-nan` average delay and wireless utilization because it intentionally injects no traffic; these are not experiment metrics.
+- `git -c safe.directory=C:/Projects/CMP-720-Project-Proposal/external/noxim -C external/noxim diff --check` completed with exit code `0`.
+- No final VL selection, full VN transition-restriction enforcement beyond assignment monotonicity, experiment automation, metrics change, golden regression output update, or DeFT performance experiment was run.
+
+## VN Transition Restrictions
+
+Purpose:
+
+- Validate that T0014 DeFT VN transition-restriction code builds.
+- Confirm the existing `DEFT_2_5D` construction-only no-traffic smoke still instantiates with exactly two VCs.
+- Confirm that no final VL selection, LUT generation, experiment automation, metrics change, or golden regression output update is introduced.
+
+Known validation:
+
+- Build from the Noxim repository root in WSL Ubuntu: `./build.sh`
+- Construction smoke from `external/noxim/bin` in WSL Ubuntu:
+
+```bash
+LD_LIBRARY_PATH=/mnt/c/Projects/CMP-720-Project-Proposal/external/noxim/bin/libs/systemc-2.3.1/lib-linux64 ./noxim -config ../config_examples/deft_2_5d_topology.yaml -seed 0 -sim 20 -warmup 0
+```
+
+T0014 result on 2026-05-07:
+
+- Required startup reading was completed before task work: `AGENTS.md`, `docs/PROGRESS.md`, `docs/TASKS.md`, `docs/ROADMAP.md`, `docs/ARCHITECTURE.md`, `docs/VALIDATION.md`, `docs/DECISIONS.md`, and `docs/PROMPTS.md`.
+- Before implementation, `git status --short --branch` in the parent repository showed branch `feat/map-noxim-extension-points...origin/feat/map-noxim-extension-points` with no local file modifications.
+- Before implementation, `git -c safe.directory=C:/Projects/CMP-720-Project-Proposal/external/noxim -C external/noxim status --short --branch` showed branch `feat/baseline-noxim...origin/feat/baseline-noxim` with no local file modifications.
+- Required source documents were confirmed present: `Extended_Proposal.pdf`, `Proposal.pdf`, and `docs/references/DeFT_A_Deadlock-Free_and_Fault-Tolerant_Routing_Algorithm_for_2.5D_Chiplet_Networks.pdf`.
+- Short source-document checks confirmed the Extended Proposal's three VN restriction requirements and the original DeFT paper's Rule 1, Rule 2, and Rule 3 wording for VN.1-to-VN.0, Up-to-Horizontal in VN.0, and Horizontal-to-Down in VN.1.
+- T0014 added DeFT-only output-direction filtering in `DeftVirtualNetwork::isOutputDirectionAllowed()`.
+- T0014 derives Up/Down/Horizontal movement from `RouteData::dir_in`, candidate output direction, current router layer, and boundary-router status without adding packet/flit movement-history metadata.
+- T0014 updated router selection to filter illegal DeFT output candidates before reservation and to skip reservation when no legal candidate exists.
+- `./build.sh` from `external/noxim` completed with exit code `0` in WSL Ubuntu.
+- The construction-only no-traffic smoke completed with exit code `0`, reported the expected 128-router topology, 16 boundary routers, 16 functional physical VLs, no faults, zero received packets, and zero received flits.
+- The construction smoke still reports `-nan` average delay and wireless utilization because it intentionally injects no traffic; these are not experiment metrics.
+- `git -c safe.directory=C:/Projects/CMP-720-Project-Proposal/external/noxim -C external/noxim diff --check` completed with exit code `0`.
+- Assumption: T0014 treats chiplet-boundary hub input as Up and chiplet-boundary hub output as Down while `DIRECTION_HUB` remains the current physical VL carrier.
+- Blocked: Final DeFT route selection and fault-aware VL choices remain future work, so T0014 cannot prove alternate legal route availability when the current routing algorithm offers only illegal candidates.
+- No final VL selection, LUT generation, experiment automation, metrics change, golden regression output update, or DeFT performance experiment was run.
+
 ## Build Validation
 
 Purpose:
