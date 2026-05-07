@@ -741,7 +741,59 @@ Future runtime lookup should:
 6. Use `destination_entry.interposer_endpoint_router_id` as the destination-side intermediate target while routing across the interposer.
 7. Use `destination_entry.selected_vl_id` to move up through a functional destination-side physical VL.
 
-Blocked: Runtime LUT loading, route-data intermediate-destination state, final VL selection behavior, and any fallback when an exact entry is missing are future tasks.
+Implemented in T0017: Runtime LUT loading and DeFT route selection now consume this contract without adding route-data intermediate-destination state. Exact missing-entry handling fails closed by returning no legal route.
+
+## T0016 Offline VL LUT Generator Implementation
+
+`T0016` adds the first standalone offline generator for the T0015 `deft_vl_lut.v1` schema. It does not load LUTs into Noxim, change router runtime behavior, alter final route selection, add experiment automation, change metrics, update golden regression outputs, or run DeFT performance experiments.
+
+Implemented source surface:
+
+- `external/noxim/other/deft_vl_lut_generator.py` is a Python standard-library generator placed with the existing Noxim helper tools under `external/noxim/other`.
+- The generator mirrors the current `DEFT_2_5D` topology constants from `DeftTopology`: four 4x4 chiplets, an 8x8 interposer footprint, chiplet routers `0..63`, interposer routers `64..127`, and 16 physical bidirectional VL IDs.
+- The generator accepts repeated `--fault-mask` values, repeated `--faulty-vls` comma-list values, or `--max-fault-count` to enumerate every valid connected-chiplet mask up to a physical fault count. With no scenario option, it emits the no-fault mask.
+- Fault-mask validation rejects masks that disconnect any chiplet, matching the T0011 connected-chiplet rule over current physical VL IDs.
+- Output is deterministic restricted YAML with top-level `schema`, `topology`, `topology_signature`, `generation`, `fault_scenarios`, and `entries` sections.
+
+Selection model:
+
+- The source-exit selection uses the proposal and paper objective exactly for the current uniform task scope: Manhattan distance plus load imbalance with `rho = 0.01`.
+- The implementation uses exact dynamic programming over assignment count states instead of naive brute-force enumeration. This is equivalent to exhaustive search for the current uniform unit-demand model, but avoids enumerating every raw assignment string.
+- For source-side selection, demand points are the 16 routers on a source chiplet and candidates are the functional VLs on that same chiplet.
+- For destination-entry selection, schema v1 has no `destination_router_id`. T0016 therefore uses the same distance-plus-load objective over interposer-entry contexts: demand points are `(source_chiplet_id, source_router_id)` contexts positioned at their selected source-exit interposer endpoint, and candidates are the functional VL interposer endpoints on the destination chiplet.
+- Every selected source-exit and destination-entry VL is functional under the entry's `fault_mask_id`, and every selected VL appears first in its `ranked_vl_ids`.
+
+Assumption: T0016 uses uniform unit inter-chiplet demand because the project has not yet implemented or registered final traffic-profile inputs for LUT generation.
+
+Assumption: The destination-entry interposer-context model is a narrow schema-v1 adjustment. A future schema that includes `destination_router_id` can optimize destination entry directly against destination-router demand.
+
+Blocked: Packet-carrying inter-chiplet DeFT route validation, traffic-profile-specific LUT generation, and experiment-scale generated artifacts remain future work.
+
+## T0017 Runtime VL LUT Loading and Boundary Use
+
+`T0017` adds the first runtime consumption path for generated `deft_vl_lut.v1` data. It does not add experiment automation, metrics changes, traffic-model work, golden regression output updates, or DeFT performance experiments.
+
+Implemented source surface:
+
+- `external/noxim/src/DeftVerticalLinkLut.h` and `external/noxim/src/DeftVerticalLinkLut.cpp` load restricted schema-v1 YAML through the existing yaml-cpp dependency, validate topology signature and entry endpoint metadata against `DeftTopology`, compute the active runtime fault mask from current physical VL functional state, and expose exact lookup by `(fault_mask, source_chiplet_id, source_router_id, destination_chiplet_id)`.
+- `external/noxim/src/routingAlgorithms/Routing_DEFT.h` and `external/noxim/src/routingAlgorithms/Routing_DEFT.cpp` register the `DEFT` routing algorithm.
+- `external/noxim/src/ConfigurationManager.cpp`, `external/noxim/src/GlobalParams.*`, and `external/noxim/config_examples/deft_2_5d_topology.yaml` add the optional `deft_vl_lut_filename` configuration surface and `-deft_vl_lut` command-line override.
+- `external/noxim/src/NoC.cpp` loads the LUT after startup fault injection so lookup uses the actual permanent physical VL fault vector.
+- `external/noxim/bin/power.yaml` adds a `DEFT` routing power entry aliased to the existing XY values, because Noxim requires every registered routing algorithm to have a power table entry before simulation starts.
+
+Routing behavior:
+
+- Intra-chiplet traffic does not use the LUT.
+- Inter-chiplet source-chiplet routing looks up the schema-v1 entry and routes to `source_exit.boundary_router_id`; at that selected boundary router it traverses `DIRECTION_HUB` only if the selected source-exit VL still matches topology metadata and is functional.
+- Interposer routing targets `destination_entry.interposer_endpoint_router_id`; at that selected interposer endpoint it traverses `DIRECTION_HUB` only if the selected destination-entry VL still matches topology metadata and is functional.
+- Destination-chiplet routing then uses the existing XY-style local route to the final destination router.
+- If the LUT is not loaded, the exact entry is missing, or the selected VL is no longer functional, the `DEFT` routing algorithm returns no legal output direction for that head flit instead of falling back to an arbitrary VL.
+
+Assumption: The runtime path is enabled by selecting routing algorithm `DEFT` and providing `deft_vl_lut_filename`. Construction-only `DEFT_2_5D` smoke runs may leave the filename empty when no inter-chiplet traffic is routed.
+
+Assumption: No `RouteData` intermediate-destination fields are required for schema v1 because each router can derive the current phase from `current_id`, `src_id`, `dst_id`, layer metadata, and the loaded LUT entry.
+
+Blocked: Packet-carrying inter-chiplet DeFT route validation, traffic-profile-specific LUT artifacts, physical-vs-directional experiment percentage accounting, experiment automation, and metrics remain future work.
 
 ## Synthetic Traffic Models
 

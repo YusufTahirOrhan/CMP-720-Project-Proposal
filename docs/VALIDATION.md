@@ -467,6 +467,94 @@ T0015 result on 2026-05-07:
 - No build, simulation, regression, or `./regression.sh --update` command was run because T0015 made no source-code change.
 - No Noxim source files, simulator behavior, route selection, experiment automation, metrics, DeFT performance experiments, or golden regression outputs were changed.
 
+## Offline VL LUT Generator
+
+Purpose:
+
+- Validate that the standalone generator emits deterministic `deft_vl_lut.v1` YAML.
+- Confirm selected source-exit and destination-entry VL IDs exclude faulty physical VLs.
+- Confirm connected-chiplet fault-mask rejection is preserved.
+- Confirm T0016 does not change Noxim router runtime behavior, simulator commands, metrics, experiment automation, or golden regression outputs.
+
+Known validation:
+
+- Syntax check:
+
+```powershell
+& 'C:\Users\ysfth\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\python.exe' -m py_compile external\noxim\other\deft_vl_lut_generator.py
+```
+
+- CLI help check:
+
+```powershell
+& 'C:\Users\ysfth\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\python.exe' external\noxim\other\deft_vl_lut_generator.py --help
+```
+
+- Deterministic in-memory generation check for masks `0x0000` and `0x1111`, asserting:
+  - repeated generator calls produce identical bytes,
+  - the output contains `schema: deft_vl_lut.v1`,
+  - the two selected masks produce 384 entries,
+  - every selected VL excludes the current mask's faulty VL IDs,
+  - every selected VL is first in its `ranked_vl_ids`.
+
+- Invalid-mask rejection:
+
+```powershell
+& 'C:\Users\ysfth\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\python.exe' external\noxim\other\deft_vl_lut_generator.py --fault-mask 0x000f
+```
+
+T0016 result on 2026-05-07:
+
+- Required startup reading was completed before task work: `AGENTS.md`, `docs/PROGRESS.md`, `docs/TASKS.md`, `docs/ROADMAP.md`, `docs/ARCHITECTURE.md`, `docs/VALIDATION.md`, `docs/DECISIONS.md`, and `docs/PROMPTS.md`.
+- Before implementation, `git status --short --branch` in the parent repository showed branch `feat/map-noxim-extension-points...origin/feat/map-noxim-extension-points` with no local file modifications.
+- Before implementation, `git -c safe.directory=C:/Projects/CMP-720-Project-Proposal/external/noxim -C external/noxim status --short --branch` showed branch `feat/baseline-noxim...origin/feat/baseline-noxim` with no local file modifications.
+- Required source documents were confirmed present: `Extended_Proposal.pdf`, `Proposal.pdf`, and `docs/references/DeFT_A_Deadlock-Free_and_Fault-Tolerant_Routing_Algorithm_for_2.5D_Chiplet_Networks.pdf`.
+- Short source-document checks confirmed the Extended Proposal's equations for `lv`, `Lv`, Manhattan distance `D`, total distance `Dv`, cost `Cs`, and `rho = 0.01`, plus the original DeFT paper's design-time offline search, runtime lookup-table use, and two VL selections per inter-chiplet packet.
+- Source inspection was limited to `external/noxim/src/DeftTopology.*`, `external/noxim/src/DeftFaultInjectionManager.*`, and `external/noxim/config_examples/deft_2_5d_topology.yaml`.
+- T0016 added `external/noxim/other/deft_vl_lut_generator.py` as a standalone Python generator with no C++/SystemC or runtime-router changes.
+- `python -m py_compile external/noxim/other/deft_vl_lut_generator.py` completed with exit code `0`.
+- The CLI help command completed with exit code `0`.
+- The deterministic in-memory generation check completed with exit code `0` for masks `0x0000` and `0x1111`; SHA-256 was `05c8cf1ce081a505e58cfa91c0e24bf53e144298119dddd530e42bd218bbdee7`, entry count was 384, selected VLs excluded faulty VLs, and selected VLs appeared first in `ranked_vl_ids`.
+- The invalid-mask command with `--fault-mask 0x000f` rejected the mask because it disconnects chiplet 0.
+- `git diff --check` in the parent repository completed with exit code `0`.
+- `git -c safe.directory=C:/Projects/CMP-720-Project-Proposal/external/noxim -C external/noxim diff --check` completed with exit code `0`.
+- After the generator was added and before documentation updates, parent status showed only the submodule changed because of the new untracked generator file, and submodule status showed `?? other/deft_vl_lut_generator.py`.
+- No simulator build, no simulator run, no regression command, no `./regression.sh --update`, no final route selection, no runtime LUT loading, no metrics change, no experiment automation, and no golden regression output update was performed.
+
+## Runtime VL LUT Loading and Boundary Use
+
+Purpose:
+
+- Validate that Noxim still builds after adding the runtime LUT loader and `DEFT` routing algorithm.
+- Confirm `DEFT_2_5D` construction still succeeds when no LUT file is configured for no-traffic smoke runs.
+- Confirm a generated schema-v1 LUT can be loaded at runtime with the current active physical fault mask.
+- Confirm no regression golden outputs, metrics changes, experiment automation, or DeFT performance experiments are introduced by T0017.
+
+Known validation:
+
+- Build from the Noxim repository root in WSL Ubuntu: `./build.sh`
+- Existing construction-only no-traffic smoke from `external/noxim/bin` in WSL Ubuntu:
+
+```bash
+LD_LIBRARY_PATH=/mnt/c/Projects/CMP-720-Project-Proposal/external/noxim/bin/libs/systemc-2.3.1/lib-linux64 ./noxim -config ../config_examples/deft_2_5d_topology.yaml -seed 0 -sim 20 -warmup 0
+```
+
+- Runtime LUT load smoke used a temporary no-fault LUT generated by the T0016 generator, then the same no-traffic configuration with `-routing DEFT -deft_vl_lut deft_vl_lut_runtime_smoke.yaml`. The temporary LUT file was removed after the smoke.
+
+T0017 result on 2026-05-07:
+
+- Required startup reading was completed before task work: `AGENTS.md`, `docs/PROGRESS.md`, `docs/TASKS.md`, `docs/ROADMAP.md`, `docs/ARCHITECTURE.md`, `docs/VALIDATION.md`, `docs/DECISIONS.md`, and `docs/PROMPTS.md`.
+- Before implementation, parent and submodule status checks showed no local file modifications.
+- Required source documents were confirmed present, and short snippets confirmed the Extended Proposal's boundary-router LUT requirement plus the original DeFT paper's two-intermediate-destination routing model.
+- T0017 added `DeftVerticalLinkLut`, registered routing algorithm `DEFT`, added `deft_vl_lut_filename` / `-deft_vl_lut`, loaded the LUT after startup fault injection, and added a `DEFT` routing power entry alias.
+- The documented WSL `./build.sh` first timed out at the two-minute tool limit, then completed with exit code `0` when rerun with a longer timeout. Only pre-existing Noxim warnings were emitted.
+- The existing construction-only no-traffic smoke completed with exit code `0` and reported `DEFT_2_5D VL LUT: disabled`, active fault mask `0x0000`, zero packets, and zero flits.
+- The first runtime LUT smoke attempt with `-routing DEFT` failed because `external/noxim/bin/power.yaml` had no `DEFT` routing power entry; T0017 added a narrow alias to the XY values.
+- The successful runtime LUT load smoke completed with exit code `0` and reported `DEFT_2_5D VL LUT: loaded`, file `deft_vl_lut_runtime_smoke.yaml`, active fault mask `0x0000`, `entries=192`, and `active_entries=192`.
+- `git diff --check` in the parent repository completed with exit code `0`.
+- `git -c safe.directory=C:/Projects/CMP-720-Project-Proposal/external/noxim -C external/noxim diff --check` completed with exit code `0` after LF-normalizing the touched `power.yaml` file.
+- No packet-carrying inter-chiplet DeFT route smoke, regression command, `./regression.sh --update`, metrics change, experiment automation, golden regression output update, or DeFT performance experiment was run.
+
 ## Build Validation
 
 Purpose:

@@ -154,23 +154,23 @@ Statuses: `TODO`, `IN_PROGRESS`, `DONE`, `BLOCKED`.
 
 ## T0016: Implement Offline VL LUT Generator
 
-- **Status:** TODO
+- **Status:** DONE
 - **Objective:** Generate fault-aware Vertical Link selection tables using distance and load imbalance cost.
 - **Relevant roadmap phase:** Phase 6
-- **Files likely to change:** To be confirmed after repository inspection
+- **Files changed:** `external/noxim/other/deft_vl_lut_generator.py`, `docs/ARCHITECTURE.md`, `docs/TASKS.md`, `docs/PROGRESS.md`, `docs/VALIDATION.md`, `docs/PROMPTS.md`, `docs/DECISIONS.md`
 - **Acceptance criteria:** Generated LUT excludes faulty Vertical Links and is deterministic.
-- **Validation command:** To be confirmed after repository inspection
-- **Notes:** Cost function should use the proposal's formulation with documented assumptions and emit the `deft_vl_lut.v1` schema from T0015. The generator should not implement runtime LUT loading or final route selection.
+- **Validation command:** Syntax check with `python -m py_compile external/noxim/other/deft_vl_lut_generator.py`; CLI help check; deterministic in-memory generation check for masks `0x0000` and `0x1111`; invalid connected-chiplet mask rejection with `--fault-mask 0x000f`; parent and submodule status/diff checks.
+- **Notes:** Completed on 2026-05-07. Added a standalone Python generator under `external/noxim/other` that emits the T0015 `deft_vl_lut.v1` schema without touching Noxim router runtime behavior or build-integrated C++ source. The generator mirrors the current 16 physical VL model, supports explicit and enumerated connected-chiplet fault masks, uses deterministic exact dynamic programming for the proposal's Manhattan-distance plus load-imbalance objective with `rho = 0.01`, and records the schema-v1 destination-entry adjustment caused by the absence of `destination_router_id`. Assumption: T0016 uses uniform unit inter-chiplet demand until traffic-profile-specific LUT generation is designed. Blocked: runtime loading and final route selection remain future work.
 
 ## T0017: Load and Use VL LUT at Boundary Routers
 
-- **Status:** TODO
+- **Status:** DONE
 - **Objective:** Integrate LUT selection into inter-chiplet routing at boundary routers.
 - **Relevant roadmap phase:** Phase 6
-- **Files likely to change:** To be confirmed after Noxim source inspection
+- **Files changed:** `external/noxim/src/DeftVerticalLinkLut.h`, `external/noxim/src/DeftVerticalLinkLut.cpp`, `external/noxim/src/routingAlgorithms/Routing_DEFT.h`, `external/noxim/src/routingAlgorithms/Routing_DEFT.cpp`, `external/noxim/src/GlobalParams.h`, `external/noxim/src/GlobalParams.cpp`, `external/noxim/src/ConfigurationManager.cpp`, `external/noxim/src/NoC.cpp`, `external/noxim/bin/power.yaml`, `external/noxim/config_examples/deft_2_5d_topology.yaml`, `docs/ARCHITECTURE.md`, `docs/TASKS.md`, `docs/PROGRESS.md`, `docs/VALIDATION.md`, `docs/PROMPTS.md`, and `docs/DECISIONS.md`
 - **Acceptance criteria:** Boundary routers select functional Vertical Links using the current fault vector.
-- **Validation command:** To be confirmed after repository inspection
-- **Notes:** Should run after generator validation.
+- **Validation command:** From `external/noxim`: `./build.sh`. Existing construction-only no-traffic smoke from `external/noxim/bin`: `LD_LIBRARY_PATH=/mnt/c/Projects/CMP-720-Project-Proposal/external/noxim/bin/libs/systemc-2.3.1/lib-linux64 ./noxim -config ../config_examples/deft_2_5d_topology.yaml -seed 0 -sim 20 -warmup 0`. Runtime LUT load smoke used the same no-traffic configuration with a temporary generator-produced no-fault LUT and `-routing DEFT -deft_vl_lut deft_vl_lut_runtime_smoke.yaml`.
+- **Notes:** Completed on 2026-05-07. Added `DeftVerticalLinkLut` as the runtime loader/validator for `deft_vl_lut.v1`, registered a new `DEFT` routing algorithm, and added `deft_vl_lut_filename` / `-deft_vl_lut` configuration. The runtime key is derived from active physical VL functional state after startup fault injection plus source chiplet, source router, and destination chiplet. The `DEFT` route path uses `source_exit` on the source chiplet, `destination_entry` on the interposer, and fails closed when a table is missing or selected VLs are not functional. Assumption: No `RouteData` intermediate-destination fields are needed for schema v1. Blocked: Packet-carrying inter-chiplet validation remains future work.
 
 ## T0018: Configure XY Baseline Modes
 
