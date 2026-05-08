@@ -224,13 +224,23 @@ Statuses: `TODO`, `IN_PROGRESS`, `DONE`, `BLOCKED`.
 
 ## T0025: Define Final Sweep Policy
 
-- **Status:** TODO
+- **Status:** DONE
 - **Objective:** Decide the final experiment policy before running or interpreting final sweeps.
 - **Relevant roadmap phase:** Phase 9
-- **Files likely to change:** `docs/ARCHITECTURE.md`, `docs/TASKS.md`, `docs/PROGRESS.md`, `docs/VALIDATION.md`, `docs/PROMPTS.md`, and `docs/DECISIONS.md`
+- **Files changed:** `docs/ARCHITECTURE.md`, `docs/TASKS.md`, `docs/PROGRESS.md`, `docs/VALIDATION.md`, `docs/PROMPTS.md`, and `docs/DECISIONS.md`
 - **Acceptance criteria:** Final sweep coverage, fault-rate accounting, simulation window, warm-up/drain policy, seed count, traffic profiles, and result-claim rules are documented before final runs.
-- **Validation command:** Documentation/status validation only unless a known command is explicitly selected by the task.
-- **Notes:** This task should not run full sweeps by default. It should resolve blockers recorded by T0022 and produce a ready-to-run final sweep prompt or mark any unresolved choices as `Blocked`.
+- **Validation command:** Documentation/status validation: source-document availability checks, runner help check, parent and submodule status, and `git diff --check`.
+- **Notes:** Completed on 2026-05-09 as a policy/documentation-only task. The final executable matrix is `XY` and `DEFT` over `uniform`, `localized_40`, and `hotspot_3x10` traffic, physical fault masks `0x0000`, `0x0001`, `0x0011`, `0x0111`, and `0x1111`, seeds `0..4`, `-sim 10000`, `-warmup 1000`, and JSON stats, for exactly 150 runs. Assumption: one physical bidirectional VL fault disables both directions and is reported as the same numeric directional-equivalent percentage over the paper's 32-channel accounting. Blocked: single-direction 3.125% fault cases and eventual-delivery reachability after a drain phase are not supported by the current fault and runner model. No source code, helper code, simulator behavior, full sweep, or performance claim was changed.
+
+## T0026: Run Final Sweep Matrix
+
+- **Status:** TODO
+- **Objective:** Execute the T0025 final sweep matrix and regenerate final analysis artifacts from completed outputs.
+- **Relevant roadmap phase:** Phase 9
+- **Files likely to change:** `docs/PROGRESS.md`, `docs/TASKS.md`, `docs/VALIDATION.md`, `docs/PROMPTS.md`, and possibly `docs/DECISIONS.md`; ignored generated outputs under `external/noxim/other/generated/`.
+- **Acceptance criteria:** The final sweep dry-run manifest contains exactly 150 planned runs; the executed manifest contains exactly 150 completed runs with return code `0`; every JSON stats file contains the T0020 metrics; final analysis artifacts are regenerated and cross-checked before any report claim.
+- **Validation command:** From `external/noxim` in WSL/Linux, use the T0025 final runner command first as dry-run, then the same command with `--execute --max-execute-runs 150` only when explicitly requested. After execution, run `external/noxim/other/deft_analysis_artifacts.py` on the completed output directory from the parent repository.
+- **Notes:** This task should not modify routing logic, VN transition logic, VL fault injection, LUT schemas, traffic semantics, metrics semantics, runner semantics, analysis semantics, or golden regression outputs. Claims remain blocked until completed final outputs are reviewed against raw manifests and stats.
 
 ## T0023: Add or Register Noxim Source Tree
 

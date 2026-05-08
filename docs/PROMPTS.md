@@ -1811,3 +1811,56 @@ At the end, provide:
 - **Next ready-to-send prompt:** See `docs/PROGRESS.md`.
 - **Suggested branch name for next task:** None; continue on the existing branch.
 - **Suggested commit message:** `feat: add final analysis scaffolding`
+
+## 2026-05-09: Start T0025 Define Final Sweep Policy
+
+- **Date:** 2026-05-09
+- **Prompt summary:** Define the final sweep policy before running or interpreting final sweeps, including exact matrix, fault-rate accounting, simulation length, warm-up/drain policy, seed count, traffic profiles, routing modes, validation checks, and result-claim rules.
+- **Full prompt:**
+
+```text
+Start task T0025: Define Final Sweep Policy.
+
+Before starting, read AGENTS.md, docs/PROGRESS.md, docs/TASKS.md, docs/ROADMAP.md, docs/ARCHITECTURE.md, docs/VALIDATION.md, docs/DECISIONS.md, and docs/PROMPTS.md.
+
+Continue on the existing Git branch. Do not create or switch task branches.
+
+Use the registered Noxim source tree at:
+external/noxim
+
+external/noxim is the Noxim submodule and modifiable project fork from:
+https://github.com/YusufTahirOrhan/noxim
+
+T0007 through T0021 implemented the DEFT_2_5D topology, physical VL model, boundary-router inventory, permanent startup VL faults, fault-mask validation, VN assignment and transition filtering, schema-v1 VL LUT generator/runtime loading, XY baseline configs, synthetic traffic configs, metrics export, and a tiny traceable experiment runner. T0022 added final-analysis scaffolding with external/noxim/other/deft_analysis_artifacts.py, which consumes T0021 manifests and T0020 stats exports but marks smoke-only or missing final-sweep data as Blocked and sets claims_allowed to false.
+
+Goal: define the final sweep policy before running or interpreting final sweeps. Focus on deciding the exact experiment matrix, fault-rate accounting basis, simulation length, warm-up/drain policy, seed count, traffic profiles, routing modes, validation checks, and result-claim rules. Keep this as a policy/documentation task unless a narrow helper update is clearly required.
+
+Do not run full sweeps in this task unless explicitly requested. Do not fabricate results or performance claims. Do not change DeFT routing, VN transition logic, VL fault injection, T0016 generator format, T0017 runtime LUT schema/use path, T0019 traffic profile semantics, T0020 metrics semantics, T0021 runner semantics, or T0022 analysis semantics unless source inspection proves a narrow compatibility fix is required.
+
+Use Extended_Proposal.pdf as the primary project requirements source and the original DeFT paper at docs/references/DeFT_A_Deadlock-Free_and_Fault-Tolerant_Routing_Algorithm_for_2.5D_Chiplet_Networks.pdf as the primary algorithmic reference. Use Proposal.pdf only as initial context. Ignore the peer evaluation document completely.
+
+Before coding or documentation edits, produce a short implementation plan. Work only on the selected final sweep policy task. Do not modify unrelated files. Clearly mark assumptions as Assumption and blockers as Blocked.
+
+Use only known validation commands. If no simulator source changes are made, do not rebuild Noxim. Documentation/status validation is sufficient unless the task explicitly changes a helper. Do not use ./regression.sh --update.
+
+Update docs/ARCHITECTURE.md, docs/TASKS.md, docs/PROGRESS.md, docs/VALIDATION.md, and docs/PROMPTS.md with the result. If a durable implementation or experiment decision becomes clear, update docs/DECISIONS.md too.
+
+At the end, provide:
+
+1. Created files
+2. Modified files
+3. Whether any source code files changed
+4. Validation result
+5. Current project phase
+6. Next recommended task
+7. The next ready-to-send prompt
+8. Suggested branch name for the next task, which should be None; continue on the existing branch
+9. Suggested commit message
+10. Unknowns or blockers
+```
+
+- **Result summary:** T0025 completed as a documentation-only policy task. The final executable sweep is exactly 150 runs: `XY` and `DEFT` over `uniform`, `localized_40`, and `hotspot_3x10`; physical fault masks `0x0000`, `0x0001`, `0x0011`, `0x0111`, and `0x1111`; seeds `0..4`; `-sim 10000`; `-warmup 1000`; and JSON stats. The policy resolves final fault-rate accounting for the current implementation by using physical bidirectional VL masks and reporting matching directional-equivalent percentages for the paper's 32-channel wording. It also defines no-drain fixed-window semantics, validation gates, and result-claim rules. No source code, helper code, full sweep, Noxim rebuild, golden outputs, or performance claims were changed.
+- **Follow-up tasks:** Start `T0026` to run the final sweep matrix and regenerate final analysis artifacts.
+- **Next ready-to-send prompt:** See `docs/PROGRESS.md`.
+- **Suggested branch name for next task:** None; continue on the existing branch.
+- **Suggested commit message:** `docs: define final sweep policy`

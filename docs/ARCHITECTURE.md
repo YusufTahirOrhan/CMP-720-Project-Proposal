@@ -894,7 +894,83 @@ Assumption: T0022 analysis inputs are runner outputs produced by T0021 and metri
 
 Blocked: No validated final sweep output set exists yet. The only available completed runner output is the T0021 20-cycle seed-0 localized XY/DEFT execute smoke with no VL faults, which validates export and analysis shape only.
 
-Blocked: Final fault-rate accounting, final simulation window, seed count, warm-up/drain policy, and result-claim rules remain future decisions.
+Resolved in T0025: Final fault-rate accounting, simulation window, seed count, warm-up/drain policy, and result-claim rules are documented below. Final sweep outputs are still missing until a later task executes the policy.
+
+## T0025 Final Sweep Policy
+
+`T0025` defines the final sweep policy before final runs are executed or interpreted. It does not run full sweeps, change simulator behavior, rebuild Noxim, update golden regression outputs, or make performance claims.
+
+Source alignment:
+
+- `Extended_Proposal.pdf` requires cycle-accurate Noxim evaluation under Uniform, Localized, and Hotspot synthetic traffic, progressive permanent VL fault injection up to 25%, and metrics for reachability, average latency, and network throughput.
+- The original DeFT paper evaluates a four-chiplet system with four bidirectional VLs per chiplet, two VCs for fairness, 8-flit packets, 4-flit buffers, Uniform/Localized/Hotspot synthetic traffic, offline VL selection optimized under Uniform traffic, and reachability under 3.125% to 25% fault-injection rates over the paper's reported `total VLs=32` accounting.
+- The current implementation models 16 physical bidirectional VL IDs. A startup fault disables one physical bidirectional VL object and therefore both directional movements over that physical VL.
+
+Final executable matrix:
+
+| Dimension | Values |
+| --- | --- |
+| Routing modes | `XY`, `DEFT` |
+| Traffic profiles | `uniform`, `localized_40`, `hotspot_3x10` |
+| Physical fault masks | `0x0000`, `0x0001`, `0x0011`, `0x0111`, `0x1111` |
+| Physical faulty VL IDs | `[]`, `[0]`, `[0,4]`, `[0,4,8]`, `[0,4,8,12]` |
+| Physical fault rates over 16 bidirectional VLs | 0%, 6.25%, 12.5%, 18.75%, 25% |
+| Paper-aligned directional-equivalent rates over 32 directional channels | 0%, 6.25%, 12.5%, 18.75%, 25% |
+| Seeds | `0`, `1`, `2`, `3`, `4` |
+| Simulation window | `-sim 10000` cycles |
+| Stats warm-up | `-warmup 1000` cycles |
+| Stats format | `json` |
+
+This policy produces exactly `2 routing modes * 3 traffic profiles * 5 fault masks * 5 seeds = 150` simulator runs.
+
+Fault-rate accounting policy:
+
+- Final commands use explicit physical fault masks because T0010/T0011/T0016/T0017/T0021 all use physical bidirectional VL IDs `0..15`.
+- Report fault rates as physical bidirectional percentages over 16 VLs and, when comparing to the paper, as directional-equivalent percentages over 32 channels. For this implementation, the numeric rates are equal because one physical bidirectional VL fault disables both directions.
+- Assumption: A permanent physical VL or microbump failure disables both directions of that physical VL in this implementation.
+- Blocked: The paper's 3.125% single-direction fault case cannot be represented without adding directional endpoint fault modeling. T0025 does not change the fault-injection model, so no final claim may state that single-direction 3.125% cases were evaluated.
+
+Warm-up and drain policy:
+
+- Use a fixed simulation window with continuous packet injection for all profiles.
+- Use `1000` cycles of stats warm-up so the measured window is not dominated by startup transients.
+- Do not use a post-injection drain phase in this policy. The current runner does not expose a source cut-off plus drain window, and Noxim's existing `max_volume_to_be_drained` is not a post-injection drain policy.
+- Assumption: T0020 reachability remains the finite-window metric `received packets / injected packets` over the measured stats window.
+- Blocked: Eventual-delivery reachability after quiescing injection requires a future drain-capable validation design or helper update.
+
+Final runner command shape:
+
+```bash
+python3 other/deft_experiment_runner.py \
+  --routing XY --routing DEFT \
+  --traffic uniform --traffic localized_40 --traffic hotspot_3x10 \
+  --fault-mask 0x0000 --fault-mask 0x0001 --fault-mask 0x0011 --fault-mask 0x0111 --fault-mask 0x1111 \
+  --seed 0 --seed 1 --seed 2 --seed 3 --seed 4 \
+  --sim 10000 \
+  --warmup 1000 \
+  --stats-format json \
+  --output-dir other/generated/t0026_final_sweep_v1
+```
+
+Execution, when explicitly requested in a later task, should use the same command with `--execute --max-execute-runs 150` from `external/noxim` in WSL/Linux.
+
+Validation gates before final claims:
+
+- A dry-run manifest must contain exactly 150 planned runs and the full Cartesian product above.
+- Every `DEFT` run must have a generated schema-v1 LUT provenance entry, and every `XY` run must leave the DeFT LUT disabled.
+- Every fault mask must pass the current connected-chiplet validation rule and must not disconnect any chiplet.
+- Executed final-sweep manifests must report `mode: execute`, `run_count: 150`, `status: completed`, and `return_code: 0` for every run.
+- Every expected JSON stats file must exist and contain the T0020 fields for routing mode, traffic distribution, active fault mask, injected and received packet/flit counts, reachability ratio, average latency, and throughput.
+- Final analysis must be regenerated from the completed sweep output using `external/noxim/other/deft_analysis_artifacts.py`, and the generated tables must be cross-checked against the raw manifest and per-run JSON stats before report text uses them.
+
+Result-claim rules:
+
+- No performance, reachability, latency, or throughput claim may use smoke runs, dry-run manifests, incomplete runs, failed runs, missing stats files, or generated grouped means that have not been cross-checked against raw artifacts.
+- Claims must be paired by identical traffic profile, fault mask, seed, simulation window, and warm-up window. Cross-profile or cross-fault comparisons must be described as separate conditions.
+- A statement that DeFT maintains `100%` measured reachability is allowed only for cells where every DeFT seed has `reachability_ratio == 1.0` in the exported JSON stats. Otherwise, report the exact measured finite-window reachability values and do not use "100%" wording.
+- Latency and throughput comparisons are valid only when both compared routing modes have completed runs and nonzero received packet counts. If a baseline has low reachability, report it as a reliability limitation before interpreting its latency or throughput.
+- With five seeds, report descriptive statistics only: mean plus min/max or per-seed table. Do not claim statistical significance unless a later task increases the sample size and defines a statistical test.
+- Literature baselines (`MTR`, `RC`) may be discussed only conceptually from the source documents because they are not implemented in this repository.
 
 ## Synthetic Traffic Models
 
@@ -911,9 +987,12 @@ Planned:
 - Static Vertical Link faults injected at simulation startup.
 - Fault rates up to 25%.
 - No chiplet may be completely disconnected from the interposer.
-- Current implementation validates masks over 16 physical bidirectional VL IDs and flags four faulty physical VLs as the current physical 25% target.
+- Current implementation validates masks over 16 physical bidirectional VL IDs.
+- T0025 final-sweep policy uses explicit physical masks `0x0000`, `0x0001`, `0x0011`, `0x0111`, and `0x1111`, corresponding to 0%, 6.25%, 12.5%, 18.75%, and 25% of the physical bidirectional VL model.
 
-Assumption: The proposal contains ambiguity around whether percentages are counted over physical bidirectional Vertical Links or directional links. The original paper reports 32 total Vertical Links for the four-chiplet fault analysis, which suggests directional or endpoint-level counting. This must be resolved before final experiment automation.
+Assumption: For final reporting, a physical bidirectional VL fault is also reported as disabling two directional channels in the paper's 32-channel accounting, so the T0025 physical rates have the same numeric directional-equivalent rates.
+
+Blocked: Single-direction fault scenarios, including the original paper's 3.125% one-direction case, are not represented by the current physical bidirectional fault model.
 
 ## Evaluation Metrics
 
@@ -939,9 +1018,8 @@ Planned and partially implemented:
 - Implemented in T0020: CSV/JSON metrics export includes routing mode, traffic mode, active fault mask, reachability, average latency, and throughput fields.
 - Implemented in T0021: `external/noxim/other/deft_experiment_runner.py` can plan and execute tiny XY/DEFT comparison runs that reuse those configs, CLI surfaces, generated temporary LUTs, and stats exports.
 - Implemented in T0022: `external/noxim/other/deft_analysis_artifacts.py` can turn runner manifests and stats exports into traceable analysis tables and a Markdown report scaffold while blocking final claims when inputs are smoke-only or final sweeps are missing.
-- Planned: XY routing in a packet-carrying fault-free scenario establishes the upper-bound reference after experiment validation exists.
-- Planned: XY routing with injected faults demonstrates baseline degradation, failures, or deadlock behavior after experiment validation exists.
-- Planned: DeFT runs use the same T0019 traffic profiles with explicit DEFT routing and matching LUT/fault settings for fair comparison.
+- Implemented in T0025: The final comparison policy uses the same traffic, seed, simulation, warm-up, and physical fault-mask cells for `XY` and `DEFT`, with `XY` providing fault-free and fault-injected baseline behavior and `DEFT` using generated schema-v1 LUTs for matching fault masks.
+- Planned: Execute the T0025 150-run final matrix and regenerate analysis artifacts before making any final report claim.
 
 ## Noxim Extension Point Map
 
