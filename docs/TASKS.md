@@ -204,13 +204,13 @@ Statuses: `TODO`, `IN_PROGRESS`, `DONE`, `BLOCKED`.
 
 ## T0021: Add Experiment Runner
 
-- **Status:** TODO
-- **Objective:** Automate sweeps across routing mode, traffic model, fault rate, and seed.
+- **Status:** DONE
+- **Objective:** Add minimal traceable single-run and tiny comparison launch support across routing mode, traffic model, fault setting, and seed.
 - **Relevant roadmap phase:** Phase 8
-- **Files likely to change:** To be confirmed after repository inspection
-- **Acceptance criteria:** A small dry-run experiment completes and records commands and outputs.
-- **Validation command:** To be confirmed after repository inspection
-- **Notes:** Do not invent commands; base this on confirmed simulator invocation.
+- **Files changed:** `external/noxim/other/deft_experiment_runner.py`, `external/noxim/.gitignore`, `docs/ARCHITECTURE.md`, `docs/TASKS.md`, `docs/PROGRESS.md`, `docs/VALIDATION.md`, `docs/PROMPTS.md`, and `docs/DECISIONS.md`
+- **Acceptance criteria:** A small dry-run experiment completes and records commands and outputs without changing simulator behavior or committing generated artifacts.
+- **Validation command:** Syntax/help checks for `external/noxim/other/deft_experiment_runner.py`; dry-run planning for XY and DEFT localized traffic with seed `0`; fault-setting dry-run planning for `none` and `physical_25`; tiny WSL execute smoke for XY and DEFT localized traffic using existing `-stats_format json -stats_file FILE` surfaces.
+- **Notes:** Completed on 2026-05-09. Added a standalone Python runner that composes existing traffic configs, routing overrides, physical fault masks, seeds, T0016 temporary LUT generation for DEFT runs, and T0020 stats export into traceable manifests, command files, logs, stats files, and a summary CSV. Generated experiment artifacts are written under `external/noxim/other/generated/`, which is ignored by the Noxim submodule. The approved tiny execute smoke completed two 20-cycle seed-0 localized runs, one `XY` and one `DEFT`, each with exit code `0` and JSON metrics. Assumption: T0021 temporary DEFT LUTs use the existing T0016 uniform-unit-interchiplet demand assumption and are not traffic-profile-specific. No C++/SystemC source, DeFT routing, VN transition logic, VL fault injection, generator format, runtime LUT schema/use path, traffic semantics, metrics semantics, final result sweep, golden regression output, or performance analysis was changed.
 
 ## T0022: Prepare Final Analysis Artifacts
 

@@ -856,7 +856,26 @@ Assumption: T0020 counts a packet as injected when its head flit actually enters
 
 Assumption: T0020 reachability follows the existing Noxim stats collection window. Packets still in flight at the end of a short smoke lower the ratio, so short validation smokes are metrics-export checks and not performance results.
 
-Blocked: Experiment runners, multi-seed sweeps, packet-carrying DeFT-vs-XY validation, final percentage accounting for fault sweeps, and analysis artifacts remain future work.
+Blocked: Multi-seed sweeps, final percentage accounting for fault sweeps, and analysis artifacts remain future work.
+
+## T0021 Experiment Runner
+
+`T0021` adds the smallest launch harness for traceable single-run and tiny comparison checks. It does not change DeFT routing, VN transition logic, VL fault injection, LUT schema/runtime behavior, traffic semantics, metrics semantics, final result sweeps, golden regression outputs, or performance analysis.
+
+Implemented helper surface:
+
+- `external/noxim/other/deft_experiment_runner.py` is a Python standard-library helper placed with the existing Noxim helper tools.
+- The runner composes simulator commands from the existing T0019 traffic configs, `-routing XY|DEFT`, explicit physical VL fault masks via `-deft_faulty_vls`, seed/simulation/warm-up overrides, and the T0020 `-stats_format` / `-stats_file` export path.
+- `DEFT` runs generate temporary schema-v1 LUTs under the selected output directory by invoking `external/noxim/other/deft_vl_lut_generator.py`; the manifest records the generator command and the uniform-unit-interchiplet LUT provenance.
+- Generated manifests, commands, logs, stats files, summaries, and temporary LUTs are written below an output directory, with the default location under `external/noxim/other/generated/deft_experiments/`. `external/noxim/.gitignore` ignores `other/generated/` so experiment artifacts are not committed.
+- The default mode is dry-run planning. `--execute` runs the tiny planned set and defaults to a four-run execution safety cap through `--max-execute-runs`.
+- Each run records a manifest entry, a shell-style command file, per-run stdout/stderr paths, per-run machine-readable stats paths, and a summary CSV. JSON stats are parsed into the summary when present.
+
+Assumption: T0021 temporary LUT generation uses the T0016 generator's current uniform-unit-interchiplet demand assumption even when the simulator traffic profile is localized or hotspot. Traffic-profile-specific LUT optimization remains future work.
+
+Assumption: T0021 execute mode is intended for WSL/Linux because the validated local `bin/noxim` artifact is a Linux ELF binary. Windows PowerShell can still use the helper for dry-run planning.
+
+Blocked: T0021 is not a final sweep runner. Final experiment windows, drain policy, physical-vs-directional fault percentage accounting, broader seed sets, result aggregation, and performance claims remain future work.
 
 ## Synthetic Traffic Models
 
@@ -899,6 +918,7 @@ Planned and partially implemented:
 - Implemented in T0018: `deft_2_5d_xy_baseline_fault_injected.yaml` selects XY routing on the same topology with explicit physical VL faults `[0,4,8,12]`.
 - Implemented in T0019: uniform, localized, and hotspot synthetic traffic configs exist on the same `DEFT_2_5D` topology.
 - Implemented in T0020: CSV/JSON metrics export includes routing mode, traffic mode, active fault mask, reachability, average latency, and throughput fields.
+- Implemented in T0021: `external/noxim/other/deft_experiment_runner.py` can plan and execute tiny XY/DEFT comparison runs that reuse those configs, CLI surfaces, generated temporary LUTs, and stats exports.
 - Planned: XY routing in a packet-carrying fault-free scenario establishes the upper-bound reference after experiment validation exists.
 - Planned: XY routing with injected faults demonstrates baseline degradation, failures, or deadlock behavior after experiment validation exists.
 - Planned: DeFT runs use the same T0019 traffic profiles with explicit DEFT routing and matching LUT/fault settings for fair comparison.
