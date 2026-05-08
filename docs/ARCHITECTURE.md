@@ -795,13 +795,114 @@ Assumption: No `RouteData` intermediate-destination fields are required for sche
 
 Blocked: Packet-carrying inter-chiplet DeFT route validation, traffic-profile-specific LUT artifacts, physical-vs-directional experiment percentage accounting, experiment automation, and metrics remain future work.
 
+## T0018 XY Baseline Mode Configuration
+
+`T0018` adds the smallest explicit configuration surface for later XY-vs-DeFT comparison on the same project topology. It does not change Noxim C++/SystemC source, routing behavior, traffic generation, metrics, experiment automation, golden regression outputs, the T0016 generator format, or the T0017 runtime LUT schema/use path.
+
+Implemented configuration surface:
+
+- `external/noxim/config_examples/deft_2_5d_xy_baseline_fault_free.yaml` selects `topology: DEFT_2_5D`, `routing_algorithm: XY`, no startup VL faults, and an empty `deft_vl_lut_filename`.
+- `external/noxim/config_examples/deft_2_5d_xy_baseline_fault_injected.yaml` selects the same topology and XY routing, keeps the DeFT LUT disabled, and uses explicit physical VL faults `[0,4,8,12]`.
+- Both configs retain `n_virtual_channels: 2` because the current `DEFT_2_5D` topology validation requires the VN.0/VN.1 VC count even when the selected routing algorithm is `XY`.
+- Both configs intentionally reuse `TRAFFIC_HARDCODED` with `external/noxim/config_examples/deft_2_5d_no_traffic.txt` so T0018 validates mode selection and startup fault state only. Synthetic packet-carrying traffic is still deferred to T0019.
+
+Baseline selector semantics:
+
+- Fault-free XY baseline: use the fault-free config as the 0% startup-fault reference on the constructed `DEFT_2_5D` topology.
+- Fault-injected XY baseline: use the fault-injected config as the current physical-model 25% startup-fault reference. The mask is `0x1111`, one faulty physical bidirectional VL per chiplet, matching the T0011 inspectability case.
+- DeFT comparison runs remain selected separately through `routing_algorithm: DEFT` plus `deft_vl_lut_filename` or `-deft_vl_lut` with a matching generated schema-v1 LUT. T0018 does not commit generated LUT artifacts.
+
+Assumption: The current baseline mode deliberately uses Noxim's existing standard `XY` routing algorithm. It does not add a 2.5D-aware XY route-selection variant or a fallback VL selector.
+
+Assumption: The fault-injected baseline follows the current 16 physical bidirectional VL model. Final percentage accounting against the original paper's directional `total VLs=32` wording remains unresolved for experiment automation.
+
+Blocked: Packet-carrying XY-vs-DeFT comparison needs experiment runners, metrics extraction, and broader validation from later tasks before performance or reachability conclusions can be made.
+
+## T0019 Synthetic Traffic Configuration
+
+`T0019` adds the smallest configuration/data surface for the proposal-required synthetic traffic profiles on the current `DEFT_2_5D` topology. It does not change Noxim C++/SystemC source, DeFT routing, VN transition logic, Vertical Link fault injection, the T0016 generator format, the T0017 runtime LUT schema/use path, metrics, experiment runners, golden regression outputs, or performance analysis.
+
+Implemented configuration surface:
+
+- `external/noxim/config_examples/deft_2_5d_traffic_uniform.yaml` selects `topology: DEFT_2_5D` with existing `TRAFFIC_RANDOM`, packet size 8 flits, two VCs, no startup VL faults, no DeFT LUT, and default `routing_algorithm: XY`.
+- `external/noxim/config_examples/deft_2_5d_traffic_localized_40.yaml` selects existing `TRAFFIC_TABLE_BASED` with `external/noxim/config_examples/deft_2_5d_traffic_localized_40.txt`.
+- `external/noxim/config_examples/deft_2_5d_traffic_hotspot_3x10.yaml` selects existing `TRAFFIC_TABLE_BASED` with `external/noxim/config_examples/deft_2_5d_traffic_hotspot_3x10.txt`.
+
+Traffic-table semantics:
+
+- Uniform uses Noxim's existing random destination selection. Under `DEFT_2_5D`, `n_delta_tiles` is set to the 64 chiplet routers, so random traffic selects final destinations in the chiplet-router ID range `0..63`.
+- Localized assigns each source a total table PIR of `0.01`; 40% of that source probability targets same-chiplet destinations and 60% targets other-chiplet destinations. Self-traffic is excluded.
+- Hotspot assigns each source a total table PIR of `0.01`. Hotspot routers are `9`, `13`, and `41`, chosen as deterministic near-center routers in three different chiplets because the source documents do not name specific hotspot IDs.
+- Each hotspot receives 10% of a non-hotspot source's generated traffic. When the source is itself a hotspot, self-destination traffic is excluded and that share is redistributed to background non-hotspot destinations.
+
+Assumption: For T0019, the hotspot "10% rate on each" requirement is interpreted as per-hotspot destination share, matching Noxim's existing `-hs ID P` percentage semantics and the original DeFT paper's wording of "3 hotspot points" with "10% rate on each"; final experiment automation can revisit this if a different global-PIR interpretation is required.
+
+Assumption: `TRAFFIC_LOCAL` is not used for the localized profile because source inspection showed it is WiNoC hub-local traffic, not chiplet-local traffic, and `DEFT_2_5D` rejects Winoc hub mode.
+
+Blocked: The T0019 configs validate selection/loading only. They do not establish final XY-vs-DEFT performance, reachability, experiment sweeps, traffic-profile-specific LUT generation, or machine-readable metrics.
+
+## T0020 Metrics Collection
+
+`T0020` adds the smallest source support needed to compare XY and DeFT runs through machine-readable metrics. It does not add experiment automation, sweeps, final analysis, golden regression output updates, DeFT routing changes, VN transition changes, VL fault-injection changes, LUT schema/generator changes, or traffic-profile semantic changes.
+
+Implemented source surface:
+
+- `external/noxim/src/ProcessingElement.h` and `external/noxim/src/ProcessingElement.cpp` now track packets and flits injected into the network by counting packet head flits when they are emitted from the PE toward the local router after the configured stats warm-up boundary.
+- `external/noxim/src/GlobalStats.h` and `external/noxim/src/GlobalStats.cpp` aggregate injected packet/flit counters and compute `reachability_ratio = total_received_packets / total_injected_packets`.
+- The existing optional `stats_format` / `stats_file` export path now emits comparison identifiers and metrics in CSV and JSON: `routing_algorithm`, `traffic_distribution`, `deft_active_fault_mask`, `total_injected_packets`, `total_injected_flits`, `total_received_packets`, `total_received_flits`, `reachability_ratio`, `global_average_delay_cycles`, `network_throughput_flits_per_cycle`, and `average_ip_throughput_flits_per_cycle_per_ip`.
+- The standard console summary labels are left compatible with existing Noxim log parsers; T0020's new comparison fields are available through the existing machine-readable export path.
+
+Assumption: T0020 counts a packet as injected when its head flit actually enters the network from the processing element, not when a traffic generator first queues a packet internally.
+
+Assumption: T0020 reachability follows the existing Noxim stats collection window. Packets still in flight at the end of a short smoke lower the ratio, so short validation smokes are metrics-export checks and not performance results.
+
+Blocked: Multi-seed sweeps, final percentage accounting for fault sweeps, and analysis artifacts remain future work.
+
+## T0021 Experiment Runner
+
+`T0021` adds the smallest launch harness for traceable single-run and tiny comparison checks. It does not change DeFT routing, VN transition logic, VL fault injection, LUT schema/runtime behavior, traffic semantics, metrics semantics, final result sweeps, golden regression outputs, or performance analysis.
+
+Implemented helper surface:
+
+- `external/noxim/other/deft_experiment_runner.py` is a Python standard-library helper placed with the existing Noxim helper tools.
+- The runner composes simulator commands from the existing T0019 traffic configs, `-routing XY|DEFT`, explicit physical VL fault masks via `-deft_faulty_vls`, seed/simulation/warm-up overrides, and the T0020 `-stats_format` / `-stats_file` export path.
+- `DEFT` runs generate temporary schema-v1 LUTs under the selected output directory by invoking `external/noxim/other/deft_vl_lut_generator.py`; the manifest records the generator command and the uniform-unit-interchiplet LUT provenance.
+- Generated manifests, commands, logs, stats files, summaries, and temporary LUTs are written below an output directory, with the default location under `external/noxim/other/generated/deft_experiments/`. `external/noxim/.gitignore` ignores `other/generated/` so experiment artifacts are not committed.
+- The default mode is dry-run planning. `--execute` runs the tiny planned set and defaults to a four-run execution safety cap through `--max-execute-runs`.
+- Each run records a manifest entry, a shell-style command file, per-run stdout/stderr paths, per-run machine-readable stats paths, and a summary CSV. JSON stats are parsed into the summary when present.
+
+Assumption: T0021 temporary LUT generation uses the T0016 generator's current uniform-unit-interchiplet demand assumption even when the simulator traffic profile is localized or hotspot. Traffic-profile-specific LUT optimization remains future work.
+
+Assumption: T0021 execute mode is intended for WSL/Linux because the validated local `bin/noxim` artifact is a Linux ELF binary. Windows PowerShell can still use the helper for dry-run planning.
+
+Blocked: T0021 is not a final sweep runner. Final experiment windows, drain policy, physical-vs-directional fault percentage accounting, broader seed sets, result aggregation, and performance claims remain future work.
+
+## T0022 Final Analysis Artifact Scaffolding
+
+`T0022` adds report-support scaffolding for validated T0021/T0020 outputs. It does not run simulations, define the final sweep policy, change simulator behavior, update golden regression outputs, or make performance claims.
+
+Implemented helper surface:
+
+- `external/noxim/other/deft_analysis_artifacts.py` is a Python standard-library helper placed with the other Noxim helper tools.
+- The helper consumes one or more T0021 runner output directories containing `manifest.json`, `summary.csv`, and optional per-run T0020 JSON stats files.
+- It emits generated analysis artifacts under a caller-selected output directory, normally below ignored `external/noxim/other/generated/`: `analysis_manifest.json`, `run_summary.csv`, `comparison_summary.csv`, and `report_scaffold.md`.
+- The run summary table preserves traceability to input manifests, run status, routing mode, traffic profile, fault mask, seed, simulation window, stats files, stdout/stderr logs, config file, LUT file, LUT provenance, and T0020 metric fields.
+- The comparison summary table computes simple grouped means for completed runs with metrics, grouped by routing mode, traffic profile, fault mask, simulation time, and warm-up time. These means are mechanical summaries only.
+- The generated analysis manifest always records `claims_allowed: false`; report text marks smoke-only inputs as `Blocked` for final performance claims.
+
+Assumption: T0022 analysis inputs are runner outputs produced by T0021 and metrics exports produced by T0020. The helper can resolve either Windows paths or WSL `/mnt/c/...` paths when reading existing stats artifacts from the shared workspace.
+
+Blocked: No validated final sweep output set exists yet. The only available completed runner output is the T0021 20-cycle seed-0 localized XY/DEFT execute smoke with no VL faults, which validates export and analysis shape only.
+
+Blocked: Final fault-rate accounting, final simulation window, seed count, warm-up/drain policy, and result-claim rules remain future decisions.
+
 ## Synthetic Traffic Models
 
-Planned:
+Implemented configuration support:
 
-- Uniform: packets are distributed uniformly across destination nodes.
-- Localized: 40% of generated packets remain within the same source chiplet.
-- Hotspot: 3 hotspot nodes receive additional directed traffic with 10% injection rate.
+- Uniform: packets are distributed uniformly across chiplet-router destination nodes through `deft_2_5d_traffic_uniform.yaml`.
+- Localized: 40% of generated packet probability remains within the same source chiplet through `deft_2_5d_traffic_localized_40.yaml` and its traffic table.
+- Hotspot: hotspot routers `9`, `13`, and `41` receive 10% destination share each through `deft_2_5d_traffic_hotspot_3x10.yaml` and its traffic table.
 
 ## Fault Scenarios
 
@@ -818,23 +919,29 @@ Assumption: The proposal contains ambiguity around whether percentages are count
 
 ### Reachability
 
-Planned: Ratio of successfully delivered packets to total injected packets.
+Implemented in T0020: `reachability_ratio` is emitted in CSV/JSON as the ratio of successfully received packets to packets injected into the network during the measured stats window. `total_injected_packets` and `total_received_packets` are exported with the ratio so later tooling can recompute or filter it.
 
 ### Average Latency
 
-Planned: Average cycles from packet injection at source processing element to delivery at destination processing element, including buffering and router pipeline delays.
+Implemented through existing Noxim statistics and exported in CSV/JSON as `global_average_delay_cycles`. The value uses the existing packet timestamp to destination-delivery delay path in `Stats` / `GlobalStats`.
 
 ### Network Throughput
 
-Planned: Delivered flits per cycle per active IP node, measured consistently across baseline XY and DeFT runs.
+Implemented through existing Noxim statistics and exported in CSV/JSON as `network_throughput_flits_per_cycle` and `average_ip_throughput_flits_per_cycle_per_ip`. For `DEFT_2_5D`, the average IP throughput denominator remains the 64 chiplet routers, not the 64 internal interposer routers.
 
 ## Baseline Comparison with XY Routing
 
-Planned:
+Planned and partially implemented:
 
-- XY routing in a fault-free topology establishes the upper-bound reference.
-- XY routing with injected faults demonstrates baseline degradation, failures, or deadlock behavior.
-- DeFT runs use the same traffic and fault scenarios for fair comparison.
+- Implemented in T0018: `deft_2_5d_xy_baseline_fault_free.yaml` selects XY routing on the `DEFT_2_5D` topology with no startup VL faults.
+- Implemented in T0018: `deft_2_5d_xy_baseline_fault_injected.yaml` selects XY routing on the same topology with explicit physical VL faults `[0,4,8,12]`.
+- Implemented in T0019: uniform, localized, and hotspot synthetic traffic configs exist on the same `DEFT_2_5D` topology.
+- Implemented in T0020: CSV/JSON metrics export includes routing mode, traffic mode, active fault mask, reachability, average latency, and throughput fields.
+- Implemented in T0021: `external/noxim/other/deft_experiment_runner.py` can plan and execute tiny XY/DEFT comparison runs that reuse those configs, CLI surfaces, generated temporary LUTs, and stats exports.
+- Implemented in T0022: `external/noxim/other/deft_analysis_artifacts.py` can turn runner manifests and stats exports into traceable analysis tables and a Markdown report scaffold while blocking final claims when inputs are smoke-only or final sweeps are missing.
+- Planned: XY routing in a packet-carrying fault-free scenario establishes the upper-bound reference after experiment validation exists.
+- Planned: XY routing with injected faults demonstrates baseline degradation, failures, or deadlock behavior after experiment validation exists.
+- Planned: DeFT runs use the same T0019 traffic profiles with explicit DEFT routing and matching LUT/fault settings for fair comparison.
 
 ## Noxim Extension Point Map
 

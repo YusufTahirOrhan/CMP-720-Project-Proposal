@@ -555,6 +555,132 @@ T0017 result on 2026-05-07:
 - `git -c safe.directory=C:/Projects/CMP-720-Project-Proposal/external/noxim -C external/noxim diff --check` completed with exit code `0` after LF-normalizing the touched `power.yaml` file.
 - No packet-carrying inter-chiplet DeFT route smoke, regression command, `./regression.sh --update`, metrics change, experiment automation, golden regression output update, or DeFT performance experiment was run.
 
+## XY Baseline Modes
+
+Purpose:
+
+- Confirm that explicit XY fault-free and fault-injected baseline configurations select the existing `XY` routing algorithm on the same `DEFT_2_5D` topology.
+- Confirm that startup VL fault metadata is visible for the fault-injected XY baseline while the DeFT LUT remains disabled.
+- Confirm no C++/SystemC source, routing behavior, traffic generation, metrics, experiment automation, or golden regression outputs are changed.
+
+Known validation:
+
+- Fault-free XY baseline construction smoke from `external/noxim/bin` in WSL Ubuntu:
+
+```bash
+LD_LIBRARY_PATH=/mnt/c/Projects/CMP-720-Project-Proposal/external/noxim/bin/libs/systemc-2.3.1/lib-linux64 ./noxim -config ../config_examples/deft_2_5d_xy_baseline_fault_free.yaml -seed 0 -sim 20 -warmup 0
+```
+
+- Fault-injected XY baseline construction smoke from `external/noxim/bin` in WSL Ubuntu:
+
+```bash
+LD_LIBRARY_PATH=/mnt/c/Projects/CMP-720-Project-Proposal/external/noxim/bin/libs/systemc-2.3.1/lib-linux64 ./noxim -config ../config_examples/deft_2_5d_xy_baseline_fault_injected.yaml -seed 0 -sim 20 -warmup 0
+```
+
+T0018 result on 2026-05-08:
+
+- Required startup reading was completed before task work: `AGENTS.md`, `docs/PROGRESS.md`, `docs/TASKS.md`, `docs/ROADMAP.md`, `docs/ARCHITECTURE.md`, `docs/VALIDATION.md`, `docs/DECISIONS.md`, and `docs/PROMPTS.md`.
+- Before implementation, parent and submodule status checks showed no local file modifications.
+- Required source documents were confirmed present: `Extended_Proposal.pdf`, `Proposal.pdf`, and `docs/references/DeFT_A_Deadlock-Free_and_Fault-Tolerant_Routing_Algorithm_for_2.5D_Chiplet_Networks.pdf`.
+- Short source-document checks found the Extended Proposal's XY fault-free and XY fault-injected baseline requirements and the original DeFT paper's statement that intra-chiplet routing can use deadlock-free dimension-order routing such as XY.
+- Source inspection covered the existing `DEFT_2_5D` config, `Routing_XY`, `Routing_DEFT`, `ConfigurationManager`, `NoC`, `ProcessingElement`, `DeftTopology`, `DeftFaultInjectionManager`, `DeftVirtualNetwork`, and `DeftVerticalLinkLut` surfaces needed to confirm config-only baseline selection was sufficient for T0018.
+- T0018 added two config-only XY baseline modes: `deft_2_5d_xy_baseline_fault_free.yaml` and `deft_2_5d_xy_baseline_fault_injected.yaml`.
+- The first WSL smoke attempts inside the sandbox failed because no WSL distribution was visible in the sandboxed environment. The same commands were rerun outside the sandbox with approval and completed successfully.
+- The fault-free XY baseline smoke completed with exit code `0`, reported `routing_algorithm = XY`, kept `DEFT_2_5D VL LUT: disabled`, reported active fault mask `0x0000`, and reported zero packets and zero flits because it intentionally uses the no-traffic hardcoded file.
+- The fault-injected XY baseline smoke completed with exit code `0`, reported explicit faulty physical VLs `[0,4,8,12]`, kept `DEFT_2_5D VL LUT: disabled`, reported active fault mask `0x1111`, reported physical faults `4/16`, and reported three functional physical VLs per chiplet.
+- `git diff --check` in the parent repository and `git -c safe.directory=C:/Projects/CMP-720-Project-Proposal/external/noxim -C external/noxim diff --check` completed with exit code `0`; a trailing-whitespace check over the two new untracked config files returned no matches.
+- No `./build.sh` run was required because no build-integrated C++/SystemC source changed.
+- No packet-carrying traffic run, regression command, `./regression.sh --update`, metrics change, experiment automation, golden regression output update, DeFT performance experiment, T0016 generator format change, or T0017 runtime LUT schema/use-path change was performed.
+
+## Synthetic Traffic Configurations
+
+Purpose:
+
+- Confirm that the proposal-required synthetic traffic profiles can be selected on the current `DEFT_2_5D` topology.
+- Confirm that localized and hotspot traffic tables encode the intended probabilities without adding a new simulator traffic mode.
+- Confirm no DeFT routing, VN transition logic, VL fault injection, metrics, experiment automation, golden regression outputs, T0016 generator format, or T0017 runtime LUT schema/use path is changed.
+
+Known validation:
+
+- Uniform synthetic traffic config-load smoke from `external/noxim/bin` in WSL Ubuntu:
+
+```bash
+LD_LIBRARY_PATH=/mnt/c/Projects/CMP-720-Project-Proposal/external/noxim/bin/libs/systemc-2.3.1/lib-linux64 ./noxim -config ../config_examples/deft_2_5d_traffic_uniform.yaml -seed 0 -sim 20 -warmup 0
+```
+
+- Localized synthetic traffic config-load smoke from `external/noxim/bin` in WSL Ubuntu:
+
+```bash
+LD_LIBRARY_PATH=/mnt/c/Projects/CMP-720-Project-Proposal/external/noxim/bin/libs/systemc-2.3.1/lib-linux64 ./noxim -config ../config_examples/deft_2_5d_traffic_localized_40.yaml -seed 0 -sim 20 -warmup 0
+```
+
+- Hotspot synthetic traffic config-load smoke from `external/noxim/bin` in WSL Ubuntu:
+
+```bash
+LD_LIBRARY_PATH=/mnt/c/Projects/CMP-720-Project-Proposal/external/noxim/bin/libs/systemc-2.3.1/lib-linux64 ./noxim -config ../config_examples/deft_2_5d_traffic_hotspot_3x10.yaml -seed 0 -sim 20 -warmup 0
+```
+
+T0019 result on 2026-05-08:
+
+- Required startup reading was completed before task work: `AGENTS.md`, `docs/PROGRESS.md`, `docs/TASKS.md`, `docs/ROADMAP.md`, `docs/ARCHITECTURE.md`, `docs/VALIDATION.md`, `docs/DECISIONS.md`, and `docs/PROMPTS.md`.
+- Before implementation, parent and submodule status checks showed no local file modifications.
+- Required source documents were confirmed present: `Extended_Proposal.pdf`, `Proposal.pdf`, and `docs/references/DeFT_A_Deadlock-Free_and_Fault-Tolerant_Routing_Algorithm_for_2.5D_Chiplet_Networks.pdf`.
+- Short source-document checks found the Extended Proposal's Uniform, Localized 40% intra-chiplet, and Hotspot 3x10 synthetic traffic requirement. The original DeFT paper confirmed 40% same-chiplet localized traffic and 3 hotspot points with 10% rate on each.
+- Source inspection covered `ProcessingElement.cpp`, `GlobalTrafficTable.*`, `ConfigurationManager.cpp`, `NoC.cpp`, the Noxim traffic documentation, existing config examples, and the T0018 baseline configs.
+- `TRAFFIC_RANDOM` was selected for the uniform profile. `TRAFFIC_TABLE_BASED` was selected for localized and hotspot profiles because existing `TRAFFIC_LOCAL` is WiNoC hub-local and unsuitable for chiplet-local traffic under `DEFT_2_5D`.
+- T0019 added three synthetic traffic YAML configs and two deterministic traffic tables under `external/noxim/config_examples`.
+- Table integrity checks confirmed the localized table has 4032 rows, total per-source PIR approximately `0.01`, same-chiplet PIR approximately `0.004`, and other-chiplet PIR `0.006`.
+- Table integrity checks confirmed the hotspot table has 4032 rows, total per-source PIR approximately `0.01`, hotspot routers `9`, `13`, and `41`, hotspot destination PIR `0.001` per non-hotspot source, and no self-destination entries.
+- The first WSL smoke attempts inside the sandbox failed because no WSL distribution was visible in the sandboxed environment. The same commands were rerun outside the sandbox with approval and completed successfully.
+- The uniform config-load smoke completed with exit code `0`, loaded `deft_2_5d_traffic_uniform.yaml`, kept `DEFT_2_5D VL LUT: disabled`, reported active fault mask `0x0000`, and delivered zero packets/flits in the short 20-cycle seed-0 run.
+- The localized config-load smoke completed with exit code `0`, loaded `deft_2_5d_traffic_localized_40.yaml` and its table, kept `DEFT_2_5D VL LUT: disabled`, reported active fault mask `0x0000`, and delivered 2 packets / 11 flits in the short run.
+- The hotspot config-load smoke completed with exit code `0`, loaded `deft_2_5d_traffic_hotspot_3x10.yaml` and its table, kept `DEFT_2_5D VL LUT: disabled`, reported active fault mask `0x0000`, and delivered 1 packet / 2 flits in the short run.
+- `git diff --check` in the parent repository and `git -c safe.directory=C:/Projects/CMP-720-Project-Proposal/external/noxim -C external/noxim diff --check` completed with exit code `0`; a trailing-whitespace check over the new T0019 config/table files returned no matches.
+- No `./build.sh` run was required because no build-integrated C++/SystemC source changed.
+- No regression command, `./regression.sh --update`, metrics change, experiment automation, golden regression output update, DeFT performance experiment, T0016 generator format change, or T0017 runtime LUT schema/use-path change was performed.
+
+## Metrics Collection
+
+Purpose:
+
+- Confirm that reachability, average latency, and throughput can be emitted in machine-readable form.
+- Confirm that the metrics row identifies routing mode, traffic mode, and active DeFT fault mask for later XY-vs-DeFT comparison.
+- Confirm no DeFT routing, VN transition logic, VL fault injection, LUT format/use path, traffic-profile semantics, experiment sweeps, performance analysis, or golden regression output is changed.
+
+Known validation:
+
+- Build from the Noxim repository root in WSL Ubuntu: `./build.sh`
+- JSON metrics export smoke from `external/noxim/bin` in WSL Ubuntu:
+
+```bash
+LD_LIBRARY_PATH=/mnt/c/Projects/CMP-720-Project-Proposal/external/noxim/bin/libs/systemc-2.3.1/lib-linux64 ./noxim -config ../config_examples/deft_2_5d_traffic_localized_40.yaml -seed 0 -sim 20 -warmup 0 -stats_format json -stats_file /tmp/deft_t0020_metrics_smoke.json
+```
+
+- CSV metrics export smoke from `external/noxim/bin` in WSL Ubuntu:
+
+```bash
+LD_LIBRARY_PATH=/mnt/c/Projects/CMP-720-Project-Proposal/external/noxim/bin/libs/systemc-2.3.1/lib-linux64 ./noxim -config ../config_examples/deft_2_5d_traffic_localized_40.yaml -seed 0 -sim 20 -warmup 0 -stats_format csv -stats_file /tmp/deft_t0020_metrics_smoke.csv
+```
+
+T0020 result on 2026-05-08:
+
+- Required startup reading was completed before task work: `AGENTS.md`, `docs/PROGRESS.md`, `docs/TASKS.md`, `docs/ROADMAP.md`, `docs/ARCHITECTURE.md`, `docs/VALIDATION.md`, `docs/DECISIONS.md`, and `docs/PROMPTS.md`.
+- Before implementation, parent status showed the current branch `feat/map-noxim-extension-points...origin/feat/map-noxim-extension-points` with no local file modifications.
+- Before implementation, submodule status showed branch `feat/baseline-noxim...origin/feat/baseline-noxim` with no local file modifications.
+- Required source documents were confirmed present: `Extended_Proposal.pdf`, `Proposal.pdf`, and `docs/references/DeFT_A_Deadlock-Free_and_Fault-Tolerant_Routing_Algorithm_for_2.5D_Chiplet_Networks.pdf`.
+- Short source-document checks found the Extended Proposal's reachability, latency, and throughput evaluation requirement and the original DeFT paper's reachability/latency motivation.
+- Source inspection found an existing `stats_format` / `stats_file` CSV and JSON export path in `GlobalStats`, existing average latency and throughput aggregation, and no existing injected-packet denominator for reachability.
+- T0020 added injected packet/flit counters at the PE head-flit injection point and added CSV/JSON fields for routing algorithm, traffic distribution, active DeFT fault mask, injected packets/flits, received packets/flits, reachability ratio, average latency, and throughput.
+- The first WSL build attempt inside the sandbox failed because no WSL distribution was visible in the sandboxed environment.
+- The first approved WSL `./build.sh` attempt timed out before returning a build result; the same documented command was rerun with a longer timeout and completed with exit code `0`.
+- The successful build recompiled `ProcessingElement.cpp` and relinked `bin/noxim`. Only pre-existing warnings from `Router.cpp` and `Stats.cpp` were emitted.
+- The JSON metrics export smoke completed with exit code `0`, loaded `deft_2_5d_traffic_localized_40.yaml`, kept routing `XY`, traffic `TRAFFIC_TABLE_BASED`, and active fault mask `0x0000`, and emitted JSON containing `total_injected_packets=13`, `total_injected_flits=104`, `total_received_packets=2`, `total_received_flits=11`, `reachability_ratio=0.15384615384615385`, `global_average_delay_cycles=5`, `network_throughput_flits_per_cycle=0.55`, and `average_ip_throughput_flits_per_cycle_per_ip=0.00859375`.
+- The CSV metrics export smoke completed with exit code `0` and emitted the same comparison fields and values in a single header row plus one data row.
+- `git -c safe.directory=C:/Projects/CMP-720-Project-Proposal/external/noxim -C external/noxim diff --check` completed with exit code `0` after LF-normalizing the modified source files.
+- No regression command, `./regression.sh --update`, experiment runner, result sweep, final analysis, golden regression output update, DeFT routing change, VN transition change, VL fault-injection change, T0016 generator format change, T0017 runtime LUT schema/use-path change, or T0019 traffic semantics change was performed.
+- Assumption: Reachability counts packets when their head flit actually enters the network after the configured warm-up boundary.
+- Assumption: Short smoke reachability can be below one because packets can remain in flight at the end of a short 20-cycle run; the smoke validates export shape only and is not a performance result.
+
 ## Build Validation
 
 Purpose:
@@ -716,17 +842,112 @@ T0004 result on 2026-05-05:
 
 Purpose:
 
-- Validate experiment sweeps across routing mode, traffic model, fault rate, and random seed.
+- Validate traceable single-run and tiny comparison launches across routing mode, traffic model, fault setting, and random seed.
 
-Command:
+Known commands:
 
-- Unknown until repository inspection.
+- Runner syntax check from the parent repository:
+
+```powershell
+python -m py_compile external/noxim/other/deft_experiment_runner.py
+```
+
+- Runner help check from the parent repository:
+
+```powershell
+python external/noxim/other/deft_experiment_runner.py --help
+```
+
+- Tiny XY/DEFT dry-run planning from `external/noxim` in WSL Ubuntu:
+
+```bash
+python3 other/deft_experiment_runner.py --routing XY --routing DEFT --traffic localized_40 --fault-mask 0x0000 --seed 0 --output-dir other/generated/t0021_wsl_dry_run
+```
+
+- Tiny XY/DEFT execute smoke from `external/noxim` in WSL Ubuntu:
+
+```bash
+python3 other/deft_experiment_runner.py --routing XY --routing DEFT --traffic localized_40 --fault-mask 0x0000 --seed 0 --output-dir other/generated/t0021_execute_smoke --execute --max-execute-runs 2
+```
+
+T0021 result on 2026-05-09:
+
+- Required startup reading was completed before task work: `AGENTS.md`, `docs/PROGRESS.md`, `docs/TASKS.md`, `docs/ROADMAP.md`, `docs/ARCHITECTURE.md`, `docs/VALIDATION.md`, `docs/DECISIONS.md`, and `docs/PROMPTS.md`.
+- Before implementation, parent status showed branch `feat/map-noxim-extension-points...origin/feat/map-noxim-extension-points` with no local file modifications.
+- Before implementation, submodule status showed branch `feat/baseline-noxim...origin/feat/baseline-noxim` with no local file modifications.
+- Required source documents were confirmed present: `Extended_Proposal.pdf`, `Proposal.pdf`, and `docs/references/DeFT_A_Deadlock-Free_and_Fault-Tolerant_Routing_Algorithm_for_2.5D_Chiplet_Networks.pdf`.
+- Source inspection confirmed the existing T0019 traffic configs, T0016 LUT generator, T0017 `-routing DEFT` / `-deft_vl_lut` surfaces, T0010/T0011 `-deft_faulty_vls` surface, and T0020 `-stats_format` / `-stats_file` surfaces.
+- T0021 added `external/noxim/other/deft_experiment_runner.py` as a standalone Python runner and added `external/noxim/other/generated/` to the Noxim submodule ignore file for generated manifests, logs, stats, summaries, and temporary LUTs.
+- `python -m py_compile external/noxim/other/deft_experiment_runner.py` completed with exit code `0`.
+- `python external/noxim/other/deft_experiment_runner.py --help` completed with exit code `0` and listed routing, traffic, fault-mask, seed, stats, dry-run, and execute controls.
+- A local dry-run planning check with `--routing XY --routing DEFT --traffic localized_40 --fault-mask 0x0000 --seed 0` completed with exit code `0` and wrote a manifest, commands file, and summary CSV under the ignored generated-output directory.
+- A local fault-setting dry-run planning check with `--fault-preset none --fault-preset physical_25` completed with exit code `0` and recorded the `0x1111` mask as `-deft_faulty_vls 0,4,8,12` with matching temporary DEFT LUT generation commands.
+- The first WSL dry-run and execute attempts inside the sandbox failed because no WSL distribution was visible in the sandboxed environment. The same commands were rerun outside the sandbox with approval and completed successfully.
+- The approved WSL dry-run planned two localized traffic commands: one `XY` run and one `DEFT` run using a temporary generated `deft_vl_lut_0x0000.yaml` under `other/generated/t0021_wsl_dry_run/luts/`.
+- The approved WSL execute smoke completed two localized traffic runs with exit code `0` through the runner. The runner produced `manifest.json`, `commands.sh`, per-run stdout/stderr files, JSON stats files, and `summary.csv` under `external/noxim/other/generated/t0021_execute_smoke/`.
+- The execute-smoke summary reported the `XY` run as completed with `total_injected_packets=13`, `total_received_packets=2`, `reachability_ratio=0.15384615384615385`, `global_average_delay_cycles=5`, and `network_throughput_flits_per_cycle=0.55`.
+- The execute-smoke summary reported the `DEFT` run as completed with `total_injected_packets=17`, `total_received_packets=3`, `reachability_ratio=0.17647058823529413`, `global_average_delay_cycles=7.333333333333333`, and `network_throughput_flits_per_cycle=0.65`.
+- The short execute-smoke metrics validate runner integration and export shape only; they are not performance results.
+- `git diff --check` in the parent repository completed with exit code `0`; Git reported line-ending conversion warnings for edited Markdown files only.
+- `git -c safe.directory=C:/Projects/CMP-720-Project-Proposal/external/noxim -C external/noxim diff --check` completed with exit code `0`.
+- A trailing-whitespace check over the new runner, the Noxim ignore file, and edited tracking docs returned no matches.
+- No `./build.sh` run was required because no build-integrated C++/SystemC source changed.
+- No regression command, `./regression.sh --update`, final sweep, final analysis, golden regression output update, DeFT routing change, VN transition change, VL fault-injection change, T0016 generator format change, T0017 runtime LUT schema/use-path change, T0019 traffic-profile semantic change, or T0020 metrics semantic change was performed.
 
 Expected future checks:
 
 - Single-run smoke test.
 - Small multi-seed dry run.
-- Fault-rate sweep up to 25% after routing and fault injection are implemented.
+- Fault-rate sweep up to 25% after final percentage accounting and sweep policy are selected.
+
+## Final Analysis Artifact Validation
+
+Purpose:
+
+- Validate that final-analysis scaffolding can consume T0021 runner manifests and T0020 stats exports.
+- Confirm generated tables preserve provenance and mark missing final sweep data as `Blocked`.
+- Avoid running full sweeps, rebuilding Noxim, changing simulator behavior, or making unsupported performance claims.
+
+Known commands:
+
+- Analysis helper syntax check from the parent repository:
+
+```powershell
+python -m py_compile external/noxim/other/deft_analysis_artifacts.py
+```
+
+- Analysis helper help check from the parent repository:
+
+```powershell
+python external/noxim/other/deft_analysis_artifacts.py --help
+```
+
+- Scaffold generation from an existing ignored T0021 execute-smoke output:
+
+```powershell
+python external/noxim/other/deft_analysis_artifacts.py --input-dir external/noxim/other/generated/t0021_execute_smoke --output-dir external/noxim/other/generated/t0022_analysis_smoke
+```
+
+T0022 result on 2026-05-09:
+
+- Required startup reading was completed before task work: `AGENTS.md`, `docs/PROGRESS.md`, `docs/TASKS.md`, `docs/ROADMAP.md`, `docs/ARCHITECTURE.md`, `docs/VALIDATION.md`, `docs/DECISIONS.md`, and `docs/PROMPTS.md`.
+- Before implementation, parent status showed branch `feat/map-noxim-extension-points...origin/feat/map-noxim-extension-points` with no local file modifications.
+- Before implementation, submodule status showed branch `feat/baseline-noxim...origin/feat/baseline-noxim` with no local file modifications.
+- Existing ignored T0021 outputs were found under `external/noxim/other/generated/`, including `t0021_execute_smoke`.
+- T0022 added `external/noxim/other/deft_analysis_artifacts.py` as a standalone Python helper that reads T0021 `manifest.json`, `summary.csv`, and T0020 JSON stats exports.
+- The helper writes ignored generated artifacts: `analysis_manifest.json`, `run_summary.csv`, `comparison_summary.csv`, and `report_scaffold.md`.
+- `python -m py_compile external/noxim/other/deft_analysis_artifacts.py` completed with exit code `0`.
+- `python external/noxim/other/deft_analysis_artifacts.py --help` completed with exit code `0`.
+- Scaffold generation from `external/noxim/other/generated/t0021_execute_smoke` completed with exit code `0` and wrote artifacts under `external/noxim/other/generated/t0022_analysis_smoke`.
+- The generated `run_summary.csv` included both completed smoke rows, resolved the WSL `/mnt/c/...` stats paths to workspace-local paths, and captured T0020 metrics from the JSON stats files.
+- The generated `comparison_summary.csv` mechanically grouped the completed smoke rows by routing, traffic, fault mask, simulation time, and warm-up. These grouped means are not final performance results.
+- The generated `report_scaffold.md` marked the result as `Blocked` for final claims because no validated final sweep output set was provided. It also recorded unresolved final fault-rate accounting, simulation window, seed count, and drain policy.
+- No simulator execution, full sweep, Noxim rebuild, regression command, `./regression.sh --update`, golden output update, DeFT routing change, VN transition logic change, VL fault-injection change, T0016 generator format change, T0017 runtime LUT schema/use-path change, T0019 traffic semantic change, T0020 metrics semantic change, T0021 runner semantic change, or performance claim was performed.
+
+Expected future checks:
+
+- Re-run the analysis helper on validated final sweep directories after T0025 defines the final sweep policy.
+- Cross-check generated final-analysis tables against raw runner manifests and per-run JSON stats before using them in the report.
 
 ## Metrics Validation
 
@@ -734,15 +955,15 @@ Purpose:
 
 - Confirm correctness of reachability, average latency, and network throughput reporting.
 
-Command:
+Known validation:
 
-- Unknown until repository inspection.
+- T0020 JSON and CSV metrics export smokes listed under `Metrics Collection`.
 
 Expected future checks:
 
-- Compare delivered packet counts against injected packet counts.
-- Verify latency uses delivery cycle minus injection cycle.
-- Verify throughput unit is flits per cycle per active IP node.
+- Cross-check T0020 exported metrics in longer packet-carrying runs after final sweep policy exists.
+- Compare delivered packet counts against injected packet counts across XY and DeFT modes.
+- Verify warm-up and in-flight packet handling for final experiment windows.
 
 ## Documentation Validation
 

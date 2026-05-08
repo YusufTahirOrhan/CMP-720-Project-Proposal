@@ -225,3 +225,43 @@ This document records project decisions that affect implementation, validation, 
 - **Context:** T0017 needed to load and use schema-v1 VL selections at runtime while preserving future XY baseline work. The existing `XY` algorithm remains useful as a baseline, and `RouteData` already carries original source, destination, current router, input direction, and VC state.
 - **Decision:** Add `DeftVerticalLinkLut` as a runtime YAML loader/validator for `deft_vl_lut.v1`, and register a separate `DEFT` routing algorithm for fault-aware 2.5D DeFT route selection. The loader derives the active fault mask from current physical VL functional state after startup fault injection. The `DEFT` route path uses exact entries keyed by active fault mask, source chiplet, source router, and destination chiplet; it routes to `source_exit` on the source chiplet, to `destination_entry` on the interposer, and then to the final destination on the destination chiplet. Missing entries or nonfunctional selected VLs fail closed by returning no legal output direction. No `RouteData` intermediate-destination fields are added for schema v1.
 - **Consequences:** `XY` remains selectable for later baseline configuration. Runtime LUT use is activated by selecting `DEFT` and configuring `deft_vl_lut_filename` or `-deft_vl_lut`. Construction-only no-traffic `DEFT_2_5D` runs can leave the LUT filename empty. Packet-carrying inter-chiplet DeFT route validation, traffic-profile-specific LUT artifacts, metrics, and experiment automation remain future tasks.
+
+## ADR-0029: Configure XY Baselines with Explicit YAML Modes
+
+- **Date:** 2026-05-08
+- **Status:** Accepted
+- **Context:** T0018 needed the smallest safe XY baseline setup for later comparison against DeFT on the same `DEFT_2_5D` topology, without adding experiment automation, metrics changes, new route-selection logic, golden outputs, or changes to the T0016/T0017 LUT path.
+- **Decision:** Add two explicit YAML configuration modes under `external/noxim/config_examples`: one fault-free XY baseline with no startup VL faults and one fault-injected XY baseline using explicit physical VL faults `[0,4,8,12]`. Keep `routing_algorithm: XY`, keep `deft_vl_lut_filename` empty, and retain the existing two-VC `DEFT_2_5D` topology requirement. Use the existing no-traffic hardcoded file for construction-only validation until synthetic traffic configurations are implemented.
+- **Consequences:** XY baseline selection is traceable and separate from `DEFT` routing. The fault-injected baseline uses the current physical-model `0x1111` mask rather than resolving final physical-vs-directional percentage accounting. Future packet-carrying experiments should reuse these routing/fault selectors with the same traffic settings as DeFT, but T0018 does not itself produce performance or reachability results.
+
+## ADR-0030: Configure Synthetic Traffic with Existing Noxim Traffic Surfaces
+
+- **Date:** 2026-05-08
+- **Status:** Accepted
+- **Context:** T0019 needed proposal-required uniform, localized, and hotspot traffic profile support without changing DeFT routing, VN transition logic, VL fault injection, LUT schemas, metrics, experiment automation, or golden outputs. Source inspection showed that Noxim's `TRAFFIC_RANDOM` works for `DEFT_2_5D` chiplet-router destination IDs, while `TRAFFIC_LOCAL` is WiNoC hub-local and not chiplet-local. Noxim hotspot percentages are CLI-only in the existing code path, so standalone YAML configs cannot express hotspot nodes directly through `GlobalParams::hotspots`.
+- **Decision:** Use existing traffic surfaces only. Configure uniform traffic with `TRAFFIC_RANDOM`. Configure localized 40% intra-chiplet traffic and hotspot 3x10 traffic with deterministic `TRAFFIC_TABLE_BASED` files under `external/noxim/config_examples`. Interpret the hotspot "10% rate on each" requirement as per-hotspot destination share, consistent with Noxim's `-hs ID P` percentage semantics and the original DeFT paper wording. Select hotspot routers `9`, `13`, and `41` as deterministic near-center routers in three different chiplets because the source documents do not specify hotspot IDs.
+- **Consequences:** T0019 remains config/data-only and adds no new C++ traffic mode. Future experiment automation can reuse the same traffic profiles while overriding routing, fault, and LUT settings. If final evaluation requires different hotspot IDs, global PIR sweeps, or traffic-profile-specific LUT demand inputs, that should be handled in a later explicit task.
+
+## ADR-0031: Extend Existing Stats Export for Metrics Collection
+
+- **Date:** 2026-05-08
+- **Status:** Accepted
+- **Context:** T0020 needed reachability, average latency, and throughput in a machine-readable form for later XY-vs-DeFT comparison. Source inspection showed that Noxim already had optional CSV/JSON export through `stats_format` and `stats_file`, and already aggregated average latency and throughput, but did not expose a measured injected-packet denominator for reachability.
+- **Decision:** Reuse the existing `GlobalStats` CSV/JSON export path. Count injected packets and flits at the processing element when a packet head flit actually enters the network after the configured stats warm-up boundary. Export routing algorithm, traffic distribution, active DeFT fault mask, injected packet/flit counts, received packet/flit counts, reachability ratio, average latency, and throughput through the existing machine-readable stats file.
+- **Consequences:** T0020 avoids adding an experiment runner or a parallel parser for console logs. Standard console summary labels remain compatible with existing Noxim log parsers. Short runs may report reachability below one when packets remain in flight at simulation end, so final experiment automation must choose simulation windows and warm-up/drain policy deliberately.
+
+## ADR-0032: Add a Standalone Tiny Experiment Runner
+
+- **Date:** 2026-05-09
+- **Status:** Accepted
+- **Context:** T0021 needed traceable launch support after routing modes, synthetic traffic configs, temporary LUT generation, and machine-readable metrics export existed. The task scope explicitly excluded full sweeps, final analysis, golden regression output updates, and performance claims.
+- **Decision:** Add `external/noxim/other/deft_experiment_runner.py` as a standalone Python standard-library helper. The runner composes existing simulator CLI surfaces and config files rather than changing simulator behavior: T0019 traffic configs, `-routing XY|DEFT`, physical fault masks through `-deft_faulty_vls`, T0016 temporary LUT generation for `DEFT`, seed/simulation/warm-up overrides, and T0020 `-stats_format` / `-stats_file` exports. Generated run artifacts are written under `external/noxim/other/generated/`, and that directory is ignored by the Noxim submodule.
+- **Consequences:** Single-run and tiny comparison launches are now reproducible through manifests, command files, logs, per-run stats, and a summary CSV. The default mode is dry-run planning, while `--execute` has a small execution safety cap. Temporary LUTs still use the T0016 uniform-unit-interchiplet demand assumption; traffic-profile-specific LUTs, final sweep policy, physical-vs-directional fault percentage accounting, result aggregation, and performance claims remain future work.
+
+## ADR-0033: Keep Final Analysis Support as Traceable Scaffolding Until Final Sweeps Exist
+
+- **Date:** 2026-05-09
+- **Status:** Accepted
+- **Context:** T0022 needed final-analysis artifact support, but the only completed runner output currently available is the short T0021 execute smoke. The task explicitly prohibited full sweeps, fabricated results, simulator behavior changes, golden regression output updates, and unsupported performance claims.
+- **Decision:** Add `external/noxim/other/deft_analysis_artifacts.py` as a standalone Python standard-library helper that consumes T0021 runner output directories and T0020 stats exports. The helper emits ignored generated artifacts for report support: `analysis_manifest.json`, `run_summary.csv`, `comparison_summary.csv`, and `report_scaffold.md`. It preserves provenance and metrics mechanically, always records `claims_allowed: false`, and marks smoke-only or missing final sweep data as `Blocked`.
+- **Consequences:** Report-support tables can be regenerated from validated output directories without changing Noxim runtime behavior or committing generated analysis artifacts. Final performance claims still require a future task to define the final sweep policy, run validated final sweeps, and review the generated tables against raw manifests and stats exports.
