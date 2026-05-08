@@ -841,6 +841,23 @@ Assumption: `TRAFFIC_LOCAL` is not used for the localized profile because source
 
 Blocked: The T0019 configs validate selection/loading only. They do not establish final XY-vs-DEFT performance, reachability, experiment sweeps, traffic-profile-specific LUT generation, or machine-readable metrics.
 
+## T0020 Metrics Collection
+
+`T0020` adds the smallest source support needed to compare XY and DeFT runs through machine-readable metrics. It does not add experiment automation, sweeps, final analysis, golden regression output updates, DeFT routing changes, VN transition changes, VL fault-injection changes, LUT schema/generator changes, or traffic-profile semantic changes.
+
+Implemented source surface:
+
+- `external/noxim/src/ProcessingElement.h` and `external/noxim/src/ProcessingElement.cpp` now track packets and flits injected into the network by counting packet head flits when they are emitted from the PE toward the local router after the configured stats warm-up boundary.
+- `external/noxim/src/GlobalStats.h` and `external/noxim/src/GlobalStats.cpp` aggregate injected packet/flit counters and compute `reachability_ratio = total_received_packets / total_injected_packets`.
+- The existing optional `stats_format` / `stats_file` export path now emits comparison identifiers and metrics in CSV and JSON: `routing_algorithm`, `traffic_distribution`, `deft_active_fault_mask`, `total_injected_packets`, `total_injected_flits`, `total_received_packets`, `total_received_flits`, `reachability_ratio`, `global_average_delay_cycles`, `network_throughput_flits_per_cycle`, and `average_ip_throughput_flits_per_cycle_per_ip`.
+- The standard console summary labels are left compatible with existing Noxim log parsers; T0020's new comparison fields are available through the existing machine-readable export path.
+
+Assumption: T0020 counts a packet as injected when its head flit actually enters the network from the processing element, not when a traffic generator first queues a packet internally.
+
+Assumption: T0020 reachability follows the existing Noxim stats collection window. Packets still in flight at the end of a short smoke lower the ratio, so short validation smokes are metrics-export checks and not performance results.
+
+Blocked: Experiment runners, multi-seed sweeps, packet-carrying DeFT-vs-XY validation, final percentage accounting for fault sweeps, and analysis artifacts remain future work.
+
 ## Synthetic Traffic Models
 
 Implemented configuration support:
@@ -864,15 +881,15 @@ Assumption: The proposal contains ambiguity around whether percentages are count
 
 ### Reachability
 
-Planned: Ratio of successfully delivered packets to total injected packets.
+Implemented in T0020: `reachability_ratio` is emitted in CSV/JSON as the ratio of successfully received packets to packets injected into the network during the measured stats window. `total_injected_packets` and `total_received_packets` are exported with the ratio so later tooling can recompute or filter it.
 
 ### Average Latency
 
-Planned: Average cycles from packet injection at source processing element to delivery at destination processing element, including buffering and router pipeline delays.
+Implemented through existing Noxim statistics and exported in CSV/JSON as `global_average_delay_cycles`. The value uses the existing packet timestamp to destination-delivery delay path in `Stats` / `GlobalStats`.
 
 ### Network Throughput
 
-Planned: Delivered flits per cycle per active IP node, measured consistently across baseline XY and DeFT runs.
+Implemented through existing Noxim statistics and exported in CSV/JSON as `network_throughput_flits_per_cycle` and `average_ip_throughput_flits_per_cycle_per_ip`. For `DEFT_2_5D`, the average IP throughput denominator remains the 64 chiplet routers, not the 64 internal interposer routers.
 
 ## Baseline Comparison with XY Routing
 
@@ -881,8 +898,9 @@ Planned and partially implemented:
 - Implemented in T0018: `deft_2_5d_xy_baseline_fault_free.yaml` selects XY routing on the `DEFT_2_5D` topology with no startup VL faults.
 - Implemented in T0018: `deft_2_5d_xy_baseline_fault_injected.yaml` selects XY routing on the same topology with explicit physical VL faults `[0,4,8,12]`.
 - Implemented in T0019: uniform, localized, and hotspot synthetic traffic configs exist on the same `DEFT_2_5D` topology.
-- Planned: XY routing in a packet-carrying fault-free scenario establishes the upper-bound reference after metrics and experiment validation exist.
-- Planned: XY routing with injected faults demonstrates baseline degradation, failures, or deadlock behavior after metrics and experiment validation exist.
+- Implemented in T0020: CSV/JSON metrics export includes routing mode, traffic mode, active fault mask, reachability, average latency, and throughput fields.
+- Planned: XY routing in a packet-carrying fault-free scenario establishes the upper-bound reference after experiment validation exists.
+- Planned: XY routing with injected faults demonstrates baseline degradation, failures, or deadlock behavior after experiment validation exists.
 - Planned: DeFT runs use the same T0019 traffic profiles with explicit DEFT routing and matching LUT/fault settings for fair comparison.
 
 ## Noxim Extension Point Map

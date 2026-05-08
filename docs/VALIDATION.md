@@ -639,6 +639,48 @@ T0019 result on 2026-05-08:
 - No `./build.sh` run was required because no build-integrated C++/SystemC source changed.
 - No regression command, `./regression.sh --update`, metrics change, experiment automation, golden regression output update, DeFT performance experiment, T0016 generator format change, or T0017 runtime LUT schema/use-path change was performed.
 
+## Metrics Collection
+
+Purpose:
+
+- Confirm that reachability, average latency, and throughput can be emitted in machine-readable form.
+- Confirm that the metrics row identifies routing mode, traffic mode, and active DeFT fault mask for later XY-vs-DeFT comparison.
+- Confirm no DeFT routing, VN transition logic, VL fault injection, LUT format/use path, traffic-profile semantics, experiment sweeps, performance analysis, or golden regression output is changed.
+
+Known validation:
+
+- Build from the Noxim repository root in WSL Ubuntu: `./build.sh`
+- JSON metrics export smoke from `external/noxim/bin` in WSL Ubuntu:
+
+```bash
+LD_LIBRARY_PATH=/mnt/c/Projects/CMP-720-Project-Proposal/external/noxim/bin/libs/systemc-2.3.1/lib-linux64 ./noxim -config ../config_examples/deft_2_5d_traffic_localized_40.yaml -seed 0 -sim 20 -warmup 0 -stats_format json -stats_file /tmp/deft_t0020_metrics_smoke.json
+```
+
+- CSV metrics export smoke from `external/noxim/bin` in WSL Ubuntu:
+
+```bash
+LD_LIBRARY_PATH=/mnt/c/Projects/CMP-720-Project-Proposal/external/noxim/bin/libs/systemc-2.3.1/lib-linux64 ./noxim -config ../config_examples/deft_2_5d_traffic_localized_40.yaml -seed 0 -sim 20 -warmup 0 -stats_format csv -stats_file /tmp/deft_t0020_metrics_smoke.csv
+```
+
+T0020 result on 2026-05-08:
+
+- Required startup reading was completed before task work: `AGENTS.md`, `docs/PROGRESS.md`, `docs/TASKS.md`, `docs/ROADMAP.md`, `docs/ARCHITECTURE.md`, `docs/VALIDATION.md`, `docs/DECISIONS.md`, and `docs/PROMPTS.md`.
+- Before implementation, parent status showed the current branch `feat/map-noxim-extension-points...origin/feat/map-noxim-extension-points` with no local file modifications.
+- Before implementation, submodule status showed branch `feat/baseline-noxim...origin/feat/baseline-noxim` with no local file modifications.
+- Required source documents were confirmed present: `Extended_Proposal.pdf`, `Proposal.pdf`, and `docs/references/DeFT_A_Deadlock-Free_and_Fault-Tolerant_Routing_Algorithm_for_2.5D_Chiplet_Networks.pdf`.
+- Short source-document checks found the Extended Proposal's reachability, latency, and throughput evaluation requirement and the original DeFT paper's reachability/latency motivation.
+- Source inspection found an existing `stats_format` / `stats_file` CSV and JSON export path in `GlobalStats`, existing average latency and throughput aggregation, and no existing injected-packet denominator for reachability.
+- T0020 added injected packet/flit counters at the PE head-flit injection point and added CSV/JSON fields for routing algorithm, traffic distribution, active DeFT fault mask, injected packets/flits, received packets/flits, reachability ratio, average latency, and throughput.
+- The first WSL build attempt inside the sandbox failed because no WSL distribution was visible in the sandboxed environment.
+- The first approved WSL `./build.sh` attempt timed out before returning a build result; the same documented command was rerun with a longer timeout and completed with exit code `0`.
+- The successful build recompiled `ProcessingElement.cpp` and relinked `bin/noxim`. Only pre-existing warnings from `Router.cpp` and `Stats.cpp` were emitted.
+- The JSON metrics export smoke completed with exit code `0`, loaded `deft_2_5d_traffic_localized_40.yaml`, kept routing `XY`, traffic `TRAFFIC_TABLE_BASED`, and active fault mask `0x0000`, and emitted JSON containing `total_injected_packets=13`, `total_injected_flits=104`, `total_received_packets=2`, `total_received_flits=11`, `reachability_ratio=0.15384615384615385`, `global_average_delay_cycles=5`, `network_throughput_flits_per_cycle=0.55`, and `average_ip_throughput_flits_per_cycle_per_ip=0.00859375`.
+- The CSV metrics export smoke completed with exit code `0` and emitted the same comparison fields and values in a single header row plus one data row.
+- `git -c safe.directory=C:/Projects/CMP-720-Project-Proposal/external/noxim -C external/noxim diff --check` completed with exit code `0` after LF-normalizing the modified source files.
+- No regression command, `./regression.sh --update`, experiment runner, result sweep, final analysis, golden regression output update, DeFT routing change, VN transition change, VL fault-injection change, T0016 generator format change, T0017 runtime LUT schema/use-path change, or T0019 traffic semantics change was performed.
+- Assumption: Reachability counts packets when their head flit actually enters the network after the configured warm-up boundary.
+- Assumption: Short smoke reachability can be below one because packets can remain in flight at the end of a short 20-cycle run; the smoke validates export shape only and is not a performance result.
+
 ## Build Validation
 
 Purpose:
@@ -818,15 +860,15 @@ Purpose:
 
 - Confirm correctness of reachability, average latency, and network throughput reporting.
 
-Command:
+Known validation:
 
-- Unknown until repository inspection.
+- T0020 JSON and CSV metrics export smokes listed under `Metrics Collection`.
 
 Expected future checks:
 
-- Compare delivered packet counts against injected packet counts.
-- Verify latency uses delivery cycle minus injection cycle.
-- Verify throughput unit is flits per cycle per active IP node.
+- Cross-check T0020 exported metrics in longer packet-carrying runs after experiment automation exists.
+- Compare delivered packet counts against injected packet counts across XY and DeFT modes.
+- Verify warm-up and in-flight packet handling for final experiment windows.
 
 ## Documentation Validation
 

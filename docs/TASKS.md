@@ -194,13 +194,13 @@ Statuses: `TODO`, `IN_PROGRESS`, `DONE`, `BLOCKED`.
 
 ## T0020: Add Metrics Collection
 
-- **Status:** TODO
+- **Status:** DONE
 - **Objective:** Collect reachability, average latency, and network throughput.
 - **Relevant roadmap phase:** Phase 8
-- **Files likely to change:** To be confirmed after Noxim source inspection
+- **Files changed:** `external/noxim/src/ProcessingElement.h`, `external/noxim/src/ProcessingElement.cpp`, `external/noxim/src/GlobalStats.h`, `external/noxim/src/GlobalStats.cpp`, `docs/ARCHITECTURE.md`, `docs/TASKS.md`, `docs/PROGRESS.md`, `docs/VALIDATION.md`, `docs/PROMPTS.md`, and `docs/DECISIONS.md`
 - **Acceptance criteria:** Metrics are emitted in a machine-readable format.
-- **Validation command:** To be confirmed after repository inspection
-- **Notes:** Metrics must be comparable across XY and DeFT runs.
+- **Validation command:** From `external/noxim`: `./build.sh`. Metrics export smokes from `external/noxim/bin` in WSL Ubuntu using the known localized traffic smoke plus documented `-stats_format json|csv -stats_file FILE` overrides.
+- **Notes:** Completed on 2026-05-08. Reused the existing `GlobalStats` CSV/JSON export path and added injected-packet/injected-flit counters at the PE head-flit injection point. Machine-readable exports now include routing algorithm, traffic distribution, active DeFT fault mask, total injected packets/flits, total received packets/flits, reachability ratio, average latency, and network throughput. Assumption: T0020 reachability is `total_received_packets / total_injected_packets` over the existing Noxim stats collection window, with injected packets counted when a head flit enters the network. No DeFT routing, VN transition logic, VL fault injection, T0016 generator format, T0017 runtime LUT schema/use path, T0019 traffic semantics, experiment runner, performance sweep, final analysis, or golden regression output was changed.
 
 ## T0021: Add Experiment Runner
 
