@@ -244,13 +244,23 @@ Statuses: `TODO`, `IN_PROGRESS`, `DONE`, `BLOCKED`.
 
 ## T0027: Review Final Sweep Results for Report Support
 
-- **Status:** TODO
+- **Status:** DONE
 - **Objective:** Interpret the completed T0026 final sweep artifacts into claim-safe report-support tables and notes.
 - **Relevant roadmap phase:** Phase 9
-- **Files likely to change:** `docs/ARCHITECTURE.md`, `docs/TASKS.md`, `docs/PROGRESS.md`, `docs/VALIDATION.md`, `docs/PROMPTS.md`, and possibly `docs/DECISIONS.md`; possibly ignored report-support outputs under `external/noxim/other/generated/`.
+- **Files changed:** `docs/ARCHITECTURE.md`, `docs/TASKS.md`, `docs/PROGRESS.md`, `docs/VALIDATION.md`, `docs/PROMPTS.md`, `docs/DECISIONS.md`; ignored generated report-support outputs under `external/noxim/other/generated/t0027_report_support_v1/`.
 - **Acceptance criteria:** Any derived table or statement is cross-checked against the T0026 raw manifest and JSON stats; zero-injection cells are explicitly handled; no performance claim is made from empty cells, failed rows, or unreviewed grouped means.
 - **Validation command:** Use existing generated T0026 artifacts under `external/noxim/other/generated/t0026_final_sweep_v1/` and `external/noxim/other/generated/t0026_final_analysis_v1/`; if no simulator source changes are made, do not rebuild Noxim or rerun the sweep.
-- **Notes:** This task should focus on report support and limitations. It should not change DeFT routing, VN transition logic, VL fault injection, LUT schemas, traffic semantics, metrics semantics, runner semantics, analysis semantics, or golden regression outputs.
+- **Notes:** Completed on 2026-05-09. Generated ignored claim-safe report-support artifacts under `external/noxim/other/generated/t0027_report_support_v1/`: `manifest.json`, `condition_summary.csv`, `xy_deft_pair_summary.csv`, `zero_injection_runs.csv`, `coverage_by_routing_traffic.csv`, and `report_notes.md`. The review derived condition and pair tables from the T0026 executed manifest and raw JSON stats, then cross-checked them against T0026 `summary.csv`, analysis `run_summary.csv`, and analysis `comparison_summary.csv` with zero mismatches. T0027 classified 30 condition cells as 12 complete-injection cells, 13 partial-injection cells, and 5 empty-injection cells. All empty-injection cells are `XY|hotspot_3x10`. No XY/DEFT pair supports latency comparison because the XY side has zero received packets in every pair where it injected packets. Assumption: zero-injection rows are completed measured-window rows, not failed runs. Blocked: final report prose must accept the T0027 blank-aware limitations or define a follow-up validation/rerun policy. No simulator source, helper source, DeFT routing, VN transition logic, VL fault injection, LUT schemas, traffic semantics, metrics semantics, runner semantics, analysis semantics, golden outputs, or `./regression.sh --update` was changed.
+
+## T0028: Draft Claim-Safe Final Report Results Text
+
+- **Status:** TODO
+- **Objective:** Convert the T0027 report-support artifacts into final-report-ready results prose and tables without unsupported claims.
+- **Relevant roadmap phase:** Phase 9
+- **Files likely to change:** `docs/ARCHITECTURE.md`, `docs/TASKS.md`, `docs/PROGRESS.md`, `docs/VALIDATION.md`, `docs/PROMPTS.md`, and possibly a report draft or ignored report-support output.
+- **Acceptance criteria:** Results text uses only cross-checked T0027/T0026 artifacts; blank, partial, and limitation cells remain explicit; no improvement, statistical-significance, latency, or throughput claim is made where the T0027 readiness notes disallow it.
+- **Validation command:** Documentation/status validation plus raw-artifact spot checks against `external/noxim/other/generated/t0027_report_support_v1/` and the T0026 raw stats when a drafted statement cites a measured value. If no simulator source changes are made, do not rebuild Noxim or rerun the sweep.
+- **Notes:** This task should draft report text, not reinterpret empty cells. If the report requires non-empty XY hotspot or latency-comparison cells, define a separate follow-up validation/rerun policy before adding claims.
 
 ## T0023: Add or Register Noxim Source Tree
 

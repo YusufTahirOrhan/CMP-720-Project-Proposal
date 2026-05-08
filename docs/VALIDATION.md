@@ -1087,9 +1087,52 @@ T0026 result on 2026-05-09:
 
 Expected future checks:
 
-- Review T0026 result tables and raw stats to decide which rows are usable for report figures.
+- Completed by T0027: review T0026 result tables and raw stats to decide which rows are usable for report figures.
 - If report claims require non-empty measurements in every cell, define and run a follow-up validation policy rather than reinterpreting zero-injection cells.
 - If final prose uses the analysis scaffold, update or annotate the scaffold blockers so they reflect the T0025 policy resolutions and T0026 execution status.
+
+## Final Sweep Report-Support Validation
+
+Purpose:
+
+- Review completed T0026 final sweep outputs for report support without rerunning simulations.
+- Generate claim-safe tables that distinguish measured values, blank cells, and limitations.
+- Cross-check every derived table against the T0026 executed manifest and raw JSON stats before recording it.
+
+Known validation:
+
+- Use existing generated T0026 artifacts under `external/noxim/other/generated/t0026_final_sweep_v1/` and `external/noxim/other/generated/t0026_final_analysis_v1/`.
+- If no simulator source changes are made, do not rebuild Noxim and do not rerun the final sweep.
+
+T0027 result on 2026-05-09:
+
+- Required startup reading was completed before task work: `AGENTS.md`, `docs/PROGRESS.md`, `docs/TASKS.md`, `docs/ROADMAP.md`, `docs/ARCHITECTURE.md`, `docs/VALIDATION.md`, `docs/DECISIONS.md`, and `docs/PROMPTS.md`.
+- Before running commands or documentation edits, a short implementation plan was produced.
+- Initial parent status showed branch `feat/map-noxim-extension-points...origin/feat/map-noxim-extension-points` with no local file modifications.
+- Initial submodule status showed branch `feat/baseline-noxim...origin/feat/baseline-noxim` with no local file modifications.
+- T0027 generated ignored report-support artifacts under `external/noxim/other/generated/t0027_report_support_v1/`: `manifest.json`, `condition_summary.csv`, `xy_deft_pair_summary.csv`, `zero_injection_runs.csv`, `coverage_by_routing_traffic.csv`, and `report_notes.md`.
+- Generated T0027 tables were derived from the T0026 executed manifest and raw JSON stats.
+- T0027 cross-checked the generated tables against T0026 `summary.csv`, analysis `run_summary.csv`, and analysis `comparison_summary.csv`.
+- Cross-check validation found zero mismatches across raw manifest rows, JSON stats, sweep summary rows, analysis run-summary rows, and analysis comparison-summary grouped means.
+- T0027 confirmed 150 completed raw stats rows, 30 condition cells, 15 XY/DEFT pair rows, and 54 individual zero-injection runs.
+- The 30 condition cells were classified as 12 complete-injection cells, 13 partial-injection cells, and 5 empty-injection cells.
+- All 5 empty-injection cells are `XY|hotspot_3x10`.
+- `XY|uniform` and `XY|localized_40` are partial-injection cells with zero received packets in the measured stats window.
+- No XY/DEFT pair supports latency comparison because the XY side has zero received packets in every pair where it injected packets.
+- No Noxim rebuild, final-sweep rerun, simulator source change, helper source change, routing behavior change, VN transition change, VL fault-injection change, traffic semantic change, metrics semantic change, runner/analysis semantic change, golden output update, regression command, `./regression.sh --update`, or performance claim was performed.
+- `git diff --check` in the parent repository completed with exit code `0`; Git reported line-ending conversion warnings for edited Markdown files only.
+- `git -c safe.directory=C:/Projects/CMP-720-Project-Proposal/external/noxim -C external/noxim diff --check` completed with exit code `0`.
+- Final parent status after documentation updates showed only the requested tracking docs modified: `docs/ARCHITECTURE.md`, `docs/DECISIONS.md`, `docs/PROGRESS.md`, `docs/PROMPTS.md`, `docs/TASKS.md`, and `docs/VALIDATION.md`.
+- Final `external/noxim` status remained clean.
+- Assumption: T0027 zero-injection rows are completed simulator rows with no packets injected during the measured stats window, not simulator failures.
+- Assumption: T0027 aggregate reachability is blank when `total_injected_packets == 0`.
+- Assumption: T0027 aggregate latency is blank when `total_received_packets == 0`.
+- Blocked: Final report prose must accept the T0027 blank-aware limitations or define a follow-up validation/rerun policy before making stronger claims.
+
+Expected future checks:
+
+- Draft final report results text from T0027 tables and spot-check any cited measured value against the generated T0027 CSV and T0026 raw JSON stats.
+- If the final report requires non-empty XY hotspot cells or latency comparisons, define a separate validation/rerun policy before adding claims.
 
 ## Metrics Validation
 

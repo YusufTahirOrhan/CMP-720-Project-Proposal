@@ -1943,3 +1943,61 @@ At the end, provide:
 - **Next ready-to-send prompt:** See `docs/PROGRESS.md`.
 - **Suggested branch name for next task:** None; continue on the existing branch.
 - **Suggested commit message:** `docs: record final sweep execution`
+
+## 2026-05-09: Start T0027 Review Final Sweep Results for Report Support
+
+- **Date:** 2026-05-09
+- **Prompt summary:** Review the completed T0026 final sweep outputs for claim-safe report support, distinguish measured values from empty cells and limitations, avoid rerunning simulations, and update tracking documents.
+- **Full prompt:**
+
+```text
+Start task T0027: Review Final Sweep Results for Report Support.
+
+Before starting, read AGENTS.md, docs/PROGRESS.md, docs/TASKS.md, docs/ROADMAP.md, docs/ARCHITECTURE.md, docs/VALIDATION.md, docs/DECISIONS.md, and docs/PROMPTS.md.
+
+Continue on the existing Git branch. Do not create or switch task branches.
+
+Use the registered Noxim source tree at:
+external/noxim
+
+external/noxim is the Noxim submodule and modifiable project fork from:
+https://github.com/YusufTahirOrhan/noxim
+
+T0026 executed the T0025 final sweep matrix and regenerated final analysis artifacts:
+
+- final sweep output: `external/noxim/other/generated/t0026_final_sweep_v1`
+- final analysis output: `external/noxim/other/generated/t0026_final_analysis_v1`
+
+The executed manifest has `mode: execute`, `run_count: 150`, 150 completed runs, and 150 return code `0` runs. All 150 JSON stats files exist and contain the T0020 fields. The generated analysis tables contain 150 run-summary rows and 30 comparison groups, and a raw-artifact cross-check found zero mismatches. The analysis helper still sets `claims_allowed: false`, and T0026 observed 54 individual runs with zero injected packets in the measured stats window.
+
+Goal: review the completed T0026 outputs for report support without fabricating results. Produce claim-safe tables or notes that distinguish measured values, empty cells, and limitations. Do not rerun simulations unless source inspection and the documented validation status prove a narrow follow-up command is required and you document the reason first.
+
+Do not fabricate results or performance claims. Do not change DeFT routing, VN transition logic, VL fault injection, T0016 generator format, T0017 runtime LUT schema/use path, T0019 traffic profile semantics, T0020 metrics semantics, T0021 runner semantics, or T0022 analysis semantics unless source inspection proves a narrow compatibility fix is required. Do not use `./regression.sh --update`.
+
+Use `Extended_Proposal.pdf` as the primary project requirements source and the original DeFT paper at `docs/references/DeFT_A_Deadlock-Free_and_Fault-Tolerant_Routing_Algorithm_for_2.5D_Chiplet_Networks.pdf` as the primary algorithmic reference. Use `Proposal.pdf` only as initial context. Ignore the peer evaluation document completely.
+
+Before running commands or documentation edits, produce a short implementation plan. Work only on the selected final-sweep review task. Do not modify unrelated files. Clearly mark assumptions as `Assumption` and blockers as `Blocked`.
+
+Use only known validation commands. If no simulator source changes are made, do not rebuild Noxim. Use the existing generated T0026 manifests, summary CSVs, analysis CSVs, and JSON stats for review. Cross-check any derived table or statement against raw artifacts before recording it.
+
+Update docs/ARCHITECTURE.md, docs/TASKS.md, docs/PROGRESS.md, docs/VALIDATION.md, and docs/PROMPTS.md with the result. If a durable implementation or experiment decision becomes clear, update docs/DECISIONS.md too.
+
+At the end, provide:
+
+1. Created files
+2. Modified files
+3. Whether any source code files changed
+4. Validation result
+5. Current project phase
+6. Next recommended task
+7. The next ready-to-send prompt
+8. Suggested branch name for the next task, which should be `None; continue on the existing branch`
+9. Suggested commit message
+10. Unknowns or blockers
+```
+
+- **Result summary:** T0027 completed. Generated ignored report-support artifacts under `external/noxim/other/generated/t0027_report_support_v1/`: `manifest.json`, `condition_summary.csv`, `xy_deft_pair_summary.csv`, `zero_injection_runs.csv`, `coverage_by_routing_traffic.csv`, and `report_notes.md`. The review derived condition and pair tables from the T0026 executed manifest and raw JSON stats, then cross-checked them against T0026 `summary.csv`, analysis `run_summary.csv`, and analysis `comparison_summary.csv` with zero mismatches. T0027 classified 30 condition cells as 12 complete-injection cells, 13 partial-injection cells, and 5 empty-injection cells; all empty cells are `XY|hotspot_3x10`. No XY/DEFT pair supports latency comparison because the XY side has zero received packets wherever it injected packets. No simulator source, helper source, routing behavior, VN transition logic, VL fault injection, LUT schemas, traffic semantics, metrics semantics, runner semantics, analysis semantics, golden outputs, rerun, rebuild, or performance claim was changed.
+- **Follow-up tasks:** Start `T0028` to draft claim-safe final report results text from the T0027 report-support artifacts.
+- **Next ready-to-send prompt:** See `docs/PROGRESS.md`.
+- **Suggested branch name for next task:** None; continue on the existing branch.
+- **Suggested commit message:** `docs: review final sweep report support`

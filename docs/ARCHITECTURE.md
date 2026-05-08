@@ -1004,6 +1004,35 @@ Assumption: T0026 analysis tables are mechanical report-support summaries only. 
 
 Blocked: 54 individual runs reported zero injected packets in the measured window. Report interpretation must handle those empty cells explicitly and must not turn missing reachability or latency values into performance claims.
 
+## T0027 Final Sweep Report-Support Review
+
+`T0027` reviewed the completed T0026 final sweep outputs and generated blank-aware report-support artifacts. It did not rerun simulations, rebuild Noxim, change simulator source, change helper source, change DeFT routing behavior, change VN transition logic, change Vertical Link fault injection, change LUT schemas, change traffic-profile semantics, change metrics semantics, change runner or analysis semantics, update golden outputs, or use `./regression.sh --update`.
+
+Generated ignored report-support artifacts:
+
+- `external/noxim/other/generated/t0027_report_support_v1/manifest.json`.
+- `external/noxim/other/generated/t0027_report_support_v1/condition_summary.csv`.
+- `external/noxim/other/generated/t0027_report_support_v1/xy_deft_pair_summary.csv`.
+- `external/noxim/other/generated/t0027_report_support_v1/zero_injection_runs.csv`.
+- `external/noxim/other/generated/t0027_report_support_v1/coverage_by_routing_traffic.csv`.
+- `external/noxim/other/generated/t0027_report_support_v1/report_notes.md`.
+
+Review outcome:
+
+- The T0027 condition and pair tables were derived from the T0026 executed manifest and raw JSON stats, then cross-checked against T0026 `summary.csv`, analysis `run_summary.csv`, and analysis `comparison_summary.csv`.
+- The cross-check found zero mismatches across 150 completed raw stats rows, 30 condition cells, and 15 XY/DEFT pair rows.
+- The 30 condition cells are classified as 12 complete-injection cells, 13 partial-injection cells, and 5 empty-injection cells.
+- The 54 zero-injection runs are preserved in `zero_injection_runs.csv` rather than folded into claims.
+- All 5 empty-injection condition cells are `XY|hotspot_3x10`.
+- `XY|uniform` and `XY|localized_40` are partial-injection cells and have zero received packets in the measured window.
+- No XY/DEFT pair supports latency comparison because the XY side has zero received packets in every pair where it injected packets.
+
+Assumption: T0027 uses blank reachability when `total_injected_packets == 0`, because the denominator is absent.
+
+Assumption: T0027 uses blank latency when `total_received_packets == 0`, because no packet delay samples exist.
+
+Blocked: T0027 tables support descriptive, claim-safe report drafting only. Empty or partial injection cells cannot support unqualified performance claims, and final report prose must either accept those limitations or define a follow-up validation/rerun policy before claiming more.
+
 ## Synthetic Traffic Models
 
 Implemented configuration support:
@@ -1052,6 +1081,7 @@ Planned and partially implemented:
 - Implemented in T0022: `external/noxim/other/deft_analysis_artifacts.py` can turn runner manifests and stats exports into traceable analysis tables and a Markdown report scaffold while blocking final claims when inputs are smoke-only or final sweeps are missing.
 - Implemented in T0025: The final comparison policy uses the same traffic, seed, simulation, warm-up, and physical fault-mask cells for `XY` and `DEFT`, with `XY` providing fault-free and fault-injected baseline behavior and `DEFT` using generated schema-v1 LUTs for matching fault masks.
 - Implemented in T0026: The T0025 150-run final matrix completed with return code `0` for every run, final analysis artifacts were regenerated with the final-sweep label, and generated tables were cross-checked against the raw manifest and JSON stats before any report claim.
+- Implemented in T0027: Blank-aware report-support tables classify complete, partial, and empty measured cells; preserve the 54 zero-injection runs; and avoid pairwise improvement or latency claims where the measured denominators are absent.
 
 ## Noxim Extension Point Map
 
