@@ -234,13 +234,23 @@ Statuses: `TODO`, `IN_PROGRESS`, `DONE`, `BLOCKED`.
 
 ## T0026: Run Final Sweep Matrix
 
-- **Status:** TODO
+- **Status:** DONE
 - **Objective:** Execute the T0025 final sweep matrix and regenerate final analysis artifacts from completed outputs.
 - **Relevant roadmap phase:** Phase 9
-- **Files likely to change:** `docs/PROGRESS.md`, `docs/TASKS.md`, `docs/VALIDATION.md`, `docs/PROMPTS.md`, and possibly `docs/DECISIONS.md`; ignored generated outputs under `external/noxim/other/generated/`.
+- **Files changed:** `docs/ARCHITECTURE.md`, `docs/TASKS.md`, `docs/PROGRESS.md`, `docs/VALIDATION.md`, `docs/PROMPTS.md`, and `docs/DECISIONS.md`; ignored generated outputs under `external/noxim/other/generated/t0026_final_sweep_v1/` and `external/noxim/other/generated/t0026_final_analysis_v1/`.
 - **Acceptance criteria:** The final sweep dry-run manifest contains exactly 150 planned runs; the executed manifest contains exactly 150 completed runs with return code `0`; every JSON stats file contains the T0020 metrics; final analysis artifacts are regenerated and cross-checked before any report claim.
-- **Validation command:** From `external/noxim` in WSL/Linux, use the T0025 final runner command first as dry-run, then the same command with `--execute --max-execute-runs 150` only when explicitly requested. After execution, run `external/noxim/other/deft_analysis_artifacts.py` on the completed output directory from the parent repository.
-- **Notes:** This task should not modify routing logic, VN transition logic, VL fault injection, LUT schemas, traffic semantics, metrics semantics, runner semantics, analysis semantics, or golden regression outputs. Claims remain blocked until completed final outputs are reviewed against raw manifests and stats.
+- **Validation command:** From `external/noxim` in WSL/Linux, the T0025 final runner command was first run as dry-run, then rerun with `--execute --max-execute-runs 150`. From the parent repository, final analysis was regenerated with `python external/noxim/other/deft_analysis_artifacts.py --input-dir external/noxim/other/generated/t0026_final_sweep_v1 --output-dir external/noxim/other/generated/t0026_final_analysis_v1 --dataset-kind final_sweep`.
+- **Notes:** Completed on 2026-05-09. The dry-run manifest reported `mode: dry_run`, `run_count: 150`, and the full Cartesian product of the T0025 matrix. The executed manifest reported `mode: execute`, `run_count: 150`, 150 completed runs, and 150 return code `0` runs. All 150 JSON stats files exist and contain the T0020 metric fields. The final analysis helper wrote `analysis_manifest.json`, `run_summary.csv`, `comparison_summary.csv`, and `report_scaffold.md` under the ignored T0026 analysis directory; run-summary and comparison tables were cross-checked against the raw manifest and per-run JSON stats with zero mismatches. Assumption: T0026 generated tables are mechanical report-support summaries only. Blocked: 54 individual runs reported zero injected packets in the measured window, so report interpretation must handle empty cells and must not make unsupported performance claims. No simulator source, helper source, routing logic, VN transition logic, VL fault injection, LUT schemas, traffic semantics, metrics semantics, runner semantics, analysis semantics, golden regression outputs, or `./regression.sh --update` was changed.
+
+## T0027: Review Final Sweep Results for Report Support
+
+- **Status:** TODO
+- **Objective:** Interpret the completed T0026 final sweep artifacts into claim-safe report-support tables and notes.
+- **Relevant roadmap phase:** Phase 9
+- **Files likely to change:** `docs/ARCHITECTURE.md`, `docs/TASKS.md`, `docs/PROGRESS.md`, `docs/VALIDATION.md`, `docs/PROMPTS.md`, and possibly `docs/DECISIONS.md`; possibly ignored report-support outputs under `external/noxim/other/generated/`.
+- **Acceptance criteria:** Any derived table or statement is cross-checked against the T0026 raw manifest and JSON stats; zero-injection cells are explicitly handled; no performance claim is made from empty cells, failed rows, or unreviewed grouped means.
+- **Validation command:** Use existing generated T0026 artifacts under `external/noxim/other/generated/t0026_final_sweep_v1/` and `external/noxim/other/generated/t0026_final_analysis_v1/`; if no simulator source changes are made, do not rebuild Noxim or rerun the sweep.
+- **Notes:** This task should focus on report support and limitations. It should not change DeFT routing, VN transition logic, VL fault injection, LUT schemas, traffic semantics, metrics semantics, runner semantics, analysis semantics, or golden regression outputs.
 
 ## T0023: Add or Register Noxim Source Tree
 

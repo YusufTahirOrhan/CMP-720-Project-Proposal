@@ -1013,6 +1013,84 @@ Expected future checks:
 - Regenerate final analysis artifacts from the completed output directory.
 - Cross-check analysis tables against raw manifests and JSON stats before writing final report claims.
 
+## Final Sweep Execution Validation
+
+Purpose:
+
+- Validate that the T0025 final matrix can be planned and executed without changing simulator behavior.
+- Confirm the executed manifest, per-run JSON stats files, and generated analysis tables are internally consistent.
+- Preserve final sweep outputs as ignored generated artifacts and avoid unsupported report claims.
+
+Known T0026 dry-run command from `external/noxim` in WSL/Linux:
+
+```bash
+python3 other/deft_experiment_runner.py \
+  --routing XY --routing DEFT \
+  --traffic uniform --traffic localized_40 --traffic hotspot_3x10 \
+  --fault-mask 0x0000 --fault-mask 0x0001 --fault-mask 0x0011 --fault-mask 0x0111 --fault-mask 0x1111 \
+  --seed 0 --seed 1 --seed 2 --seed 3 --seed 4 \
+  --sim 10000 \
+  --warmup 1000 \
+  --stats-format json \
+  --output-dir other/generated/t0026_final_sweep_v1
+```
+
+Known T0026 execution command from `external/noxim` in WSL/Linux:
+
+```bash
+python3 other/deft_experiment_runner.py \
+  --routing XY --routing DEFT \
+  --traffic uniform --traffic localized_40 --traffic hotspot_3x10 \
+  --fault-mask 0x0000 --fault-mask 0x0001 --fault-mask 0x0011 --fault-mask 0x0111 --fault-mask 0x1111 \
+  --seed 0 --seed 1 --seed 2 --seed 3 --seed 4 \
+  --sim 10000 \
+  --warmup 1000 \
+  --stats-format json \
+  --output-dir other/generated/t0026_final_sweep_v1 \
+  --execute \
+  --max-execute-runs 150
+```
+
+Known T0026 analysis command from the parent repository:
+
+```powershell
+python external/noxim/other/deft_analysis_artifacts.py --input-dir external/noxim/other/generated/t0026_final_sweep_v1 --output-dir external/noxim/other/generated/t0026_final_analysis_v1 --dataset-kind final_sweep
+```
+
+T0026 result on 2026-05-09:
+
+- Required startup reading was completed before task work: `AGENTS.md`, `docs/PROGRESS.md`, `docs/TASKS.md`, `docs/ROADMAP.md`, `docs/ARCHITECTURE.md`, `docs/VALIDATION.md`, `docs/DECISIONS.md`, and `docs/PROMPTS.md`.
+- Before running the dry-run command, parent status showed branch `feat/map-noxim-extension-points...origin/feat/map-noxim-extension-points` with no local file modifications.
+- Before running the dry-run command, submodule status showed branch `feat/baseline-noxim...origin/feat/baseline-noxim` with no local file modifications.
+- The first sandboxed WSL dry-run attempt could not see an installed WSL distribution. The same dry-run command was rerun with approved WSL execution and completed with exit code `0`.
+- The dry-run manifest reported `mode: dry_run`, `run_count: 150`, and 150 planned runs.
+- Dry-run manifest validation confirmed exactly the full Cartesian product of `XY` and `DEFT`; `uniform`, `localized_40`, and `hotspot_3x10`; `0x0000`, `0x0001`, `0x0011`, `0x0111`, and `0x1111`; and seeds `0..4`.
+- Dry-run validation confirmed all planned runs used `simulation_time_cycles=10000`, `stats_warm_up_time_cycles=1000`, and `stats_format=json`; `XY` runs had no LUT enabled, and `DEFT` runs had generated LUT provenance.
+- The approved WSL execution command completed with exit code `0` and wrote generated artifacts under `external/noxim/other/generated/t0026_final_sweep_v1/`.
+- Executed manifest validation confirmed `mode: execute`, `run_count: 150`, 150 manifest rows, 150 completed runs, 150 return code `0` runs, no missing Cartesian-product cells, no extra cells, and no duplicate cells.
+- All 150 expected JSON stats files exist under `external/noxim/other/generated/t0026_final_sweep_v1/stats/`.
+- Every JSON stats file contains the T0020 config and summary fields for routing mode, traffic distribution, active DeFT fault mask, injected packet/flit counts, received packet/flit counts, reachability ratio, average latency, and throughput.
+- Per-run stats cross-checking confirmed each JSON file matched its manifest row for routing mode, fault mask, seed, simulation window, and warm-up window.
+- Final analysis was regenerated with `--dataset-kind final_sweep` under `external/noxim/other/generated/t0026_final_analysis_v1/`.
+- The analysis manifest reported `dataset_kind: final_sweep`, `run_count: 150`, `completed_with_metrics_count: 150`, `comparison_group_count: 30`, and `claims_allowed: false`.
+- The generated `run_summary.csv` contains 150 rows and `comparison_summary.csv` contains 30 routing/traffic/fault-mask groups.
+- A corrected CSV/JSON cross-check script found zero mismatches between the analysis run summary, comparison summary, executed manifest, and per-run JSON stats.
+- The cross-check also observed 54 individual runs with `total_injected_packets=0` in the measured stats window: 20 `XY|uniform`, 5 `XY|localized_40`, 25 `XY|hotspot_3x10`, 1 `DEFT|uniform`, and 3 `DEFT|hotspot_3x10`.
+- No Noxim rebuild was run because no simulator source changed.
+- No simulator source, helper source, routing behavior, VN transition logic, VL fault injection, T0016 generator format, T0017 runtime LUT schema/use path, T0019 traffic semantics, T0020 metrics semantics, T0021 runner semantics, T0022 analysis semantics, golden regression output, regression command, or `./regression.sh --update` was changed.
+- `git diff --check` in the parent repository completed with exit code `0`; Git reported line-ending conversion warnings for edited Markdown files only.
+- `git -c safe.directory=C:/Projects/CMP-720-Project-Proposal/external/noxim -C external/noxim diff --check` completed with exit code `0`.
+- Final parent status after documentation updates showed only the requested tracking docs modified: `docs/ARCHITECTURE.md`, `docs/DECISIONS.md`, `docs/PROGRESS.md`, `docs/PROMPTS.md`, `docs/TASKS.md`, and `docs/VALIDATION.md`.
+- Final `external/noxim` status remained clean.
+- Assumption: T0026 generated analysis tables are mechanical report-support summaries only.
+- Blocked: Final report interpretation must handle zero-injection cells and the analysis helper's conservative `claims_allowed: false` state before any performance statement uses the grouped means.
+
+Expected future checks:
+
+- Review T0026 result tables and raw stats to decide which rows are usable for report figures.
+- If report claims require non-empty measurements in every cell, define and run a follow-up validation policy rather than reinterpreting zero-injection cells.
+- If final prose uses the analysis scaffold, update or annotate the scaffold blockers so they reflect the T0025 policy resolutions and T0026 execution status.
+
 ## Metrics Validation
 
 Purpose:

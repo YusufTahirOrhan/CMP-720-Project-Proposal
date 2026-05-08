@@ -972,6 +972,38 @@ Result-claim rules:
 - With five seeds, report descriptive statistics only: mean plus min/max or per-seed table. Do not claim statistical significance unless a later task increases the sample size and defines a statistical test.
 - Literature baselines (`MTR`, `RC`) may be discussed only conceptually from the source documents because they are not implemented in this repository.
 
+## T0026 Final Sweep Execution
+
+`T0026` executed the T0025 final matrix and regenerated final analysis artifacts. It did not change simulator source, helper source, DeFT routing behavior, VN transition logic, Vertical Link fault injection, LUT schemas, traffic-profile semantics, metrics semantics, runner semantics, analysis semantics, golden regression outputs, or `./regression.sh --update`.
+
+Generated ignored sweep artifacts:
+
+- `external/noxim/other/generated/t0026_final_sweep_v1/manifest.json`.
+- `external/noxim/other/generated/t0026_final_sweep_v1/commands.sh`.
+- `external/noxim/other/generated/t0026_final_sweep_v1/summary.csv`.
+- `external/noxim/other/generated/t0026_final_sweep_v1/logs/`.
+- `external/noxim/other/generated/t0026_final_sweep_v1/luts/`.
+- `external/noxim/other/generated/t0026_final_sweep_v1/stats/`.
+
+Generated ignored analysis artifacts:
+
+- `external/noxim/other/generated/t0026_final_analysis_v1/analysis_manifest.json`.
+- `external/noxim/other/generated/t0026_final_analysis_v1/run_summary.csv`.
+- `external/noxim/other/generated/t0026_final_analysis_v1/comparison_summary.csv`.
+- `external/noxim/other/generated/t0026_final_analysis_v1/report_scaffold.md`.
+
+Validation outcome:
+
+- The dry-run manifest contained `mode: dry_run`, `run_count: 150`, 150 planned runs, and the full Cartesian product of routing modes, traffic profiles, fault masks, and seeds from T0025.
+- The executed manifest contained `mode: execute`, `run_count: 150`, 150 completed runs, and 150 return code `0` runs.
+- All 150 expected JSON stats files exist and contain the T0020 fields for routing mode, traffic distribution, active fault mask, injected and received packet/flit counts, reachability ratio, average latency, and throughput.
+- The analysis helper was run with `--dataset-kind final_sweep` and produced 150 run-summary rows and 30 comparison-summary groups.
+- A raw-artifact cross-check found zero mismatches between `run_summary.csv`, `comparison_summary.csv`, the executed manifest, and per-run JSON stats.
+
+Assumption: T0026 analysis tables are mechanical report-support summaries only. The helper intentionally keeps `claims_allowed: false`, so final report text still needs a separate interpretation step before using the grouped means.
+
+Blocked: 54 individual runs reported zero injected packets in the measured window. Report interpretation must handle those empty cells explicitly and must not turn missing reachability or latency values into performance claims.
+
 ## Synthetic Traffic Models
 
 Implemented configuration support:
@@ -1019,7 +1051,7 @@ Planned and partially implemented:
 - Implemented in T0021: `external/noxim/other/deft_experiment_runner.py` can plan and execute tiny XY/DEFT comparison runs that reuse those configs, CLI surfaces, generated temporary LUTs, and stats exports.
 - Implemented in T0022: `external/noxim/other/deft_analysis_artifacts.py` can turn runner manifests and stats exports into traceable analysis tables and a Markdown report scaffold while blocking final claims when inputs are smoke-only or final sweeps are missing.
 - Implemented in T0025: The final comparison policy uses the same traffic, seed, simulation, warm-up, and physical fault-mask cells for `XY` and `DEFT`, with `XY` providing fault-free and fault-injected baseline behavior and `DEFT` using generated schema-v1 LUTs for matching fault masks.
-- Planned: Execute the T0025 150-run final matrix and regenerate analysis artifacts before making any final report claim.
+- Implemented in T0026: The T0025 150-run final matrix completed with return code `0` for every run, final analysis artifacts were regenerated with the final-sweep label, and generated tables were cross-checked against the raw manifest and JSON stats before any report claim.
 
 ## Noxim Extension Point Map
 

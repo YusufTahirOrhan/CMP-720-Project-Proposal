@@ -31,8 +31,9 @@ Phase 9 - Final Analysis and Report Support
 - `T0023` - Add or register the Noxim source tree.
 - `T0024` - Decide Windows 11 development environment and persist paper reference.
 - `T0025` - Define Final Sweep Policy.
+- `T0026` - Run Final Sweep Matrix.
 
-DeFT VN assignment behavior, the first VN movement-transition restriction enforcement layer, the offline VL LUT schema/generator, the runtime schema-v1 LUT loading/use path, explicit XY fault-free/fault-injected baseline configuration modes, proposal-required synthetic traffic configuration profiles, machine-readable metrics export, tiny experiment-runner launch support, final-analysis scaffolding, and the final sweep policy now exist for `DEFT_2_5D`. Validated final sweep outputs and performance claims have not been completed.
+DeFT VN assignment behavior, the first VN movement-transition restriction enforcement layer, the offline VL LUT schema/generator, the runtime schema-v1 LUT loading/use path, explicit XY fault-free/fault-injected baseline configuration modes, proposal-required synthetic traffic configuration profiles, machine-readable metrics export, tiny experiment-runner launch support, final-analysis scaffolding, the final sweep policy, and the validated T0026 150-run final sweep output set now exist for `DEFT_2_5D`. Performance claims have not been completed.
 
 ## In-Progress Tasks
 
@@ -44,29 +45,31 @@ DeFT VN assignment behavior, the first VN movement-transition restriction enforc
 
 ## Last Validation Result
 
-- T0025 Define Final Sweep Policy completed on 2026-05-09.
+- T0026 Run Final Sweep Matrix completed on 2026-05-09.
 - Required startup reading was completed before task work: `AGENTS.md`, `docs/PROGRESS.md`, `docs/TASKS.md`, `docs/ROADMAP.md`, `docs/ARCHITECTURE.md`, `docs/VALIDATION.md`, `docs/DECISIONS.md`, and `docs/PROMPTS.md`.
-- Before documentation edits, `git status --short --branch` in the parent repository showed branch `feat/map-noxim-extension-points...origin/feat/map-noxim-extension-points` with no local file modifications.
-- Before documentation edits, `git -c safe.directory=C:/Projects/CMP-720-Project-Proposal/external/noxim -C external/noxim status --short --branch` showed branch `feat/baseline-noxim...origin/feat/baseline-noxim` with no local file modifications.
-- Required source documents were confirmed present: `Extended_Proposal.pdf`, `Proposal.pdf`, and `docs/references/DeFT_A_Deadlock-Free_and_Fault-Tolerant_Routing_Algorithm_for_2.5D_Chiplet_Networks.pdf`.
-- Source-document checks found the final evaluation anchors in `Extended_Proposal.pdf`: Uniform, Localized, and Hotspot synthetic traffic; permanent VL fault injection up to 25%; XY fault-free and fault-injected baselines; and reachability, average latency, and throughput metrics.
-- Source-document checks found the original DeFT paper's evaluation anchors: four bidirectional VLs per chiplet, two VCs, 8-flit packets, 4-flit buffers, offline Uniform-traffic VL selection, synthetic Uniform/Localized/Hotspot traffic, and reachability analysis over reported `total VLs=32`.
-- `python external/noxim/other/deft_experiment_runner.py --help` completed with exit code `0` and confirmed the runner supports repeated routing, traffic, fault-mask, seed, `--sim`, `--warmup`, and JSON stats controls needed by the policy.
-- T0025 defined the exact final executable matrix: `XY` and `DEFT`; `uniform`, `localized_40`, and `hotspot_3x10`; physical fault masks `0x0000`, `0x0001`, `0x0011`, `0x0111`, and `0x1111`; seeds `0..4`; `-sim 10000`; `-warmup 1000`; and JSON stats, for exactly 150 planned simulator runs.
-- T0025 resolves final fault-rate accounting for this implementation by using explicit physical bidirectional VL masks over the current 16-VL model and reporting matching directional-equivalent percentages over the paper's 32-channel wording.
-- T0025 selects a fixed-window policy with `1000` stats warm-up cycles and no post-injection drain phase.
-- T0025 defines validation gates for dry-run manifests, executed manifests, JSON stats files, analysis regeneration, and raw-artifact cross-checks before claims.
-- T0025 defines result-claim rules: no claims from smoke/dry-run/incomplete data, pair comparisons by identical conditions, use exact measured finite-window reachability, reserve `100%` wording for cells where every relevant exported value is exactly `1.0`, and report descriptive statistics only for five seeds.
-- No simulator source, helper source, routing behavior, VN transition logic, VL fault injection, T0016 generator format, T0017 runtime LUT schema/use path, T0019 traffic semantics, T0020 metrics semantics, T0021 runner semantics, T0022 analysis semantics, full sweep, Noxim rebuild, regression command, `./regression.sh --update`, golden output update, or performance claim was changed.
+- Before running commands, a short implementation plan was produced and marked assumptions/blockers.
+- Before the dry-run command, `git status --short --branch` in the parent repository showed branch `feat/map-noxim-extension-points...origin/feat/map-noxim-extension-points` with no local file modifications.
+- Before the dry-run command, `git -c safe.directory=C:/Projects/CMP-720-Project-Proposal/external/noxim -C external/noxim status --short --branch` showed branch `feat/baseline-noxim...origin/feat/baseline-noxim` with no local file modifications.
+- The first sandboxed WSL dry-run attempt could not see an installed WSL distribution. The same command was rerun with approved WSL execution and completed with exit code `0`.
+- The T0025 dry-run command from `external/noxim` generated `external/noxim/other/generated/t0026_final_sweep_v1/manifest.json`, `commands.sh`, and `summary.csv`.
+- Dry-run validation confirmed `mode: dry_run`, `run_count: 150`, 150 planned runs, no missing or extra Cartesian-product combinations, no duplicates, `-sim 10000`, `-warmup 1000`, JSON stats, disabled LUTs for `XY`, and generated LUT provenance for `DEFT`.
+- The approved T0026 execution command completed with exit code `0` and overwrote the final sweep output directory with executed artifacts.
+- Executed manifest validation confirmed `mode: execute`, `run_count: 150`, 150 manifest rows, 150 completed runs, 150 return code `0` runs, no missing/extra/duplicate matrix cells, and the same T0025 matrix.
+- All 150 JSON stats files exist under `external/noxim/other/generated/t0026_final_sweep_v1/stats/`.
+- Every JSON stats file contains the T0020 metric fields and matches its manifest row for routing mode, fault mask, seed, simulation window, and warm-up window.
+- The final analysis helper was run from the parent repository with `--dataset-kind final_sweep` and wrote `analysis_manifest.json`, `run_summary.csv`, `comparison_summary.csv`, and `report_scaffold.md` under `external/noxim/other/generated/t0026_final_analysis_v1/`.
+- The analysis manifest reports `dataset_kind: final_sweep`, `run_count: 150`, `completed_with_metrics_count: 150`, `comparison_group_count: 30`, and `claims_allowed: false`.
+- A raw-artifact cross-check found zero mismatches between the analysis run summary, comparison summary, executed manifest, and per-run JSON stats.
+- The cross-check observed 54 individual runs with `total_injected_packets=0` in the measured stats window: 20 `XY|uniform`, 5 `XY|localized_40`, 25 `XY|hotspot_3x10`, 1 `DEFT|uniform`, and 3 `DEFT|hotspot_3x10`.
+- No Noxim rebuild was run because no simulator source changed.
+- No simulator source, helper source, routing behavior, VN transition logic, VL fault injection, T0016 generator format, T0017 runtime LUT schema/use path, T0019 traffic semantics, T0020 metrics semantics, T0021 runner semantics, T0022 analysis semantics, golden regression output, regression command, `./regression.sh --update`, or performance claim was changed.
 - `git diff --check` in the parent repository completed with exit code `0`; Git reported line-ending conversion warnings for edited Markdown files only.
 - `git -c safe.directory=C:/Projects/CMP-720-Project-Proposal/external/noxim -C external/noxim diff --check` completed with exit code `0`.
 - Final parent status after documentation updates showed only the requested tracking docs modified: `docs/ARCHITECTURE.md`, `docs/DECISIONS.md`, `docs/PROGRESS.md`, `docs/PROMPTS.md`, `docs/TASKS.md`, and `docs/VALIDATION.md`.
 - Final `external/noxim` status remained clean.
-- ADR-0034 records the durable final sweep policy decision.
-- Assumption: A permanent physical bidirectional VL fault disables both directions and can be reported as two disabled directional channels for paper-aligned percentage comparison.
-- Blocked: The paper's single-direction 3.125% fault case is not represented by the current physical bidirectional fault model.
-- Blocked: Eventual-delivery reachability after a post-injection drain phase is not supported by the current fixed-window runner policy.
-- Blocked: No validated final sweep output set exists yet.
+- ADR-0035 records the durable decision to treat T0026 generated tables as mechanical report-support artifacts, not claims.
+- Assumption: T0026 generated analysis tables are mechanical report-support summaries only.
+- Blocked: Final report interpretation must handle zero-injection cells and the analysis helper's conservative `claims_allowed: false` state before any performance statement uses the grouped means.
 
 ## Important Changed Files
 
@@ -353,6 +356,28 @@ Files updated during `T0025` Define Final Sweep Policy:
 - `docs/PROMPTS.md`
 - `docs/DECISIONS.md`
 
+Files updated during `T0026` Run Final Sweep Matrix:
+
+- `docs/ARCHITECTURE.md`
+- `docs/TASKS.md`
+- `docs/PROGRESS.md`
+- `docs/VALIDATION.md`
+- `docs/PROMPTS.md`
+- `docs/DECISIONS.md`
+
+Ignored generated files created or updated during `T0026`:
+
+- `external/noxim/other/generated/t0026_final_sweep_v1/manifest.json`
+- `external/noxim/other/generated/t0026_final_sweep_v1/commands.sh`
+- `external/noxim/other/generated/t0026_final_sweep_v1/summary.csv`
+- `external/noxim/other/generated/t0026_final_sweep_v1/logs/`
+- `external/noxim/other/generated/t0026_final_sweep_v1/luts/`
+- `external/noxim/other/generated/t0026_final_sweep_v1/stats/`
+- `external/noxim/other/generated/t0026_final_analysis_v1/analysis_manifest.json`
+- `external/noxim/other/generated/t0026_final_analysis_v1/run_summary.csv`
+- `external/noxim/other/generated/t0026_final_analysis_v1/comparison_summary.csv`
+- `external/noxim/other/generated/t0026_final_analysis_v1/report_scaffold.md`
+
 Noxim build files LF-normalized during `T0003`:
 
 - `external/noxim/bin/Makefile`
@@ -459,6 +484,8 @@ External source tree registered during `T0023`:
 - Assumption: T0025 final sweeps use explicit physical bidirectional VL masks over the current 16 physical VL IDs and report matching directional-equivalent percentages over the paper's 32-channel wording.
 - Assumption: A permanent physical bidirectional VL fault disables both directions of that VL in the current implementation.
 - Assumption: T0025 final sweeps use fixed-window continuous injection with `-sim 10000`, `-warmup 1000`, five seeds, and no post-injection drain phase.
+- Assumption: T0026 final sweep generated outputs under `external/noxim/other/generated/` are ignored report-support artifacts and should remain traceable to their raw manifests and JSON stats.
+- Assumption: T0026 analysis grouped means are mechanical summaries only and are not performance claims.
 
 ## Open Questions
 
@@ -472,15 +499,17 @@ External source tree registered during `T0023`:
 - Should future validation add a documented packet-carrying hardcoded inter-chiplet DeFT smoke once the allowed smoke command and expected behavior are designed?
 - Should a future implementation add directional endpoint fault modeling for the original paper's single-direction 3.125% fault case?
 - Should a future helper add source cut-off and post-injection drain support for eventual-delivery reachability checks?
+- Should final report tables exclude, annotate, or rerun cells where T0026 recorded zero injected packets during the measured stats window?
+- Should the final analysis scaffold blocker text be updated in a future task to reflect the T0025 policy resolutions while still keeping `claims_allowed: false` until report prose is reviewed?
 
 ## Next Recommended Task
 
-Start `T0026` and run the T0025 final sweep matrix only after first validating the dry-run manifest.
+Start `T0027` and review the T0026 final sweep artifacts for report-support tables and claim-safe interpretation.
 
 ## Next Ready-to-Send Prompt
 
 ```text
-Start task T0026: Run Final Sweep Matrix.
+Start task T0027: Review Final Sweep Results for Report Support.
 
 Before starting, read AGENTS.md, docs/PROGRESS.md, docs/TASKS.md, docs/ROADMAP.md, docs/ARCHITECTURE.md, docs/VALIDATION.md, docs/DECISIONS.md, and docs/PROMPTS.md.
 
@@ -492,43 +521,22 @@ external/noxim
 external/noxim is the Noxim submodule and modifiable project fork from:
 https://github.com/YusufTahirOrhan/noxim
 
-T0007 through T0021 implemented the DEFT_2_5D topology, physical VL model, boundary-router inventory, permanent startup VL faults, fault-mask validation, VN assignment and transition filtering, schema-v1 VL LUT generator/runtime loading, XY baseline configs, synthetic traffic configs, metrics export, and a tiny traceable experiment runner. T0022 added final-analysis scaffolding with `external/noxim/other/deft_analysis_artifacts.py`. T0025 defined the final sweep policy as exactly 150 runs:
+T0026 executed the T0025 final sweep matrix and regenerated final analysis artifacts:
 
-- routing modes: `XY`, `DEFT`
-- traffic profiles: `uniform`, `localized_40`, `hotspot_3x10`
-- physical fault masks: `0x0000`, `0x0001`, `0x0011`, `0x0111`, `0x1111`
-- seeds: `0`, `1`, `2`, `3`, `4`
-- simulation window: `-sim 10000`
-- stats warm-up: `-warmup 1000`
-- stats format: `json`
+- final sweep output: `external/noxim/other/generated/t0026_final_sweep_v1`
+- final analysis output: `external/noxim/other/generated/t0026_final_analysis_v1`
 
-Goal: run the T0025 final sweep matrix and regenerate final analysis artifacts from completed outputs. First run the dry-run command and verify that the manifest contains exactly 150 planned runs and the full Cartesian product. Then execute the same matrix only if the dry-run manifest is correct.
+The executed manifest has `mode: execute`, `run_count: 150`, 150 completed runs, and 150 return code `0` runs. All 150 JSON stats files exist and contain the T0020 fields. The generated analysis tables contain 150 run-summary rows and 30 comparison groups, and a raw-artifact cross-check found zero mismatches. The analysis helper still sets `claims_allowed: false`, and T0026 observed 54 individual runs with zero injected packets in the measured stats window.
 
-Use this dry-run command from `external/noxim` in WSL/Linux:
-
-python3 other/deft_experiment_runner.py \
-  --routing XY --routing DEFT \
-  --traffic uniform --traffic localized_40 --traffic hotspot_3x10 \
-  --fault-mask 0x0000 --fault-mask 0x0001 --fault-mask 0x0011 --fault-mask 0x0111 --fault-mask 0x1111 \
-  --seed 0 --seed 1 --seed 2 --seed 3 --seed 4 \
-  --sim 10000 \
-  --warmup 1000 \
-  --stats-format json \
-  --output-dir other/generated/t0026_final_sweep_v1
-
-If the dry-run manifest is correct, execute the final sweep with the same command plus:
-
---execute --max-execute-runs 150
-
-After execution, run the final analysis helper from the parent repository against the completed output directory and write artifacts under `external/noxim/other/generated/t0026_final_analysis_v1`.
+Goal: review the completed T0026 outputs for report support without fabricating results. Produce claim-safe tables or notes that distinguish measured values, empty cells, and limitations. Do not rerun simulations unless source inspection and the documented validation status prove a narrow follow-up command is required and you document the reason first.
 
 Do not fabricate results or performance claims. Do not change DeFT routing, VN transition logic, VL fault injection, T0016 generator format, T0017 runtime LUT schema/use path, T0019 traffic profile semantics, T0020 metrics semantics, T0021 runner semantics, or T0022 analysis semantics unless source inspection proves a narrow compatibility fix is required. Do not use `./regression.sh --update`.
 
 Use `Extended_Proposal.pdf` as the primary project requirements source and the original DeFT paper at `docs/references/DeFT_A_Deadlock-Free_and_Fault-Tolerant_Routing_Algorithm_for_2.5D_Chiplet_Networks.pdf` as the primary algorithmic reference. Use `Proposal.pdf` only as initial context. Ignore the peer evaluation document completely.
 
-Before running commands or documentation edits, produce a short implementation plan. Work only on the selected final sweep task. Do not modify unrelated files. Clearly mark assumptions as `Assumption` and blockers as `Blocked`.
+Before running commands or documentation edits, produce a short implementation plan. Work only on the selected final-sweep review task. Do not modify unrelated files. Clearly mark assumptions as `Assumption` and blockers as `Blocked`.
 
-Use only known validation commands. If no simulator source changes are made, do not rebuild Noxim. Validate that the executed manifest has `mode: execute`, `run_count: 150`, and every run has `status: completed` and `return_code: 0`. Validate that every JSON stats file exists and contains the T0020 metric fields. Cross-check final analysis tables against raw manifests and per-run JSON stats before making any report-support statements.
+Use only known validation commands. If no simulator source changes are made, do not rebuild Noxim. Use the existing generated T0026 manifests, summary CSVs, analysis CSVs, and JSON stats for review. Cross-check any derived table or statement against raw artifacts before recording it.
 
 Update docs/ARCHITECTURE.md, docs/TASKS.md, docs/PROGRESS.md, docs/VALIDATION.md, and docs/PROMPTS.md with the result. If a durable implementation or experiment decision becomes clear, update docs/DECISIONS.md too.
 
@@ -555,5 +563,5 @@ None; continue on the existing branch.
 ## Suggested Commit Message
 
 ```text
-docs: define final sweep policy
+docs: record final sweep execution
 ```
