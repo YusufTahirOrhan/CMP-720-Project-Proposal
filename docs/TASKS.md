@@ -174,13 +174,13 @@ Statuses: `TODO`, `IN_PROGRESS`, `DONE`, `BLOCKED`.
 
 ## T0018: Configure XY Baseline Modes
 
-- **Status:** TODO
+- **Status:** DONE
 - **Objective:** Configure fault-free and fault-injected XY routing baselines for comparison.
 - **Relevant roadmap phase:** Phase 7
-- **Files likely to change:** To be confirmed after Noxim source inspection
-- **Acceptance criteria:** XY and DeFT runs can be selected and compared under the same traffic settings.
-- **Validation command:** To be confirmed after repository inspection
-- **Notes:** Use existing Noxim XY behavior where available.
+- **Files changed:** `external/noxim/config_examples/deft_2_5d_xy_baseline_fault_free.yaml`, `external/noxim/config_examples/deft_2_5d_xy_baseline_fault_injected.yaml`, `docs/ARCHITECTURE.md`, `docs/TASKS.md`, `docs/PROGRESS.md`, `docs/VALIDATION.md`, `docs/PROMPTS.md`, and `docs/DECISIONS.md`
+- **Acceptance criteria:** XY fault-free and XY fault-injected baseline modes can be selected on the same `DEFT_2_5D` project topology without changing the `DEFT` routing path.
+- **Validation command:** Construction-only no-traffic smokes from `external/noxim/bin` in WSL Ubuntu for both new config files, preserving the documented simulator invocation shape with `LD_LIBRARY_PATH`, `-seed 0`, `-sim 20`, and `-warmup 0`; parent and submodule diff whitespace/status checks.
+- **Notes:** Completed on 2026-05-08. Added two explicit XY baseline configuration files that keep `routing_algorithm: XY`, keep `deft_vl_lut_filename` empty, and reuse the existing no-traffic construction smoke traffic file. The fault-free baseline uses no VL faults and reports active fault mask `0x0000`. The fault-injected baseline uses explicit physical VL faults `[0,4,8,12]`, the current T0011 physical 25% inspectability mask with one faulty physical VL per chiplet, and reports active fault mask `0x1111`. Assumption: T0018 is configuration-only; packet-carrying XY-vs-DEFT traffic comparability remains a future synthetic traffic and experiment task. No C++/SystemC source, routing logic, metrics, experiment automation, golden outputs, generator format, or runtime LUT schema/use path was changed.
 
 ## T0019: Add Synthetic Traffic Configurations
 

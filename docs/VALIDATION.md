@@ -555,6 +555,43 @@ T0017 result on 2026-05-07:
 - `git -c safe.directory=C:/Projects/CMP-720-Project-Proposal/external/noxim -C external/noxim diff --check` completed with exit code `0` after LF-normalizing the touched `power.yaml` file.
 - No packet-carrying inter-chiplet DeFT route smoke, regression command, `./regression.sh --update`, metrics change, experiment automation, golden regression output update, or DeFT performance experiment was run.
 
+## XY Baseline Modes
+
+Purpose:
+
+- Confirm that explicit XY fault-free and fault-injected baseline configurations select the existing `XY` routing algorithm on the same `DEFT_2_5D` topology.
+- Confirm that startup VL fault metadata is visible for the fault-injected XY baseline while the DeFT LUT remains disabled.
+- Confirm no C++/SystemC source, routing behavior, traffic generation, metrics, experiment automation, or golden regression outputs are changed.
+
+Known validation:
+
+- Fault-free XY baseline construction smoke from `external/noxim/bin` in WSL Ubuntu:
+
+```bash
+LD_LIBRARY_PATH=/mnt/c/Projects/CMP-720-Project-Proposal/external/noxim/bin/libs/systemc-2.3.1/lib-linux64 ./noxim -config ../config_examples/deft_2_5d_xy_baseline_fault_free.yaml -seed 0 -sim 20 -warmup 0
+```
+
+- Fault-injected XY baseline construction smoke from `external/noxim/bin` in WSL Ubuntu:
+
+```bash
+LD_LIBRARY_PATH=/mnt/c/Projects/CMP-720-Project-Proposal/external/noxim/bin/libs/systemc-2.3.1/lib-linux64 ./noxim -config ../config_examples/deft_2_5d_xy_baseline_fault_injected.yaml -seed 0 -sim 20 -warmup 0
+```
+
+T0018 result on 2026-05-08:
+
+- Required startup reading was completed before task work: `AGENTS.md`, `docs/PROGRESS.md`, `docs/TASKS.md`, `docs/ROADMAP.md`, `docs/ARCHITECTURE.md`, `docs/VALIDATION.md`, `docs/DECISIONS.md`, and `docs/PROMPTS.md`.
+- Before implementation, parent and submodule status checks showed no local file modifications.
+- Required source documents were confirmed present: `Extended_Proposal.pdf`, `Proposal.pdf`, and `docs/references/DeFT_A_Deadlock-Free_and_Fault-Tolerant_Routing_Algorithm_for_2.5D_Chiplet_Networks.pdf`.
+- Short source-document checks found the Extended Proposal's XY fault-free and XY fault-injected baseline requirements and the original DeFT paper's statement that intra-chiplet routing can use deadlock-free dimension-order routing such as XY.
+- Source inspection covered the existing `DEFT_2_5D` config, `Routing_XY`, `Routing_DEFT`, `ConfigurationManager`, `NoC`, `ProcessingElement`, `DeftTopology`, `DeftFaultInjectionManager`, `DeftVirtualNetwork`, and `DeftVerticalLinkLut` surfaces needed to confirm config-only baseline selection was sufficient for T0018.
+- T0018 added two config-only XY baseline modes: `deft_2_5d_xy_baseline_fault_free.yaml` and `deft_2_5d_xy_baseline_fault_injected.yaml`.
+- The first WSL smoke attempts inside the sandbox failed because no WSL distribution was visible in the sandboxed environment. The same commands were rerun outside the sandbox with approval and completed successfully.
+- The fault-free XY baseline smoke completed with exit code `0`, reported `routing_algorithm = XY`, kept `DEFT_2_5D VL LUT: disabled`, reported active fault mask `0x0000`, and reported zero packets and zero flits because it intentionally uses the no-traffic hardcoded file.
+- The fault-injected XY baseline smoke completed with exit code `0`, reported explicit faulty physical VLs `[0,4,8,12]`, kept `DEFT_2_5D VL LUT: disabled`, reported active fault mask `0x1111`, reported physical faults `4/16`, and reported three functional physical VLs per chiplet.
+- `git diff --check` in the parent repository and `git -c safe.directory=C:/Projects/CMP-720-Project-Proposal/external/noxim -C external/noxim diff --check` completed with exit code `0`; a trailing-whitespace check over the two new untracked config files returned no matches.
+- No `./build.sh` run was required because no build-integrated C++/SystemC source changed.
+- No packet-carrying traffic run, regression command, `./regression.sh --update`, metrics change, experiment automation, golden regression output update, DeFT performance experiment, T0016 generator format change, or T0017 runtime LUT schema/use-path change was performed.
+
 ## Build Validation
 
 Purpose:

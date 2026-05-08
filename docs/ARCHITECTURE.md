@@ -795,6 +795,29 @@ Assumption: No `RouteData` intermediate-destination fields are required for sche
 
 Blocked: Packet-carrying inter-chiplet DeFT route validation, traffic-profile-specific LUT artifacts, physical-vs-directional experiment percentage accounting, experiment automation, and metrics remain future work.
 
+## T0018 XY Baseline Mode Configuration
+
+`T0018` adds the smallest explicit configuration surface for later XY-vs-DeFT comparison on the same project topology. It does not change Noxim C++/SystemC source, routing behavior, traffic generation, metrics, experiment automation, golden regression outputs, the T0016 generator format, or the T0017 runtime LUT schema/use path.
+
+Implemented configuration surface:
+
+- `external/noxim/config_examples/deft_2_5d_xy_baseline_fault_free.yaml` selects `topology: DEFT_2_5D`, `routing_algorithm: XY`, no startup VL faults, and an empty `deft_vl_lut_filename`.
+- `external/noxim/config_examples/deft_2_5d_xy_baseline_fault_injected.yaml` selects the same topology and XY routing, keeps the DeFT LUT disabled, and uses explicit physical VL faults `[0,4,8,12]`.
+- Both configs retain `n_virtual_channels: 2` because the current `DEFT_2_5D` topology validation requires the VN.0/VN.1 VC count even when the selected routing algorithm is `XY`.
+- Both configs intentionally reuse `TRAFFIC_HARDCODED` with `external/noxim/config_examples/deft_2_5d_no_traffic.txt` so T0018 validates mode selection and startup fault state only. Synthetic packet-carrying traffic is still deferred to T0019.
+
+Baseline selector semantics:
+
+- Fault-free XY baseline: use the fault-free config as the 0% startup-fault reference on the constructed `DEFT_2_5D` topology.
+- Fault-injected XY baseline: use the fault-injected config as the current physical-model 25% startup-fault reference. The mask is `0x1111`, one faulty physical bidirectional VL per chiplet, matching the T0011 inspectability case.
+- DeFT comparison runs remain selected separately through `routing_algorithm: DEFT` plus `deft_vl_lut_filename` or `-deft_vl_lut` with a matching generated schema-v1 LUT. T0018 does not commit generated LUT artifacts.
+
+Assumption: The current baseline mode deliberately uses Noxim's existing standard `XY` routing algorithm. It does not add a 2.5D-aware XY route-selection variant or a fallback VL selector.
+
+Assumption: The fault-injected baseline follows the current 16 physical bidirectional VL model. Final percentage accounting against the original paper's directional `total VLs=32` wording remains unresolved for experiment automation.
+
+Blocked: Packet-carrying XY-vs-DeFT comparison needs synthetic traffic configurations, experiment runners, and metrics extraction from later tasks before performance or reachability conclusions can be made.
+
 ## Synthetic Traffic Models
 
 Planned:
@@ -830,11 +853,13 @@ Planned: Delivered flits per cycle per active IP node, measured consistently acr
 
 ## Baseline Comparison with XY Routing
 
-Planned:
+Planned and partially implemented:
 
-- XY routing in a fault-free topology establishes the upper-bound reference.
-- XY routing with injected faults demonstrates baseline degradation, failures, or deadlock behavior.
-- DeFT runs use the same traffic and fault scenarios for fair comparison.
+- Implemented in T0018: `deft_2_5d_xy_baseline_fault_free.yaml` selects XY routing on the `DEFT_2_5D` topology with no startup VL faults.
+- Implemented in T0018: `deft_2_5d_xy_baseline_fault_injected.yaml` selects XY routing on the same topology with explicit physical VL faults `[0,4,8,12]`.
+- Planned: XY routing in a packet-carrying fault-free scenario establishes the upper-bound reference after synthetic traffic configs exist.
+- Planned: XY routing with injected faults demonstrates baseline degradation, failures, or deadlock behavior after packet-carrying validation exists.
+- Planned: DeFT runs use the same future traffic and fault scenarios for fair comparison.
 
 ## Noxim Extension Point Map
 

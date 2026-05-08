@@ -1546,3 +1546,56 @@ At the end, provide:
 - **Next ready-to-send prompt:** See `docs/PROGRESS.md`.
 - **Suggested branch name for next task:** None; continue on the existing branch.
 - **Suggested commit message:** `feat: load and use DeFT VL LUT at runtime`
+
+## 2026-05-08: Start T0018 Configure XY Baseline Modes
+
+- **Date:** 2026-05-08
+- **Prompt summary:** Configure the smallest safe fault-free and fault-injected XY baseline modes for later comparison against DeFT on the same `DEFT_2_5D` topology, without changing the DeFT route path, experiment automation, metrics, golden outputs, or LUT schemas.
+- **Full prompt:**
+
+```text
+Start task T0018: Configure XY Baseline Modes.
+
+Before starting, read AGENTS.md, docs/PROGRESS.md, docs/TASKS.md, docs/ROADMAP.md, docs/ARCHITECTURE.md, docs/VALIDATION.md, docs/DECISIONS.md, and docs/PROMPTS.md.
+
+Continue on the existing Git branch. Do not create or switch task branches.
+
+Use the registered Noxim source tree at:
+external/noxim
+
+external/noxim is the Noxim submodule and modifiable project fork from:
+https://github.com/YusufTahirOrhan/noxim
+
+T0007 added selectable DEFT_2_5D topology construction and the DeftTopology mapping helper. T0008 centralized the physical Vertical Link model and functional state. T0009 added the derived boundary-router inventory. T0010 added startup-time permanent physical VL fault injection. T0011 added focused explicit/generated fault-mask validation and inspectability against the current 16 physical bidirectional VL model. T0012 mapped DeFT VN state directly onto Noxim VC IDs. T0013 implemented VN assignment and output-VC-aware reservation/forwarding. T0014 added DeFT-only VN transition-restriction filtering without packet/flit movement-history metadata. T0015 designed the offline VL LUT format. T0016 added the standalone deterministic deft_vl_lut.v1 generator. T0017 added runtime LUT loading, deft_vl_lut_filename / -deft_vl_lut, and registered routing algorithm DEFT that uses source_exit and destination_entry while failing closed on missing or nonfunctional selections.
+
+Goal: configure the smallest safe XY baseline modes needed for later comparison against DeFT on the same project topology. Keep the work focused on selecting and documenting fault-free and fault-injected XY baseline configurations or switches; preserve the new DEFT routing path and do not add experiment automation, metrics changes, golden regression output updates, or performance experiments.
+
+Keep this task independent from synthetic traffic implementation, experiment runners, result sweeps, metrics extraction, and final analysis. Do not change the T0016 generator format or the T0017 runtime LUT schema/use path unless source inspection proves a narrow compatibility fix is required.
+
+Use Extended_Proposal.pdf as the primary project requirements source and the original DeFT paper at docs/references/DeFT_A_Deadlock-Free_and_Fault-Tolerant_Routing_Algorithm_for_2.5D_Chiplet_Networks.pdf as the primary algorithmic reference. Use Proposal.pdf only as initial context. Ignore the peer evaluation document completely.
+
+Before coding, produce a short implementation plan. Work only on the selected XY baseline configuration task. Do not modify unrelated files. Clearly mark assumptions as Assumption and blockers as Blocked.
+
+Use only known validation commands. If build-integrated Noxim C++ changes are made, use the documented ./build.sh from external/noxim in WSL Ubuntu and the existing construction-only no-traffic smoke only when the invocation remains valid. Do not invent simulator commands. Do not use ./regression.sh --update.
+
+Update docs/ARCHITECTURE.md, docs/TASKS.md, docs/PROGRESS.md, docs/VALIDATION.md, and docs/PROMPTS.md with the result. If a durable implementation decision becomes clear, update docs/DECISIONS.md too.
+
+At the end, provide:
+
+1. Created files
+2. Modified files
+3. Whether any source code files changed
+4. Validation result
+5. Current project phase
+6. Next recommended task
+7. The next ready-to-send prompt
+8. Suggested branch name for the next task, which should be None; continue on the existing branch
+9. Suggested commit message
+10. Unknowns or blockers
+```
+
+- **Result summary:** T0018 completed. Two explicit XY baseline configuration files were added for `DEFT_2_5D`: `deft_2_5d_xy_baseline_fault_free.yaml` with no startup VL faults and `deft_2_5d_xy_baseline_fault_injected.yaml` with explicit physical VL faults `[0,4,8,12]`. Both select `routing_algorithm: XY`, keep the DeFT LUT disabled, retain the existing two-VC topology requirement, and reuse the no-traffic hardcoded file for construction-only validation. Approved WSL smokes completed for both configs. No C++/SystemC source, routing behavior, traffic generation, metrics, experiment automation, golden outputs, generator format, or runtime LUT schema/use path was changed.
+- **Follow-up tasks:** Start `T0019` to add synthetic traffic configurations.
+- **Next ready-to-send prompt:** See `docs/PROGRESS.md`.
+- **Suggested branch name for next task:** None; continue on the existing branch.
+- **Suggested commit message:** `chore: configure XY baseline modes`
