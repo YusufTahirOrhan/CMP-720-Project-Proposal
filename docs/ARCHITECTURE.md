@@ -877,6 +877,25 @@ Assumption: T0021 execute mode is intended for WSL/Linux because the validated l
 
 Blocked: T0021 is not a final sweep runner. Final experiment windows, drain policy, physical-vs-directional fault percentage accounting, broader seed sets, result aggregation, and performance claims remain future work.
 
+## T0022 Final Analysis Artifact Scaffolding
+
+`T0022` adds report-support scaffolding for validated T0021/T0020 outputs. It does not run simulations, define the final sweep policy, change simulator behavior, update golden regression outputs, or make performance claims.
+
+Implemented helper surface:
+
+- `external/noxim/other/deft_analysis_artifacts.py` is a Python standard-library helper placed with the other Noxim helper tools.
+- The helper consumes one or more T0021 runner output directories containing `manifest.json`, `summary.csv`, and optional per-run T0020 JSON stats files.
+- It emits generated analysis artifacts under a caller-selected output directory, normally below ignored `external/noxim/other/generated/`: `analysis_manifest.json`, `run_summary.csv`, `comparison_summary.csv`, and `report_scaffold.md`.
+- The run summary table preserves traceability to input manifests, run status, routing mode, traffic profile, fault mask, seed, simulation window, stats files, stdout/stderr logs, config file, LUT file, LUT provenance, and T0020 metric fields.
+- The comparison summary table computes simple grouped means for completed runs with metrics, grouped by routing mode, traffic profile, fault mask, simulation time, and warm-up time. These means are mechanical summaries only.
+- The generated analysis manifest always records `claims_allowed: false`; report text marks smoke-only inputs as `Blocked` for final performance claims.
+
+Assumption: T0022 analysis inputs are runner outputs produced by T0021 and metrics exports produced by T0020. The helper can resolve either Windows paths or WSL `/mnt/c/...` paths when reading existing stats artifacts from the shared workspace.
+
+Blocked: No validated final sweep output set exists yet. The only available completed runner output is the T0021 20-cycle seed-0 localized XY/DEFT execute smoke with no VL faults, which validates export and analysis shape only.
+
+Blocked: Final fault-rate accounting, final simulation window, seed count, warm-up/drain policy, and result-claim rules remain future decisions.
+
 ## Synthetic Traffic Models
 
 Implemented configuration support:
@@ -919,6 +938,7 @@ Planned and partially implemented:
 - Implemented in T0019: uniform, localized, and hotspot synthetic traffic configs exist on the same `DEFT_2_5D` topology.
 - Implemented in T0020: CSV/JSON metrics export includes routing mode, traffic mode, active fault mask, reachability, average latency, and throughput fields.
 - Implemented in T0021: `external/noxim/other/deft_experiment_runner.py` can plan and execute tiny XY/DEFT comparison runs that reuse those configs, CLI surfaces, generated temporary LUTs, and stats exports.
+- Implemented in T0022: `external/noxim/other/deft_analysis_artifacts.py` can turn runner manifests and stats exports into traceable analysis tables and a Markdown report scaffold while blocking final claims when inputs are smoke-only or final sweeps are missing.
 - Planned: XY routing in a packet-carrying fault-free scenario establishes the upper-bound reference after experiment validation exists.
 - Planned: XY routing with injected faults demonstrates baseline degradation, failures, or deadlock behavior after experiment validation exists.
 - Planned: DeFT runs use the same T0019 traffic profiles with explicit DEFT routing and matching LUT/fault settings for fair comparison.

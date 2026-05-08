@@ -1758,3 +1758,56 @@ At the end, provide:
 - **Next ready-to-send prompt:** See `docs/PROGRESS.md`.
 - **Suggested branch name for next task:** None; continue on the existing branch.
 - **Suggested commit message:** `feat: add experiment runner`
+
+## 2026-05-09: Start T0022 Prepare Final Analysis Artifacts
+
+- **Date:** 2026-05-09
+- **Prompt summary:** Prepare the smallest safe final-analysis artifact support from validated T0021 runner outputs and T0020 stats exports, focused on traceability, summary tables, limitations, and report-support scaffolding without running full sweeps or making performance claims.
+- **Full prompt:**
+
+```text
+Start task T0022: Prepare Final Analysis Artifacts.
+
+Before starting, read AGENTS.md, docs/PROGRESS.md, docs/TASKS.md, docs/ROADMAP.md, docs/ARCHITECTURE.md, docs/VALIDATION.md, docs/DECISIONS.md, and docs/PROMPTS.md.
+
+Continue on the existing Git branch. Do not create or switch task branches.
+
+Use the registered Noxim source tree at:
+external/noxim
+
+external/noxim is the Noxim submodule and modifiable project fork from:
+https://github.com/YusufTahirOrhan/noxim
+
+T0007 added selectable DEFT_2_5D topology construction and the DeftTopology mapping helper. T0008 centralized the physical Vertical Link model and functional state. T0009 added the derived boundary-router inventory. T0010 added startup-time permanent physical VL fault injection. T0011 added focused explicit/generated fault-mask validation and inspectability against the current 16 physical bidirectional VL model. T0012 mapped DeFT VN state directly onto Noxim VC IDs. T0013 implemented VN assignment and output-VC-aware reservation/forwarding. T0014 added DeFT-only VN transition-restriction filtering without packet/flit movement-history metadata. T0015 designed the offline VL LUT format. T0016 added the standalone deterministic deft_vl_lut.v1 generator. T0017 added runtime LUT loading, deft_vl_lut_filename / -deft_vl_lut, and registered routing algorithm DEFT. T0018 added explicit XY baseline configs for fault-free and fault-injected DEFT_2_5D modes without changing source code. T0019 added uniform, localized-40%, and hotspot-3x10 synthetic traffic configs/tables using existing Noxim traffic surfaces. T0020 added machine-readable CSV/JSON metrics export through existing stats_format/stats_file surfaces. T0021 added a standalone tiny experiment runner that records manifests, commands, logs, JSON/CSV stats paths, temporary DEFT LUT provenance, and summary CSV output under ignored generated-output directories.
+
+Goal: prepare the smallest safe final-analysis artifact support from validated experiment outputs. Focus on traceability, summary tables, limitations, and report-support scaffolding that can consume T0021 runner manifests and T0020 stats exports. Keep this independent from running full sweeps, inventing missing experiment results, changing simulator behavior, updating golden regression outputs, or making unsupported performance claims.
+
+Use existing T0021 runner outputs, T0020 metrics export fields, and project documentation where possible. If no validated final sweep outputs exist, create only analysis scaffolding and clearly mark missing data as `Blocked`; do not fabricate results. Do not change DeFT routing, VN transition logic, VL fault injection, T0016 generator format, T0017 runtime LUT schema/use path, T0019 traffic profile semantics, T0020 metrics semantics, or T0021 runner semantics unless source inspection proves a narrow compatibility fix is required.
+
+Use `Extended_Proposal.pdf` as the primary project requirements source and the original DeFT paper at `docs/references/DeFT_A_Deadlock-Free_and_Fault-Tolerant_Routing_Algorithm_for_2.5D_Chiplet_Networks.pdf` as the primary algorithmic reference. Use `Proposal.pdf` only as initial context. Ignore the peer evaluation document completely.
+
+Before coding, produce a short implementation plan. Work only on the selected final-analysis artifact task. Do not modify unrelated files. Clearly mark assumptions as `Assumption` and blockers as `Blocked`.
+
+Use only known validation commands. If no simulator source changes are made, do not rebuild Noxim. Validate any analysis helper with syntax checks and a small fixture or existing ignored T0021 output if available. Do not run full sweeps unless explicitly requested. Do not use ./regression.sh --update.
+
+Update docs/ARCHITECTURE.md, docs/TASKS.md, docs/PROGRESS.md, docs/VALIDATION.md, and docs/PROMPTS.md with the result. If a durable implementation decision becomes clear, update docs/DECISIONS.md too.
+
+At the end, provide:
+
+1. Created files
+2. Modified files
+3. Whether any source code files changed
+4. Validation result
+5. Current project phase
+6. Next recommended task
+7. The next ready-to-send prompt
+8. Suggested branch name for the next task, which should be `None; continue on the existing branch`
+9. Suggested commit message
+10. Unknowns or blockers
+```
+
+- **Result summary:** T0022 completed. Added `external/noxim/other/deft_analysis_artifacts.py`, a standalone analysis helper that consumes T0021 runner output directories and T0020 stats exports, then writes generated `analysis_manifest.json`, `run_summary.csv`, `comparison_summary.csv`, and `report_scaffold.md` artifacts under ignored generated-output directories. Validation confirmed syntax/help and generated a scaffold from the existing T0021 20-cycle execute smoke. The generated scaffold marks missing final sweep data as `Blocked` and sets `claims_allowed` to `false`. No simulator source, routing behavior, VN transition logic, VL fault injection, LUT schema/use path, traffic semantics, metrics semantics, runner semantics, final sweep, golden output, or performance claim was changed.
+- **Follow-up tasks:** Start `T0025` to define the final sweep policy before running or interpreting final sweeps.
+- **Next ready-to-send prompt:** See `docs/PROGRESS.md`.
+- **Suggested branch name for next task:** None; continue on the existing branch.
+- **Suggested commit message:** `feat: add final analysis scaffolding`

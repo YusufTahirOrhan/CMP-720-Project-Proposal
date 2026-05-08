@@ -900,6 +900,55 @@ Expected future checks:
 - Small multi-seed dry run.
 - Fault-rate sweep up to 25% after final percentage accounting and sweep policy are selected.
 
+## Final Analysis Artifact Validation
+
+Purpose:
+
+- Validate that final-analysis scaffolding can consume T0021 runner manifests and T0020 stats exports.
+- Confirm generated tables preserve provenance and mark missing final sweep data as `Blocked`.
+- Avoid running full sweeps, rebuilding Noxim, changing simulator behavior, or making unsupported performance claims.
+
+Known commands:
+
+- Analysis helper syntax check from the parent repository:
+
+```powershell
+python -m py_compile external/noxim/other/deft_analysis_artifacts.py
+```
+
+- Analysis helper help check from the parent repository:
+
+```powershell
+python external/noxim/other/deft_analysis_artifacts.py --help
+```
+
+- Scaffold generation from an existing ignored T0021 execute-smoke output:
+
+```powershell
+python external/noxim/other/deft_analysis_artifacts.py --input-dir external/noxim/other/generated/t0021_execute_smoke --output-dir external/noxim/other/generated/t0022_analysis_smoke
+```
+
+T0022 result on 2026-05-09:
+
+- Required startup reading was completed before task work: `AGENTS.md`, `docs/PROGRESS.md`, `docs/TASKS.md`, `docs/ROADMAP.md`, `docs/ARCHITECTURE.md`, `docs/VALIDATION.md`, `docs/DECISIONS.md`, and `docs/PROMPTS.md`.
+- Before implementation, parent status showed branch `feat/map-noxim-extension-points...origin/feat/map-noxim-extension-points` with no local file modifications.
+- Before implementation, submodule status showed branch `feat/baseline-noxim...origin/feat/baseline-noxim` with no local file modifications.
+- Existing ignored T0021 outputs were found under `external/noxim/other/generated/`, including `t0021_execute_smoke`.
+- T0022 added `external/noxim/other/deft_analysis_artifacts.py` as a standalone Python helper that reads T0021 `manifest.json`, `summary.csv`, and T0020 JSON stats exports.
+- The helper writes ignored generated artifacts: `analysis_manifest.json`, `run_summary.csv`, `comparison_summary.csv`, and `report_scaffold.md`.
+- `python -m py_compile external/noxim/other/deft_analysis_artifacts.py` completed with exit code `0`.
+- `python external/noxim/other/deft_analysis_artifacts.py --help` completed with exit code `0`.
+- Scaffold generation from `external/noxim/other/generated/t0021_execute_smoke` completed with exit code `0` and wrote artifacts under `external/noxim/other/generated/t0022_analysis_smoke`.
+- The generated `run_summary.csv` included both completed smoke rows, resolved the WSL `/mnt/c/...` stats paths to workspace-local paths, and captured T0020 metrics from the JSON stats files.
+- The generated `comparison_summary.csv` mechanically grouped the completed smoke rows by routing, traffic, fault mask, simulation time, and warm-up. These grouped means are not final performance results.
+- The generated `report_scaffold.md` marked the result as `Blocked` for final claims because no validated final sweep output set was provided. It also recorded unresolved final fault-rate accounting, simulation window, seed count, and drain policy.
+- No simulator execution, full sweep, Noxim rebuild, regression command, `./regression.sh --update`, golden output update, DeFT routing change, VN transition logic change, VL fault-injection change, T0016 generator format change, T0017 runtime LUT schema/use-path change, T0019 traffic semantic change, T0020 metrics semantic change, T0021 runner semantic change, or performance claim was performed.
+
+Expected future checks:
+
+- Re-run the analysis helper on validated final sweep directories after T0025 defines the final sweep policy.
+- Cross-check generated final-analysis tables against raw runner manifests and per-run JSON stats before using them in the report.
+
 ## Metrics Validation
 
 Purpose:

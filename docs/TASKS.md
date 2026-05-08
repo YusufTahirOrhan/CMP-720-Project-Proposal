@@ -214,13 +214,23 @@ Statuses: `TODO`, `IN_PROGRESS`, `DONE`, `BLOCKED`.
 
 ## T0022: Prepare Final Analysis Artifacts
 
-- **Status:** TODO
+- **Status:** DONE
 - **Objective:** Produce final result summaries and report-support material from validated experiment outputs.
 - **Relevant roadmap phase:** Phase 9
-- **Files likely to change:** To be confirmed after experiment output structure exists
+- **Files changed:** `external/noxim/other/deft_analysis_artifacts.py`, `docs/ARCHITECTURE.md`, `docs/TASKS.md`, `docs/PROGRESS.md`, `docs/VALIDATION.md`, `docs/PROMPTS.md`, and `docs/DECISIONS.md`
 - **Acceptance criteria:** Results are traceable to configurations, commands, and validation status.
-- **Validation command:** To be confirmed after repository inspection
-- **Notes:** Keep limitations and assumptions explicit.
+- **Validation command:** Syntax/help checks for `external/noxim/other/deft_analysis_artifacts.py`; scaffold generation from the existing ignored `external/noxim/other/generated/t0021_execute_smoke` runner output.
+- **Notes:** Completed on 2026-05-09. Added a standalone Python analysis helper that consumes T0021 `manifest.json`, `summary.csv`, and T0020 JSON stats exports, then writes ignored `analysis_manifest.json`, `run_summary.csv`, `comparison_summary.csv`, and `report_scaffold.md` artifacts. The helper records provenance, run status, routing/traffic/fault/seed identifiers, stats-file availability, LUT provenance, per-run metrics, and simple grouped means, but sets `claims_allowed` to `false` and marks smoke-only or missing final-sweep inputs as `Blocked`. Validation used the existing 20-cycle T0021 execute smoke only; those rows validate analysis shape and traceability, not performance. No C++/SystemC source, DeFT routing, VN transition logic, VL fault injection, generator format, runtime LUT schema/use path, traffic semantics, metrics semantics, runner semantics, final sweep, golden regression output, or performance claim was changed.
+
+## T0025: Define Final Sweep Policy
+
+- **Status:** TODO
+- **Objective:** Decide the final experiment policy before running or interpreting final sweeps.
+- **Relevant roadmap phase:** Phase 9
+- **Files likely to change:** `docs/ARCHITECTURE.md`, `docs/TASKS.md`, `docs/PROGRESS.md`, `docs/VALIDATION.md`, `docs/PROMPTS.md`, and `docs/DECISIONS.md`
+- **Acceptance criteria:** Final sweep coverage, fault-rate accounting, simulation window, warm-up/drain policy, seed count, traffic profiles, and result-claim rules are documented before final runs.
+- **Validation command:** Documentation/status validation only unless a known command is explicitly selected by the task.
+- **Notes:** This task should not run full sweeps by default. It should resolve blockers recorded by T0022 and produce a ready-to-run final sweep prompt or mark any unresolved choices as `Blocked`.
 
 ## T0023: Add or Register Noxim Source Tree
 
