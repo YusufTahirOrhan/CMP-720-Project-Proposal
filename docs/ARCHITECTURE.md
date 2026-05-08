@@ -816,15 +816,38 @@ Assumption: The current baseline mode deliberately uses Noxim's existing standar
 
 Assumption: The fault-injected baseline follows the current 16 physical bidirectional VL model. Final percentage accounting against the original paper's directional `total VLs=32` wording remains unresolved for experiment automation.
 
-Blocked: Packet-carrying XY-vs-DeFT comparison needs synthetic traffic configurations, experiment runners, and metrics extraction from later tasks before performance or reachability conclusions can be made.
+Blocked: Packet-carrying XY-vs-DeFT comparison needs experiment runners, metrics extraction, and broader validation from later tasks before performance or reachability conclusions can be made.
+
+## T0019 Synthetic Traffic Configuration
+
+`T0019` adds the smallest configuration/data surface for the proposal-required synthetic traffic profiles on the current `DEFT_2_5D` topology. It does not change Noxim C++/SystemC source, DeFT routing, VN transition logic, Vertical Link fault injection, the T0016 generator format, the T0017 runtime LUT schema/use path, metrics, experiment runners, golden regression outputs, or performance analysis.
+
+Implemented configuration surface:
+
+- `external/noxim/config_examples/deft_2_5d_traffic_uniform.yaml` selects `topology: DEFT_2_5D` with existing `TRAFFIC_RANDOM`, packet size 8 flits, two VCs, no startup VL faults, no DeFT LUT, and default `routing_algorithm: XY`.
+- `external/noxim/config_examples/deft_2_5d_traffic_localized_40.yaml` selects existing `TRAFFIC_TABLE_BASED` with `external/noxim/config_examples/deft_2_5d_traffic_localized_40.txt`.
+- `external/noxim/config_examples/deft_2_5d_traffic_hotspot_3x10.yaml` selects existing `TRAFFIC_TABLE_BASED` with `external/noxim/config_examples/deft_2_5d_traffic_hotspot_3x10.txt`.
+
+Traffic-table semantics:
+
+- Uniform uses Noxim's existing random destination selection. Under `DEFT_2_5D`, `n_delta_tiles` is set to the 64 chiplet routers, so random traffic selects final destinations in the chiplet-router ID range `0..63`.
+- Localized assigns each source a total table PIR of `0.01`; 40% of that source probability targets same-chiplet destinations and 60% targets other-chiplet destinations. Self-traffic is excluded.
+- Hotspot assigns each source a total table PIR of `0.01`. Hotspot routers are `9`, `13`, and `41`, chosen as deterministic near-center routers in three different chiplets because the source documents do not name specific hotspot IDs.
+- Each hotspot receives 10% of a non-hotspot source's generated traffic. When the source is itself a hotspot, self-destination traffic is excluded and that share is redistributed to background non-hotspot destinations.
+
+Assumption: For T0019, the hotspot "10% rate on each" requirement is interpreted as per-hotspot destination share, matching Noxim's existing `-hs ID P` percentage semantics and the original DeFT paper's wording of "3 hotspot points" with "10% rate on each"; final experiment automation can revisit this if a different global-PIR interpretation is required.
+
+Assumption: `TRAFFIC_LOCAL` is not used for the localized profile because source inspection showed it is WiNoC hub-local traffic, not chiplet-local traffic, and `DEFT_2_5D` rejects Winoc hub mode.
+
+Blocked: The T0019 configs validate selection/loading only. They do not establish final XY-vs-DEFT performance, reachability, experiment sweeps, traffic-profile-specific LUT generation, or machine-readable metrics.
 
 ## Synthetic Traffic Models
 
-Planned:
+Implemented configuration support:
 
-- Uniform: packets are distributed uniformly across destination nodes.
-- Localized: 40% of generated packets remain within the same source chiplet.
-- Hotspot: 3 hotspot nodes receive additional directed traffic with 10% injection rate.
+- Uniform: packets are distributed uniformly across chiplet-router destination nodes through `deft_2_5d_traffic_uniform.yaml`.
+- Localized: 40% of generated packet probability remains within the same source chiplet through `deft_2_5d_traffic_localized_40.yaml` and its traffic table.
+- Hotspot: hotspot routers `9`, `13`, and `41` receive 10% destination share each through `deft_2_5d_traffic_hotspot_3x10.yaml` and its traffic table.
 
 ## Fault Scenarios
 
@@ -857,9 +880,10 @@ Planned and partially implemented:
 
 - Implemented in T0018: `deft_2_5d_xy_baseline_fault_free.yaml` selects XY routing on the `DEFT_2_5D` topology with no startup VL faults.
 - Implemented in T0018: `deft_2_5d_xy_baseline_fault_injected.yaml` selects XY routing on the same topology with explicit physical VL faults `[0,4,8,12]`.
-- Planned: XY routing in a packet-carrying fault-free scenario establishes the upper-bound reference after synthetic traffic configs exist.
-- Planned: XY routing with injected faults demonstrates baseline degradation, failures, or deadlock behavior after packet-carrying validation exists.
-- Planned: DeFT runs use the same future traffic and fault scenarios for fair comparison.
+- Implemented in T0019: uniform, localized, and hotspot synthetic traffic configs exist on the same `DEFT_2_5D` topology.
+- Planned: XY routing in a packet-carrying fault-free scenario establishes the upper-bound reference after metrics and experiment validation exist.
+- Planned: XY routing with injected faults demonstrates baseline degradation, failures, or deadlock behavior after metrics and experiment validation exist.
+- Planned: DeFT runs use the same T0019 traffic profiles with explicit DEFT routing and matching LUT/fault settings for fair comparison.
 
 ## Noxim Extension Point Map
 

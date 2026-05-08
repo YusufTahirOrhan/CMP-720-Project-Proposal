@@ -1599,3 +1599,56 @@ At the end, provide:
 - **Next ready-to-send prompt:** See `docs/PROGRESS.md`.
 - **Suggested branch name for next task:** None; continue on the existing branch.
 - **Suggested commit message:** `chore: configure XY baseline modes`
+
+## 2026-05-08: Start T0019 Synthetic Traffic Configurations
+
+- **Date:** 2026-05-08
+- **Prompt summary:** Add the smallest safe synthetic traffic configuration support for Uniform, Localized with 40% intra-chiplet traffic, and Hotspot with 3 hotspot nodes at 10% rate, using existing Noxim traffic-generation surfaces where possible and keeping the work independent from metrics, experiment runners, performance analysis, and routing changes.
+- **Full prompt:**
+
+```text
+Start task T0019: Add Synthetic Traffic Configurations.
+
+Before starting, read AGENTS.md, docs/PROGRESS.md, docs/TASKS.md, docs/ROADMAP.md, docs/ARCHITECTURE.md, docs/VALIDATION.md, docs/DECISIONS.md, and docs/PROMPTS.md.
+
+Continue on the existing Git branch. Do not create or switch task branches.
+
+Use the registered Noxim source tree at:
+external/noxim
+
+external/noxim is the Noxim submodule and modifiable project fork from:
+https://github.com/YusufTahirOrhan/noxim
+
+T0007 added selectable DEFT_2_5D topology construction and the DeftTopology mapping helper. T0008 centralized the physical Vertical Link model and functional state. T0009 added the derived boundary-router inventory. T0010 added startup-time permanent physical VL fault injection. T0011 added focused explicit/generated fault-mask validation and inspectability against the current 16 physical bidirectional VL model. T0012 mapped DeFT VN state directly onto Noxim VC IDs. T0013 implemented VN assignment and output-VC-aware reservation/forwarding. T0014 added DeFT-only VN transition-restriction filtering without packet/flit movement-history metadata. T0015 designed the offline VL LUT format. T0016 added the standalone deterministic deft_vl_lut.v1 generator. T0017 added runtime LUT loading, deft_vl_lut_filename / -deft_vl_lut, and registered routing algorithm DEFT. T0018 added explicit XY baseline configs for fault-free and fault-injected DEFT_2_5D modes without changing source code.
+
+Goal: add the smallest safe synthetic traffic configuration support needed for later XY-vs-DeFT comparison on the same project topology. Focus on selecting or configuring the proposal-required synthetic traffic shapes: uniform, localized with 40% intra-chiplet traffic, and hotspot with 3 hotspot nodes at 10% injection rate. Keep the work independent from experiment runners, result sweeps, metrics extraction, final analysis, golden regression output updates, and performance experiments.
+
+Use existing Noxim traffic-generation surfaces where possible. Do not change DeFT routing, VN transition logic, VL fault injection, T0016 generator format, or T0017 runtime LUT schema/use path unless source inspection proves a narrow compatibility fix is required. If a new traffic mode is required for DEFT_2_5D, keep it narrowly scoped and document why before editing.
+
+Use Extended_Proposal.pdf as the primary project requirements source and the original DeFT paper at docs/references/DeFT_A_Deadlock-Free_and_Fault-Tolerant_Routing_Algorithm_for_2.5D_Chiplet_Networks.pdf as the primary algorithmic reference. Use Proposal.pdf only as initial context. Ignore the peer evaluation document completely.
+
+Before coding, produce a short implementation plan. Work only on the selected synthetic traffic configuration task. Do not modify unrelated files. Clearly mark assumptions as Assumption and blockers as Blocked.
+
+Use only known validation commands. If build-integrated Noxim C++ changes are made, use the documented ./build.sh from external/noxim in WSL Ubuntu and run only documented smoke invocations that remain valid. For config-only changes, validate with repository/submodule status and the smallest known simulator smoke shape needed to confirm configuration loading. Do not invent experiment commands. Do not use ./regression.sh --update.
+
+Update docs/ARCHITECTURE.md, docs/TASKS.md, docs/PROGRESS.md, docs/VALIDATION.md, and docs/PROMPTS.md with the result. If a durable implementation decision becomes clear, update docs/DECISIONS.md too.
+
+At the end, provide:
+
+1. Created files
+2. Modified files
+3. Whether any source code files changed
+4. Validation result
+5. Current project phase
+6. Next recommended task
+7. The next ready-to-send prompt
+8. Suggested branch name for the next task, which should be None; continue on the existing branch
+9. Suggested commit message
+10. Unknowns or blockers
+```
+
+- **Result summary:** T0019 completed. Added `DEFT_2_5D` synthetic traffic configs for uniform, localized 40% intra-chiplet, and hotspot 3x10 traffic. Uniform uses existing `TRAFFIC_RANDOM`; localized and hotspot use existing `TRAFFIC_TABLE_BASED` with deterministic tables. The localized table assigns each source total PIR `0.01` with `0.004` same-chiplet and `0.006` other-chiplet probability. The hotspot table uses routers `9`, `13`, and `41`, gives each hotspot a 10% destination share for non-hotspot sources, excludes self-destinations, and keeps each source total PIR at `0.01`. Approved WSL smokes confirmed all three configs load. No C++/SystemC source, routing behavior, VN transition logic, VL fault injection, metrics, experiment automation, golden outputs, generator format, or runtime LUT schema/use path was changed.
+- **Follow-up tasks:** Start `T0020` to add metrics collection.
+- **Next ready-to-send prompt:** See `docs/PROGRESS.md`.
+- **Suggested branch name for next task:** None; continue on the existing branch.
+- **Suggested commit message:** `chore: add synthetic traffic configurations`

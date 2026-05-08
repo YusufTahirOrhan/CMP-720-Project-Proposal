@@ -592,6 +592,53 @@ T0018 result on 2026-05-08:
 - No `./build.sh` run was required because no build-integrated C++/SystemC source changed.
 - No packet-carrying traffic run, regression command, `./regression.sh --update`, metrics change, experiment automation, golden regression output update, DeFT performance experiment, T0016 generator format change, or T0017 runtime LUT schema/use-path change was performed.
 
+## Synthetic Traffic Configurations
+
+Purpose:
+
+- Confirm that the proposal-required synthetic traffic profiles can be selected on the current `DEFT_2_5D` topology.
+- Confirm that localized and hotspot traffic tables encode the intended probabilities without adding a new simulator traffic mode.
+- Confirm no DeFT routing, VN transition logic, VL fault injection, metrics, experiment automation, golden regression outputs, T0016 generator format, or T0017 runtime LUT schema/use path is changed.
+
+Known validation:
+
+- Uniform synthetic traffic config-load smoke from `external/noxim/bin` in WSL Ubuntu:
+
+```bash
+LD_LIBRARY_PATH=/mnt/c/Projects/CMP-720-Project-Proposal/external/noxim/bin/libs/systemc-2.3.1/lib-linux64 ./noxim -config ../config_examples/deft_2_5d_traffic_uniform.yaml -seed 0 -sim 20 -warmup 0
+```
+
+- Localized synthetic traffic config-load smoke from `external/noxim/bin` in WSL Ubuntu:
+
+```bash
+LD_LIBRARY_PATH=/mnt/c/Projects/CMP-720-Project-Proposal/external/noxim/bin/libs/systemc-2.3.1/lib-linux64 ./noxim -config ../config_examples/deft_2_5d_traffic_localized_40.yaml -seed 0 -sim 20 -warmup 0
+```
+
+- Hotspot synthetic traffic config-load smoke from `external/noxim/bin` in WSL Ubuntu:
+
+```bash
+LD_LIBRARY_PATH=/mnt/c/Projects/CMP-720-Project-Proposal/external/noxim/bin/libs/systemc-2.3.1/lib-linux64 ./noxim -config ../config_examples/deft_2_5d_traffic_hotspot_3x10.yaml -seed 0 -sim 20 -warmup 0
+```
+
+T0019 result on 2026-05-08:
+
+- Required startup reading was completed before task work: `AGENTS.md`, `docs/PROGRESS.md`, `docs/TASKS.md`, `docs/ROADMAP.md`, `docs/ARCHITECTURE.md`, `docs/VALIDATION.md`, `docs/DECISIONS.md`, and `docs/PROMPTS.md`.
+- Before implementation, parent and submodule status checks showed no local file modifications.
+- Required source documents were confirmed present: `Extended_Proposal.pdf`, `Proposal.pdf`, and `docs/references/DeFT_A_Deadlock-Free_and_Fault-Tolerant_Routing_Algorithm_for_2.5D_Chiplet_Networks.pdf`.
+- Short source-document checks found the Extended Proposal's Uniform, Localized 40% intra-chiplet, and Hotspot 3x10 synthetic traffic requirement. The original DeFT paper confirmed 40% same-chiplet localized traffic and 3 hotspot points with 10% rate on each.
+- Source inspection covered `ProcessingElement.cpp`, `GlobalTrafficTable.*`, `ConfigurationManager.cpp`, `NoC.cpp`, the Noxim traffic documentation, existing config examples, and the T0018 baseline configs.
+- `TRAFFIC_RANDOM` was selected for the uniform profile. `TRAFFIC_TABLE_BASED` was selected for localized and hotspot profiles because existing `TRAFFIC_LOCAL` is WiNoC hub-local and unsuitable for chiplet-local traffic under `DEFT_2_5D`.
+- T0019 added three synthetic traffic YAML configs and two deterministic traffic tables under `external/noxim/config_examples`.
+- Table integrity checks confirmed the localized table has 4032 rows, total per-source PIR approximately `0.01`, same-chiplet PIR approximately `0.004`, and other-chiplet PIR `0.006`.
+- Table integrity checks confirmed the hotspot table has 4032 rows, total per-source PIR approximately `0.01`, hotspot routers `9`, `13`, and `41`, hotspot destination PIR `0.001` per non-hotspot source, and no self-destination entries.
+- The first WSL smoke attempts inside the sandbox failed because no WSL distribution was visible in the sandboxed environment. The same commands were rerun outside the sandbox with approval and completed successfully.
+- The uniform config-load smoke completed with exit code `0`, loaded `deft_2_5d_traffic_uniform.yaml`, kept `DEFT_2_5D VL LUT: disabled`, reported active fault mask `0x0000`, and delivered zero packets/flits in the short 20-cycle seed-0 run.
+- The localized config-load smoke completed with exit code `0`, loaded `deft_2_5d_traffic_localized_40.yaml` and its table, kept `DEFT_2_5D VL LUT: disabled`, reported active fault mask `0x0000`, and delivered 2 packets / 11 flits in the short run.
+- The hotspot config-load smoke completed with exit code `0`, loaded `deft_2_5d_traffic_hotspot_3x10.yaml` and its table, kept `DEFT_2_5D VL LUT: disabled`, reported active fault mask `0x0000`, and delivered 1 packet / 2 flits in the short run.
+- `git diff --check` in the parent repository and `git -c safe.directory=C:/Projects/CMP-720-Project-Proposal/external/noxim -C external/noxim diff --check` completed with exit code `0`; a trailing-whitespace check over the new T0019 config/table files returned no matches.
+- No `./build.sh` run was required because no build-integrated C++/SystemC source changed.
+- No regression command, `./regression.sh --update`, metrics change, experiment automation, golden regression output update, DeFT performance experiment, T0016 generator format change, or T0017 runtime LUT schema/use-path change was performed.
+
 ## Build Validation
 
 Purpose:

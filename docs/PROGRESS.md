@@ -24,10 +24,11 @@ Phase 8 - Experiment Automation and Metrics Collection
 - `T0016` - Implement Offline VL LUT Generator.
 - `T0017` - Load and Use VL LUT at Boundary Routers.
 - `T0018` - Configure XY Baseline Modes.
+- `T0019` - Add Synthetic Traffic Configurations.
 - `T0023` - Add or register the Noxim source tree.
 - `T0024` - Decide Windows 11 development environment and persist paper reference.
 
-DeFT VN assignment behavior, the first VN movement-transition restriction enforcement layer, the offline VL LUT schema/generator, the runtime schema-v1 LUT loading/use path, and explicit XY fault-free/fault-injected baseline configuration modes now exist for `DEFT_2_5D`. Packet-carrying inter-chiplet DeFT/XY validation, synthetic traffic, experiment automation, and metrics tasks have not been implemented.
+DeFT VN assignment behavior, the first VN movement-transition restriction enforcement layer, the offline VL LUT schema/generator, the runtime schema-v1 LUT loading/use path, explicit XY fault-free/fault-injected baseline configuration modes, and proposal-required synthetic traffic configuration profiles now exist for `DEFT_2_5D`. Packet-carrying inter-chiplet DeFT/XY validation, experiment automation, and metrics tasks have not been implemented.
 
 ## In-Progress Tasks
 
@@ -39,25 +40,29 @@ DeFT VN assignment behavior, the first VN movement-transition restriction enforc
 
 ## Last Validation Result
 
-- T0018 Configure XY Baseline Modes completed on 2026-05-08.
+- T0019 Add Synthetic Traffic Configurations completed on 2026-05-08.
 - Required startup reading was completed before task work: `AGENTS.md`, `docs/PROGRESS.md`, `docs/TASKS.md`, `docs/ROADMAP.md`, `docs/ARCHITECTURE.md`, `docs/VALIDATION.md`, `docs/DECISIONS.md`, and `docs/PROMPTS.md`.
 - Before implementation, `git status --short --branch` in the parent repository showed branch `feat/map-noxim-extension-points...origin/feat/map-noxim-extension-points` with no local file modifications.
 - Before implementation, `git -c safe.directory=C:/Projects/CMP-720-Project-Proposal/external/noxim -C external/noxim status --short --branch` showed branch `feat/baseline-noxim...origin/feat/baseline-noxim` with no local file modifications.
 - Source document availability was confirmed for `Extended_Proposal.pdf`, `Proposal.pdf`, and `docs/references/DeFT_A_Deadlock-Free_and_Fault-Tolerant_Routing_Algorithm_for_2.5D_Chiplet_Networks.pdf`.
-- Short source-document checks found the Extended Proposal's XY fault-free and XY fault-injected baseline requirements and the original DeFT paper's statement that intra-chiplet routing can use deadlock-free dimension-order routing such as XY.
-- Source inspection confirmed the existing `XY` routing algorithm, `DEFT_2_5D` topology/fault configuration surface, and separate `DEFT` LUT-enabled route path were sufficient for a config-only T0018.
-- T0018 added `external/noxim/config_examples/deft_2_5d_xy_baseline_fault_free.yaml` and `external/noxim/config_examples/deft_2_5d_xy_baseline_fault_injected.yaml`.
-- The fault-free XY baseline selects `topology: DEFT_2_5D`, `routing_algorithm: XY`, no startup VL faults, and no DeFT LUT. The approved WSL no-traffic smoke completed with exit code `0`, reported active fault mask `0x0000`, zero packets, and zero flits.
-- The fault-injected XY baseline selects the same topology and routing, no DeFT LUT, and explicit physical VL faults `[0,4,8,12]`. The approved WSL no-traffic smoke completed with exit code `0`, reported active fault mask `0x1111`, physical faults `4/16`, and three functional physical VLs per chiplet.
+- Short source-document checks found the Extended Proposal's synthetic traffic requirement for Uniform, Localized with 40% intra-chiplet traffic, and Hotspot with 3 hotspot nodes at 10% rate; the original DeFT paper confirms 40% same-chiplet localized traffic and 3 hotspot points with 10% rate on each.
+- Source inspection confirmed existing `TRAFFIC_RANDOM` can support uniform chiplet-router destinations for `DEFT_2_5D`, while existing `TRAFFIC_LOCAL` is WiNoC hub-local and not suitable for chiplet-local traffic. Existing `TRAFFIC_TABLE_BASED` is suitable for deterministic localized and hotspot profiles without adding a new C++ traffic mode.
+- T0019 added `external/noxim/config_examples/deft_2_5d_traffic_uniform.yaml`, `external/noxim/config_examples/deft_2_5d_traffic_localized_40.yaml`, `external/noxim/config_examples/deft_2_5d_traffic_localized_40.txt`, `external/noxim/config_examples/deft_2_5d_traffic_hotspot_3x10.yaml`, and `external/noxim/config_examples/deft_2_5d_traffic_hotspot_3x10.txt`.
+- The localized traffic table has 4032 rows, excludes self-traffic, assigns each source total PIR approximately `0.01`, and splits that source probability as `0.004` same-chiplet and `0.006` other-chiplet.
+- The hotspot traffic table has 4032 rows, excludes self-traffic, uses hotspot routers `9`, `13`, and `41`, assigns each hotspot destination PIR `0.001` from non-hotspot sources, and keeps each source total PIR approximately `0.01`.
 - The first WSL smoke attempts inside the sandbox failed because no WSL distribution was visible in the sandboxed environment; the same commands succeeded outside the sandbox with approval.
+- The approved WSL uniform traffic smoke completed with exit code `0`, loaded `deft_2_5d_traffic_uniform.yaml`, kept the DeFT LUT disabled, reported active fault mask `0x0000`, and completed the 20-cycle smoke with zero delivered packets/flits. This confirms configuration loading only and is not a performance result.
+- The approved WSL localized traffic smoke completed with exit code `0`, loaded `deft_2_5d_traffic_localized_40.yaml` and its table, kept the DeFT LUT disabled, reported active fault mask `0x0000`, and delivered 2 packets / 11 flits in the 20-cycle smoke. This is a config-loading smoke only.
+- The approved WSL hotspot traffic smoke completed with exit code `0`, loaded `deft_2_5d_traffic_hotspot_3x10.yaml` and its table, kept the DeFT LUT disabled, reported active fault mask `0x0000`, and delivered 1 packet / 2 flits in the 20-cycle smoke. This is a config-loading smoke only.
 - `git diff --check` in the parent repository completed with exit code `0`.
 - `git -c safe.directory=C:/Projects/CMP-720-Project-Proposal/external/noxim -C external/noxim diff --check` completed with exit code `0`.
-- A trailing-whitespace check over the two new untracked XY baseline config files returned no matches.
+- A trailing-whitespace check over the new T0019 config and table files returned no matches.
 - No `./build.sh` run was required because no build-integrated C++/SystemC source changed.
-- ADR-0029 records the durable decision to configure XY baselines with explicit YAML modes.
-- Assumption: T0018 is configuration-only; packet-carrying XY-vs-DEFT comparison remains a future synthetic traffic and experiment task.
-- Blocked: Synthetic traffic configurations, packet-carrying inter-chiplet validation, physical-vs-directional experiment percentage accounting, experiment automation, and metrics remain future work.
-- No C++/SystemC source, routing logic, metrics, experiment automation, golden regression output updates, T0016 generator format, or T0017 runtime LUT schema/use path was changed.
+- ADR-0030 records the durable decision to use existing Noxim traffic surfaces and deterministic traffic tables for T0019.
+- Assumption: T0019 interprets hotspot "10% rate on each" as per-hotspot destination share, matching existing Noxim hotspot percentage semantics and the original DeFT paper wording.
+- Assumption: Hotspot routers `9`, `13`, and `41` are deterministic near-center routers in three different chiplets because the source documents do not specify hotspot node IDs.
+- Blocked: Packet-carrying DeFT-vs-XY validation, traffic-profile-specific LUT generation, physical-vs-directional experiment percentage accounting, metrics extraction, experiment automation, and performance analysis remain future work.
+- No C++/SystemC source, routing logic, VN transition logic, VL fault injection, metrics, experiment automation, golden regression output updates, T0016 generator format, or T0017 runtime LUT schema/use path was changed.
 
 ## Important Changed Files
 
@@ -287,6 +292,20 @@ Files created or updated during `T0018` Configure XY Baseline Modes:
 - `docs/PROMPTS.md`
 - `docs/DECISIONS.md`
 
+Files created or updated during `T0019` Add Synthetic Traffic Configurations:
+
+- `external/noxim/config_examples/deft_2_5d_traffic_uniform.yaml`
+- `external/noxim/config_examples/deft_2_5d_traffic_localized_40.yaml`
+- `external/noxim/config_examples/deft_2_5d_traffic_localized_40.txt`
+- `external/noxim/config_examples/deft_2_5d_traffic_hotspot_3x10.yaml`
+- `external/noxim/config_examples/deft_2_5d_traffic_hotspot_3x10.txt`
+- `docs/ARCHITECTURE.md`
+- `docs/TASKS.md`
+- `docs/PROGRESS.md`
+- `docs/VALIDATION.md`
+- `docs/PROMPTS.md`
+- `docs/DECISIONS.md`
+
 Noxim build files LF-normalized during `T0003`:
 
 - `external/noxim/bin/Makefile`
@@ -380,7 +399,10 @@ External source tree registered during `T0023`:
 - Assumption: T0017 construction-only `DEFT_2_5D` runs may leave the LUT filename empty when no inter-chiplet packets are routed.
 - Assumption: T0018 uses explicit YAML configs, not new routing code, as the smallest safe XY baseline mode surface.
 - Assumption: The T0018 fault-injected XY baseline uses the current physical-model mask `[0,4,8,12]` / `0x1111`, with one faulty physical bidirectional VL per chiplet.
-- Assumption: T0018 baseline configs intentionally use the no-traffic hardcoded file until T0019 adds packet-carrying synthetic traffic configurations.
+- Assumption: T0019 uses existing Noxim traffic surfaces instead of adding a new C++ traffic mode.
+- Assumption: `TRAFFIC_LOCAL` is not suitable for the proposal localized profile because it is WiNoC hub-local rather than chiplet-local, and `DEFT_2_5D` rejects Winoc hub mode.
+- Assumption: T0019's hotspot "10% rate on each" means per-hotspot destination share of generated traffic, not a new global packet-injection-rate sweep.
+- Assumption: Hotspot routers `9`, `13`, and `41` are deterministic near-center routers in three different chiplets because the source documents do not specify hotspot IDs.
 
 ## Open Questions
 
@@ -390,17 +412,18 @@ External source tree registered during `T0023`:
 - Should final DeFT routing keep using `DIRECTION_HUB` as the physical Vertical Link carrier, or introduce explicit semantic Up/Down ports after the LUT design is complete?
 - Should a future `deft_vl_lut.v2` add `destination_router_id` for destination-router-granular entry VL optimization?
 - How should final traffic-profile-specific LUT generation encode non-uniform `T_inter_r` inputs?
+- Should final hotspot experiments keep hotspot routers `9`, `13`, and `41`, or should an explicit source-document or instructor-provided hotspot-node set replace them?
 - Why did Git fail to create task branch refs in the current Windows worktree? This is no longer operationally important because user instruction now forbids automatic task branch creation.
 - Should future validation add a documented packet-carrying hardcoded inter-chiplet DeFT smoke once the allowed smoke command and expected behavior are designed?
 
 ## Next Recommended Task
 
-Start `T0019` and add synthetic traffic configurations.
+Start `T0020` and add metrics collection.
 
 ## Next Ready-to-Send Prompt
 
 ```text
-Start task T0019: Add Synthetic Traffic Configurations.
+Start task T0020: Add Metrics Collection.
 
 Before starting, read AGENTS.md, docs/PROGRESS.md, docs/TASKS.md, docs/ROADMAP.md, docs/ARCHITECTURE.md, docs/VALIDATION.md, docs/DECISIONS.md, and docs/PROMPTS.md.
 
@@ -412,17 +435,17 @@ external/noxim
 external/noxim is the Noxim submodule and modifiable project fork from:
 https://github.com/YusufTahirOrhan/noxim
 
-T0007 added selectable DEFT_2_5D topology construction and the DeftTopology mapping helper. T0008 centralized the physical Vertical Link model and functional state. T0009 added the derived boundary-router inventory. T0010 added startup-time permanent physical VL fault injection. T0011 added focused explicit/generated fault-mask validation and inspectability against the current 16 physical bidirectional VL model. T0012 mapped DeFT VN state directly onto Noxim VC IDs. T0013 implemented VN assignment and output-VC-aware reservation/forwarding. T0014 added DeFT-only VN transition-restriction filtering without packet/flit movement-history metadata. T0015 designed the offline VL LUT format. T0016 added the standalone deterministic deft_vl_lut.v1 generator. T0017 added runtime LUT loading, deft_vl_lut_filename / -deft_vl_lut, and registered routing algorithm DEFT. T0018 added explicit XY baseline configs for fault-free and fault-injected DEFT_2_5D modes without changing source code.
+T0007 added selectable DEFT_2_5D topology construction and the DeftTopology mapping helper. T0008 centralized the physical Vertical Link model and functional state. T0009 added the derived boundary-router inventory. T0010 added startup-time permanent physical VL fault injection. T0011 added focused explicit/generated fault-mask validation and inspectability against the current 16 physical bidirectional VL model. T0012 mapped DeFT VN state directly onto Noxim VC IDs. T0013 implemented VN assignment and output-VC-aware reservation/forwarding. T0014 added DeFT-only VN transition-restriction filtering without packet/flit movement-history metadata. T0015 designed the offline VL LUT format. T0016 added the standalone deterministic deft_vl_lut.v1 generator. T0017 added runtime LUT loading, deft_vl_lut_filename / -deft_vl_lut, and registered routing algorithm DEFT. T0018 added explicit XY baseline configs for fault-free and fault-injected DEFT_2_5D modes without changing source code. T0019 added uniform, localized-40%, and hotspot-3x10 synthetic traffic configs/tables using existing Noxim traffic surfaces.
 
-Goal: add the smallest safe synthetic traffic configuration support needed for later XY-vs-DeFT comparison on the same project topology. Focus on selecting or configuring the proposal-required synthetic traffic shapes: uniform, localized with 40% intra-chiplet traffic, and hotspot with 3 hotspot nodes at 10% injection rate. Keep the work independent from experiment runners, result sweeps, metrics extraction, final analysis, golden regression output updates, and performance experiments.
+Goal: add the smallest safe metrics collection support needed for later XY-vs-DeFT comparison. Focus on reachability, average latency, and network throughput in a machine-readable form that can be compared across routing modes and traffic profiles. Keep the work independent from full experiment runners, result sweeps, final analysis, golden regression output updates, and performance experiments.
 
-Use existing Noxim traffic-generation surfaces where possible. Do not change DeFT routing, VN transition logic, VL fault injection, T0016 generator format, or T0017 runtime LUT schema/use path unless source inspection proves a narrow compatibility fix is required. If a new traffic mode is required for DEFT_2_5D, keep it narrowly scoped and document why before editing.
+Use existing Noxim statistics surfaces where possible. Do not change DeFT routing, VN transition logic, VL fault injection, T0016 generator format, T0017 runtime LUT schema/use path, or T0019 traffic profile semantics unless source inspection proves a narrow compatibility fix is required. If new metric fields or export options are required, keep them narrowly scoped and document why before editing.
 
 Use `Extended_Proposal.pdf` as the primary project requirements source and the original DeFT paper at `docs/references/DeFT_A_Deadlock-Free_and_Fault-Tolerant_Routing_Algorithm_for_2.5D_Chiplet_Networks.pdf` as the primary algorithmic reference. Use `Proposal.pdf` only as initial context. Ignore the peer evaluation document completely.
 
-Before coding, produce a short implementation plan. Work only on the selected synthetic traffic configuration task. Do not modify unrelated files. Clearly mark assumptions as `Assumption` and blockers as `Blocked`.
+Before coding, produce a short implementation plan. Work only on the selected metrics collection task. Do not modify unrelated files. Clearly mark assumptions as `Assumption` and blockers as `Blocked`.
 
-Use only known validation commands. If build-integrated Noxim C++ changes are made, use the documented ./build.sh from external/noxim in WSL Ubuntu and run only documented smoke invocations that remain valid. For config-only changes, validate with repository/submodule status and the smallest known simulator smoke shape needed to confirm configuration loading. Do not invent experiment commands. Do not use ./regression.sh --update.
+Use only known validation commands. If build-integrated Noxim C++ changes are made, use the documented ./build.sh from external/noxim in WSL Ubuntu and run only documented smoke invocations that remain valid. Do not invent experiment commands. Do not use ./regression.sh --update.
 
 Update docs/ARCHITECTURE.md, docs/TASKS.md, docs/PROGRESS.md, docs/VALIDATION.md, and docs/PROMPTS.md with the result. If a durable implementation decision becomes clear, update docs/DECISIONS.md too.
 
@@ -449,5 +472,5 @@ None; continue on the existing branch.
 ## Suggested Commit Message
 
 ```text
-chore: configure XY baseline modes
+chore: add synthetic traffic configurations
 ```

@@ -184,13 +184,13 @@ Statuses: `TODO`, `IN_PROGRESS`, `DONE`, `BLOCKED`.
 
 ## T0019: Add Synthetic Traffic Configurations
 
-- **Status:** TODO
+- **Status:** DONE
 - **Objective:** Support uniform, localized, and hotspot synthetic traffic models.
 - **Relevant roadmap phase:** Phase 8
-- **Files likely to change:** To be confirmed after Noxim source inspection
+- **Files changed:** `external/noxim/config_examples/deft_2_5d_traffic_uniform.yaml`, `external/noxim/config_examples/deft_2_5d_traffic_localized_40.yaml`, `external/noxim/config_examples/deft_2_5d_traffic_localized_40.txt`, `external/noxim/config_examples/deft_2_5d_traffic_hotspot_3x10.yaml`, `external/noxim/config_examples/deft_2_5d_traffic_hotspot_3x10.txt`, `docs/ARCHITECTURE.md`, `docs/TASKS.md`, `docs/PROGRESS.md`, `docs/VALIDATION.md`, `docs/PROMPTS.md`, and `docs/DECISIONS.md`
 - **Acceptance criteria:** Traffic models match proposal definitions.
-- **Validation command:** To be confirmed after repository inspection
-- **Notes:** Localized traffic keeps 40% traffic intra-chiplet; hotspot uses 3 hotspot nodes with 10% injection rate.
+- **Validation command:** Table integrity checks plus config-load smokes from `external/noxim/bin` in WSL Ubuntu for the three new synthetic traffic config files, preserving the documented simulator invocation shape with `LD_LIBRARY_PATH`, `-seed 0`, `-sim 20`, and `-warmup 0`; parent and submodule diff whitespace/status checks.
+- **Notes:** Completed on 2026-05-08. Added a uniform config using existing `TRAFFIC_RANDOM`, plus localized and hotspot configs using existing `TRAFFIC_TABLE_BASED` and deterministic traffic tables. The localized table assigns each source total PIR `0.01` with 40% same-chiplet and 60% other-chiplet destination probability. The hotspot table uses hotspot routers `9`, `13`, and `41`, assigns each hotspot a 10% destination share for non-hotspot sources, redistributes self-hotspot probability to background destinations, and keeps each source total PIR at `0.01`. Assumption: hotspot "10% rate on each" is interpreted as per-hotspot destination share, consistent with Noxim hotspot percentage semantics and the original DeFT paper wording. No C++/SystemC source, routing logic, VN transition logic, VL fault injection, generator format, runtime LUT schema/use path, experiment automation, metrics, performance experiment, or golden regression output was changed.
 
 ## T0020: Add Metrics Collection
 
