@@ -34,8 +34,9 @@ Phase 9 - Final Analysis and Report Support
 - `T0026` - Run Final Sweep Matrix.
 - `T0027` - Review Final Sweep Results for Report Support.
 - `T0028` - Draft Claim-Safe Final Report Results Text.
+- `T0029` - Assemble Claim-Safe Final Report Draft.
 
-DeFT VN assignment behavior, the first VN movement-transition restriction enforcement layer, the offline VL LUT schema/generator, the runtime schema-v1 LUT loading/use path, explicit XY fault-free/fault-injected baseline configuration modes, proposal-required synthetic traffic configuration profiles, machine-readable metrics export, tiny experiment-runner launch support, final-analysis scaffolding, the final sweep policy, the validated T0026 150-run final sweep output set, T0027 blank-aware report-support tables, and T0028 claim-safe final report results draft now exist for `DEFT_2_5D`. Performance claims remain limited to descriptive, blank-aware report support only.
+DeFT VN assignment behavior, the first VN movement-transition restriction enforcement layer, the offline VL LUT schema/generator, the runtime schema-v1 LUT loading/use path, explicit XY fault-free/fault-injected baseline configuration modes, proposal-required synthetic traffic configuration profiles, machine-readable metrics export, tiny experiment-runner launch support, final-analysis scaffolding, the final sweep policy, the validated T0026 150-run final sweep output set, T0027 blank-aware report-support tables, T0028 claim-safe final report results draft, and T0029 tracked claim-safe Markdown report draft now exist for `DEFT_2_5D`. Performance claims remain limited to descriptive, blank-aware report support only.
 
 ## In-Progress Tasks
 
@@ -47,30 +48,27 @@ DeFT VN assignment behavior, the first VN movement-transition restriction enforc
 
 ## Last Validation Result
 
-- T0028 Draft Claim-Safe Final Report Results Text completed on 2026-05-09.
+- T0029 Assemble Claim-Safe Final Report Draft completed on 2026-05-09.
 - Required startup reading was completed before task work: `AGENTS.md`, `docs/PROGRESS.md`, `docs/TASKS.md`, `docs/ROADMAP.md`, `docs/ARCHITECTURE.md`, `docs/VALIDATION.md`, `docs/DECISIONS.md`, and `docs/PROMPTS.md`.
-- Before running commands or documentation edits, a short implementation plan was produced.
+- Before documentation edits, a short implementation plan was produced.
 - Initial parent status showed branch `feat/map-noxim-extension-points...origin/feat/map-noxim-extension-points` with no local file modifications.
 - Initial `external/noxim` status showed branch `feat/baseline-noxim...origin/feat/baseline-noxim` with no local file modifications.
 - Required source-document paths were present: `Extended_Proposal.pdf`, `Proposal.pdf`, and `docs/references/DeFT_A_Deadlock-Free_and_Fault-Tolerant_Routing_Algorithm_for_2.5D_Chiplet_Networks.pdf`.
-- T0028 used the existing generated T0027 report-support artifacts and T0026 raw/analysis outputs only; no simulations were rerun.
-- T0028 created ignored report-draft artifacts under `external/noxim/other/generated/t0028_final_report_results_v1/`: `manifest.json` and `report_results_draft.md`.
-- The T0028 draft converts the T0027 coverage, condition, pair-readiness, zero-injection, and limitation notes into final-report-ready descriptive prose and Markdown tables.
-- T0027 manifest counts were spot-checked before drafting: 150 raw stats rows, 30 condition cells, 15 XY/DEFT pair rows, 54 zero-injection runs, 5 empty-injection condition cells, 13 partial-injection condition cells, 12 complete-injection condition cells, and zero cross-check mismatches.
-- T0027 CSV spot checks confirmed 12 complete-injection cells, 13 partial-injection cells, 5 empty-injection cells, 5 `not_comparison_ready_xy_empty` pair rows, 10 `descriptive_reachability_only_latency_blank` pair rows, and the zero-injection grouping by routing/traffic.
-- The draft preserves blank reachability when no packets were injected, blank latency when no packets were received, and nonempty/empty seed counts for partial cells.
-- The draft makes no improvement, delta, statistical-significance, latency-comparison, 100% reachability, or unsupported performance claim and keeps `claims_allowed: false`.
+- Read-only PDF snippet checks confirmed the extended proposal's Noxim, synthetic traffic, permanent VL fault, reachability, latency, and throughput scope, and the original DeFT paper's VN, two-VC, VL-selection, and 2.5D routing context.
+- Created the tracked Markdown report draft `docs/FINAL_REPORT_DRAFT.md`.
+- The draft uses T0028 results prose and tables as the results-section source and preserves blank reachability, blank latency, nonempty/empty seed counts, zero-injection notes, validation provenance, assumptions, blockers, and limitations.
+- Spot checks against T0028/T0027 confirmed 150 completed runs, 30 condition rows, 15 pair rows, 54 zero-injection runs, 12 complete-injection cells, 13 partial-injection cells, 5 empty-injection cells, and zero cross-check mismatches.
+- Claim-safety search found no complete-reachability wording, no non-ASCII characters, and no obvious ranking or latency-claim phrases in `docs/FINAL_REPORT_DRAFT.md`.
 - No Noxim rebuild, final-sweep rerun, simulator source change, helper source change, routing behavior change, VN transition change, VL fault-injection change, traffic semantic change, metrics semantic change, runner/analysis semantic change, golden output update, regression command, `./regression.sh --update`, or performance claim was performed.
 - `git diff --check` in the parent repository completed with exit code `0`; Git reported line-ending conversion warnings for edited Markdown files only.
 - `git -c safe.directory=C:/Projects/CMP-720-Project-Proposal/external/noxim -C external/noxim diff --check` completed with exit code `0`.
-- Final parent status after documentation updates showed only the requested tracking docs modified: `docs/ARCHITECTURE.md`, `docs/DECISIONS.md`, `docs/PROGRESS.md`, `docs/PROMPTS.md`, `docs/TASKS.md`, and `docs/VALIDATION.md`.
+- Final parent status after documentation updates showed only the requested tracking docs modified plus the new tracked report draft: `docs/ARCHITECTURE.md`, `docs/DECISIONS.md`, `docs/FINAL_REPORT_DRAFT.md`, `docs/PROGRESS.md`, `docs/PROMPTS.md`, `docs/TASKS.md`, and `docs/VALIDATION.md`.
 - Final `external/noxim` status remained clean.
-- ADR-0037 records the durable decision to treat T0028 results prose as claim-safe descriptive draft text.
-- Assumption: T0028 prose is report-ready support text, not a new interpretation of empty cells.
-- Assumption: T0028 continues to treat zero-injection rows as completed measured-window rows, not failed runs.
-- Assumption: T0028 keeps aggregate reachability blank when no packets were injected and latency blank when no packets were received.
+- ADR-0038 records the durable decision to use `docs/FINAL_REPORT_DRAFT.md` as the tracked claim-safe Markdown report draft.
+- Assumption: `docs/FINAL_REPORT_DRAFT.md` is a claim-safe manuscript draft, not a new result-analysis layer.
+- Assumption: T0029 keeps aggregate reachability blank when no packets were injected and latency blank when no packets were received.
 - Blocked: Empty or partial injection cells cannot support unqualified performance claims.
-- Blocked: Stronger claims, non-empty XY hotspot cells, latency comparisons, the original paper's single-direction 3.125% fault case, and eventual-delivery reachability after a drain phase require a separate documented validation or rerun policy.
+- Blocked: Submission formatting, real-application trace coverage, stronger claims, non-empty XY hotspot cells, latency comparisons, the original paper's single-direction 3.125% fault case, and eventual-delivery reachability after a drain phase require separate follow-up tasks.
 
 ## Important Changed Files
 
@@ -411,6 +409,16 @@ Ignored generated files created during `T0028`:
 - `external/noxim/other/generated/t0028_final_report_results_v1/manifest.json`
 - `external/noxim/other/generated/t0028_final_report_results_v1/report_results_draft.md`
 
+Files created or updated during `T0029` Assemble Claim-Safe Final Report Draft:
+
+- `docs/FINAL_REPORT_DRAFT.md`
+- `docs/ARCHITECTURE.md`
+- `docs/TASKS.md`
+- `docs/PROGRESS.md`
+- `docs/VALIDATION.md`
+- `docs/PROMPTS.md`
+- `docs/DECISIONS.md`
+
 Noxim build files LF-normalized during `T0003`:
 
 - `external/noxim/bin/Makefile`
@@ -523,6 +531,7 @@ External source tree registered during `T0023`:
 - Assumption: T0027 condition-level aggregate reachability is defined as `total_received_packets / total_injected_packets` and is blank when no packets were injected.
 - Assumption: T0027 condition-level aggregate latency is received-packet-weighted and is blank when no packets were received.
 - Assumption: T0028 final report results prose is claim-safe descriptive support text and must be integrated only with its blank cells, partial-cell coverage counts, and limitations intact.
+- Assumption: `docs/FINAL_REPORT_DRAFT.md` is the tracked claim-safe Markdown manuscript draft assembled from the source documents, project documentation, and T0028/T0027/T0026 artifacts.
 
 ## Open Questions
 
@@ -536,17 +545,17 @@ External source tree registered during `T0023`:
 - Should future validation add a documented packet-carrying hardcoded inter-chiplet DeFT smoke once the allowed smoke command and expected behavior are designed?
 - Should a future implementation add directional endpoint fault modeling for the original paper's single-direction 3.125% fault case?
 - Should a future helper add source cut-off and post-injection drain support for eventual-delivery reachability checks?
-- Where should the T0028 claim-safe results draft be integrated for final delivery: a new Markdown report draft, an existing report manuscript, or a presentation/report appendix?
+- Should the final report draft be converted to PDF, DOCX, PPTX, or another submission format?
 - Should the final analysis scaffold blocker text be updated in a future task to reflect the T0025 policy resolutions while still keeping `claims_allowed: false` until report prose is reviewed?
 
 ## Next Recommended Task
 
-Start `T0029` and assemble a claim-safe final report draft using the T0028 results text and the existing project documentation.
+Start `T0030` and review `docs/FINAL_REPORT_DRAFT.md` for submission readiness while preserving claim-safety constraints.
 
 ## Next Ready-to-Send Prompt
 
 ```text
-Start task T0029: Assemble Claim-Safe Final Report Draft.
+Start task T0030: Review Final Report Draft for Submission Readiness.
 
 Before starting, read AGENTS.md, docs/PROGRESS.md, docs/TASKS.md, docs/ROADMAP.md, docs/ARCHITECTURE.md, docs/VALIDATION.md, docs/DECISIONS.md, and docs/PROMPTS.md.
 
@@ -555,27 +564,20 @@ Continue on the existing Git branch. Do not create or switch task branches.
 Use the registered Noxim source tree at:
 external/noxim
 
-external/noxim is the Noxim submodule and modifiable project fork from:
-https://github.com/YusufTahirOrhan/noxim
+Use the tracked claim-safe report draft at:
+docs/FINAL_REPORT_DRAFT.md
 
-T0028 drafted claim-safe final report results text and tables from these artifacts:
+T0029 assembled this Markdown report draft from `Extended_Proposal.pdf`, the original DeFT paper at `docs/references/DeFT_A_Deadlock-Free_and_Fault-Tolerant_Routing_Algorithm_for_2.5D_Chiplet_Networks.pdf`, existing project documentation, and the T0028/T0027/T0026 generated report-support artifacts.
 
-- final sweep output: `external/noxim/other/generated/t0026_final_sweep_v1`
-- final analysis output: `external/noxim/other/generated/t0026_final_analysis_v1`
-- final report-support output: `external/noxim/other/generated/t0027_report_support_v1`
-- final report results draft output: `external/noxim/other/generated/t0028_final_report_results_v1`
+Goal: review and polish `docs/FINAL_REPORT_DRAFT.md` for final-delivery structure, citation wording, table readability, and submission readiness. Preserve all claim-safety constraints, blank cells, partial-cell coverage counts, validation provenance, assumptions, blockers, and limitations.
 
-The T0028 draft preserves T0027's 150 raw stats rows, 30 condition cells, 15 XY/DEFT pair rows, 54 individual zero-injection runs, 5 empty-injection condition cells, 13 partial-injection condition cells, 12 complete-injection condition cells, and zero cross-check mismatches. It keeps `claims_allowed: false`, leaves reachability blank when no packets were injected, and leaves latency blank when no packets were received.
+Do not fabricate results or performance claims. Do not add deltas, rankings, inferential claims, latency comparisons, complete-reachability wording, or unsupported result language. Do not change DeFT routing, VN transition logic, VL fault injection, T0016 generator format, T0017 runtime LUT schema/use path, T0019 traffic profile semantics, T0020 metrics semantics, T0021 runner semantics, or T0022 analysis semantics. Do not use `./regression.sh --update`.
 
-Goal: assemble a claim-safe final report draft from the existing project documentation, source-of-truth references, and T0028 report-results draft. Preserve assumptions, blockers, blank cells, partial-cell coverage counts, validation provenance, and limitations. Do not add unsupported performance claims, improvement claims, statistical-significance claims, latency comparisons, or 100% reachability wording.
+Use `Extended_Proposal.pdf` as the primary project requirements source and the original DeFT paper as the primary algorithmic reference. Use `Proposal.pdf` only as initial context. Ignore the peer evaluation document completely.
 
-Do not fabricate results or performance claims. Do not change DeFT routing, VN transition logic, VL fault injection, T0016 generator format, T0017 runtime LUT schema/use path, T0019 traffic profile semantics, T0020 metrics semantics, T0021 runner semantics, or T0022 analysis semantics unless source inspection proves a narrow compatibility fix is required. Do not use `./regression.sh --update`.
+Before running commands or documentation edits, produce a short implementation plan. Work only on the selected final-report review task. Do not modify unrelated files. Clearly mark assumptions as `Assumption` and blockers as `Blocked`.
 
-Use `Extended_Proposal.pdf` as the primary project requirements source and the original DeFT paper at `docs/references/DeFT_A_Deadlock-Free_and_Fault-Tolerant_Routing_Algorithm_for_2.5D_Chiplet_Networks.pdf` as the primary algorithmic reference. Use `Proposal.pdf` only as initial context. Ignore the peer evaluation document completely.
-
-Before running commands or documentation edits, produce a short implementation plan. Work only on the selected final-report assembly task. Do not modify unrelated files. Clearly mark assumptions as `Assumption` and blockers as `Blocked`.
-
-Use only known validation commands. If no simulator source changes are made, do not rebuild Noxim or rerun simulations. Use `external/noxim/other/generated/t0028_final_report_results_v1/report_results_draft.md` as the results section source and cross-check any cited measured value against T0027/T0026 artifacts before recording it.
+Use only known validation commands. If no simulator source changes are made, do not rebuild Noxim or rerun simulations. If the final submission format must be PDF, DOCX, PPTX, or another artifact, record the requested format and validation method before conversion.
 
 Update docs/ARCHITECTURE.md, docs/TASKS.md, docs/PROGRESS.md, docs/VALIDATION.md, and docs/PROMPTS.md with the result. If a durable implementation or experiment decision becomes clear, update docs/DECISIONS.md too.
 
@@ -602,5 +604,5 @@ None; continue on the existing branch.
 ## Suggested Commit Message
 
 ```text
-docs: draft claim-safe final report results
+docs: assemble claim-safe final report draft
 ```

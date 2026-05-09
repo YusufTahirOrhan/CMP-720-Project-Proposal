@@ -1174,6 +1174,44 @@ Expected future checks:
 - Integrate `external/noxim/other/generated/t0028_final_report_results_v1/report_results_draft.md` into the final report only with its blank cells and limitations intact.
 - If the final report requires stronger claims, non-empty XY hotspot cells, or latency comparisons, define a separate validation/rerun policy before changing the report language.
 
+## Claim-Safe Final Report Draft Assembly Validation
+
+Purpose:
+
+- Assemble a tracked Markdown final report draft from the source documents, project documentation, and T0028/T0027/T0026 report-support artifacts.
+- Preserve blank cells, partial-cell coverage counts, zero-injection notes, validation provenance, assumptions, blockers, and limitations.
+- Confirm the assembled report draft does not introduce unsupported result language.
+
+Known validation:
+
+- Use `docs/FINAL_REPORT_DRAFT.md` as the tracked report draft.
+- Use `external/noxim/other/generated/t0028_final_report_results_v1/report_results_draft.md` as the source for results prose and tables.
+- Use `external/noxim/other/generated/t0027_report_support_v1/` and T0026 generated artifacts for spot checks.
+- If no simulator source changes are made, do not rebuild Noxim and do not rerun the final sweep.
+
+T0029 result on 2026-05-09:
+
+- Required startup reading was completed before task work: `AGENTS.md`, `docs/PROGRESS.md`, `docs/TASKS.md`, `docs/ROADMAP.md`, `docs/ARCHITECTURE.md`, `docs/VALIDATION.md`, `docs/DECISIONS.md`, and `docs/PROMPTS.md`.
+- Before documentation edits, a short implementation plan was produced.
+- Initial parent status showed branch `feat/map-noxim-extension-points...origin/feat/map-noxim-extension-points` with no local file modifications.
+- Initial submodule status showed branch `feat/baseline-noxim...origin/feat/baseline-noxim` with no local file modifications.
+- Required source-document paths were present: `Extended_Proposal.pdf`, `Proposal.pdf`, and `docs/references/DeFT_A_Deadlock-Free_and_Fault-Tolerant_Routing_Algorithm_for_2.5D_Chiplet_Networks.pdf`.
+- Read-only PDF snippet checks confirmed the extended proposal's Noxim, synthetic traffic, permanent VL fault, reachability, latency, and throughput scope, and the original DeFT paper's VN, two-VC, VL-selection, and 2.5D routing context.
+- Created the tracked draft `docs/FINAL_REPORT_DRAFT.md`.
+- The draft uses T0028 results prose and tables as the results-section source and preserves blank reachability, blank latency, nonempty/empty seed counts, zero-injection notes, and limitations.
+- Spot checks against T0028/T0027 confirmed 150 completed runs, 30 condition rows, 15 pair rows, 54 zero-injection runs, 12 complete-injection cells, 13 partial-injection cells, 5 empty-injection cells, and zero cross-check mismatches.
+- Claim-safety search found no complete-reachability wording, no non-ASCII characters, and no obvious ranking or latency-claim phrases in `docs/FINAL_REPORT_DRAFT.md`.
+- No Noxim rebuild, final-sweep rerun, simulator source change, helper source change, routing behavior change, VN transition change, VL fault-injection change, traffic semantic change, metrics semantic change, runner/analysis semantic change, golden output update, regression command, `./regression.sh --update`, or performance claim was performed.
+- `git diff --check` in the parent repository completed with exit code `0`; Git reported line-ending conversion warnings for edited Markdown files only.
+- `git -c safe.directory=C:/Projects/CMP-720-Project-Proposal/external/noxim -C external/noxim diff --check` completed with exit code `0`.
+- Final parent status after documentation updates showed only the requested tracking docs modified plus the new tracked report draft: `docs/ARCHITECTURE.md`, `docs/DECISIONS.md`, `docs/FINAL_REPORT_DRAFT.md`, `docs/PROGRESS.md`, `docs/PROMPTS.md`, `docs/TASKS.md`, and `docs/VALIDATION.md`.
+- Final `external/noxim` status remained clean.
+
+Expected future checks:
+
+- Review `docs/FINAL_REPORT_DRAFT.md` for final submission formatting and citation style while preserving its claim-safety constraints.
+- If a PDF, DOCX, or presentation artifact is required, record the requested output format and validate the rendered artifact separately.
+
 ## Metrics Validation
 
 Purpose:

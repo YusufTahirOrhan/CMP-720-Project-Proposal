@@ -1056,6 +1056,27 @@ Assumption: T0028 text is report-ready descriptive support, not a new analysis l
 
 Blocked: Stronger claims, non-empty XY hotspot cells, latency comparisons, the original paper's single-direction 3.125% fault case, and eventual-delivery reachability after a drain phase still require separate documented validation or rerun policy.
 
+## T0029 Claim-Safe Final Report Draft Assembly
+
+`T0029` assembled the tracked Markdown final report draft at `docs/FINAL_REPORT_DRAFT.md`. It uses `Extended_Proposal.pdf` as the primary requirements source, the original DeFT paper as the primary algorithmic reference, `Proposal.pdf` as initial context, project documentation for implementation traceability, and the T0028/T0027/T0026 artifacts for results text and validation provenance.
+
+Report draft structure:
+
+- Claim safety notice and source scope.
+- Abstract, introduction, background, implementation summary, evaluation method, validation provenance, results, limitations, conclusion, and references.
+- T0028-derived artifact readiness, coverage, condition-level descriptive metrics, pair-readiness, and zero-injection summary tables.
+
+The draft preserves the T0027/T0028 interpretation rules:
+
+- Blank reachability means no injected-packet denominator exists in that measured cell.
+- Blank latency means no received-packet delay samples exist in that measured cell.
+- Partial cells must keep nonempty and empty seed counts beside descriptive metrics.
+- The final report draft uses `claims_allowed: false` result language and does not add deltas, ranking, latency comparison, inferential claims, or complete-reachability language.
+
+Assumption: `docs/FINAL_REPORT_DRAFT.md` is the current tracked claim-safe manuscript draft, not a new result-analysis layer.
+
+Blocked: Submission formatting, real-application PARSEC/GEM5 trace coverage, non-empty XY hotspot measurements, latency comparisons, single-direction fault modeling, and eventual-delivery checks require separate documented follow-up tasks before they can change the report claims.
+
 ## Synthetic Traffic Models
 
 Implemented configuration support:
@@ -1106,6 +1127,7 @@ Planned and partially implemented:
 - Implemented in T0026: The T0025 150-run final matrix completed with return code `0` for every run, final analysis artifacts were regenerated with the final-sweep label, and generated tables were cross-checked against the raw manifest and JSON stats before any report claim.
 - Implemented in T0027: Blank-aware report-support tables classify complete, partial, and empty measured cells; preserve the 54 zero-injection runs; and avoid pairwise improvement or latency claims where the measured denominators are absent.
 - Implemented in T0028: Claim-safe final report results prose and Markdown tables were drafted from T0027/T0026 artifacts while preserving blank cells, partial-cell coverage counts, and `claims_allowed: false`.
+- Implemented in T0029: A tracked claim-safe Markdown final report draft was assembled at `docs/FINAL_REPORT_DRAFT.md` from the source documents, project documentation, and T0028/T0027/T0026 report-support artifacts.
 
 ## Noxim Extension Point Map
 

@@ -264,13 +264,23 @@ Statuses: `TODO`, `IN_PROGRESS`, `DONE`, `BLOCKED`.
 
 ## T0029: Assemble Claim-Safe Final Report Draft
 
-- **Status:** TODO
+- **Status:** DONE
 - **Objective:** Integrate the claim-safe T0028 results prose and existing project context into a final report draft without adding unsupported claims.
 - **Relevant roadmap phase:** Phase 9
-- **Files likely to change:** A final report draft file, `docs/ARCHITECTURE.md`, `docs/TASKS.md`, `docs/PROGRESS.md`, `docs/VALIDATION.md`, `docs/PROMPTS.md`, and possibly `docs/DECISIONS.md`.
-- **Acceptance criteria:** The report draft uses `Extended_Proposal.pdf`, the original DeFT paper, and T0028/T0027/T0026 artifacts; it preserves assumptions and blockers; it does not claim improvement, statistical significance, latency comparison, or 100% reachability unless directly supported by cross-checked artifacts.
+- **Files changed:** `docs/FINAL_REPORT_DRAFT.md`, `docs/ARCHITECTURE.md`, `docs/TASKS.md`, `docs/PROGRESS.md`, `docs/VALIDATION.md`, `docs/PROMPTS.md`, and `docs/DECISIONS.md`.
+- **Acceptance criteria:** The report draft uses `Extended_Proposal.pdf`, the original DeFT paper, and T0028/T0027/T0026 artifacts; it preserves assumptions and blockers; it does not claim improvement, statistical significance, latency comparison, or complete reachability.
 - **Validation command:** Documentation/status validation and spot checks against `external/noxim/other/generated/t0028_final_report_results_v1/report_results_draft.md`, `external/noxim/other/generated/t0027_report_support_v1/`, and T0026 raw artifacts. If no simulator source changes are made, do not rebuild Noxim or rerun the sweep.
-- **Notes:** This task should assemble report text, not change simulator behavior or reinterpret results. If final report requirements demand stronger claims or missing cells, define a separate validation/rerun policy before changing the report language.
+- **Notes:** Completed on 2026-05-09. Created the tracked Markdown report draft `docs/FINAL_REPORT_DRAFT.md`, assembled from `Extended_Proposal.pdf`, the original DeFT paper, existing project documentation, and the T0028 results draft. The draft preserves T0027/T0028 blank cells, partial-cell coverage counts, zero-injection notes, validation provenance, and limitations. It does not rerun simulations, rebuild Noxim, change simulator/helper/source behavior, or add unsupported performance language. Assumption: the Markdown draft is a claim-safe manuscript draft, not a new analysis layer. Blocked: submission-format polish, real-application trace coverage, stronger claims, non-empty XY hotspot cells, latency comparisons, single-direction fault cases, and eventual-delivery checks require separate follow-up tasks.
+
+## T0030: Review Final Report Draft for Submission Readiness
+
+- **Status:** TODO
+- **Objective:** Review `docs/FINAL_REPORT_DRAFT.md` for final-delivery structure, citation wording, formatting, and any instructor-specific submission requirements without changing the validated result claims.
+- **Relevant roadmap phase:** Phase 9
+- **Files likely to change:** `docs/FINAL_REPORT_DRAFT.md`, `docs/ARCHITECTURE.md`, `docs/TASKS.md`, `docs/PROGRESS.md`, `docs/VALIDATION.md`, `docs/PROMPTS.md`, and possibly a rendered report artifact if explicitly requested.
+- **Acceptance criteria:** The draft is polished for submission, claim-safety constraints remain intact, any required format conversion is traceable, and no unsupported result claims are introduced.
+- **Validation command:** Documentation/status validation and claim-safety checks against the final report draft. If no simulator source changes are made, do not rebuild Noxim or rerun simulations.
+- **Notes:** Continue on the existing branch. If final submission requires a PDF, DOCX, or presentation artifact, record the requested format before converting.
 
 ## T0023: Add or Register Noxim Source Tree
 

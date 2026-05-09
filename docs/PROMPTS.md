@@ -2060,3 +2060,14 @@ At the end, provide:
 - **Next ready-to-send prompt:** See `docs/PROGRESS.md`.
 - **Suggested branch name for next task:** None; continue on the existing branch.
 - **Suggested commit message:** `docs: draft claim-safe final report results`
+
+## 2026-05-09: Start T0029 Assemble Claim-Safe Final Report Draft
+
+- **Date:** 2026-05-09
+- **Prompt summary:** Assemble a claim-safe final report draft from the source documents, existing project documentation, and T0028/T0027/T0026 report-support artifacts without rerunning simulations or adding unsupported result language.
+- **Full prompt summary:** The user requested task `T0029`, required startup reading of all project tracking documents, required continuing on the existing branch, required using `external/noxim` and the generated T0026/T0027/T0028 artifacts, and required assembling a claim-safe final report draft. The prompt emphasized `Extended_Proposal.pdf` as the primary requirements source, the local original DeFT paper as the algorithmic reference, `Proposal.pdf` as initial context, and the peer evaluation document as out of scope. It also required preserving assumptions, blockers, blank cells, partial-cell coverage counts, validation provenance, and limitations; avoiding unsupported result language, latency comparisons, and complete-reachability wording; not rerunning simulations or rebuilding Noxim unless narrowly justified; not using `./regression.sh --update`; updating the tracking documents; and reporting created files, modified files, source-code status, validation, phase, next task, next prompt, branch guidance, commit message, and blockers.
+- **Result summary:** T0029 completed. Created `docs/FINAL_REPORT_DRAFT.md` as the tracked claim-safe Markdown final report draft. The draft assembles source scope, abstract, introduction, background, implementation summary, evaluation method, validation provenance, T0028-derived results tables, limitations, conclusion, and references. It preserves blank reachability, blank latency, partial-cell coverage counts, zero-injection notes, assumptions, blockers, and validation provenance. It does not rerun simulations, rebuild Noxim, change source/helper behavior, update golden outputs, or add unsupported performance language.
+- **Follow-up tasks:** Start `T0030` to review `docs/FINAL_REPORT_DRAFT.md` for submission readiness and optional format conversion if explicitly required.
+- **Next ready-to-send prompt:** See `docs/PROGRESS.md`.
+- **Suggested branch name for next task:** None; continue on the existing branch.
+- **Suggested commit message:** `docs: assemble claim-safe final report draft`

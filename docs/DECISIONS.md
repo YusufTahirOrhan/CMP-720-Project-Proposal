@@ -297,3 +297,11 @@ This document records project decisions that affect implementation, validation, 
 - **Context:** T0028 converted the T0027 report-support artifacts into final-report-ready results prose and Markdown tables. The T0027 manifest still records `claims_allowed: false`, and the data set contains empty and partial injection cells plus no XY/DEFT pair that supports latency comparison.
 - **Decision:** Use `external/noxim/other/generated/t0028_final_report_results_v1/report_results_draft.md` as claim-safe descriptive draft text only. The final report may reuse its prose and tables if it preserves blank reachability cells, blank latency cells, nonempty/empty seed counts, T0027 limitations, and the absence of deltas or improvement language.
 - **Consequences:** Final report assembly can proceed from the T0028 draft without rerunning simulations or reinterpreting empty cells. Any stronger result statement, non-empty XY hotspot measurement, statistical-significance statement, latency comparison, or 100% reachability wording requires a separate documented validation or rerun policy before it is added.
+
+## ADR-0038: Use `docs/FINAL_REPORT_DRAFT.md` as the Tracked Claim-Safe Report Draft
+
+- **Date:** 2026-05-09
+- **Status:** Accepted
+- **Context:** T0029 assembled the final report draft from `Extended_Proposal.pdf`, the original DeFT paper, existing project documentation, and the T0028/T0027/T0026 generated report-support artifacts. The report needs a tracked repository location that future tasks can review or convert without treating generated artifacts as manuscript files.
+- **Decision:** Use `docs/FINAL_REPORT_DRAFT.md` as the tracked claim-safe Markdown report draft. The generated T0028 draft remains the results-section source, while the tracked report draft provides the assembled manuscript structure.
+- **Consequences:** Future report edits should start from `docs/FINAL_REPORT_DRAFT.md` and preserve blank reachability cells, blank latency cells, nonempty/empty seed counts, validation provenance, assumptions, blockers, and limitations. Submission-format conversion or stronger result language requires a separate documented follow-up task.
