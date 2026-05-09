@@ -254,13 +254,23 @@ Statuses: `TODO`, `IN_PROGRESS`, `DONE`, `BLOCKED`.
 
 ## T0028: Draft Claim-Safe Final Report Results Text
 
-- **Status:** TODO
+- **Status:** DONE
 - **Objective:** Convert the T0027 report-support artifacts into final-report-ready results prose and tables without unsupported claims.
 - **Relevant roadmap phase:** Phase 9
-- **Files likely to change:** `docs/ARCHITECTURE.md`, `docs/TASKS.md`, `docs/PROGRESS.md`, `docs/VALIDATION.md`, `docs/PROMPTS.md`, and possibly a report draft or ignored report-support output.
+- **Files changed:** `docs/ARCHITECTURE.md`, `docs/TASKS.md`, `docs/PROGRESS.md`, `docs/VALIDATION.md`, `docs/PROMPTS.md`, `docs/DECISIONS.md`; ignored generated report draft outputs under `external/noxim/other/generated/t0028_final_report_results_v1/`.
 - **Acceptance criteria:** Results text uses only cross-checked T0027/T0026 artifacts; blank, partial, and limitation cells remain explicit; no improvement, statistical-significance, latency, or throughput claim is made where the T0027 readiness notes disallow it.
 - **Validation command:** Documentation/status validation plus raw-artifact spot checks against `external/noxim/other/generated/t0027_report_support_v1/` and the T0026 raw stats when a drafted statement cites a measured value. If no simulator source changes are made, do not rebuild Noxim or rerun the sweep.
-- **Notes:** This task should draft report text, not reinterpret empty cells. If the report requires non-empty XY hotspot or latency-comparison cells, define a separate follow-up validation/rerun policy before adding claims.
+- **Notes:** Completed on 2026-05-09. Created ignored generated report-draft artifacts under `external/noxim/other/generated/t0028_final_report_results_v1/`: `manifest.json` and `report_results_draft.md`. The draft converts T0027 condition, coverage, zero-injection, and pair-readiness outputs into final-report-ready descriptive prose and Markdown tables. It preserves blank reachability where no packets were injected, blank latency where no packets were received, partial-cell seed coverage, and the T0027 limitation notes. It makes no improvement, delta, statistical-significance, latency-comparison, or unsupported performance claim and keeps `claims_allowed: false`. Assumption: T0028 prose is report-ready support text, not a new interpretation of empty cells. Blocked: stronger claims, non-empty XY hotspot cells, or latency comparisons require a separate documented validation/rerun policy. No simulator source, helper source, DeFT routing, VN transition logic, VL fault injection, LUT schemas, traffic semantics, metrics semantics, runner semantics, analysis semantics, golden outputs, or `./regression.sh --update` was changed.
+
+## T0029: Assemble Claim-Safe Final Report Draft
+
+- **Status:** TODO
+- **Objective:** Integrate the claim-safe T0028 results prose and existing project context into a final report draft without adding unsupported claims.
+- **Relevant roadmap phase:** Phase 9
+- **Files likely to change:** A final report draft file, `docs/ARCHITECTURE.md`, `docs/TASKS.md`, `docs/PROGRESS.md`, `docs/VALIDATION.md`, `docs/PROMPTS.md`, and possibly `docs/DECISIONS.md`.
+- **Acceptance criteria:** The report draft uses `Extended_Proposal.pdf`, the original DeFT paper, and T0028/T0027/T0026 artifacts; it preserves assumptions and blockers; it does not claim improvement, statistical significance, latency comparison, or 100% reachability unless directly supported by cross-checked artifacts.
+- **Validation command:** Documentation/status validation and spot checks against `external/noxim/other/generated/t0028_final_report_results_v1/report_results_draft.md`, `external/noxim/other/generated/t0027_report_support_v1/`, and T0026 raw artifacts. If no simulator source changes are made, do not rebuild Noxim or rerun the sweep.
+- **Notes:** This task should assemble report text, not change simulator behavior or reinterpret results. If final report requirements demand stronger claims or missing cells, define a separate validation/rerun policy before changing the report language.
 
 ## T0023: Add or Register Noxim Source Tree
 

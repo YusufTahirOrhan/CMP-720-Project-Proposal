@@ -1033,6 +1033,29 @@ Assumption: T0027 uses blank latency when `total_received_packets == 0`, because
 
 Blocked: T0027 tables support descriptive, claim-safe report drafting only. Empty or partial injection cells cannot support unqualified performance claims, and final report prose must either accept those limitations or define a follow-up validation/rerun policy before claiming more.
 
+## T0028 Claim-Safe Final Report Results Draft
+
+`T0028` converted the T0027 report-support artifacts into a final-report-ready results draft without changing simulator behavior or rerunning simulations.
+
+Generated ignored report-draft artifacts:
+
+- `external/noxim/other/generated/t0028_final_report_results_v1/manifest.json`.
+- `external/noxim/other/generated/t0028_final_report_results_v1/report_results_draft.md`.
+
+Drafting outcome:
+
+- The draft uses the T0027 manifest, condition summary, XY/DEFT pair summary, coverage table, zero-injection list, and report notes as the only result sources.
+- The draft records the T0025/T0026 matrix shape: `XY` and `DEFT`; `uniform`, `localized_40`, and `hotspot_3x10`; fault masks `0x0000`, `0x0001`, `0x0011`, `0x0111`, and `0x1111`; seeds `0..4`; `-sim 10000`; `-warmup 1000`.
+- The draft preserves T0027 counts: 150 completed raw stats rows, 30 condition cells, 15 XY/DEFT pair rows, 54 individual zero-injection runs, 12 complete-injection cells, 13 partial-injection cells, 5 empty-injection cells, and zero cross-check mismatches.
+- Blank reachability remains blank when no packets were injected.
+- Blank latency remains blank when no packets were received.
+- Partial cells keep nonempty and empty seed counts beside descriptive metrics.
+- No deltas, improvement percentages, statistical-significance statements, unqualified performance claims, or latency comparisons are introduced.
+
+Assumption: T0028 text is report-ready descriptive support, not a new analysis layer. It should be integrated into a final report only with its coverage counts, blank cells, and limitations intact.
+
+Blocked: Stronger claims, non-empty XY hotspot cells, latency comparisons, the original paper's single-direction 3.125% fault case, and eventual-delivery reachability after a drain phase still require separate documented validation or rerun policy.
+
 ## Synthetic Traffic Models
 
 Implemented configuration support:
@@ -1082,6 +1105,7 @@ Planned and partially implemented:
 - Implemented in T0025: The final comparison policy uses the same traffic, seed, simulation, warm-up, and physical fault-mask cells for `XY` and `DEFT`, with `XY` providing fault-free and fault-injected baseline behavior and `DEFT` using generated schema-v1 LUTs for matching fault masks.
 - Implemented in T0026: The T0025 150-run final matrix completed with return code `0` for every run, final analysis artifacts were regenerated with the final-sweep label, and generated tables were cross-checked against the raw manifest and JSON stats before any report claim.
 - Implemented in T0027: Blank-aware report-support tables classify complete, partial, and empty measured cells; preserve the 54 zero-injection runs; and avoid pairwise improvement or latency claims where the measured denominators are absent.
+- Implemented in T0028: Claim-safe final report results prose and Markdown tables were drafted from T0027/T0026 artifacts while preserving blank cells, partial-cell coverage counts, and `claims_allowed: false`.
 
 ## Noxim Extension Point Map
 

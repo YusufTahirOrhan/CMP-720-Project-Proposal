@@ -1134,6 +1134,46 @@ Expected future checks:
 - Draft final report results text from T0027 tables and spot-check any cited measured value against the generated T0027 CSV and T0026 raw JSON stats.
 - If the final report requires non-empty XY hotspot cells or latency comparisons, define a separate validation/rerun policy before adding claims.
 
+## Claim-Safe Final Report Results Draft Validation
+
+Purpose:
+
+- Draft final report results prose and tables from T0027 report-support artifacts without rerunning simulations.
+- Preserve blank reachability, blank latency, partial-cell coverage, and limitations explicitly.
+- Confirm the draft remains descriptive and does not introduce unsupported performance claims.
+
+Known validation:
+
+- Use existing generated T0027 artifacts under `external/noxim/other/generated/t0027_report_support_v1/`.
+- Use existing generated T0026 artifacts under `external/noxim/other/generated/t0026_final_sweep_v1/` and `external/noxim/other/generated/t0026_final_analysis_v1/` for spot checks.
+- If no simulator source changes are made, do not rebuild Noxim and do not rerun the final sweep.
+
+T0028 result on 2026-05-09:
+
+- Required startup reading was completed before task work: `AGENTS.md`, `docs/PROGRESS.md`, `docs/TASKS.md`, `docs/ROADMAP.md`, `docs/ARCHITECTURE.md`, `docs/VALIDATION.md`, `docs/DECISIONS.md`, and `docs/PROMPTS.md`.
+- Before running commands or documentation edits, a short implementation plan was produced.
+- Initial parent status showed branch `feat/map-noxim-extension-points...origin/feat/map-noxim-extension-points` with no local file modifications.
+- Initial submodule status showed branch `feat/baseline-noxim...origin/feat/baseline-noxim` with no local file modifications.
+- Required source-document paths were present: `Extended_Proposal.pdf`, `Proposal.pdf`, and `docs/references/DeFT_A_Deadlock-Free_and_Fault-Tolerant_Routing_Algorithm_for_2.5D_Chiplet_Networks.pdf`.
+- T0028 used the existing generated T0027 report-support artifacts only for result drafting and did not rerun simulations.
+- T0028 created ignored report-draft artifacts under `external/noxim/other/generated/t0028_final_report_results_v1/`: `manifest.json` and `report_results_draft.md`.
+- The T0027 manifest counts were spot-checked before drafting: 150 raw stats rows, 30 condition cells, 15 pair rows, 54 zero-injection runs, 5 empty-injection cells, 13 partial-injection cells, 12 complete-injection cells, and zero cross-check mismatches.
+- Condition status counts were spot-checked from `condition_summary.csv`: 12 complete-injection cells, 13 partial-injection cells, and 5 empty-injection cells.
+- Pair readiness counts were spot-checked from `xy_deft_pair_summary.csv`: 5 `not_comparison_ready_xy_empty` rows and 10 `descriptive_reachability_only_latency_blank` rows.
+- Zero-injection run grouping was spot-checked from `zero_injection_runs.csv`: 25 `XY|hotspot_3x10`, 20 `XY|uniform`, 5 `XY|localized_40`, 3 `DEFT|hotspot_3x10`, and 1 `DEFT|uniform`.
+- The draft preserves blank reachability cells where no packets were injected and blank latency cells where no packets were received.
+- The draft makes no improvement, delta, statistical-significance, latency-comparison, or unsupported performance claim and keeps `claims_allowed: false`.
+- No Noxim rebuild, final-sweep rerun, simulator source change, helper source change, routing behavior change, VN transition change, VL fault-injection change, traffic semantic change, metrics semantic change, runner/analysis semantic change, golden output update, regression command, `./regression.sh --update`, or performance claim was performed.
+- `git diff --check` in the parent repository completed with exit code `0`; Git reported line-ending conversion warnings for edited Markdown files only.
+- `git -c safe.directory=C:/Projects/CMP-720-Project-Proposal/external/noxim -C external/noxim diff --check` completed with exit code `0`.
+- Final parent status after documentation updates showed only the requested tracking docs modified: `docs/ARCHITECTURE.md`, `docs/DECISIONS.md`, `docs/PROGRESS.md`, `docs/PROMPTS.md`, `docs/TASKS.md`, and `docs/VALIDATION.md`.
+- Final `external/noxim` status remained clean.
+
+Expected future checks:
+
+- Integrate `external/noxim/other/generated/t0028_final_report_results_v1/report_results_draft.md` into the final report only with its blank cells and limitations intact.
+- If the final report requires stronger claims, non-empty XY hotspot cells, or latency comparisons, define a separate validation/rerun policy before changing the report language.
+
 ## Metrics Validation
 
 Purpose:

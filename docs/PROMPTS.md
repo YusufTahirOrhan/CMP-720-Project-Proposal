@@ -2001,3 +2001,62 @@ At the end, provide:
 - **Next ready-to-send prompt:** See `docs/PROGRESS.md`.
 - **Suggested branch name for next task:** None; continue on the existing branch.
 - **Suggested commit message:** `docs: review final sweep report support`
+
+## 2026-05-09: Start T0028 Draft Claim-Safe Final Report Results Text
+
+- **Date:** 2026-05-09
+- **Prompt summary:** Draft claim-safe final report results text and tables from T0027 report-support artifacts, preserving blank cells and limitations without rerunning simulations or making unsupported claims.
+- **Full prompt:**
+
+```text
+Start task T0028: Draft Claim-Safe Final Report Results Text.
+
+Before starting, read AGENTS.md, docs/PROGRESS.md, docs/TASKS.md, docs/ROADMAP.md, docs/ARCHITECTURE.md, docs/VALIDATION.md, docs/DECISIONS.md, and docs/PROMPTS.md.
+
+Continue on the existing Git branch. Do not create or switch task branches.
+
+Use the registered Noxim source tree at:
+external/noxim
+
+external/noxim is the Noxim submodule and modifiable project fork from:
+https://github.com/YusufTahirOrhan/noxim
+
+T0027 reviewed the completed T0026 final sweep artifacts and generated claim-safe report-support outputs:
+
+- final sweep output: `external/noxim/other/generated/t0026_final_sweep_v1`
+- final analysis output: `external/noxim/other/generated/t0026_final_analysis_v1`
+- final report-support output: `external/noxim/other/generated/t0027_report_support_v1`
+
+The T0027 report-support manifest records 150 raw stats rows, 30 condition cells, 15 XY/DEFT pair rows, 54 individual zero-injection runs, 5 empty-injection condition cells, 13 partial-injection condition cells, 12 complete-injection condition cells, and zero cross-check mismatches. It keeps `claims_allowed: false`.
+
+Goal: draft claim-safe final report results text and tables from the T0027 report-support artifacts without fabricating results or making unsupported performance claims. Preserve blank cells and limitations explicitly. Do not rerun simulations unless source inspection and documented validation status prove a narrow follow-up command is required and you document the reason first.
+
+Do not fabricate results or performance claims. Do not change DeFT routing, VN transition logic, VL fault injection, T0016 generator format, T0017 runtime LUT schema/use path, T0019 traffic profile semantics, T0020 metrics semantics, T0021 runner semantics, or T0022 analysis semantics unless source inspection proves a narrow compatibility fix is required. Do not use `./regression.sh --update`.
+
+Use `Extended_Proposal.pdf` as the primary project requirements source and the original DeFT paper at `docs/references/DeFT_A_Deadlock-Free_and_Fault-Tolerant_Routing_Algorithm_for_2.5D_Chiplet_Networks.pdf` as the primary algorithmic reference. Use `Proposal.pdf` only as initial context. Ignore the peer evaluation document completely.
+
+Before running commands or documentation edits, produce a short implementation plan. Work only on the selected report-results drafting task. Do not modify unrelated files. Clearly mark assumptions as `Assumption` and blockers as `Blocked`.
+
+Use only known validation commands. If no simulator source changes are made, do not rebuild Noxim. Use the existing generated T0027 report-support tables and, when needed, cross-check statements against the T0026 raw artifacts before recording them.
+
+Update docs/ARCHITECTURE.md, docs/TASKS.md, docs/PROGRESS.md, docs/VALIDATION.md, and docs/PROMPTS.md with the result. If a durable implementation or experiment decision becomes clear, update docs/DECISIONS.md too.
+
+At the end, provide:
+
+1. Created files
+2. Modified files
+3. Whether any source code files changed
+4. Validation result
+5. Current project phase
+6. Next recommended task
+7. The next ready-to-send prompt
+8. Suggested branch name for the next task, which should be `None; continue on the existing branch`
+9. Suggested commit message
+10. Unknowns or blockers
+```
+
+- **Result summary:** T0028 completed. Created ignored generated report-draft artifacts under `external/noxim/other/generated/t0028_final_report_results_v1/`: `manifest.json` and `report_results_draft.md`. The draft converts T0027 report-support artifacts into claim-safe descriptive report prose and Markdown tables while preserving blank reachability, blank latency, partial-cell coverage counts, zero-injection notes, and the T0027 limitations. It keeps `claims_allowed: false` and makes no improvement, delta, statistical-significance, latency-comparison, 100% reachability, or unsupported performance claim. No simulator source, helper source, routing behavior, VN transition logic, VL fault injection, LUT schemas, traffic semantics, metrics semantics, runner/analysis semantics, golden outputs, rerun, rebuild, or regression command was changed.
+- **Follow-up tasks:** Start `T0029` to assemble a claim-safe final report draft using the T0028 results text and the existing project documentation.
+- **Next ready-to-send prompt:** See `docs/PROGRESS.md`.
+- **Suggested branch name for next task:** None; continue on the existing branch.
+- **Suggested commit message:** `docs: draft claim-safe final report results`
