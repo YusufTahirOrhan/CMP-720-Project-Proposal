@@ -305,3 +305,11 @@ This document records project decisions that affect implementation, validation, 
 - **Context:** T0029 assembled the final report draft from `Extended_Proposal.pdf`, the original DeFT paper, existing project documentation, and the T0028/T0027/T0026 generated report-support artifacts. The report needs a tracked repository location that future tasks can review or convert without treating generated artifacts as manuscript files.
 - **Decision:** Use `docs/FINAL_REPORT_DRAFT.md` as the tracked claim-safe Markdown report draft. The generated T0028 draft remains the results-section source, while the tracked report draft provides the assembled manuscript structure.
 - **Consequences:** Future report edits should start from `docs/FINAL_REPORT_DRAFT.md` and preserve blank reachability cells, blank latency cells, nonempty/empty seed counts, validation provenance, assumptions, blockers, and limitations. Submission-format conversion or stronger result language requires a separate documented follow-up task.
+
+## ADR-0039: Use `final_report/` as the IEEE LaTeX Final Report Source Artifact
+
+- **Date:** 2026-05-09
+- **Status:** Accepted
+- **Context:** T0031 resumed after the final artifact format was explicitly supplied as an IEEE conference-style LaTeX final project report. The repository already had the reviewed Markdown content source at `docs/FINAL_REPORT_DRAFT.md` and the Extended Proposal LaTeX source archive at `Extended_Proposal.zip`.
+- **Decision:** Use `final_report/` as the final report source artifact directory. Generate `final_report/main.tex` from the reviewed Markdown draft, reuse the Extended Proposal IEEEtran style and bibliography style, copy `IEEEtran.cls` and the schematic figure from `Extended_Proposal.zip`, and keep only cited reused bibliography entries in `final_report/references.bib`.
+- **Consequences:** The original Extended Proposal archive and source files remain unchanged. Future PDF generation should compile `final_report/main.tex` without changing report claims. Any layout edits must preserve blank metric cells, partial-cell coverage counts, validation provenance, assumptions, blockers, limitations, and descriptive-only result wording.

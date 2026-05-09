@@ -1097,23 +1097,32 @@ The review preserved the T0027/T0028 interpretation rules:
 - Partial cells keep nonempty and empty seed counts beside descriptive metrics.
 - No deltas, ordering claims, inferential claims, latency comparisons, complete-reachability wording, or unsupported performance language were added.
 
-Assumption: `docs/FINAL_REPORT_DRAFT.md` is submission-ready as a reviewed Markdown draft, but not yet as a PDF, DOCX, PPTX, or other final artifact.
+Assumption: `docs/FINAL_REPORT_DRAFT.md` is submission-ready as a reviewed Markdown draft and is the content source for the final LaTeX artifact.
 
-Blocked: Final artifact conversion remains pending until the required submission format is specified.
+Blocked: A compiled final-report PDF still requires a TeX-enabled environment.
 
-## T0031 Final Submission Artifact Format Check
+## T0031 IEEE LaTeX Final Submission Artifact
 
-`T0031` checked whether the reviewed Markdown draft at `docs/FINAL_REPORT_DRAFT.md` could be converted into a required final submission artifact.
+`T0031` converted the reviewed Markdown draft at `docs/FINAL_REPORT_DRAFT.md` into an IEEE conference-style LaTeX final report artifact after the required format was explicitly supplied.
 
-Inspection outcome:
+Artifact outcome:
 
-- `Extended_Proposal.pdf` remains the primary project requirements source. Its timeline calls for analysis and final report work, including finalizing the project report, but it does not specify a required file format.
-- `Proposal.pdf` is initial context only. Its submission instructions refer to the initial proposal source files and compiled proposal PDF, not to the final report artifact.
-- The original DeFT paper remains the primary algorithmic reference and does not define course submission packaging.
+- `Extended_Proposal.zip` was used as the formatting/template reference. Its usable source tree contains `conference_101719.tex`, `IEEEtran.cls`, `references.bib`, and `figures/schematic.png`.
+- `final_report/main.tex` uses `\documentclass[conference]{IEEEtran}`, the same IEEE bibliography style, the same author/title convention family, and the same general proposal package/layout style.
+- `final_report/references.bib` reuses only cited entries from the Extended Proposal bibliography.
+- `final_report/IEEEtran.cls` and `final_report/figures/schematic.png` were copied from `Extended_Proposal.zip` so the final artifact is self-contained without overwriting the original proposal archive.
+- `final_report/README.md` records source hierarchy, build instructions, and the PDF-generation blocker.
 
-Assumption: `docs/FINAL_REPORT_DRAFT.md` remains the current reviewed Markdown report draft until an explicit final output format is supplied.
+The LaTeX report preserves the T0027/T0028 interpretation rules:
 
-Blocked: No PDF, DOCX, PPTX, Markdown copy, or other final artifact was generated because the required final submission format is still unspecified.
+- Blank reachability remains blank when no packets were injected.
+- Blank latency remains blank when no packets were received.
+- Partial cells keep nonempty and empty seed counts beside descriptive metrics.
+- No deltas, ordering claims, inferential claims, latency comparisons, complete-reachability wording, or unsupported performance language were added.
+
+Assumption: `final_report/` is the final source artifact for IEEE-style LaTeX submission.
+
+Blocked: PDF generation was not completed in T0031 because `latexmk`, `pdflatex`, `bibtex`, and `tectonic` were not available on the Windows PATH.
 
 ## Synthetic Traffic Models
 
@@ -1167,7 +1176,7 @@ Planned and partially implemented:
 - Implemented in T0028: Claim-safe final report results prose and Markdown tables were drafted from T0027/T0026 artifacts while preserving blank cells, partial-cell coverage counts, and `claims_allowed: false`.
 - Implemented in T0029: A tracked claim-safe Markdown final report draft was assembled at `docs/FINAL_REPORT_DRAFT.md` from the source documents, project documentation, and T0028/T0027/T0026 report-support artifacts.
 - Implemented in T0030: The tracked Markdown final report draft was reviewed and polished for submission readiness while preserving claim-safety constraints, blank cells, validation provenance, assumptions, blockers, and limitations.
-- Blocked in T0031: Final artifact conversion was not performed because no source document or user instruction explicitly specified the required final submission format. `Extended_Proposal.pdf` requires finalizing the project report but does not define PDF, DOCX, PPTX, Markdown, or another artifact target.
+- Implemented in T0031: The reviewed Markdown draft was converted into an IEEE conference-style LaTeX source artifact under `final_report/` using `Extended_Proposal.zip` as the formatting/template reference. PDF generation remains blocked until a TeX toolchain is available.
 
 ## Noxim Extension Point Map
 

@@ -1248,8 +1248,8 @@ T0030 result on 2026-05-09:
 - `git -c safe.directory=C:/Projects/CMP-720-Project-Proposal/external/noxim -C external/noxim diff --check` completed with exit code `0`.
 - Final parent status after documentation updates showed only requested Markdown files modified: `docs/ARCHITECTURE.md`, `docs/FINAL_REPORT_DRAFT.md`, `docs/PROGRESS.md`, `docs/PROMPTS.md`, `docs/TASKS.md`, and `docs/VALIDATION.md`.
 - Final `external/noxim` status remained clean.
-- Assumption: `docs/FINAL_REPORT_DRAFT.md` is submission-ready as a reviewed Markdown draft, but not yet as a converted PDF, DOCX, PPTX, or other final artifact.
-- Blocked: Final artifact conversion remains pending until the required submission format is specified.
+- Assumption: At T0030 completion, `docs/FINAL_REPORT_DRAFT.md` was submission-ready as a reviewed Markdown draft, but not yet as a converted PDF, DOCX, PPTX, or other final artifact. This was superseded by the T0031 LaTeX source artifact.
+- Blocked: At T0030 completion, final artifact conversion was pending until the required submission format was specified. This was superseded by T0031; only PDF generation remains blocked by missing TeX tooling.
 
 Expected future checks:
 
@@ -1260,18 +1260,20 @@ Expected future checks:
 
 Purpose:
 
-- Confirm the required final submission artifact format before converting the reviewed report draft.
-- Avoid guessing a PDF, DOCX, PPTX, Markdown, or other artifact target when the required format is not explicitly specified.
+- Convert the reviewed report draft into the explicitly requested IEEE conference-style LaTeX artifact.
 - Preserve claim-safety constraints, blank metric cells, partial-cell coverage counts, validation provenance, assumptions, blockers, and limitations.
+- Validate the generated LaTeX source when local PDF compilation is not available.
 
 Known validation:
 
 - Use `docs/FINAL_REPORT_DRAFT.md` as the reviewed report draft.
-- Inspect `Extended_Proposal.pdf` first for an explicit final submission format.
+- Use `Extended_Proposal.zip` as the LaTeX formatting/template reference.
 - Use `Proposal.pdf` only as initial context.
 - Use the original DeFT paper only as the algorithmic reference.
 - If no simulator source changes are made, do not rebuild Noxim and do not rerun simulations.
-- If no required final format is specified, do not run artifact conversion; record the task as `Blocked`.
+- Run `git diff --check`.
+- If LaTeX tooling is available, compile the final report and record the generated PDF path.
+- If LaTeX tooling is not available, record the exact PDF generation blocker.
 
 T0031 result on 2026-05-09:
 
@@ -1280,26 +1282,29 @@ T0031 result on 2026-05-09:
 - Initial parent status showed branch `feat/map-noxim-extension-points...origin/feat/map-noxim-extension-points` with no local file modifications.
 - Initial `external/noxim` status showed branch `feat/baseline-noxim...origin/feat/baseline-noxim` with no local file modifications.
 - Required source-document paths were present: `Extended_Proposal.pdf`, `Proposal.pdf`, and `docs/references/DeFT_A_Deadlock-Free_and_Fault-Tolerant_Routing_Algorithm_for_2.5D_Chiplet_Networks.pdf`.
-- The bundled Python environment provided `pypdf`, and read-only PDF text inspection was used only to search for explicit final-format wording.
-- `Extended_Proposal.pdf` mentions finalizing the project report, but it does not specify PDF, DOCX, PPTX, Markdown, or another final artifact format.
-- `Proposal.pdf` includes initial proposal submission instructions for proposal source and compiled PDF files, but it is initial context only and does not specify the final report artifact format.
-- The original DeFT paper is an algorithmic reference and does not specify project submission format.
-- No final submission artifact was generated because no required final format was specified.
+- The explicitly supplied final artifact format was IEEE conference-style LaTeX.
+- `Extended_Proposal.zip` was inspected before artifact creation. Its usable template source contains `conference_101719.tex`, `IEEEtran.cls`, `references.bib`, and `figures/schematic.png`.
+- Created `final_report/main.tex`, `final_report/references.bib`, `final_report/README.md`, and copied `final_report/IEEEtran.cls` and `final_report/figures/schematic.png` from `Extended_Proposal.zip`.
+- `final_report/main.tex` uses IEEEtran conference style, IEEE bibliography style, the Extended Proposal author/title convention family, and IEEE-style sections.
+- `final_report/references.bib` contains only cited bibliography entries reused from the Extended Proposal source.
+- The LaTeX report preserves claim-safety constraints, blank reachability cells, blank latency cells, partial-cell coverage counts, validation provenance, assumptions, blockers, limitations, and descriptive-only result wording.
+- Citation/BibTeX consistency checks found no cited key missing from `references.bib` and no uncited BibTeX entries.
+- LaTeX source environment count check found balanced `\begin{...}` and `\end{...}` counts.
+- ASCII checks found no non-ASCII characters in `final_report/main.tex`, `final_report/references.bib`, or `final_report/README.md`.
+- `latexmk`, `pdflatex`, `bibtex`, and `tectonic` were not available on the Windows PATH, so no PDF was generated.
 - No Noxim rebuild, final-sweep rerun, simulator source change, helper source change, routing behavior change, VN transition change, VL fault-injection change, traffic semantic change, metrics semantic change, runner/analysis semantic change, golden output update, regression command, `./regression.sh --update`, or performance claim was performed.
-- `git diff -- docs/FINAL_REPORT_DRAFT.md` returned no output, confirming the report draft was not modified during T0031.
-- ASCII checks found no non-ASCII characters in the edited Markdown files.
-- `git diff --check` in the parent repository completed with exit code `0`; Git reported line-ending conversion warnings for edited Markdown files only.
-- `git -c safe.directory=C:/Projects/CMP-720-Project-Proposal/external/noxim -C external/noxim diff --check` completed with exit code `0`.
-- Final parent status after documentation updates showed only requested Markdown files modified: `docs/ARCHITECTURE.md`, `docs/PROGRESS.md`, `docs/PROMPTS.md`, `docs/TASKS.md`, and `docs/VALIDATION.md`.
+- Final `git diff --check` in the parent repository completed with exit code `0`; Git reported line-ending conversion warnings for edited Markdown files only.
+- Final `git -c safe.directory=C:/Projects/CMP-720-Project-Proposal/external/noxim -C external/noxim diff --check` completed with exit code `0`.
+- Final parent status showed modified tracking docs and the new untracked `final_report/` artifact directory.
 - Final `external/noxim` status remained clean.
-- Assumption: `docs/FINAL_REPORT_DRAFT.md` remains the current reviewed Markdown draft until the required final output format is explicitly supplied.
-- Blocked: Final artifact conversion cannot proceed until the required output format is specified.
+- Assumption: `final_report/` is ready as the final LaTeX source artifact.
+- Blocked: PDF generation requires a TeX-enabled environment.
 
 Expected future checks:
 
-- Resume T0031 only after the required final artifact format is explicitly supplied.
-- Record the requested output format and artifact validation method before conversion.
-- Validate the generated artifact with a format-appropriate render, open, or inspection method.
+- Compile `final_report/main.tex` in a TeX-enabled environment and record the generated PDF path.
+- Inspect the generated PDF for layout issues, especially wide result tables.
+- Preserve claim-safety constraints if any LaTeX layout edits are needed.
 
 ## Metrics Validation
 

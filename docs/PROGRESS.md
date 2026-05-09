@@ -36,8 +36,9 @@ Phase 9 - Final Analysis and Report Support
 - `T0028` - Draft Claim-Safe Final Report Results Text.
 - `T0029` - Assemble Claim-Safe Final Report Draft.
 - `T0030` - Review Final Report Draft for Submission Readiness.
+- `T0031` - Prepare Final Submission Artifact.
 
-DeFT VN assignment behavior, the first VN movement-transition restriction enforcement layer, the offline VL LUT schema/generator, the runtime schema-v1 LUT loading/use path, explicit XY fault-free/fault-injected baseline configuration modes, proposal-required synthetic traffic configuration profiles, machine-readable metrics export, tiny experiment-runner launch support, final-analysis scaffolding, the final sweep policy, the validated T0026 150-run final sweep output set, T0027 blank-aware report-support tables, T0028 claim-safe final report results draft, the T0029 tracked claim-safe Markdown report draft, and the T0030 submission-readiness polish now exist for `DEFT_2_5D`. Performance claims remain limited to descriptive, blank-aware report support only.
+DeFT VN assignment behavior, the first VN movement-transition restriction enforcement layer, the offline VL LUT schema/generator, the runtime schema-v1 LUT loading/use path, explicit XY fault-free/fault-injected baseline configuration modes, proposal-required synthetic traffic configuration profiles, machine-readable metrics export, tiny experiment-runner launch support, final-analysis scaffolding, the final sweep policy, the validated T0026 150-run final sweep output set, T0027 blank-aware report-support tables, T0028 claim-safe final report results draft, the T0029 tracked claim-safe Markdown report draft, the T0030 submission-readiness polish, and the T0031 IEEE-style LaTeX final report source artifact now exist for `DEFT_2_5D`. Performance claims remain limited to descriptive, blank-aware report support only.
 
 ## In-Progress Tasks
 
@@ -45,31 +46,35 @@ DeFT VN assignment behavior, the first VN movement-transition restriction enforc
 
 ## Blocked Tasks
 
-- `T0031` - Prepare Final Submission Artifact.
+- None.
 
 ## Last Validation Result
 
-- T0031 Prepare Final Submission Artifact is blocked as of 2026-05-09.
+- T0031 Prepare Final Submission Artifact completed as a source-artifact task on 2026-05-09.
 - Required startup reading was completed before task work: `AGENTS.md`, `docs/PROGRESS.md`, `docs/TASKS.md`, `docs/ROADMAP.md`, `docs/ARCHITECTURE.md`, `docs/VALIDATION.md`, `docs/DECISIONS.md`, and `docs/PROMPTS.md`.
 - Before running commands or documentation edits, a short implementation plan was produced.
 - Initial parent status showed branch `feat/map-noxim-extension-points...origin/feat/map-noxim-extension-points` with no local file modifications.
 - Initial `external/noxim` status showed branch `feat/baseline-noxim...origin/feat/baseline-noxim` with no local file modifications.
-- Required source-document paths were present: `Extended_Proposal.pdf`, `Proposal.pdf`, and `docs/references/DeFT_A_Deadlock-Free_and_Fault-Tolerant_Routing_Algorithm_for_2.5D_Chiplet_Networks.pdf`.
-- The bundled Python environment provided `pypdf`, and read-only PDF text inspection was used only to search for explicit final-format wording.
-- `Extended_Proposal.pdf` was inspected first as the primary requirements source. It says to finalize the project report, but it does not specify PDF, DOCX, PPTX, Markdown, or another final artifact format.
-- `Proposal.pdf` was inspected only as initial context. It includes initial proposal submission instructions for proposal source and compiled PDF files, but it does not specify the final report artifact format.
-- The original DeFT paper was treated as the algorithmic reference and does not specify project submission format.
-- No final submission artifact was generated because no required final format was specified.
-- No changes were made to `docs/FINAL_REPORT_DRAFT.md`; its T0030-reviewed Markdown draft remains the current report draft.
+- Required source paths were inspected: `docs/FINAL_REPORT_DRAFT.md`, `Extended_Proposal.zip`, `Extended_Proposal.pdf`, `Proposal.pdf`, and `docs/references/DeFT_A_Deadlock-Free_and_Fault-Tolerant_Routing_Algorithm_for_2.5D_Chiplet_Networks.pdf`.
+- The explicitly supplied final artifact format is an IEEE conference-style LaTeX final project report.
+- `Extended_Proposal.zip` was inspected and found to contain the style/template sources `conference_101719.tex`, `IEEEtran.cls`, `references.bib`, and `figures/schematic.png`.
+- Created the final LaTeX artifact directory `final_report/`.
+- Created `final_report/main.tex` from `docs/FINAL_REPORT_DRAFT.md` using the Extended Proposal IEEEtran style, author/title convention, package style, bibliography style, and general layout.
+- Created `final_report/references.bib` with only cited entries reused from the Extended Proposal source.
+- Copied `final_report/IEEEtran.cls` and `final_report/figures/schematic.png` from `Extended_Proposal.zip` without overwriting the original archive or proposal files.
+- Created `final_report/README.md` with source hierarchy, build instructions, and the PDF generation blocker.
+- The LaTeX report preserves claim-safety constraints, blank reachability cells, blank latency cells, partial-cell coverage counts, validation provenance, assumptions, blockers, limitations, and descriptive-only result wording.
+- Citation and BibTeX key checks found no cited key missing from `references.bib` and no uncited BibTeX entries.
+- LaTeX source environment count check found balanced `\begin{...}` and `\end{...}` counts.
+- ASCII checks found no non-ASCII characters in `final_report/main.tex`, `final_report/references.bib`, or `final_report/README.md`.
+- LaTeX tooling checks found no `latexmk`, `pdflatex`, `bibtex`, or `tectonic` command available on the Windows PATH, so PDF generation was not attempted successfully.
 - No Noxim rebuild, final-sweep rerun, simulator source change, helper source change, routing behavior change, VN transition change, VL fault-injection change, traffic semantic change, metrics semantic change, runner/analysis semantic change, golden output update, regression command, `./regression.sh --update`, or performance claim was performed.
-- `git diff -- docs/FINAL_REPORT_DRAFT.md` returned no output, confirming the report draft was not modified during T0031.
-- ASCII checks found no non-ASCII characters in the edited Markdown files.
-- `git diff --check` in the parent repository completed with exit code `0`; Git reported line-ending conversion warnings for edited Markdown files only.
-- `git -c safe.directory=C:/Projects/CMP-720-Project-Proposal/external/noxim -C external/noxim diff --check` completed with exit code `0`.
-- Final parent status after documentation updates showed only requested Markdown files modified: `docs/ARCHITECTURE.md`, `docs/PROGRESS.md`, `docs/PROMPTS.md`, `docs/TASKS.md`, and `docs/VALIDATION.md`.
+- Final `git diff --check` in the parent repository completed with exit code `0`; Git reported line-ending conversion warnings for edited Markdown files only.
+- Final `git -c safe.directory=C:/Projects/CMP-720-Project-Proposal/external/noxim -C external/noxim diff --check` completed with exit code `0`.
+- Final parent status showed modified tracking docs and the new untracked `final_report/` artifact directory.
 - Final `external/noxim` status remained clean.
-- Assumption: `docs/FINAL_REPORT_DRAFT.md` is submission-ready as a reviewed Markdown draft, but not yet as a converted PDF, DOCX, PPTX, or other final artifact.
-- Blocked: Final artifact conversion cannot proceed until the required output format is explicitly supplied.
+- Assumption: `final_report/` is the final LaTeX source artifact and can be compiled once a TeX toolchain is available.
+- Blocked: PDF generation is blocked in the current Windows environment because no LaTeX engine or BibTeX tool was found on the PATH.
 
 ## Important Changed Files
 
@@ -431,11 +436,17 @@ Files updated during `T0030` Review Final Report Draft for Submission Readiness:
 
 Files updated during `T0031` Prepare Final Submission Artifact:
 
+- `final_report/main.tex`
+- `final_report/references.bib`
+- `final_report/IEEEtran.cls`
+- `final_report/figures/schematic.png`
+- `final_report/README.md`
 - `docs/ARCHITECTURE.md`
 - `docs/TASKS.md`
 - `docs/PROGRESS.md`
 - `docs/VALIDATION.md`
 - `docs/PROMPTS.md`
+- `docs/DECISIONS.md`
 
 Noxim build files LF-normalized during `T0003`:
 
@@ -551,7 +562,8 @@ External source tree registered during `T0023`:
 - Assumption: T0028 final report results prose is claim-safe descriptive support text and must be integrated only with its blank cells, partial-cell coverage counts, and limitations intact.
 - Assumption: `docs/FINAL_REPORT_DRAFT.md` is the tracked claim-safe Markdown manuscript draft assembled from the source documents, project documentation, and T0028/T0027/T0026 artifacts.
 - Assumption: After T0030, `docs/FINAL_REPORT_DRAFT.md` is submission-ready as a reviewed Markdown draft, but no converted final artifact exists because no final format was specified.
-- Assumption: After T0031 source-document inspection, the required final submission artifact format remains unspecified; the reviewed Markdown draft is still the current report draft until an explicit output format is supplied.
+- Assumption: After T0031 completion, `final_report/` is the IEEE conference-style LaTeX final report source artifact generated from `docs/FINAL_REPORT_DRAFT.md` and the `Extended_Proposal.zip` template source.
+- Assumption: T0031 did not generate a PDF because no TeX engine or BibTeX tool was available on the Windows PATH.
 
 ## Open Questions
 
@@ -565,42 +577,36 @@ External source tree registered during `T0023`:
 - Should future validation add a documented packet-carrying hardcoded inter-chiplet DeFT smoke once the allowed smoke command and expected behavior are designed?
 - Should a future implementation add directional endpoint fault modeling for the original paper's single-direction 3.125% fault case?
 - Should a future helper add source cut-off and post-injection drain support for eventual-delivery reachability checks?
-- What final submission format is required for the reviewed report draft: PDF, DOCX, PPTX, Markdown, or another artifact?
+- Should the final report PDF be generated in WSL, another TeX-enabled environment, or after installing a Windows LaTeX distribution?
 - Should the generated final-analysis scaffold blocker text be updated in a future task to reflect the T0025 policy resolutions while still keeping generated scaffold outputs conservative?
 
 ## Next Recommended Task
 
-Resume `T0031` only after the required final submission artifact format is explicitly supplied.
+Start `T0032` only if a compiled PDF is required from the LaTeX source artifact and a TeX toolchain is available.
 
 ## Next Ready-to-Send Prompt
 
 ```text
-Resume task T0031: Prepare Final Submission Artifact.
+Start task T0032: Generate Final Report PDF in a TeX-Enabled Environment.
 
 Before starting, read AGENTS.md, docs/PROGRESS.md, docs/TASKS.md, docs/ROADMAP.md, docs/ARCHITECTURE.md, docs/VALIDATION.md, docs/DECISIONS.md, and docs/PROMPTS.md.
 
 Continue on the existing Git branch. Do not create or switch task branches.
 
-Use the registered Noxim source tree at:
-external/noxim
+Use the final LaTeX source artifact at:
+final_report/main.tex
 
-Use the reviewed tracked report draft at:
-docs/FINAL_REPORT_DRAFT.md
+T0031 created `final_report/` as the IEEE conference-style LaTeX final project report artifact from `docs/FINAL_REPORT_DRAFT.md` and the `Extended_Proposal.zip` template source. T0031 did not generate a PDF because `latexmk`, `pdflatex`, `bibtex`, and `tectonic` were not available on the Windows PATH.
 
-T0030 reviewed and polished this Markdown report draft for final-delivery structure, source-scoped citation wording, table readability, and submission readiness while preserving claim-safety constraints. T0031 inspected the source documents and is blocked because no required final submission format was specified.
-
-Required final artifact format:
-<insert the explicit required format here, such as PDF, DOCX, PPTX, Markdown, or another artifact target>
-
-Goal: record the explicitly supplied final submission format and prepare only that final artifact. Record the conversion method and the format-appropriate validation method before conversion. If the format is still not supplied, keep the task `Blocked` and do not guess a conversion target.
+Goal: compile `final_report/main.tex` into a final PDF without changing report claims. Use `latexmk -pdf main.tex` from `final_report/` if available. If `latexmk` is unavailable but `pdflatex` and `bibtex` are available, use the standard `pdflatex`, `bibtex`, `pdflatex`, `pdflatex` sequence. If no TeX toolchain is available, record the exact blocker and do not claim that a PDF was generated.
 
 Preserve all claim-safety constraints, blank cells, partial-cell coverage counts, validation provenance, assumptions, blockers, and limitations. Do not fabricate results or performance claims. Do not add deltas, ordering claims, inferential claims, latency comparisons, complete-reachability wording, or unsupported result language. Do not change DeFT routing, VN transition logic, VL fault injection, T0016 generator format, T0017 runtime LUT schema/use path, T0019 traffic profile semantics, T0020 metrics semantics, T0021 runner semantics, or T0022 analysis semantics. Do not use `./regression.sh --update`.
 
 Use `Extended_Proposal.pdf` as the primary project requirements source and the original DeFT paper as the primary algorithmic reference. Use `Proposal.pdf` only as initial context. Ignore the peer evaluation document completely.
 
-Before running commands or documentation edits, produce a short implementation plan. Work only on the selected final-submission artifact task. Do not modify unrelated files. Clearly mark assumptions as `Assumption` and blockers as `Blocked`.
+Before running commands or documentation edits, produce a short implementation plan. Work only on final PDF generation and validation. Do not modify unrelated files. Clearly mark assumptions as `Assumption` and blockers as `Blocked`.
 
-Use only known validation commands. If no simulator source changes are made, do not rebuild Noxim or rerun simulations. Validate any generated artifact with a documented render/open/inspection method appropriate to the requested format.
+Use only known validation commands. If no simulator source changes are made, do not rebuild Noxim or rerun simulations. Validate the generated PDF path if compilation succeeds, run `git diff --check`, and record any PDF generation warnings or blockers.
 
 Update docs/ARCHITECTURE.md, docs/TASKS.md, docs/PROGRESS.md, docs/VALIDATION.md, and docs/PROMPTS.md with the result. If a durable implementation or experiment decision becomes clear, update docs/DECISIONS.md too.
 
@@ -627,5 +633,5 @@ None; continue on the existing branch.
 ## Suggested Commit Message
 
 ```text
-docs: record final artifact format blocker
+docs: add IEEE LaTeX final report artifact
 ```

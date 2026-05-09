@@ -284,13 +284,23 @@ Statuses: `TODO`, `IN_PROGRESS`, `DONE`, `BLOCKED`.
 
 ## T0031: Prepare Final Submission Artifact
 
-- **Status:** BLOCKED
-- **Objective:** Confirm the required final submission format and, only when explicitly specified, convert the reviewed Markdown report draft into the requested submission artifact.
+- **Status:** DONE
+- **Objective:** Convert the reviewed Markdown report draft into the explicitly requested IEEE conference-style LaTeX final report artifact.
 - **Relevant roadmap phase:** Phase 9
-- **Files changed:** `docs/ARCHITECTURE.md`, `docs/TASKS.md`, `docs/PROGRESS.md`, `docs/VALIDATION.md`, and `docs/PROMPTS.md`.
-- **Acceptance criteria:** The required submission format is recorded before conversion; the generated artifact preserves claim-safety constraints, blank cells, limitations, citations, and table readability; the conversion method and validation method are documented.
-- **Validation command:** Documentation/status validation plus source-document inspection for an explicit final submission format. No artifact-rendering validation was run because no final artifact was generated.
-- **Notes:** Blocked on 2026-05-09. Required startup reading was completed. `Extended_Proposal.pdf` was inspected first and states that the project should finalize the project report, but it does not specify PDF, DOCX, PPTX, Markdown, or another final artifact format. `Proposal.pdf` contains initial proposal submission instructions for proposal source and compiled PDF files, but it is initial context only and does not define the final report artifact format. The original DeFT paper is an algorithmic reference and does not specify project submission format. Assumption: `docs/FINAL_REPORT_DRAFT.md` remains the current reviewed Markdown draft. Blocked: final artifact conversion cannot proceed until the required output format is explicitly supplied. No final artifact, simulator source change, helper source change, routing behavior change, VN transition change, VL fault-injection change, LUT schema change, traffic semantic change, metrics semantic change, runner/analysis semantic change, rebuild, rerun, regression command, `./regression.sh --update`, or performance claim was produced.
+- **Files changed:** `final_report/main.tex`, `final_report/references.bib`, `final_report/IEEEtran.cls`, `final_report/figures/schematic.png`, `final_report/README.md`, `docs/ARCHITECTURE.md`, `docs/TASKS.md`, `docs/PROGRESS.md`, `docs/VALIDATION.md`, `docs/PROMPTS.md`, and `docs/DECISIONS.md`.
+- **Acceptance criteria:** The required submission format is recorded before conversion; the generated LaTeX artifact follows the Extended Proposal IEEE-style source structure; the report preserves claim-safety constraints, blank cells, limitations, citations, validation provenance, assumptions, and blockers; the conversion method and validation method are documented.
+- **Validation command:** `git diff --check`; citation and BibTeX key consistency checks; begin/end environment count check; ASCII checks for new text files; LaTeX tool availability checks for `latexmk`, `pdflatex`, `bibtex`, and `tectonic`; parent and submodule status checks.
+- **Notes:** Completed on 2026-05-09 after the required final artifact format was explicitly supplied as an IEEE conference-style LaTeX final project report. `Extended_Proposal.zip` was inspected first as the formatting/template reference and contains `conference_101719.tex`, `IEEEtran.cls`, `references.bib`, and `figures/schematic.png`. Created `final_report/` with an IEEEtran-based `main.tex`, a cited-only `references.bib` reused from the Extended Proposal source, a local copy of `IEEEtran.cls`, the reused schematic figure, and build notes in `README.md`. The report converts `docs/FINAL_REPORT_DRAFT.md` into IEEE-style sections and preserves blank cells, partial-cell coverage counts, validation provenance, assumptions, blockers, and limitations. Assumption: the LaTeX source artifact is ready for a TeX-enabled environment. Blocked: PDF generation could not be completed because `latexmk`, `pdflatex`, `bibtex`, and `tectonic` were not available on the Windows PATH. No source code, simulator behavior, helper behavior, routing logic, VN transition logic, VL fault injection, LUT schema, traffic semantics, metrics semantics, runner/analysis semantics, rebuild, rerun, regression command, `./regression.sh --update`, or performance claim was changed.
+
+## T0032: Generate Final Report PDF in a TeX-Enabled Environment
+
+- **Status:** TODO
+- **Objective:** Compile `final_report/main.tex` into a PDF once LaTeX tooling is available, then visually inspect or otherwise validate the generated PDF.
+- **Relevant roadmap phase:** Phase 9
+- **Files likely to change:** `final_report/` generated build outputs if tracked intentionally, `docs/PROGRESS.md`, `docs/TASKS.md`, `docs/VALIDATION.md`, and `docs/PROMPTS.md`.
+- **Acceptance criteria:** A final PDF is generated from the existing LaTeX source without changing report claims; the generated PDF path is recorded; any warnings or layout issues are documented; no simulator source or behavior is modified.
+- **Validation command:** Use a documented LaTeX build command available in the environment, preferably `latexmk -pdf main.tex` from `final_report/`; if `latexmk` is unavailable, use a standard `pdflatex`/`bibtex`/`pdflatex`/`pdflatex` sequence only when those tools are present.
+- **Notes:** This follow-up is only needed because T0031 could not generate a PDF in the current Windows environment. Do not rerun Noxim, change report claims, or modify simulator source while generating the PDF.
 
 ## T0023: Add or Register Noxim Source Tree
 
