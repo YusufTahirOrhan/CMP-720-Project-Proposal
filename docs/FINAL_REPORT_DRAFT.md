@@ -1,22 +1,24 @@
-# Claim-Safe Final Report Draft: DeFT Routing for 2.5D Chiplet Networks
+# DeFT Routing for 2.5D Chiplet Networks: Final Report Draft
 
-Draft status: assembled during `T0029` on 2026-05-09.
+Draft status: assembled during `T0029` and reviewed for submission readiness during `T0030` on 2026-05-09.
 
-## Claim Safety Notice
+## Draft Status And Claim Safety Notice
 
-This draft is assembled from the project source documents and the cross-checked T0028/T0027/T0026 report-support artifacts. It is intentionally conservative. It does not rank routing modes, compute deltas, make inferential claims, compare latency between `XY` and `DEFT`, or turn blank cells into measured values.
+This draft is assembled from the project source documents and the cross-checked T0028/T0027/T0026 report-support artifacts. It is intentionally conservative. It does not order routing modes, compute deltas, make inferential claims, compare latency between `XY` and `DEFT`, or turn blank cells into measured values.
 
 Metric cells are left blank when the supporting denominator is absent. Reachability is blank when no packets were injected in the measured window. Latency is blank when no packets were received in the measured window.
+
+Submission format note: no PDF, DOCX, PPTX, or other final artifact format was requested during `T0030`, so this reviewed Markdown draft remains the current deliverable.
 
 ## Source Scope
 
 Primary project requirements source:
 
-- `Extended_Proposal.pdf`.
+- `Extended_Proposal.pdf` for project scope, implementation expectations, synthetic traffic evaluation, fault scenarios, and required metrics.
 
 Primary algorithmic reference:
 
-- `docs/references/DeFT_A_Deadlock-Free_and_Fault-Tolerant_Routing_Algorithm_for_2.5D_Chiplet_Networks.pdf`.
+- `docs/references/DeFT_A_Deadlock-Free_and_Fault-Tolerant_Routing_Algorithm_for_2.5D_Chiplet_Networks.pdf` for DeFT routing, VN behavior, movement restrictions, and design-time VL selection.
 
 Initial context source:
 
@@ -27,6 +29,8 @@ Out-of-scope source:
 - Peer evaluation material is ignored completely.
 
 The extended proposal defines the project as an extension of the cycle-accurate Noxim simulator for 2.5D chiplet networks, with evaluation under synthetic traffic profiles, permanent Vertical Link fault scenarios, and reachability, latency, and throughput metrics. The original DeFT paper provides the algorithmic reference for the VN assignment strategy, movement restrictions, and design-time VL selection idea used by this implementation.
+
+Citation wording in this draft is intentionally source-scoped: project requirements are attributed to `Extended_Proposal.pdf`, DeFT algorithm details are attributed to the original DeFT paper, and implementation or validation provenance is attributed to the tracked project documentation and generated report-support artifacts.
 
 Assumption: This draft uses the existing synthetic-traffic final sweep as the current reportable evaluation set.
 
@@ -99,7 +103,7 @@ The final sweep policy was defined in `T0025` and executed in `T0026`. The sweep
 | Routing modes | `XY`, `DEFT` |
 | Traffic profiles | `uniform`, `localized_40`, `hotspot_3x10` |
 | Fault masks | `0x0000`, `0x0001`, `0x0011`, `0x0111`, `0x1111` |
-| Physical fault rates | 0, 6.25, 12.5, 18.75, 25 |
+| Physical fault rates (%) | 0, 6.25, 12.5, 18.75, 25 |
 | Seeds | `0`, `1`, `2`, `3`, `4` |
 | Simulation window | `-sim 10000` |
 | Warm-up window | `-warmup 1000` |
@@ -171,7 +175,13 @@ Under this fixed-window measurement policy, the `XY` hotspot cells cannot be com
 
 ### 6.3 Condition-Level Descriptive Metrics
 
-Reachability is `total_received_packets / total_injected_packets` within the condition. Latency is received-packet-weighted across runs with received packets. Mean network throughput is the exported finite-window mean across all five runs.
+Reachability is `total_received_packets / total_injected_packets` within the condition. Latency is received-packet-weighted across runs with received packets. Mean network throughput is the exported finite-window mean across all five runs. The status labels are defined before the table to keep the wide table readable while preserving the original T0027/T0028 terminology.
+
+| Status label | Meaning |
+| --- | --- |
+| `complete_injection_cell` | All five seeds injected at least one packet in the measured window. |
+| `partial_injection_cell` | Some seeds injected packets and some seeds injected none in the measured window. |
+| `empty_injection_cell` | No seed injected packets in the measured window; reachability and latency stay blank. |
 
 | Routing | Traffic | Fault mask | Fault rate (%) | Nonempty seeds | Empty seeds | Injected | Received | Reachability | Latency (cycles) | Mean network throughput | Status |
 | --- | --- | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | --- |
@@ -208,7 +218,7 @@ Reachability is `total_received_packets / total_injected_packets` within the con
 
 ### 6.4 XY/DEFT Pairwise Readiness
 
-No delta columns are included. These rows describe whether values can be displayed side by side.
+No delta columns are included. These rows describe whether values can be displayed side by side, not whether either routing mode should be preferred.
 
 | Traffic | Fault mask | XY status | DEFT status | Readiness | Claim-safe note |
 | --- | --- | --- | --- | --- | --- |
@@ -266,9 +276,9 @@ The safest final conclusion is that the implementation and report-support workfl
 
 ## References
 
-1. `Extended_Proposal.pdf`.
-2. `docs/references/DeFT_A_Deadlock-Free_and_Fault-Tolerant_Routing_Algorithm_for_2.5D_Chiplet_Networks.pdf`.
-3. `Proposal.pdf`.
-4. `docs/ARCHITECTURE.md`.
-5. `docs/VALIDATION.md`.
-6. `external/noxim/other/generated/t0028_final_report_results_v1/report_results_draft.md`.
+1. Extended proposal, primary project requirements source: `Extended_Proposal.pdf`.
+2. Taheri, Pasricha, and Nikdast, DeFT original paper, primary algorithmic reference: `docs/references/DeFT_A_Deadlock-Free_and_Fault-Tolerant_Routing_Algorithm_for_2.5D_Chiplet_Networks.pdf`.
+3. Initial proposal context: `Proposal.pdf`.
+4. Project architecture record: `docs/ARCHITECTURE.md`.
+5. Project validation record: `docs/VALIDATION.md`.
+6. T0028 claim-safe results draft: `external/noxim/other/generated/t0028_final_report_results_v1/report_results_draft.md`.

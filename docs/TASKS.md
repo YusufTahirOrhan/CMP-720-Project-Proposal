@@ -274,13 +274,23 @@ Statuses: `TODO`, `IN_PROGRESS`, `DONE`, `BLOCKED`.
 
 ## T0030: Review Final Report Draft for Submission Readiness
 
-- **Status:** TODO
+- **Status:** DONE
 - **Objective:** Review `docs/FINAL_REPORT_DRAFT.md` for final-delivery structure, citation wording, formatting, and any instructor-specific submission requirements without changing the validated result claims.
 - **Relevant roadmap phase:** Phase 9
-- **Files likely to change:** `docs/FINAL_REPORT_DRAFT.md`, `docs/ARCHITECTURE.md`, `docs/TASKS.md`, `docs/PROGRESS.md`, `docs/VALIDATION.md`, `docs/PROMPTS.md`, and possibly a rendered report artifact if explicitly requested.
+- **Files changed:** `docs/FINAL_REPORT_DRAFT.md`, `docs/ARCHITECTURE.md`, `docs/TASKS.md`, `docs/PROGRESS.md`, `docs/VALIDATION.md`, and `docs/PROMPTS.md`.
 - **Acceptance criteria:** The draft is polished for submission, claim-safety constraints remain intact, any required format conversion is traceable, and no unsupported result claims are introduced.
 - **Validation command:** Documentation/status validation and claim-safety checks against the final report draft. If no simulator source changes are made, do not rebuild Noxim or rerun simulations.
-- **Notes:** Continue on the existing branch. If final submission requires a PDF, DOCX, or presentation artifact, record the requested format before converting.
+- **Notes:** Completed on 2026-05-09. Reviewed and polished the tracked Markdown draft for final-delivery structure, source-scoped citation wording, table readability, and submission readiness. Added reviewed status text, a submission-format note, clearer source-scope wording, a status-label legend for the wide condition metrics table, and clearer references. Preserved blank reachability, blank latency, partial-cell coverage counts, zero-injection notes, validation provenance, assumptions, blockers, limitations, and `claims_allowed: false` wording. Assumption: no PDF, DOCX, PPTX, or other final artifact format was requested during T0030, so no conversion artifact was created. Blocked: final conversion remains pending until the required submission format is specified. No simulator source, helper source, DeFT routing, VN transition logic, VL fault injection, LUT schemas, traffic semantics, metrics semantics, runner/analysis semantics, golden outputs, rebuild, rerun, or `./regression.sh --update` was changed.
+
+## T0031: Prepare Final Submission Artifact
+
+- **Status:** TODO
+- **Objective:** Confirm the required final submission format and, only when explicitly specified, convert the reviewed Markdown report draft into the requested submission artifact.
+- **Relevant roadmap phase:** Phase 9
+- **Files likely to change:** `docs/FINAL_REPORT_DRAFT.md`, `docs/ARCHITECTURE.md`, `docs/TASKS.md`, `docs/PROGRESS.md`, `docs/VALIDATION.md`, `docs/PROMPTS.md`, and a generated final artifact such as PDF, DOCX, or PPTX if explicitly requested.
+- **Acceptance criteria:** The required submission format is recorded before conversion; the generated artifact preserves claim-safety constraints, blank cells, limitations, citations, and table readability; the conversion method and validation method are documented.
+- **Validation command:** Documentation/status validation plus the specific artifact-rendering validation recorded before conversion. If no simulator source changes are made, do not rebuild Noxim or rerun simulations.
+- **Notes:** Continue on the existing branch. If no final format is specified, record the task as blocked rather than guessing a conversion target.
 
 ## T0023: Add or Register Noxim Source Tree
 

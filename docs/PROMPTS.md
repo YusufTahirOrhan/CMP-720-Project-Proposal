@@ -2071,3 +2071,14 @@ At the end, provide:
 - **Next ready-to-send prompt:** See `docs/PROGRESS.md`.
 - **Suggested branch name for next task:** None; continue on the existing branch.
 - **Suggested commit message:** `docs: assemble claim-safe final report draft`
+
+## 2026-05-09: Start T0030 Review Final Report Draft for Submission Readiness
+
+- **Date:** 2026-05-09
+- **Prompt summary:** Review and polish the tracked claim-safe Markdown final report draft for submission readiness without changing validated claims, simulator behavior, or report-support semantics.
+- **Full prompt summary:** The user requested task `T0030`, required startup reading of all project tracking documents, required continuing on the existing branch, required using `external/noxim` and `docs/FINAL_REPORT_DRAFT.md`, and required polishing the final report draft for final-delivery structure, citation wording, table readability, and submission readiness. The prompt emphasized preserving all claim-safety constraints, blank cells, partial-cell coverage counts, validation provenance, assumptions, blockers, and limitations. It prohibited fabricated results, performance claims, deltas, rankings, inferential claims, latency comparisons, complete-reachability wording, unsupported result language, simulator/source behavior changes, runner/analysis semantic changes, and `./regression.sh --update`. It also required recording any requested final submission format and validation method before conversion, updating the project tracking documents, and reporting created files, modified files, source-code status, validation, phase, next task, next prompt, branch guidance, commit message, and blockers.
+- **Result summary:** T0030 completed. `docs/FINAL_REPORT_DRAFT.md` was reviewed and polished for submission readiness. The title/front matter, source-scoped citation wording, evaluation table label, condition-table status legend, pair-readiness wording, and references were improved while preserving every measured value, blank reachability cell, blank latency cell, partial-cell coverage count, validation provenance item, assumption, blocker, limitation, and `claims_allowed: false` wording. No final artifact conversion was performed because no PDF, DOCX, PPTX, or other required output format was specified. No simulator source, helper source, routing behavior, VN transition logic, VL fault injection, LUT schema, traffic semantic, metrics semantic, runner/analysis semantic, golden output, rebuild, rerun, or performance claim was changed.
+- **Follow-up tasks:** Start `T0031` to confirm the required final submission format and produce a final artifact only when the format is explicitly specified.
+- **Next ready-to-send prompt:** See `docs/PROGRESS.md`.
+- **Suggested branch name for next task:** None; continue on the existing branch.
+- **Suggested commit message:** `docs: polish final report draft for submission`

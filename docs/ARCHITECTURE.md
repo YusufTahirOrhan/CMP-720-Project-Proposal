@@ -1077,6 +1077,30 @@ Assumption: `docs/FINAL_REPORT_DRAFT.md` is the current tracked claim-safe manus
 
 Blocked: Submission formatting, real-application PARSEC/GEM5 trace coverage, non-empty XY hotspot measurements, latency comparisons, single-direction fault modeling, and eventual-delivery checks require separate documented follow-up tasks before they can change the report claims.
 
+## T0030 Final Report Submission-Readiness Review
+
+`T0030` reviewed and polished the tracked Markdown draft at `docs/FINAL_REPORT_DRAFT.md` without changing simulator behavior or report-support measurements.
+
+Review outcome:
+
+- The report title and draft-status front matter now identify the reviewed Markdown draft as the current deliverable.
+- The claim-safety notice remains explicit and now records that no PDF, DOCX, PPTX, or other final artifact format was requested during T0030.
+- Source-scope wording now separates project requirements, DeFT algorithmic reference material, initial context, and validation provenance.
+- The evaluation-method table labels physical fault rates as percentages.
+- The condition-level metrics table keeps all measured values and blank cells intact, and adds a status-label legend for readability.
+- The references list now describes each source role without introducing unsupported bibliographic details.
+
+The review preserved the T0027/T0028 interpretation rules:
+
+- Blank reachability remains blank when no packets were injected.
+- Blank latency remains blank when no packets were received.
+- Partial cells keep nonempty and empty seed counts beside descriptive metrics.
+- No deltas, ordering claims, inferential claims, latency comparisons, complete-reachability wording, or unsupported performance language were added.
+
+Assumption: `docs/FINAL_REPORT_DRAFT.md` is submission-ready as a reviewed Markdown draft, but not yet as a PDF, DOCX, PPTX, or other final artifact.
+
+Blocked: Final artifact conversion remains pending until the required submission format is specified.
+
 ## Synthetic Traffic Models
 
 Implemented configuration support:
@@ -1128,6 +1152,7 @@ Planned and partially implemented:
 - Implemented in T0027: Blank-aware report-support tables classify complete, partial, and empty measured cells; preserve the 54 zero-injection runs; and avoid pairwise improvement or latency claims where the measured denominators are absent.
 - Implemented in T0028: Claim-safe final report results prose and Markdown tables were drafted from T0027/T0026 artifacts while preserving blank cells, partial-cell coverage counts, and `claims_allowed: false`.
 - Implemented in T0029: A tracked claim-safe Markdown final report draft was assembled at `docs/FINAL_REPORT_DRAFT.md` from the source documents, project documentation, and T0028/T0027/T0026 report-support artifacts.
+- Implemented in T0030: The tracked Markdown final report draft was reviewed and polished for submission readiness while preserving claim-safety constraints, blank cells, validation provenance, assumptions, blockers, and limitations.
 
 ## Noxim Extension Point Map
 

@@ -1212,6 +1212,50 @@ Expected future checks:
 - Review `docs/FINAL_REPORT_DRAFT.md` for final submission formatting and citation style while preserving its claim-safety constraints.
 - If a PDF, DOCX, or presentation artifact is required, record the requested output format and validate the rendered artifact separately.
 
+## Final Report Submission-Readiness Validation
+
+Purpose:
+
+- Review the tracked Markdown final report draft for submission readiness without changing validated measurements.
+- Preserve claim-safety constraints, blank metric cells, partial-cell coverage counts, validation provenance, assumptions, blockers, and limitations.
+- Confirm that no unsupported result language is introduced during report polish.
+
+Known validation:
+
+- Use `docs/FINAL_REPORT_DRAFT.md` as the tracked report draft.
+- Use existing T0028/T0027/T0026 artifacts only for traceability checks.
+- Use documentation/status validation and targeted claim-safety searches.
+- If no simulator source changes are made, do not rebuild Noxim and do not rerun simulations.
+- If a PDF, DOCX, PPTX, or other final artifact is requested, record the requested format and validation method before conversion.
+
+T0030 result on 2026-05-09:
+
+- Required startup reading was completed before task work: `AGENTS.md`, `docs/PROGRESS.md`, `docs/TASKS.md`, `docs/ROADMAP.md`, `docs/ARCHITECTURE.md`, `docs/VALIDATION.md`, `docs/DECISIONS.md`, and `docs/PROMPTS.md`.
+- Before documentation edits, a short implementation plan was produced.
+- Initial parent status showed branch `feat/map-noxim-extension-points...origin/feat/map-noxim-extension-points` with no local file modifications.
+- Initial submodule status showed branch `feat/baseline-noxim...origin/feat/baseline-noxim` with no local file modifications.
+- Required source-document paths were present: `Extended_Proposal.pdf`, `Proposal.pdf`, and `docs/references/DeFT_A_Deadlock-Free_and_Fault-Tolerant_Routing_Algorithm_for_2.5D_Chiplet_Networks.pdf`.
+- The default Python environment did not provide `pypdf`, so T0030 did not extract new bibliographic details from PDFs. Citation wording was kept source-scoped to verified local paths and existing project records.
+- Polished `docs/FINAL_REPORT_DRAFT.md` for title/front-matter clarity, source-scope wording, citation wording, table readability, and submission-readiness notes.
+- Added a submission-format note recording that no PDF, DOCX, PPTX, or other final artifact format was requested during T0030.
+- Added a status-label legend for the condition-level metrics table while preserving every measured value, blank reachability cell, blank latency cell, nonempty/empty seed count, status label, and zero-injection note.
+- Claim-safety searches found only negative or limitation-context occurrences for deltas and latency comparison language, with no unsupported ordering, improvement, complete-reachability, statistical-significance, or latency-comparison claim added.
+- Count checks in `docs/FINAL_REPORT_DRAFT.md` confirmed 30 condition rows, 12 complete-injection rows, 13 partial-injection rows, 5 empty-injection rows, and preserved blank-cell rows.
+- ASCII checks found no non-ASCII characters in the edited Markdown files.
+- No final submission artifact was generated because no final format was specified.
+- No Noxim rebuild, final-sweep rerun, simulator source change, helper source change, routing behavior change, VN transition change, VL fault-injection change, traffic semantic change, metrics semantic change, runner/analysis semantic change, golden output update, regression command, `./regression.sh --update`, or performance claim was performed.
+- `git diff --check` in the parent repository completed with exit code `0`; Git reported line-ending conversion warnings for edited Markdown files only.
+- `git -c safe.directory=C:/Projects/CMP-720-Project-Proposal/external/noxim -C external/noxim diff --check` completed with exit code `0`.
+- Final parent status after documentation updates showed only requested Markdown files modified: `docs/ARCHITECTURE.md`, `docs/FINAL_REPORT_DRAFT.md`, `docs/PROGRESS.md`, `docs/PROMPTS.md`, `docs/TASKS.md`, and `docs/VALIDATION.md`.
+- Final `external/noxim` status remained clean.
+- Assumption: `docs/FINAL_REPORT_DRAFT.md` is submission-ready as a reviewed Markdown draft, but not yet as a converted PDF, DOCX, PPTX, or other final artifact.
+- Blocked: Final artifact conversion remains pending until the required submission format is specified.
+
+Expected future checks:
+
+- If the final report requires PDF, DOCX, PPTX, or another artifact, record the requested output format before conversion and validate the rendered artifact separately.
+- If stronger claims, non-empty XY hotspot cells, latency comparisons, directional endpoint fault modeling, real-application traces, or eventual-delivery checks are required, define a separate validation policy before changing report language.
+
 ## Metrics Validation
 
 Purpose:
