@@ -1101,6 +1101,20 @@ Assumption: `docs/FINAL_REPORT_DRAFT.md` is submission-ready as a reviewed Markd
 
 Blocked: Final artifact conversion remains pending until the required submission format is specified.
 
+## T0031 Final Submission Artifact Format Check
+
+`T0031` checked whether the reviewed Markdown draft at `docs/FINAL_REPORT_DRAFT.md` could be converted into a required final submission artifact.
+
+Inspection outcome:
+
+- `Extended_Proposal.pdf` remains the primary project requirements source. Its timeline calls for analysis and final report work, including finalizing the project report, but it does not specify a required file format.
+- `Proposal.pdf` is initial context only. Its submission instructions refer to the initial proposal source files and compiled proposal PDF, not to the final report artifact.
+- The original DeFT paper remains the primary algorithmic reference and does not define course submission packaging.
+
+Assumption: `docs/FINAL_REPORT_DRAFT.md` remains the current reviewed Markdown report draft until an explicit final output format is supplied.
+
+Blocked: No PDF, DOCX, PPTX, Markdown copy, or other final artifact was generated because the required final submission format is still unspecified.
+
 ## Synthetic Traffic Models
 
 Implemented configuration support:
@@ -1153,6 +1167,7 @@ Planned and partially implemented:
 - Implemented in T0028: Claim-safe final report results prose and Markdown tables were drafted from T0027/T0026 artifacts while preserving blank cells, partial-cell coverage counts, and `claims_allowed: false`.
 - Implemented in T0029: A tracked claim-safe Markdown final report draft was assembled at `docs/FINAL_REPORT_DRAFT.md` from the source documents, project documentation, and T0028/T0027/T0026 report-support artifacts.
 - Implemented in T0030: The tracked Markdown final report draft was reviewed and polished for submission readiness while preserving claim-safety constraints, blank cells, validation provenance, assumptions, blockers, and limitations.
+- Blocked in T0031: Final artifact conversion was not performed because no source document or user instruction explicitly specified the required final submission format. `Extended_Proposal.pdf` requires finalizing the project report but does not define PDF, DOCX, PPTX, Markdown, or another artifact target.
 
 ## Noxim Extension Point Map
 

@@ -45,32 +45,31 @@ DeFT VN assignment behavior, the first VN movement-transition restriction enforc
 
 ## Blocked Tasks
 
-- None.
+- `T0031` - Prepare Final Submission Artifact.
 
 ## Last Validation Result
 
-- T0030 Review Final Report Draft for Submission Readiness completed on 2026-05-09.
+- T0031 Prepare Final Submission Artifact is blocked as of 2026-05-09.
 - Required startup reading was completed before task work: `AGENTS.md`, `docs/PROGRESS.md`, `docs/TASKS.md`, `docs/ROADMAP.md`, `docs/ARCHITECTURE.md`, `docs/VALIDATION.md`, `docs/DECISIONS.md`, and `docs/PROMPTS.md`.
-- Before documentation edits, a short implementation plan was produced.
+- Before running commands or documentation edits, a short implementation plan was produced.
 - Initial parent status showed branch `feat/map-noxim-extension-points...origin/feat/map-noxim-extension-points` with no local file modifications.
 - Initial `external/noxim` status showed branch `feat/baseline-noxim...origin/feat/baseline-noxim` with no local file modifications.
 - Required source-document paths were present: `Extended_Proposal.pdf`, `Proposal.pdf`, and `docs/references/DeFT_A_Deadlock-Free_and_Fault-Tolerant_Routing_Algorithm_for_2.5D_Chiplet_Networks.pdf`.
-- The default Python environment did not provide `pypdf`, so T0030 did not extract new bibliographic details from PDFs. Citation wording was kept source-scoped to verified local paths and existing project records.
-- Polished `docs/FINAL_REPORT_DRAFT.md` for final-delivery structure, title/front-matter clarity, citation wording, table readability, and submission-readiness notes.
-- Added a submission-format note recording that no PDF, DOCX, PPTX, or other final artifact format was requested during T0030.
-- Added a status-label legend for the condition-level metrics table while preserving every measured value, blank reachability cell, blank latency cell, nonempty/empty seed count, status label, and zero-injection note.
-- Preserved T0027/T0028 blank cells, partial-cell coverage counts, validation provenance, assumptions, blockers, limitations, and `claims_allowed: false` wording.
-- Claim-safety searches found only negative or limitation-context occurrences for deltas and latency comparison language, with no unsupported ordering, improvement, complete-reachability, statistical-significance, or latency-comparison claim added.
-- Count checks in `docs/FINAL_REPORT_DRAFT.md` confirmed 30 condition rows, 12 complete-injection rows, 13 partial-injection rows, 5 empty-injection rows, and preserved blank-cell rows.
-- ASCII checks found no non-ASCII characters in the edited Markdown files.
-- No final submission artifact was generated because no final format was specified.
+- The bundled Python environment provided `pypdf`, and read-only PDF text inspection was used only to search for explicit final-format wording.
+- `Extended_Proposal.pdf` was inspected first as the primary requirements source. It says to finalize the project report, but it does not specify PDF, DOCX, PPTX, Markdown, or another final artifact format.
+- `Proposal.pdf` was inspected only as initial context. It includes initial proposal submission instructions for proposal source and compiled PDF files, but it does not specify the final report artifact format.
+- The original DeFT paper was treated as the algorithmic reference and does not specify project submission format.
+- No final submission artifact was generated because no required final format was specified.
+- No changes were made to `docs/FINAL_REPORT_DRAFT.md`; its T0030-reviewed Markdown draft remains the current report draft.
 - No Noxim rebuild, final-sweep rerun, simulator source change, helper source change, routing behavior change, VN transition change, VL fault-injection change, traffic semantic change, metrics semantic change, runner/analysis semantic change, golden output update, regression command, `./regression.sh --update`, or performance claim was performed.
+- `git diff -- docs/FINAL_REPORT_DRAFT.md` returned no output, confirming the report draft was not modified during T0031.
+- ASCII checks found no non-ASCII characters in the edited Markdown files.
 - `git diff --check` in the parent repository completed with exit code `0`; Git reported line-ending conversion warnings for edited Markdown files only.
 - `git -c safe.directory=C:/Projects/CMP-720-Project-Proposal/external/noxim -C external/noxim diff --check` completed with exit code `0`.
-- Final parent status after documentation updates showed only requested Markdown files modified: `docs/ARCHITECTURE.md`, `docs/FINAL_REPORT_DRAFT.md`, `docs/PROGRESS.md`, `docs/PROMPTS.md`, `docs/TASKS.md`, and `docs/VALIDATION.md`.
+- Final parent status after documentation updates showed only requested Markdown files modified: `docs/ARCHITECTURE.md`, `docs/PROGRESS.md`, `docs/PROMPTS.md`, `docs/TASKS.md`, and `docs/VALIDATION.md`.
 - Final `external/noxim` status remained clean.
 - Assumption: `docs/FINAL_REPORT_DRAFT.md` is submission-ready as a reviewed Markdown draft, but not yet as a converted PDF, DOCX, PPTX, or other final artifact.
-- Blocked: Final artifact conversion remains pending until the required submission format is specified.
+- Blocked: Final artifact conversion cannot proceed until the required output format is explicitly supplied.
 
 ## Important Changed Files
 
@@ -430,6 +429,14 @@ Files updated during `T0030` Review Final Report Draft for Submission Readiness:
 - `docs/VALIDATION.md`
 - `docs/PROMPTS.md`
 
+Files updated during `T0031` Prepare Final Submission Artifact:
+
+- `docs/ARCHITECTURE.md`
+- `docs/TASKS.md`
+- `docs/PROGRESS.md`
+- `docs/VALIDATION.md`
+- `docs/PROMPTS.md`
+
 Noxim build files LF-normalized during `T0003`:
 
 - `external/noxim/bin/Makefile`
@@ -544,6 +551,7 @@ External source tree registered during `T0023`:
 - Assumption: T0028 final report results prose is claim-safe descriptive support text and must be integrated only with its blank cells, partial-cell coverage counts, and limitations intact.
 - Assumption: `docs/FINAL_REPORT_DRAFT.md` is the tracked claim-safe Markdown manuscript draft assembled from the source documents, project documentation, and T0028/T0027/T0026 artifacts.
 - Assumption: After T0030, `docs/FINAL_REPORT_DRAFT.md` is submission-ready as a reviewed Markdown draft, but no converted final artifact exists because no final format was specified.
+- Assumption: After T0031 source-document inspection, the required final submission artifact format remains unspecified; the reviewed Markdown draft is still the current report draft until an explicit output format is supplied.
 
 ## Open Questions
 
@@ -562,12 +570,12 @@ External source tree registered during `T0023`:
 
 ## Next Recommended Task
 
-Start `T0031` and prepare the final submission artifact only after the required output format is specified.
+Resume `T0031` only after the required final submission artifact format is explicitly supplied.
 
 ## Next Ready-to-Send Prompt
 
 ```text
-Start task T0031: Prepare Final Submission Artifact.
+Resume task T0031: Prepare Final Submission Artifact.
 
 Before starting, read AGENTS.md, docs/PROGRESS.md, docs/TASKS.md, docs/ROADMAP.md, docs/ARCHITECTURE.md, docs/VALIDATION.md, docs/DECISIONS.md, and docs/PROMPTS.md.
 
@@ -579,9 +587,12 @@ external/noxim
 Use the reviewed tracked report draft at:
 docs/FINAL_REPORT_DRAFT.md
 
-T0030 reviewed and polished this Markdown report draft for final-delivery structure, source-scoped citation wording, table readability, and submission readiness while preserving claim-safety constraints.
+T0030 reviewed and polished this Markdown report draft for final-delivery structure, source-scoped citation wording, table readability, and submission readiness while preserving claim-safety constraints. T0031 inspected the source documents and is blocked because no required final submission format was specified.
 
-Goal: confirm the required final submission format and prepare the final submission artifact only when the format is explicitly specified. If the required format is PDF, DOCX, PPTX, Markdown, or another artifact, record that format and the validation method before conversion. If no required format is specified, record the task as `Blocked` and do not guess a conversion target.
+Required final artifact format:
+<insert the explicit required format here, such as PDF, DOCX, PPTX, Markdown, or another artifact target>
+
+Goal: record the explicitly supplied final submission format and prepare only that final artifact. Record the conversion method and the format-appropriate validation method before conversion. If the format is still not supplied, keep the task `Blocked` and do not guess a conversion target.
 
 Preserve all claim-safety constraints, blank cells, partial-cell coverage counts, validation provenance, assumptions, blockers, and limitations. Do not fabricate results or performance claims. Do not add deltas, ordering claims, inferential claims, latency comparisons, complete-reachability wording, or unsupported result language. Do not change DeFT routing, VN transition logic, VL fault injection, T0016 generator format, T0017 runtime LUT schema/use path, T0019 traffic profile semantics, T0020 metrics semantics, T0021 runner semantics, or T0022 analysis semantics. Do not use `./regression.sh --update`.
 
@@ -616,5 +627,5 @@ None; continue on the existing branch.
 ## Suggested Commit Message
 
 ```text
-docs: polish final report draft for submission
+docs: record final artifact format blocker
 ```

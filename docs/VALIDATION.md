@@ -1256,6 +1256,51 @@ Expected future checks:
 - If the final report requires PDF, DOCX, PPTX, or another artifact, record the requested output format before conversion and validate the rendered artifact separately.
 - If stronger claims, non-empty XY hotspot cells, latency comparisons, directional endpoint fault modeling, real-application traces, or eventual-delivery checks are required, define a separate validation policy before changing report language.
 
+## Final Submission Artifact Validation
+
+Purpose:
+
+- Confirm the required final submission artifact format before converting the reviewed report draft.
+- Avoid guessing a PDF, DOCX, PPTX, Markdown, or other artifact target when the required format is not explicitly specified.
+- Preserve claim-safety constraints, blank metric cells, partial-cell coverage counts, validation provenance, assumptions, blockers, and limitations.
+
+Known validation:
+
+- Use `docs/FINAL_REPORT_DRAFT.md` as the reviewed report draft.
+- Inspect `Extended_Proposal.pdf` first for an explicit final submission format.
+- Use `Proposal.pdf` only as initial context.
+- Use the original DeFT paper only as the algorithmic reference.
+- If no simulator source changes are made, do not rebuild Noxim and do not rerun simulations.
+- If no required final format is specified, do not run artifact conversion; record the task as `Blocked`.
+
+T0031 result on 2026-05-09:
+
+- Required startup reading was completed before task work: `AGENTS.md`, `docs/PROGRESS.md`, `docs/TASKS.md`, `docs/ROADMAP.md`, `docs/ARCHITECTURE.md`, `docs/VALIDATION.md`, `docs/DECISIONS.md`, and `docs/PROMPTS.md`.
+- Before running commands or documentation edits, a short implementation plan was produced.
+- Initial parent status showed branch `feat/map-noxim-extension-points...origin/feat/map-noxim-extension-points` with no local file modifications.
+- Initial `external/noxim` status showed branch `feat/baseline-noxim...origin/feat/baseline-noxim` with no local file modifications.
+- Required source-document paths were present: `Extended_Proposal.pdf`, `Proposal.pdf`, and `docs/references/DeFT_A_Deadlock-Free_and_Fault-Tolerant_Routing_Algorithm_for_2.5D_Chiplet_Networks.pdf`.
+- The bundled Python environment provided `pypdf`, and read-only PDF text inspection was used only to search for explicit final-format wording.
+- `Extended_Proposal.pdf` mentions finalizing the project report, but it does not specify PDF, DOCX, PPTX, Markdown, or another final artifact format.
+- `Proposal.pdf` includes initial proposal submission instructions for proposal source and compiled PDF files, but it is initial context only and does not specify the final report artifact format.
+- The original DeFT paper is an algorithmic reference and does not specify project submission format.
+- No final submission artifact was generated because no required final format was specified.
+- No Noxim rebuild, final-sweep rerun, simulator source change, helper source change, routing behavior change, VN transition change, VL fault-injection change, traffic semantic change, metrics semantic change, runner/analysis semantic change, golden output update, regression command, `./regression.sh --update`, or performance claim was performed.
+- `git diff -- docs/FINAL_REPORT_DRAFT.md` returned no output, confirming the report draft was not modified during T0031.
+- ASCII checks found no non-ASCII characters in the edited Markdown files.
+- `git diff --check` in the parent repository completed with exit code `0`; Git reported line-ending conversion warnings for edited Markdown files only.
+- `git -c safe.directory=C:/Projects/CMP-720-Project-Proposal/external/noxim -C external/noxim diff --check` completed with exit code `0`.
+- Final parent status after documentation updates showed only requested Markdown files modified: `docs/ARCHITECTURE.md`, `docs/PROGRESS.md`, `docs/PROMPTS.md`, `docs/TASKS.md`, and `docs/VALIDATION.md`.
+- Final `external/noxim` status remained clean.
+- Assumption: `docs/FINAL_REPORT_DRAFT.md` remains the current reviewed Markdown draft until the required final output format is explicitly supplied.
+- Blocked: Final artifact conversion cannot proceed until the required output format is specified.
+
+Expected future checks:
+
+- Resume T0031 only after the required final artifact format is explicitly supplied.
+- Record the requested output format and artifact validation method before conversion.
+- Validate the generated artifact with a format-appropriate render, open, or inspection method.
+
 ## Metrics Validation
 
 Purpose:

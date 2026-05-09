@@ -2082,3 +2082,14 @@ At the end, provide:
 - **Next ready-to-send prompt:** See `docs/PROGRESS.md`.
 - **Suggested branch name for next task:** None; continue on the existing branch.
 - **Suggested commit message:** `docs: polish final report draft for submission`
+
+## 2026-05-09: Start T0031 Prepare Final Submission Artifact
+
+- **Date:** 2026-05-09
+- **Prompt summary:** Confirm the required final submission format and prepare the final artifact only if the format is explicitly specified; otherwise record the task as blocked.
+- **Full prompt summary:** The user requested task `T0031`, required startup reading of all project tracking documents, required continuing on the existing branch, required using `external/noxim` and the reviewed tracked report draft at `docs/FINAL_REPORT_DRAFT.md`, and required preserving all claim-safety constraints, blank cells, partial-cell coverage counts, validation provenance, assumptions, blockers, and limitations. The prompt explicitly prohibited guessing a conversion target, fabricated results, unsupported result language, simulator behavior changes, reruns, rebuilds, and `./regression.sh --update`. It required using `Extended_Proposal.pdf` as the primary requirements source, the original DeFT paper as the algorithmic reference, and `Proposal.pdf` only as initial context.
+- **Result summary:** T0031 is blocked. Source-document inspection found no explicit final submission artifact format. `Extended_Proposal.pdf` calls for finalizing the project report but does not specify PDF, DOCX, PPTX, Markdown, or another target format. `Proposal.pdf` contains initial proposal submission instructions for proposal source and compiled PDF files, but it is initial context only and does not define the final report format. No final artifact conversion was performed, and no simulator source, helper source, routing behavior, VN transition logic, VL fault injection, traffic semantics, metrics semantics, runner/analysis semantics, rebuild, rerun, regression command, or performance claim was changed.
+- **Follow-up tasks:** Resume `T0031` after the required final submission format is explicitly supplied.
+- **Next ready-to-send prompt:** See `docs/PROGRESS.md`.
+- **Suggested branch name for next task:** None; continue on the existing branch.
+- **Suggested commit message:** `docs: record final artifact format blocker`

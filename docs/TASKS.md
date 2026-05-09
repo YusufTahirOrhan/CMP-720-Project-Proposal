@@ -284,13 +284,13 @@ Statuses: `TODO`, `IN_PROGRESS`, `DONE`, `BLOCKED`.
 
 ## T0031: Prepare Final Submission Artifact
 
-- **Status:** TODO
+- **Status:** BLOCKED
 - **Objective:** Confirm the required final submission format and, only when explicitly specified, convert the reviewed Markdown report draft into the requested submission artifact.
 - **Relevant roadmap phase:** Phase 9
-- **Files likely to change:** `docs/FINAL_REPORT_DRAFT.md`, `docs/ARCHITECTURE.md`, `docs/TASKS.md`, `docs/PROGRESS.md`, `docs/VALIDATION.md`, `docs/PROMPTS.md`, and a generated final artifact such as PDF, DOCX, or PPTX if explicitly requested.
+- **Files changed:** `docs/ARCHITECTURE.md`, `docs/TASKS.md`, `docs/PROGRESS.md`, `docs/VALIDATION.md`, and `docs/PROMPTS.md`.
 - **Acceptance criteria:** The required submission format is recorded before conversion; the generated artifact preserves claim-safety constraints, blank cells, limitations, citations, and table readability; the conversion method and validation method are documented.
-- **Validation command:** Documentation/status validation plus the specific artifact-rendering validation recorded before conversion. If no simulator source changes are made, do not rebuild Noxim or rerun simulations.
-- **Notes:** Continue on the existing branch. If no final format is specified, record the task as blocked rather than guessing a conversion target.
+- **Validation command:** Documentation/status validation plus source-document inspection for an explicit final submission format. No artifact-rendering validation was run because no final artifact was generated.
+- **Notes:** Blocked on 2026-05-09. Required startup reading was completed. `Extended_Proposal.pdf` was inspected first and states that the project should finalize the project report, but it does not specify PDF, DOCX, PPTX, Markdown, or another final artifact format. `Proposal.pdf` contains initial proposal submission instructions for proposal source and compiled PDF files, but it is initial context only and does not define the final report artifact format. The original DeFT paper is an algorithmic reference and does not specify project submission format. Assumption: `docs/FINAL_REPORT_DRAFT.md` remains the current reviewed Markdown draft. Blocked: final artifact conversion cannot proceed until the required output format is explicitly supplied. No final artifact, simulator source change, helper source change, routing behavior change, VN transition change, VL fault-injection change, LUT schema change, traffic semantic change, metrics semantic change, runner/analysis semantic change, rebuild, rerun, regression command, `./regression.sh --update`, or performance claim was produced.
 
 ## T0023: Add or Register Noxim Source Tree
 
