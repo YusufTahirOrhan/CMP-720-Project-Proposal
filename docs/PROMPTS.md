@@ -2148,3 +2148,30 @@ At the end, provide:
 - **Next ready-to-send prompt:** See `docs/PROGRESS.md`.
 - **Suggested branch name for next task:** None; continue on the existing branch.
 - **Suggested commit message:** `docs: record final report pdf generation blocker`
+
+## 2026-05-11: Continue T0032 After TeX Toolchain Blocker Check
+
+- **Date:** 2026-05-11
+- **Prompt summary:** Continue T0032 after the TeX toolchain blocker was expected to be resolved, first confirming tool availability, then compiling the report or recording the exact remaining blocker.
+- **Full prompt summary:** The user requested continuing `T0032`, required startup reading of all project tracking documents plus `docs/FINAL_REPORT_DRAFT.md` and `final_report/main.tex`, required continuing on the existing branch, and prohibited modifying report claims, source code, simulator behavior, generated final-sweep artifacts, or Extended Proposal files. The prompt required first confirming that a TeX toolchain is available, preferring `latexmk -pdf main.tex` from `final_report/`, with a fallback to `pdflatex`/`bibtex`/`pdflatex`/`pdflatex` only when both fallback tools are available. It required recording the generated PDF path, warnings, and layout blockers, or the exact blocker if tooling remained unavailable, updating tracking docs, and running `git diff --check`.
+- **Result summary:** The T0032 continuation attempt remains blocked. Windows PATH still does not expose `latexmk`, `pdflatex`, `bibtex`, or `tectonic`; common Windows TeX install locations checked during the continuation did not expose a visible TeX install; and `wsl -l -v` still reported no installed WSL distributions. LaTeX compilation was not attempted, no PDF was generated, and no warnings or layout blockers could be inspected. `git diff --check` passed with line-ending warnings for edited Markdown files only. No report claims, source code, simulator behavior, generated final-sweep artifacts, rebuild, rerun, regression command, or performance claim was changed.
+- **Follow-up tasks:** Resolve the TeX-environment blocker, then continue `T0032` to compile the revised final report PDF.
+- **Next ready-to-send prompt:** See `docs/PROGRESS.md`.
+- **Suggested branch name for next task:** None; continue on the existing branch.
+- **Suggested commit message:** `docs: record continued pdf generation blocker`
+
+## 2026-05-11: Retry T0032 After WSL `pdflatex` Installation
+
+- **Date:** 2026-05-11
+- **Prompt summary:** Retry T0032 after the user reported that `pdflatex` was installed on WSL Ubuntu.
+- **Full prompt:**
+
+```text
+Ok retry, I installed pdflatex on wsl ubuntu
+```
+
+- **Result summary:** T0032 completed. The sandbox-visible WSL check still reported no installed distributions, but an approved outside-sandbox WSL check found Ubuntu running under WSL 2. Windows PATH still did not expose TeX tools, and WSL did not expose `latexmk`, but WSL did expose `/usr/bin/pdflatex` and `/usr/bin/bibtex`. The fallback sequence was run from `final_report/`. Two claim-neutral TeX compatibility edits were made in `final_report/main.tex`: remove the unused `algorithmic` package import because `algorithmic.sty` was missing, and switch the bibliography style from unavailable `IEEEtran` to installed `ieeetr` because `IEEEtran.bst` was not available locally. The final PDF was generated at `final_report/main.pdf`; final log inspection found no unresolved citations or references, no LaTeX errors, no fatal errors, no overfull boxes, and BibTeX zero warnings. Remaining diagnostics were 43 underfull box messages, one underfull vbox, and the standard IEEEtran final-page column-balance reminder. No report claims, source code, simulator behavior, generated final-sweep artifacts, rebuild, rerun, regression command, or performance claim was changed.
+- **Follow-up tasks:** Start `T0036` to perform the post-final experimental extension design gate.
+- **Next ready-to-send prompt:** See `docs/PROGRESS.md`.
+- **Suggested branch name for next task:** None; continue on the existing branch.
+- **Suggested commit message:** `docs: generate final report pdf`

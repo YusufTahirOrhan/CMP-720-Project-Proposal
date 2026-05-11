@@ -1,0 +1,54 @@
+\begin{thebibliography}{10}
+
+\bibitem{Taheri2022DeFT}
+E.~Taheri, S.~Pasricha, and M.~Nikdast, ``Deft: A deadlock-free and
+  fault-tolerant routing algorithm for 2.5d chiplet networks,'' in {\em Design,
+  Automation \& Test in Europe Conference \& Exhibition (DATE)},
+  pp.~1047--1052, 2022.
+
+\bibitem{Catania2016Noxim}
+V.~Catania {\em et~al.}, ``Cycle-accurate network on chip simulation with
+  noxim,'' {\em ACM Transactions on Modeling and Computer Simulation (TOMACS)},
+  2016.
+
+\bibitem{Yin2018MTR}
+J.~Yin {\em et~al.}, ``Modular routing design for chiplet-based systems,'' in
+  {\em Proceedings of the 45th Annual International Symposium on Computer
+  Architecture (ISCA)}, 2018.
+
+\bibitem{Majumder2020RC}
+P.~Majumder {\em et~al.}, ``Remote control: A simple deadlock avoidance scheme
+  for modular systems-on-chip,'' {\em IEEE Transactions on Computers (TC)},
+  2020.
+
+\bibitem{Wang2023BUP}
+X.~Wang {\em et~al.}, ``Bup: A deadlock resolution framework for 2.5d chiplet
+  networks by update packet bypassing,'' in {\em 2023 IEEE 31st Annual
+  International Symposium on Field-Programmable Custom Computing Machines
+  (FCCM)}, 2023.
+
+\bibitem{Taheri2023ReD}
+E.~Taheri, M.~Nikdast, and S.~Pasricha, ``Red: A reliable and deadlock-free
+  routing for 2.5-d chiplet-based interposer networks,'' in {\em Proceedings of
+  the 41st IEEE International Conference on Computer Design (ICCD)}, 2023.
+
+\bibitem{Salamat2018Runtime}
+R.~Salamat {\em et~al.}, ``A runtime fault-tolerant routing scheme for
+  partially connected 3d networks-on-chip,'' {\em IEEE Transactions on
+  Computer-Aided Design of Integrated Circuits and Systems}, 2018.
+
+\bibitem{Li2020Circular}
+Y.~Li {\em et~al.}, ``Fault-tolerant circular routing algorithm for 3d-noc,''
+  {\em The Journal of Supercomputing}, 2020.
+
+\bibitem{Hsu2015Link}
+C.~Hsu {\em et~al.}, ``Configurable fault-tolerant link for inter-die
+  communication in 3d on-chip networks,'' in {\em Proceedings of the 2015
+  IEEE/ACM International Symposium on Low Power Electronics and Design
+  (ISLPED)}, 2015.
+
+\bibitem{Bienia2011PARSEC}
+C.~Bienia and K.~Li, ``Benchmarking modern multiprocessors,'' in {\em Princeton
+  University technical report}, 2011.
+
+\end{thebibliography}

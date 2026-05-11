@@ -37,11 +37,12 @@ Phase 9 - Final Analysis and Report Support
 - `T0029` - Assemble Claim-Safe Final Report Draft.
 - `T0030` - Review Final Report Draft for Submission Readiness.
 - `T0031` - Prepare Final Submission Artifact.
+- `T0032` - Generate Final Report PDF in a TeX-Enabled Environment.
 - `T0033` - Diagnose and Reduce Final-Report Blockers.
 - `T0034` - Decide Next Gap-Closure Direction and Add Follow-up Tasks.
 - `T0035` - Revise Final Report with T0033 Diagnosis.
 
-DeFT VN assignment behavior, the first VN movement-transition restriction enforcement layer, the offline VL LUT schema/generator, the runtime schema-v1 LUT loading/use path, explicit XY fault-free/fault-injected baseline configuration modes, proposal-required synthetic traffic configuration profiles, machine-readable metrics export, tiny experiment-runner launch support, final-analysis scaffolding, the final sweep policy, the validated T0026 150-run final sweep output set, T0027 blank-aware report-support tables, T0028 claim-safe final report results draft, the T0029 tracked claim-safe Markdown report draft, the T0030 submission-readiness polish, the T0031 IEEE-style LaTeX final report source artifact, the T0033 blocker diagnosis, the T0034 report-revision direction decision, and the T0035 final-report diagnosis revision now exist for `DEFT_2_5D`. Performance claims remain limited to descriptive, blank-aware report support only.
+DeFT VN assignment behavior, the first VN movement-transition restriction enforcement layer, the offline VL LUT schema/generator, the runtime schema-v1 LUT loading/use path, explicit XY fault-free/fault-injected baseline configuration modes, proposal-required synthetic traffic configuration profiles, machine-readable metrics export, tiny experiment-runner launch support, final-analysis scaffolding, the final sweep policy, the validated T0026 150-run final sweep output set, T0027 blank-aware report-support tables, T0028 claim-safe final report results draft, the T0029 tracked claim-safe Markdown report draft, the T0030 submission-readiness polish, the T0031 IEEE-style LaTeX final report source artifact, the T0032 generated final report PDF, the T0033 blocker diagnosis, the T0034 report-revision direction decision, and the T0035 final-report diagnosis revision now exist for `DEFT_2_5D`. Performance claims remain limited to descriptive, blank-aware report support only.
 
 ## In-Progress Tasks
 
@@ -49,27 +50,31 @@ DeFT VN assignment behavior, the first VN movement-transition restriction enforc
 
 ## Blocked Tasks
 
-- `T0032` - Generate Final Report PDF in a TeX-Enabled Environment. Blocked because no usable TeX toolchain is available in the current Windows PATH or WSL environment.
+- None.
 
 ## Last Validation Result
 
-- T0032 Generate Final Report PDF in a TeX-Enabled Environment is blocked on 2026-05-11.
-- Required startup reading was completed before task work: `AGENTS.md`, `docs/PROGRESS.md`, `docs/TASKS.md`, `docs/ROADMAP.md`, `docs/ARCHITECTURE.md`, `docs/VALIDATION.md`, `docs/DECISIONS.md`, `docs/PROMPTS.md`, `docs/FINAL_REPORT_DRAFT.md`, and `final_report/main.tex`.
-- Before status checks, toolchain checks, or tracking-document edits, a short implementation plan was produced. Assumption: T0032 is a report-build/tracking task only. Blocked: PDF generation requires a usable TeX toolchain.
-- Parent repository status before documentation edits showed branch `feat/map-noxim-extension-points...origin/feat/map-noxim-extension-points` ahead by one commit and the pre-existing untracked `final_report.zip`.
-- The registered Noxim source tree at `external/noxim` remained clean before documentation edits.
-- `final_report/main.tex`, `final_report/references.bib`, and `final_report/IEEEtran.cls` are present.
-- Windows PATH did not expose `latexmk`, `pdflatex`, `bibtex`, or `tectonic`; the command availability check returned no tools.
-- Common Windows TeX install locations checked during T0032 did not expose a visible TeX install.
-- `wsl.exe` exists, but `wsl -l -v` reported no installed WSL distributions, so no WSL TeX environment is usable from this workspace.
-- LaTeX compilation was not attempted because neither `latexmk` nor the `pdflatex` plus `bibtex` fallback toolchain is available.
-- No PDF was generated. Generated PDF path: none.
-- No LaTeX warnings or PDF layout blockers could be inspected because compilation did not run.
-- `docs/TASKS.md`, `docs/PROGRESS.md`, `docs/VALIDATION.md`, and `docs/PROMPTS.md` were updated with the blocked PDF-generation result.
-- `docs/DECISIONS.md` was not updated because T0032 made no new durable decision.
-- No report claims, simulator source, helper source, routing logic, VN transition logic, VL fault injection, LUT schema/use path, topology behavior, traffic semantics, metrics semantics, runner/analysis semantics, generated final-sweep artifact, Extended Proposal file, Noxim rebuild, simulation run, final-sweep regeneration, regression command, `./regression.sh --update`, or performance claim was changed.
-- Final `git diff --check` in the parent repository completed with exit code `0`; Git reported line-ending conversion warnings for edited Markdown files only.
-- Final parent status showed modified tracking docs and the pre-existing untracked `final_report.zip`.
+- T0032 Generate Final Report PDF in a TeX-Enabled Environment completed on 2026-05-11.
+- Required startup reading was completed before retrying the PDF generation task: `AGENTS.md`, `docs/PROGRESS.md`, `docs/TASKS.md`, `docs/ROADMAP.md`, `docs/ARCHITECTURE.md`, `docs/VALIDATION.md`, `docs/DECISIONS.md`, `docs/PROMPTS.md`, `docs/FINAL_REPORT_DRAFT.md`, and `final_report/main.tex`.
+- Before status checks, toolchain checks, compilation, or tracking-document edits, a short implementation plan was produced. Assumption: T0032 remained limited to final report PDF generation and tracking-document updates. Blocked: if WSL exposed `pdflatex` without `bibtex`, the fallback sequence would still be incomplete.
+- Parent repository status before this retry showed branch `feat/map-noxim-extension-points...origin/feat/map-noxim-extension-points` ahead by two commits, modified tracking docs from the earlier blocked T0032 attempts, and the pre-existing untracked `final_report.zip`.
+- The registered Noxim source tree at `external/noxim` remained clean before this retry.
+- The sandbox-visible `wsl -l -v` still reported no installed WSL distributions, but the approved outside-sandbox WSL check showed Ubuntu running under WSL 2.
+- Windows PATH still did not expose `latexmk`, `pdflatex`, `bibtex`, or `tectonic`.
+- WSL Ubuntu did not expose `latexmk`, but exposed `pdflatex` at `/usr/bin/pdflatex` and `bibtex` at `/usr/bin/bibtex`; the fallback command sequence was therefore used from `final_report/`.
+- The first `pdflatex main.tex` attempt found `algorithmic.sty` missing. Because `algorithmic` was an unused template import, `final_report/main.tex` was edited to remove only that unused package import.
+- The first `bibtex main` attempt found `IEEEtran.bst` missing. No `IEEEtran.bst` file was found in the project tree, `Extended_Proposal.zip`, or the WSL TeX installation. `final_report/main.tex` was edited to use the installed `ieeetr` bibliography style.
+- Final fallback sequence completed successfully from `final_report/`: `pdflatex main.tex`, `bibtex main`, `pdflatex main.tex`, and `pdflatex main.tex`.
+- Generated PDF path: `final_report/main.pdf`; absolute path: `C:\Projects\CMP-720-Project-Proposal\final_report\main.pdf`; size: 344758 bytes; final PDF type check reported PDF version 1.7.
+- Generated LaTeX build artifacts: `final_report/main.aux`, `final_report/main.bbl`, `final_report/main.blg`, `final_report/main.log`, `final_report/main.out`, and `final_report/main.pdf`.
+- Final log inspection found no LaTeX errors, no fatal errors, no unresolved citations, no unresolved references, and no overfull boxes. BibTeX completed with zero warnings.
+- Remaining layout diagnostics are 43 underfull box messages, mainly from long path/code strings and dense explanatory paragraphs, plus one underfull vbox on output and the standard IEEEtran reminder to manually equalize final-page column lengths before camera-ready submission. No hard layout blocker was found in the log.
+- `pdfinfo` was unavailable in WSL, so PDF metadata inspection used `file main.pdf` plus the generated file record.
+- `docs/TASKS.md`, `docs/PROGRESS.md`, `docs/VALIDATION.md`, and `docs/PROMPTS.md` were updated with the completed PDF-generation result.
+- `docs/DECISIONS.md` was not updated because no new durable project decision was made.
+- No report claims, source code, simulator behavior, helper behavior, routing logic, VN transition logic, VL fault injection, LUT schema/use path, topology behavior, traffic semantics, metrics semantics, runner/analysis semantics, generated final-sweep artifact, Extended Proposal file, Noxim rebuild, simulation run, final-sweep regeneration, regression command, `./regression.sh --update`, or performance claim was changed.
+- Final `git diff --check` in the parent repository completed with exit code `0`; Git reported line-ending conversion warnings for edited Markdown files and `final_report/main.tex` only.
+- Final parent status showed modified tracking docs, modified `final_report/main.tex`, generated untracked LaTeX build artifacts, and the pre-existing untracked `final_report.zip`.
 - Final `external/noxim` status remained clean.
 
 - T0035 Revise Final Report with T0033 Diagnosis completed as a report/documentation-only task on 2026-05-11.
@@ -519,6 +524,29 @@ Files updated during `T0034` Decide Next Gap-Closure Direction and Add Follow-up
 - `docs/VALIDATION.md`
 - `docs/PROMPTS.md`
 
+Files updated during `T0035` Revise Final Report with T0033 Diagnosis:
+
+- `docs/FINAL_REPORT_DRAFT.md`
+- `final_report/main.tex`
+- `docs/TASKS.md`
+- `docs/PROGRESS.md`
+- `docs/VALIDATION.md`
+- `docs/PROMPTS.md`
+
+Files updated or generated during `T0032` Generate Final Report PDF:
+
+- `final_report/main.tex`
+- `final_report/main.pdf`
+- `final_report/main.aux`
+- `final_report/main.bbl`
+- `final_report/main.blg`
+- `final_report/main.log`
+- `final_report/main.out`
+- `docs/TASKS.md`
+- `docs/PROGRESS.md`
+- `docs/VALIDATION.md`
+- `docs/PROMPTS.md`
+
 Noxim build files LF-normalized during `T0003`:
 
 - `external/noxim/bin/Makefile`
@@ -639,12 +667,13 @@ External source tree registered during `T0023`:
 - Assumption: The existing `XY` algorithm is a cardinal 2D footprint route and is not an interposer-aware baseline for unrestricted inter-chiplet traffic on `DEFT_2_5D`.
 - Assumption: T0034 selected report revision with the T0033 diagnosis as the safest immediate gap-closure direction.
 - Assumption: T0035 updated both `docs/FINAL_REPORT_DRAFT.md` and `final_report/main.tex`, so T0032 should compile the revised LaTeX source when a TeX-enabled environment is available.
-- Assumption: T0032 leaves `final_report/main.tex` as the current revised LaTeX source and does not change report claims while the PDF-generation environment is unavailable.
+- Assumption: T0032 generated the current PDF at `final_report/main.pdf` from the revised `final_report/main.tex` without changing report claims.
+- Assumption: The T0032 TeX compatibility edits are formatting/build-surface only: remove an unused `algorithmic` package import and use the installed `ieeetr` bibliography style because `IEEEtran.bst` was not available.
 - Assumption: Options B, C, and D require separate future design or source-change tasks and should not be started implicitly during final report closure.
 - Blocked: True post-injection drain validation needs a source cut-off plus drain/timeout mechanism beyond the current runner and Noxim `-volume` stop condition.
 - Blocked: Strong inter-chiplet XY-vs-DEFT comparison needs either a newly designed interposer-aware baseline route or a narrower traffic policy that explicitly limits XY comparison to route-compatible traffic.
 - Blocked: Stronger final-report claims remain blocked after T0035; the selected immediate path improved explanation, not measured performance coverage.
-- Blocked: PDF generation remains blocked because `latexmk`, `pdflatex`, `bibtex`, and `tectonic` are unavailable on the Windows PATH, common Windows TeX install locations checked during T0032 did not expose a visible TeX install, and WSL has no installed distribution.
+- Blocked: No current PDF-generation blocker remains after T0032; stronger final-report claims remain blocked without a separate approved validation or rerun policy.
 
 ## Open Questions
 
@@ -659,24 +688,24 @@ External source tree registered during `T0023`:
 - Should a future implementation add directional endpoint fault modeling for the original paper's single-direction 3.125% fault case?
 - Should a future helper add source cut-off and post-injection drain support for eventual-delivery reachability checks?
 - Should the generated final-analysis scaffold blocker text be updated in a future task to reflect the T0025 policy resolutions while still keeping generated scaffold outputs conservative?
-- Should the T0032 blocker be resolved by installing a Windows TeX distribution, installing a WSL distribution with TeX tooling, or compiling the report on another TeX-enabled machine?
+- Should a future report-packaging cleanup install or vendor the exact `IEEEtran.bst` style, or keep the currently installed `ieeetr` BibTeX style used for the generated PDF?
 - After final report closure, should future experimental work prioritize an interposer-aware baseline, a source-supported drain/source-cutoff policy, an explicitly intra-chiplet comparison, PARSEC/GEM5 traces, or no further simulator work?
 
 ## Next Recommended Task
 
-Resolve the T0032 TeX-environment blocker, then continue `T0032` to compile the revised final report PDF from `final_report/main.tex`. Do not change report claims, rerun simulations, rebuild Noxim, or modify simulator source while generating the PDF.
+Start `T0036` to run the post-final experimental extension design gate now that the revised final report PDF has been generated. Keep it design-only unless the user explicitly selects a later source-change or simulation task.
 
 ## Next Ready-to-Send Prompt
 
 ```text
-Continue task T0032: Generate Final Report PDF in a TeX-Enabled Environment after resolving the TeX toolchain blocker.
+Start task T0036: Post-Final Experimental Extension Design Gate.
 
 Before starting, read AGENTS.md, docs/PROGRESS.md, docs/TASKS.md, docs/ROADMAP.md, docs/ARCHITECTURE.md, docs/VALIDATION.md, docs/DECISIONS.md, docs/PROMPTS.md, docs/FINAL_REPORT_DRAFT.md, and final_report/main.tex.
 
 Continue on the existing Git branch. Do not create or switch task branches.
 
 Goal:
-Compile the revised IEEE LaTeX final report source at `final_report/main.tex` into a PDF after T0035 incorporated the T0033 diagnosis and after a usable TeX toolchain is available.
+After final report revision and PDF generation, decide whether any high-risk experimental extension should be designed as future work.
 
 Use `Extended_Proposal.pdf` as the primary project requirements source and the original DeFT paper as the primary algorithmic reference. Use `Proposal.pdf` only as initial context. Ignore the peer evaluation document completely.
 
@@ -685,11 +714,9 @@ external/noxim
 
 Before running commands or editing tracking docs, produce a short implementation plan. Clearly mark assumptions as `Assumption` and blockers as `Blocked`.
 
-Do not modify report claims, simulator source, helper source, routing logic, VN transition logic, VL fault injection, LUT schema/use path, topology behavior, traffic semantics, metrics semantics, runner/analysis semantics, generated final-sweep artifacts, or Extended Proposal files. Do not rebuild Noxim, rerun simulations, regenerate the final sweep, or use `./regression.sh --update`.
+Do not modify source code, report claims, simulator behavior, helper behavior, routing logic, VN transition logic, VL fault injection, LUT schema/use path, topology behavior, traffic semantics, metrics semantics, runner/analysis semantics, generated final-sweep artifacts, generated final-report PDF artifacts, or Extended Proposal files. Do not rebuild Noxim, rerun simulations, regenerate the final sweep, install external dependencies, or use `./regression.sh --update`.
 
-Known blocker from the previous T0032 attempt: Windows PATH did not expose `latexmk`, `pdflatex`, `bibtex`, or `tectonic`; common Windows TeX install locations checked during T0032 did not expose a visible TeX install; and `wsl -l -v` reported no installed WSL distributions. First confirm that a TeX toolchain is now available.
-
-If LaTeX tooling is available, compile from `final_report/`. Prefer `latexmk -pdf main.tex`; if `latexmk` is unavailable but `pdflatex` and `bibtex` are available, use the standard `pdflatex`/`bibtex`/`pdflatex`/`pdflatex` sequence. Record the generated PDF path and any warnings or layout blockers. If no TeX toolchain is available, record the exact blocker and leave PDF generation blocked.
+Revisit the deferred T0034 options: interposer-aware XY-like baseline, source-cutoff plus post-injection drain policy, explicitly route-compatible intra-chiplet comparison, PARSEC/GEM5 trace support, or no further experimental work. Produce a design-only recommendation for whether to pursue one later task or stop experimental work after the final report. Record risks, validation requirements, dependencies, and blockers before any implementation.
 
 Update docs/TASKS.md, docs/PROGRESS.md, docs/VALIDATION.md, and docs/PROMPTS.md with the result. Update docs/DECISIONS.md only if a new durable decision is made.
 
@@ -702,10 +729,10 @@ At the end, provide:
 3. Whether any source code files changed
 4. Validation result
 5. Current project phase
-6. Generated PDF path or exact PDF-generation blocker
+6. Selected future-work direction
 7. Next recommended task
 8. The next ready-to-send prompt
-9. Suggested branch name for the next task, which should be `None; continue on the existing branch`
+9. Suggested branch name, which should be `None; continue on the existing branch`
 10. Suggested commit message
 11. Unknowns or blockers
 ```
@@ -719,5 +746,5 @@ None; continue on the existing branch.
 ## Suggested Commit Message
 
 ```text
-docs: record final report pdf generation blocker
+docs: generate final report pdf
 ```

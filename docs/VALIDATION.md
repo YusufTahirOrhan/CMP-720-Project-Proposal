@@ -1477,10 +1477,54 @@ T0032 result on 2026-05-11:
 - Final parent status showed modified tracking docs and the pre-existing untracked `final_report.zip`.
 - Final `external/noxim` status remained clean.
 
+T0032 continuation result on 2026-05-11:
+
+- Required startup reading was completed again before the continuation work: `AGENTS.md`, `docs/PROGRESS.md`, `docs/TASKS.md`, `docs/ROADMAP.md`, `docs/ARCHITECTURE.md`, `docs/VALIDATION.md`, `docs/DECISIONS.md`, `docs/PROMPTS.md`, `docs/FINAL_REPORT_DRAFT.md`, and `final_report/main.tex`.
+- Before status checks, toolchain checks, or tracking-document edits, a short implementation plan was produced.
+- Parent repository status before continuation documentation edits showed branch `feat/map-noxim-extension-points...origin/feat/map-noxim-extension-points` ahead by two commits and the pre-existing untracked `final_report.zip`.
+- The registered Noxim source tree at `external/noxim` remained clean before continuation documentation edits.
+- Windows PATH still did not expose `latexmk`, `pdflatex`, `bibtex`, or `tectonic`.
+- Common Windows TeX install locations checked during the continuation attempt did not expose a visible TeX install.
+- `wsl.exe` exists, but `wsl -l -v` still reported no installed WSL distributions, so no WSL TeX environment is usable from this workspace.
+- LaTeX compilation was not attempted because neither `latexmk` nor the `pdflatex` plus `bibtex` fallback toolchain is available.
+- No PDF was generated. Generated PDF path: none.
+- No LaTeX warnings or PDF layout blockers could be inspected because compilation did not run.
+- No report claims, source code, simulator behavior, helper behavior, routing logic, VN transition logic, VL fault injection, LUT schema/use path, topology behavior, traffic semantics, metrics semantics, runner/analysis semantics, generated final-sweep artifacts, Extended Proposal files, Noxim rebuild, simulation run, final-sweep regeneration, regression command, `./regression.sh --update`, or performance claim was changed.
+- `docs/DECISIONS.md` was not updated because no new durable decision was made.
+- Final `git diff --check` in the parent repository completed with exit code `0`; Git reported line-ending conversion warnings for edited Markdown files only.
+- Final parent status showed modified tracking docs and the pre-existing untracked `final_report.zip`.
+- Final `external/noxim` status remained clean.
+
+T0032 final PDF generation result on 2026-05-11:
+
+- Required startup reading was completed again before the successful retry: `AGENTS.md`, `docs/PROGRESS.md`, `docs/TASKS.md`, `docs/ROADMAP.md`, `docs/ARCHITECTURE.md`, `docs/VALIDATION.md`, `docs/DECISIONS.md`, `docs/PROMPTS.md`, `docs/FINAL_REPORT_DRAFT.md`, and `final_report/main.tex`.
+- Before status checks, toolchain checks, compilation, or tracking-document edits, a short implementation plan was produced.
+- Parent repository status before the retry showed branch `feat/map-noxim-extension-points...origin/feat/map-noxim-extension-points` ahead by two commits, modified tracking docs from earlier T0032 attempts, and the pre-existing untracked `final_report.zip`.
+- The registered Noxim source tree at `external/noxim` remained clean before the retry.
+- The sandbox-visible `wsl -l -v` still reported no installed WSL distributions, but the approved outside-sandbox WSL check showed Ubuntu running under WSL 2.
+- Windows PATH still did not expose `latexmk`, `pdflatex`, `bibtex`, or `tectonic`.
+- WSL Ubuntu did not expose `latexmk`; WSL Ubuntu did expose `pdflatex` at `/usr/bin/pdflatex` and `bibtex` at `/usr/bin/bibtex`.
+- The fallback command sequence was run from `final_report/`: `pdflatex main.tex`, `bibtex main`, `pdflatex main.tex`, `pdflatex main.tex`.
+- The first `pdflatex main.tex` attempt failed because `algorithmic.sty` was not installed. `algorithmic` was an unused template import, so `final_report/main.tex` was edited to remove only that package import.
+- The first `bibtex main` attempt failed because `IEEEtran.bst` was not installed or present locally. No `IEEEtran.bst` file was found in the project tree, `Extended_Proposal.zip`, or WSL TeX installation; `final_report/main.tex` was edited to use the installed `ieeetr` bibliography style.
+- After those claim-neutral TeX compatibility edits, `pdflatex main.tex`, `bibtex main`, `pdflatex main.tex`, and `pdflatex main.tex` completed with exit code `0`.
+- Generated PDF path: `final_report/main.pdf`; absolute path: `C:\Projects\CMP-720-Project-Proposal\final_report\main.pdf`; size: 344758 bytes.
+- Generated LaTeX build artifacts: `final_report/main.aux`, `final_report/main.bbl`, `final_report/main.blg`, `final_report/main.log`, `final_report/main.out`, and `final_report/main.pdf`.
+- `file main.pdf` reported a PDF document, version 1.7. `pdfinfo` was not available in WSL.
+- Final `main.log` inspection found no LaTeX errors, no fatal errors, no unresolved citations, no unresolved references, no rerun request, and no overfull boxes.
+- Final `main.blg` inspection found BibTeX completed with zero warnings.
+- Remaining layout diagnostics: 43 underfull box messages, mainly due to long path/code strings and dense explanatory paragraphs, one underfull vbox, and the standard IEEEtran camera-ready reminder to manually equalize final-page column lengths.
+- No hard layout blocker was found in the log.
+- No report claims, source code, simulator behavior, helper behavior, routing logic, VN transition logic, VL fault injection, LUT schema/use path, topology behavior, traffic semantics, metrics semantics, runner/analysis semantics, generated final-sweep artifacts, Extended Proposal files, Noxim rebuild, simulation run, final-sweep regeneration, regression command, `./regression.sh --update`, or performance claim was changed.
+- `docs/DECISIONS.md` was not updated because no new durable decision was made.
+- Final `git diff --check` in the parent repository completed with exit code `0`; Git reported line-ending conversion warnings for edited Markdown files and `final_report/main.tex` only.
+- Final parent status showed modified tracking docs, modified `final_report/main.tex`, generated untracked LaTeX build artifacts, and the pre-existing untracked `final_report.zip`.
+- Final `external/noxim` status remained clean.
+
 Expected future checks:
 
-- After a TeX toolchain is installed or otherwise made available, rerun T0032 and compile from `final_report/`.
-- Inspect the generated PDF for layout issues, especially wide tables.
+- If the PDF is packaged for submission, include `final_report/main.pdf` and the revised `final_report/main.tex`; optionally install or vendor exact `IEEEtran.bst` in a separate report-packaging cleanup if exact IEEEtran bibliography styling is required.
+- If visual page inspection is requested, review `final_report/main.pdf` for final-page column balance and the underfull-box regions involving long path/code strings.
 
 ## Metrics Validation
 
