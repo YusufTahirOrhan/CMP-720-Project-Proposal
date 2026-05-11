@@ -1405,9 +1405,43 @@ T0034 result on 2026-05-11:
 
 Expected future checks:
 
-- T0035 should run `git diff --check` after revising `docs/FINAL_REPORT_DRAFT.md` and `final_report/main.tex`.
-- T0035 may attempt a LaTeX compile only if tooling is available, otherwise it should leave PDF generation to T0032 and record the exact blocker.
+- T0035 completed the report revision and ran `git diff --check`.
+- T0032 should compile the revised `final_report/main.tex` when a TeX toolchain is available.
 - Any future source-change or simulation-rerun direction must get its own task, design, validation commands, and versioned output directories before implementation.
+
+## Final Report Diagnosis Revision Validation
+
+Purpose:
+
+- Revise `docs/FINAL_REPORT_DRAFT.md` and `final_report/main.tex` with the T0033 `XY` blocker diagnosis.
+- Preserve T0026/T0027/T0028 as the only final report-support data set.
+- Keep T0033 warm-up-0 diagnostics as provenance only, not as final performance results.
+- Avoid simulator source changes, helper source changes, generated final-sweep artifact changes, Noxim rebuilds, simulation reruns, and unsupported performance claims.
+
+Known validation:
+
+- Use documentation/source consistency checks only.
+- Run `git diff --check`.
+- Check whether `latexmk`, `pdflatex`, `bibtex`, or `tectonic` are available before attempting PDF compilation.
+
+T0035 result on 2026-05-11:
+
+- Required startup reading was completed before task work: `AGENTS.md`, `docs/PROGRESS.md`, `docs/TASKS.md`, `docs/ROADMAP.md`, `docs/ARCHITECTURE.md`, `docs/VALIDATION.md`, `docs/DECISIONS.md`, `docs/PROMPTS.md`, `docs/FINAL_REPORT_DRAFT.md`, and `final_report/main.tex`.
+- Before editing, a short implementation plan was produced with the T0026/T0027/T0028 final-report-support data set as the controlling assumption and PDF generation as blocked without TeX tooling.
+- `docs/FINAL_REPORT_DRAFT.md` and `final_report/main.tex` were revised to explain T0033 as provenance only.
+- The revised report text states that `XY|hotspot_3x10` zero-injection cells are measured-window artifacts caused by `-warmup 1000` after early XY traffic had already injected and then stalled.
+- The revised report text states that `XY|uniform` and `XY|localized_40` zero-received cells are caused by standard `XY` being cardinal-only on `DEFT_2_5D`, where unrestricted inter-chiplet routes need VL/hub/interposer traversal.
+- The revised report text states that a post-injection drain/source-cutoff policy is needed for eventual-delivery analysis but would not by itself fix standard `XY` topology incompatibility.
+- Warm-up-0 T0033 diagnostic values are not presented as final performance results.
+- `latexmk`, `pdflatex`, `bibtex`, and `tectonic` were not available on the Windows PATH, so no PDF was generated and T0032 remains the PDF-generation task.
+- No simulator source, helper source, routing logic, VN transition logic, VL fault injection, LUT schema/use path, topology behavior, traffic semantics, metrics semantics, runner/analysis semantics, generated final-sweep artifacts, Extended Proposal files, Noxim rebuild, simulation run, final-sweep regeneration, regression command, `./regression.sh --update`, or performance claim was changed.
+- Final `git diff --check` in the parent repository completed with exit code `0`; Git reported line-ending conversion warnings for edited text files, including Markdown files and `final_report/main.tex`.
+- Final `external/noxim` status remained clean.
+
+Expected future checks:
+
+- T0032 should compile `final_report/main.tex` in a TeX-enabled environment and record the generated PDF path or exact blocker.
+- If any layout-only edits are required during PDF generation, preserve the T0035 diagnosis wording, blank metric cells, claim-safety constraints, and T0026/T0027/T0028-only result policy.
 
 ## Metrics Validation
 

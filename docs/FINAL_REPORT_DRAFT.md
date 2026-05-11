@@ -1,6 +1,6 @@
 # DeFT Routing for 2.5D Chiplet Networks: Final Report Draft
 
-Draft status: assembled during `T0029` and reviewed for submission readiness during `T0030` on 2026-05-09.
+Draft status: assembled during `T0029`, reviewed for submission readiness during `T0030` on 2026-05-09, and revised with the T0033 XY diagnosis during `T0035` on 2026-05-11.
 
 ## Draft Status And Claim Safety Notice
 
@@ -8,7 +8,9 @@ This draft is assembled from the project source documents and the cross-checked 
 
 Metric cells are left blank when the supporting denominator is absent. Reachability is blank when no packets were injected in the measured window. Latency is blank when no packets were received in the measured window.
 
-Submission format note: no PDF, DOCX, PPTX, or other final artifact format was requested during `T0030`, so this reviewed Markdown draft remains the current deliverable.
+T0033 diagnostic evidence is used only to explain why the blank `XY` cells appear in the fixed-window final sweep. The T0026/T0027/T0028 artifacts remain the only final report-support data set, and the warm-up-0 T0033 diagnostic values are not reported as final performance results.
+
+Submission format note: `T0031` created the IEEE LaTeX source artifact under `final_report/`, but PDF generation remains blocked until a TeX-enabled environment is available.
 
 ## Source Scope
 
@@ -73,6 +75,10 @@ This project maps VN.0 to VC 0 and VN.1 to VC 1 for `DEFT_2_5D`. It also uses a 
 
 The project includes explicit `XY` baseline configurations on the same `DEFT_2_5D` topology. The final sweep runs `XY` and `DEFT` over the same synthetic traffic profiles, fault masks, seeds, simulation window, and warm-up window.
 
+T0033 diagnosed the current standard `XY` implementation as a limited control baseline on `DEFT_2_5D`, not as an interposer-aware unrestricted inter-chiplet baseline. The existing `XY` route path selects only cardinal directions from the global footprint. It does not select VL, hub, interposer, or chiplet-layer phases. On `DEFT_2_5D`, unrestricted inter-chiplet routes require VL/hub/interposer traversal, so standard `XY` can select chiplet-layer movement that has no physical cross-chiplet cardinal link.
+
+Assumption: T0033 warm-up-0 diagnostics are traceability evidence that the traffic sources were not empty. They are not a replacement final performance data set.
+
 ## 3. Implementation Summary
 
 The implementation was built task by task and recorded in `docs/TASKS.md`, `docs/PROGRESS.md`, `docs/ARCHITECTURE.md`, and `docs/DECISIONS.md`.
@@ -111,6 +117,8 @@ The final sweep policy was defined in `T0025` and executed in `T0026`. The sweep
 
 The final sweep contains exactly 150 planned and completed simulator runs. No post-injection drain phase is included in the current fixed-window policy.
 
+T0033 showed that a post-injection drain/source-cutoff policy would be needed for eventual-delivery analysis. That policy would not by itself fix standard `XY` topology incompatibility on unrestricted inter-chiplet `DEFT_2_5D` traffic, because standard `XY` still has no VL/hub/interposer route phase.
+
 Assumption: A zero-injection run is a completed simulator run with `total_injected_packets == 0` in the measured stats window, not a failed run.
 
 Blocked: The current runner policy does not evaluate eventual delivery after a post-injection drain phase.
@@ -132,15 +140,21 @@ T0027 validation derived blank-aware condition and pair tables from T0026 raw ar
 
 T0028 validation converted the T0027 report-support tables into claim-safe prose and Markdown tables without rerunning simulations. The T0028 manifest keeps `claims_allowed: false`.
 
+T0033 is additional diagnosis provenance only. It explains the source of the `XY` blank cells by inspecting the runner warm-up policy, injected-packet accounting, standard `XY` routing, and `DEFT_2_5D` topology wiring. It does not add new final performance rows, does not replace T0026/T0027/T0028, and does not change simulator behavior.
+
 ## 6. Results
 
 The results in this section are copied or assembled from the T0028 claim-safe results draft. They are finite-window descriptive measurements. Blank cells are intentional and should remain blank.
+
+The T0026/T0027/T0028 artifact chain remains the only final report-support data set used in the tables below.
 
 All 150 planned simulator runs completed with return code `0`, and the generated T0027 report-support tables were cross-checked against the T0026 executed manifest, raw JSON stats, sweep summary, analysis run summary, and analysis comparison summary with zero mismatches. The upstream report-support manifest keeps `claims_allowed: false`.
 
 The measured data set contains completed runs in which no packets were injected after the warm-up boundary. T0027 records 54 individual zero-injection runs. At condition level, 12 cells have packet injection in all five seeds, 13 cells have packet injection in only some seeds, and 5 cells have no packet injection in any seed. The 5 empty-injection cells are all `XY` with `hotspot_3x10` traffic.
 
-Under this fixed-window measurement policy, the `XY` hotspot cells cannot be compared with `DEFT` because the `XY` side injected zero packets in every hotspot fault-mask cell. The `XY` uniform and localized cells injected packets in some seeds, but received zero packets in the measured window. Therefore, side-by-side latency comparisons against `DEFT` are not supported.
+Under this fixed-window measurement policy, the `XY` hotspot cells cannot be compared with `DEFT` because the `XY` side injected zero packets in every hotspot fault-mask cell. T0033 diagnosed those `XY|hotspot_3x10` zero-injection cells as measured-window artifacts: with `-warmup 1000`, early `XY` traffic had already injected before the measured window and then stalled on topology-incompatible paths. The warm-up-0 diagnostic values from T0033 are kept only as traceability evidence and are not reported as final performance results.
+
+The `XY` uniform and localized cells injected packets in some seeds, but received zero packets in the measured window. T0033 diagnosed these `XY|uniform` and `XY|localized_40` zero-received cells as standard `XY` topology incompatibility on `DEFT_2_5D`: cardinal-only `XY` cannot route unrestricted inter-chiplet traffic through the VL/hub/interposer path required by this topology. Therefore, side-by-side latency comparisons against `DEFT` are not supported.
 
 ### 6.1 Artifact And Readiness Summary
 
@@ -260,9 +274,13 @@ Assumption: Latency is blank when no packets were received.
 
 Blocked: Empty or partial injection cells cannot support unqualified performance claims.
 
-Blocked: XY hotspot cells injected zero packets for all seeds and fault masks in the measured window.
+Blocked: `XY|hotspot_3x10` cells injected zero packets for all seeds and fault masks in the measured window; T0033 diagnosed these cells as `-warmup 1000` measured-window artifacts after early `XY` traffic injected and then stalled.
 
-Blocked: The current data set does not support XY/DEFT latency comparisons because the XY side has zero received packets wherever it injected packets.
+Blocked: The current data set does not support `XY`/`DEFT` latency comparisons because the `XY` side has zero received packets wherever it injected packets.
+
+Blocked: Standard `XY` is cardinal-only on `DEFT_2_5D` and does not traverse VL/hub/interposer paths required for unrestricted inter-chiplet traffic.
+
+Blocked: A post-injection drain/source-cutoff policy is needed for eventual-delivery analysis, but it would not by itself make standard `XY` topology-compatible with unrestricted inter-chiplet `DEFT_2_5D` traffic.
 
 Blocked: Stronger result statements, non-empty XY hotspot measurements, latency comparisons, single-direction fault cases, and eventual-delivery checks require separate documented validation or rerun policy.
 
@@ -272,7 +290,7 @@ Blocked: PARSEC/GEM5 trace evaluation remains outside the current final-sweep ar
 
 The project produced a traceable Noxim extension for `DEFT_2_5D` and a reproducible final-sweep artifact set. The final report-support data confirms that the planned 150-run matrix executed successfully and that generated summary tables cross-check against raw artifacts. The reportable results should remain descriptive because the measured fixed-window data contains blank and partial cells.
 
-The safest final conclusion is that the implementation and report-support workflow are in place, while stronger experimental claims require an explicitly scoped follow-up validation policy.
+The safest final conclusion is that the implementation and report-support workflow are in place, and the known `XY` blank-cell behavior is now explained by the T0033 diagnosis. Stronger experimental claims still require an explicitly scoped follow-up validation policy.
 
 ## References
 
