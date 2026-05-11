@@ -1443,6 +1443,45 @@ Expected future checks:
 - T0032 should compile `final_report/main.tex` in a TeX-enabled environment and record the generated PDF path or exact blocker.
 - If any layout-only edits are required during PDF generation, preserve the T0035 diagnosis wording, blank metric cells, claim-safety constraints, and T0026/T0027/T0028-only result policy.
 
+## Final Report PDF Generation Validation
+
+Purpose:
+
+- Compile `final_report/main.tex` into a PDF when a TeX-enabled environment is available.
+- Record the generated PDF path, LaTeX warnings, and any layout blockers.
+- Preserve report claims, simulator behavior, generated final-sweep artifacts, and Extended Proposal files.
+
+Known validation:
+
+- Preferred command from `final_report/`: `latexmk -pdf main.tex`.
+- Fallback command sequence from `final_report/` only when both tools are available: `pdflatex main.tex`, `bibtex main`, `pdflatex main.tex`, `pdflatex main.tex`.
+- Run `git diff --check`.
+- Do not rebuild Noxim, rerun simulations, regenerate the final sweep, or use `./regression.sh --update`.
+
+T0032 result on 2026-05-11:
+
+- Required startup reading was completed before task work: `AGENTS.md`, `docs/PROGRESS.md`, `docs/TASKS.md`, `docs/ROADMAP.md`, `docs/ARCHITECTURE.md`, `docs/VALIDATION.md`, `docs/DECISIONS.md`, `docs/PROMPTS.md`, `docs/FINAL_REPORT_DRAFT.md`, and `final_report/main.tex`.
+- Before status checks, toolchain checks, or tracking-document edits, a short implementation plan was produced.
+- Parent repository status before documentation edits showed branch `feat/map-noxim-extension-points...origin/feat/map-noxim-extension-points` ahead by one commit and the pre-existing untracked `final_report.zip`.
+- The registered Noxim source tree at `external/noxim` remained clean before documentation edits.
+- `final_report/main.tex`, `final_report/references.bib`, and `final_report/IEEEtran.cls` are present.
+- Windows PATH did not expose `latexmk`, `pdflatex`, `bibtex`, or `tectonic`.
+- Common Windows TeX install locations checked during T0032 did not expose a visible TeX install.
+- `wsl.exe` exists, but `wsl -l -v` reported no installed WSL distributions, so no WSL TeX environment is usable from this workspace.
+- LaTeX compilation was not attempted because neither `latexmk` nor the `pdflatex` plus `bibtex` fallback toolchain is available.
+- No PDF was generated. Generated PDF path: none.
+- No LaTeX warnings or PDF layout blockers could be inspected because compilation did not run.
+- No report claims, simulator source, helper source, routing logic, VN transition logic, VL fault injection, LUT schema/use path, topology behavior, traffic semantics, metrics semantics, runner/analysis semantics, generated final-sweep artifacts, Extended Proposal files, Noxim rebuild, simulation run, final-sweep regeneration, regression command, `./regression.sh --update`, or performance claim was changed.
+- `docs/DECISIONS.md` was not updated because no new durable decision was made.
+- Final `git diff --check` in the parent repository completed with exit code `0`; Git reported line-ending conversion warnings for edited Markdown files only.
+- Final parent status showed modified tracking docs and the pre-existing untracked `final_report.zip`.
+- Final `external/noxim` status remained clean.
+
+Expected future checks:
+
+- After a TeX toolchain is installed or otherwise made available, rerun T0032 and compile from `final_report/`.
+- Inspect the generated PDF for layout issues, especially wide tables.
+
 ## Metrics Validation
 
 Purpose:

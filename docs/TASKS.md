@@ -294,13 +294,13 @@ Statuses: `TODO`, `IN_PROGRESS`, `DONE`, `BLOCKED`.
 
 ## T0032: Generate Final Report PDF in a TeX-Enabled Environment
 
-- **Status:** TODO
+- **Status:** BLOCKED
 - **Objective:** Compile `final_report/main.tex` into a PDF once LaTeX tooling is available, then visually inspect or otherwise validate the generated PDF.
 - **Relevant roadmap phase:** Phase 9
-- **Files likely to change:** `final_report/` generated build outputs if tracked intentionally, `docs/PROGRESS.md`, `docs/TASKS.md`, `docs/VALIDATION.md`, and `docs/PROMPTS.md`.
+- **Files changed:** `docs/PROGRESS.md`, `docs/TASKS.md`, `docs/VALIDATION.md`, and `docs/PROMPTS.md`.
 - **Acceptance criteria:** A final PDF is generated from the existing LaTeX source without changing report claims; the generated PDF path is recorded; any warnings or layout issues are documented; no simulator source or behavior is modified.
 - **Validation command:** Use a documented LaTeX build command available in the environment, preferably `latexmk -pdf main.tex` from `final_report/`; if `latexmk` is unavailable, use a standard `pdflatex`/`bibtex`/`pdflatex`/`pdflatex` sequence only when those tools are present.
-- **Notes:** This follow-up is only needed because T0031 and T0035 could not generate a PDF in the current Windows environment. T0035 revised the report with the T0033 diagnosis, so T0032 can now compile the revised `final_report/main.tex` once a TeX toolchain is available. Do not rerun Noxim, change report claims, or modify simulator source while generating the PDF.
+- **Notes:** Blocked on 2026-05-11. Required startup reading was completed, and a short implementation plan was produced before status checks, toolchain checks, or tracking-document edits. `final_report/main.tex`, `final_report/references.bib`, and `final_report/IEEEtran.cls` are present. Windows PATH does not expose `latexmk`, `pdflatex`, `bibtex`, or `tectonic`; common Windows TeX install directories checked during T0032 did not contain a visible TeX install; and `wsl -l -v` reported that no WSL distribution is installed, so no usable WSL TeX environment is available. No LaTeX compile command was run, no PDF was generated, and no warnings or layout blockers could be inspected. No report claims, simulator source, helper source, routing logic, VN transition logic, VL fault injection, LUT schema/use path, topology behavior, traffic semantics, metrics semantics, runner/analysis semantics, generated final-sweep artifacts, Extended Proposal files, Noxim rebuild, simulation run, final-sweep regeneration, regression command, or performance claim was changed.
 
 ## T0033: Diagnose and Reduce Final-Report Blockers
 

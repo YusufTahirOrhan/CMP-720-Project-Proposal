@@ -2137,3 +2137,14 @@ At the end, provide:
 - **Next ready-to-send prompt:** See `docs/PROGRESS.md`.
 - **Suggested branch name for next task:** None; continue on the existing branch.
 - **Suggested commit message:** `docs: revise final report with xy diagnosis`
+
+## 2026-05-11: Start T0032 Generate Final Report PDF in a TeX-Enabled Environment
+
+- **Date:** 2026-05-11
+- **Prompt summary:** Compile the revised IEEE LaTeX final report source at `final_report/main.tex` into a PDF after T0035 incorporated the T0033 diagnosis, or record the exact TeX-environment blocker if no toolchain is available.
+- **Full prompt summary:** The user requested task `T0032`, required startup reading of all project tracking documents plus `docs/FINAL_REPORT_DRAFT.md` and `final_report/main.tex`, required continuing on the existing branch, and required using `external/noxim` as the registered Noxim source tree. The prompt required compiling from `final_report/` with `latexmk -pdf main.tex` if available, or `pdflatex`/`bibtex`/`pdflatex`/`pdflatex` if `latexmk` was unavailable but both fallback tools existed. It required recording the generated PDF path and any warnings or layout blockers, or recording the exact blocker and leaving PDF generation blocked if no TeX toolchain was available. It prohibited modifying report claims, simulator source, helper source, routing logic, VN transition logic, VL fault injection, LUT schema/use path, topology behavior, traffic semantics, metrics semantics, runner/analysis semantics, generated final-sweep artifacts, Extended Proposal files, rebuilding Noxim, rerunning simulations, regenerating the final sweep, using `./regression.sh --update`, or adding unsupported performance claims.
+- **Result summary:** T0032 is blocked. `final_report/main.tex`, `final_report/references.bib`, and `final_report/IEEEtran.cls` are present, but Windows PATH does not expose `latexmk`, `pdflatex`, `bibtex`, or `tectonic`; common Windows TeX install locations checked during T0032 did not expose a visible TeX install; and `wsl -l -v` reported no installed WSL distributions. LaTeX compilation was not attempted, no PDF was generated, and no warnings or layout blockers could be inspected. `git diff --check` passed with line-ending warnings for edited Markdown files only. No report claims, simulator source, helper source, generated final-sweep artifacts, rebuild, rerun, regression command, or performance claim was changed.
+- **Follow-up tasks:** Resolve the TeX-environment blocker, then continue `T0032` to compile the revised final report PDF.
+- **Next ready-to-send prompt:** See `docs/PROGRESS.md`.
+- **Suggested branch name for next task:** None; continue on the existing branch.
+- **Suggested commit message:** `docs: record final report pdf generation blocker`
