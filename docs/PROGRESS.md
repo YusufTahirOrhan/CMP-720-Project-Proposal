@@ -2,7 +2,7 @@
 
 ## Current Phase
 
-Phase 9 - Final Analysis and Report Support (final package ready; IA-XY baseline implemented and smoke-validated)
+Phase 9 - Final Analysis and Report Support (final package ready; limited IA-XY-vs-DEFT comparison completed)
 
 ## Completed Tasks
 
@@ -47,8 +47,9 @@ Phase 9 - Final Analysis and Report Support (final package ready; IA-XY baseline
 - `T0039` - Analyze Remaining Gaps and Document Future Task Backlog.
 - `T0040` - Design Interposer-Aware XY Baseline.
 - `T0041` - Implement Interposer-Aware XY Baseline.
+- `T0042` - Run Limited IA-XY vs DeFT Comparison.
 
-DeFT VN assignment behavior, the first VN movement-transition restriction enforcement layer, the offline VL LUT schema/generator, the runtime schema-v1 LUT loading/use path, explicit XY fault-free/fault-injected baseline configuration modes, proposal-required synthetic traffic configuration profiles, machine-readable metrics export, tiny experiment-runner launch support, final-analysis scaffolding, the final sweep policy, the validated T0026 150-run final sweep output set, T0027 blank-aware report-support tables, T0028 claim-safe final report results draft, the T0029 tracked claim-safe Markdown report draft, the T0030 submission-readiness polish, the T0031 IEEE-style LaTeX final report source artifact, the T0032 generated final report PDF, the T0033 blocker diagnosis, the T0034 report-revision direction decision, the T0035 final-report diagnosis revision, the T0036 post-final experimental design gate, the T0037 final submission handoff check, the T0038 final submission archive refresh, the T0039 future backlog documentation, the T0040 IA-XY baseline design, and the T0041 IA-XY baseline implementation now exist for `DEFT_2_5D`. Performance claims remain limited to descriptive, blank-aware report support only. No future backlog item blocks the current final submission.
+DeFT VN assignment behavior, the first VN movement-transition restriction enforcement layer, the offline VL LUT schema/generator, the runtime schema-v1 LUT loading/use path, explicit XY fault-free/fault-injected baseline configuration modes, proposal-required synthetic traffic configuration profiles, machine-readable metrics export, tiny experiment-runner launch support, final-analysis scaffolding, the final sweep policy, the validated T0026 150-run final sweep output set, T0027 blank-aware report-support tables, T0028 claim-safe final report results draft, the T0029 tracked claim-safe Markdown report draft, the T0030 submission-readiness polish, the T0031 IEEE-style LaTeX final report source artifact, the T0032 generated final report PDF, the T0033 blocker diagnosis, the T0034 report-revision direction decision, the T0035 final-report diagnosis revision, the T0036 post-final experimental design gate, the T0037 final submission handoff check, the T0038 final submission archive refresh, the T0039 future backlog documentation, the T0040 IA-XY baseline design, the T0041 IA-XY baseline implementation, and the T0042 limited IA-XY-vs-DEFT artifact set now exist for `DEFT_2_5D`. Performance claims remain limited to descriptive, blank-aware report support only. No future backlog item blocks the current final submission.
 
 ## In-Progress Tasks
 
@@ -59,6 +60,33 @@ DeFT VN assignment behavior, the first VN movement-transition restriction enforc
 - None.
 
 ## Last Validation Result
+
+- T0042 Run Limited IA-XY vs DeFT Comparison completed on 2026-05-11.
+- Required startup reading was completed before experiment work: `AGENTS.md`, `docs/PROGRESS.md`, `docs/TASKS.md`, `docs/ROADMAP.md`, `docs/ARCHITECTURE.md`, `docs/VALIDATION.md`, `docs/DECISIONS.md`, `docs/PROMPTS.md`, `docs/FINAL_REPORT_DRAFT.md`, and `final_report/main.tex`.
+- The T0040 IA-XY design and T0041 IA-XY implementation notes in `docs/ARCHITECTURE.md` were read before execution.
+- Source-document roles were preserved: `Extended_Proposal.pdf` is the primary project requirements source, the original DeFT paper at `docs/references/DeFT_A_Deadlock-Free_and_Fault-Tolerant_Routing_Algorithm_for_2.5D_Chiplet_Networks.pdf` is the primary algorithmic reference, `Proposal.pdf` is initial context only, and the peer evaluation document was ignored completely.
+- Parent repository status before execution was clean on `feat/map-noxim-extension-points...origin/feat/map-noxim-extension-points`; `external/noxim` status before execution was clean on `feat/baseline-noxim...origin/feat/baseline-noxim`.
+- Before simulator execution, a short experiment plan and exact limited matrix were produced. Assumption: reusing `-sim 10000` and `-warmup 1000` keeps the fixed-window policy comparable in shape to earlier artifacts while keeping T0042 much smaller than the final sweep. Blocked: none at execution start.
+- Exact matrix: routing modes `INTERPOSER_AWARE_XY` and `DEFT`; traffic profiles `uniform`, `localized_40`, and `hotspot_3x10`; fault masks `0x0000` and `0x1111`; seeds `0` and `1`; warm-up `1000`; simulation window `10000`; stats format JSON; 24 planned runs.
+- All new artifacts were written under `external/noxim/other/generated/t0042_iaxy_deft_limited_v1/`. Existing T0026/T0027/T0028 generated directories were not targeted.
+- A default WSL attempt failed before simulator execution because no default WSL distribution was configured: `wsl -u root -- bash -lc "cd /mnt/c/Projects/CMP-720-Project-Proposal/external/noxim && python3 other/generated/t0042_iaxy_deft_limited_v1/run_t0042_limited.py"` returned exit code `1`.
+- The explicit Ubuntu WSL run completed with exit code `0`: `wsl -d Ubuntu -u root -- bash -lc "cd /mnt/c/Projects/CMP-720-Project-Proposal/external/noxim && python3 other/generated/t0042_iaxy_deft_limited_v1/run_t0042_limited.py"`.
+- Run manifest path: `external/noxim/other/generated/t0042_iaxy_deft_limited_v1/manifest.json`. Command listing path: `external/noxim/other/generated/t0042_iaxy_deft_limited_v1/commands.sh`. Per-run summary path: `external/noxim/other/generated/t0042_iaxy_deft_limited_v1/summary.csv`.
+- Every simulator command, return code, per-run log path, and per-run JSON stats path is recorded in `manifest.json`; logs are under `external/noxim/other/generated/t0042_iaxy_deft_limited_v1/logs/`, stats are under `external/noxim/other/generated/t0042_iaxy_deft_limited_v1/stats/`, and generated DEFT LUTs are under `external/noxim/other/generated/t0042_iaxy_deft_limited_v1/luts/`.
+- Mechanical analysis with `external/noxim/other/deft_analysis_artifacts.py` completed with exit code `0` and wrote `analysis/analysis_manifest.json`, `analysis/run_summary.csv`, `analysis/comparison_summary.csv`, and `analysis/report_scaffold.md`.
+- Blank-aware cross-check completed with exit code `0` and wrote `blank_aware_condition_summary.csv`, `blank_aware_pair_summary.csv`, `blank_aware_validation.json`, and `blank_aware_report.md`.
+- `blank_aware_validation.json` reports `cross_check_passed: true`, 24 completed return-code-zero runs, 24 JSON stats files, 24 stdout logs, 24 stderr logs, no summary/stat mismatches, no config mismatches, no missing artifacts, and no unexpected matrix values.
+- IA-XY hotspot cells injected zero packets for both fault masks and both seeds, so those IA-XY reachability and latency cells remain blank-aware. IA-XY uniform/no-fault injected packets but received zero packets, so latency remains blank for that cell.
+- The remaining packet-carrying IA-XY/DEFT cells are descriptive side-by-side evidence only. T0042 does not support ranking, improvement percentages, statistical conclusions, final-sweep replacement, or final-report claim changes.
+- No simulator source code changed. Standard `XY`, `DEFT`, VN transition restrictions, VL fault injection semantics, LUT schema/use path, topology behavior, traffic semantics, metrics semantics, runner/analysis source semantics, T0026/T0027/T0028 artifacts, `final_report/main.pdf`, `final_report.zip`, and Extended Proposal files were preserved.
+- `git diff --check` completed with exit code `0`; Git reported line-ending conversion warnings for edited Markdown files only.
+- `git -c safe.directory=C:/Projects/CMP-720-Project-Proposal/external/noxim -C external/noxim diff --check` completed with exit code `0`.
+- Final `external/noxim` status remained clean on `feat/baseline-noxim...origin/feat/baseline-noxim`; generated T0042 artifacts are ignored under `external/noxim/other/generated/`.
+- The generated-artifact guard returned no changed files for T0026/T0027/T0028 directories.
+- The final-report and Extended Proposal artifact guard returned no changed files for `final_report/main.pdf`, `final_report.zip`, `Extended_Proposal.pdf`, or `Extended_Proposal.zip`.
+- Final parent status shows only modified tracking docs: `docs/ARCHITECTURE.md`, `docs/PROGRESS.md`, `docs/PROMPTS.md`, `docs/TASKS.md`, and `docs/VALIDATION.md`.
+- `docs/TASKS.md`, `docs/PROGRESS.md`, `docs/VALIDATION.md`, `docs/PROMPTS.md`, and `docs/ARCHITECTURE.md` were updated for T0042 traceability. `docs/DECISIONS.md` was not updated because no new durable design or experiment decision was made.
+- This experiment does not change the current final submission status. Existing final handoff artifacts remain `final_report/main.pdf`, the current `final_report/` source tree, and `final_report.zip`.
 
 - T0041 Implement Interposer-Aware XY Baseline completed on 2026-05-11.
 - Required startup reading was completed before implementation work: `AGENTS.md`, `docs/PROGRESS.md`, `docs/TASKS.md`, `docs/ROADMAP.md`, `docs/ARCHITECTURE.md`, `docs/VALIDATION.md`, `docs/DECISIONS.md`, `docs/PROMPTS.md`, `docs/FINAL_REPORT_DRAFT.md`, and `final_report/main.tex`.
@@ -860,11 +888,14 @@ External source tree registered during `T0023`:
 - Assumption: T0041 IA-XY reuses `DIRECTION_HUB` as the current physical VL traversal carrier and relies on the existing topology-scoped VN filter without changing VN transition restrictions.
 - Assumption: T0041 validates implementation smokes only; IA-XY performance comparison claims require a later experiment task.
 - Assumption: IA-XY design or smoke validation alone supports no performance claim and does not change the current final submission status.
+- Assumption: T0042 is a limited exploratory artifact set, not a final sweep, because it uses two seeds and two fault masks rather than the T0025 five-seed/five-mask policy.
+- Assumption: T0042 blank-aware condition-level reachability is total received packets divided by total injected packets, and condition-level latency is received-packet-weighted and blank when no packets are received.
+- Assumption: T0042 can support future report discussion only after a separate report task decides whether and how to incorporate it without strengthening unsupported claims.
 - Blocked: True post-injection drain validation needs a source cut-off plus drain/timeout mechanism beyond the current runner and Noxim `-volume` stop condition.
 - Blocked: Strong inter-chiplet IA-XY-vs-DEFT comparison needs new versioned experiment artifacts and blank-aware analysis, or a narrower traffic policy that explicitly limits comparison to route-compatible traffic.
 - Blocked: Stronger final-report claims remain blocked after T0035; the selected immediate path improved explanation, not measured performance coverage.
 - Blocked: No current PDF-generation blocker remains after T0032; stronger final-report claims remain blocked without a separate approved validation or rerun policy.
-- Blocked: IA-XY performance claims remain blocked until T0042 or a later experiment task generates validated comparison artifacts.
+- Blocked: Strong IA-XY performance claims remain blocked after T0042 because the new artifact set is limited, two-seed exploratory data and still contains blank IA-XY hotspot cells.
 - Blocked: Reopening source-cutoff/drain semantics, route-compatible intra-chiplet comparison, PARSEC/GEM5 traces, directional endpoint faults, or stronger performance claims requires a new explicit task with its own design and validation policy.
 
 ## Open Questions
@@ -884,14 +915,14 @@ External source tree registered during `T0023`:
 
 ## Next Recommended Task
 
-T0042: Run Limited IA-XY vs DeFT Comparison, only if more development is required after the current final submission.
+T0043: Design Source-Cutoff and Post-Injection Drain Policy, only if more development is required after the current final submission.
 
 ## Next Ready-to-Send Prompt
 
 ```text
-Start task T0042: Run Limited IA-XY vs DeFT Comparison.
+Start task T0043: Design Source-Cutoff and Post-Injection Drain Policy.
 
-Before starting, read AGENTS.md and the required project tracking documents, including the T0040 IA-XY design and T0041 IA-XY implementation notes in docs/ARCHITECTURE.md.
+Before starting, read AGENTS.md and the required project tracking documents, including docs/VALIDATION.md, docs/DECISIONS.md, docs/PROMPTS.md, docs/FINAL_REPORT_DRAFT.md, and final_report/main.tex.
 
 Continue on the existing Git branch. Do not create or switch task branches.
 
@@ -899,13 +930,13 @@ Use Extended_Proposal.pdf as the primary project requirements source and the ori
 
 Use the registered Noxim source tree at external/noxim.
 
-Goal: define and run a limited, claim-safe IA-XY-vs-DEFT comparison now that INTERPOSER_AWARE_XY has build and smoke validation.
+Goal: design, but do not implement, a source-cutoff and post-injection drain/timeout policy for eventual-delivery analysis.
 
-Before execution, document the exact limited matrix, seeds, traffic profiles, fault masks, warm-up, simulation window, output directories, analysis rules, and claim limits. Use new artifact directories only. Preserve T0026/T0027/T0028 artifacts, standard XY, DEFT routing, VN transition restrictions, VL fault injection, LUT schema/use path, topology behavior, traffic semantics, metrics semantics, runner/analysis semantics, final_report/main.pdf, final_report.zip, and Extended Proposal files.
+Before editing, produce a short design plan. Define source cutoff, drain start, in-flight empty condition, timeout policy, metric denominators, warm-up interaction, and how this differs from current fixed-window `-sim` and Noxim `-volume` behavior.
 
-Do not run a full final-sweep regeneration, do not overwrite generated final-sweep artifacts, do not use ./regression.sh --update, do not invent results, and do not strengthen unsupported claims. Update tracking docs and run git diff --check.
+Do not edit simulator source, helper source, routing logic, VN transition restrictions, VL fault injection semantics, LUT schema/use path, topology behavior, traffic semantics, metrics semantics, runner/analysis semantics, generated artifacts, final_report/main.pdf, final_report.zip, or Extended Proposal files. Do not rebuild Noxim, rerun simulations, regenerate final sweeps, regenerate the final report PDF, use ./regression.sh --update, invent results, or strengthen unsupported claims.
 
-Update tracking docs and run git diff --check. Check that unrelated generated final-sweep artifacts are not changed and record external/noxim status.
+Update docs/TASKS.md, docs/PROGRESS.md, docs/VALIDATION.md, docs/PROMPTS.md, and docs/ARCHITECTURE.md. Update docs/DECISIONS.md only if a new durable policy decision is made. Run git diff --check and record external/noxim status.
 ```
 
 ## Suggested Branch Name for Next Task
@@ -917,5 +948,5 @@ None; continue on the existing branch.
 ## Suggested Commit Message
 
 ```text
-feat: implement interposer-aware xy baseline
+test: run limited ia-xy deft comparison
 ```

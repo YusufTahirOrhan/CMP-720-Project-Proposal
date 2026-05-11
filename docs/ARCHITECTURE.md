@@ -1400,6 +1400,59 @@ Blocked: IA-XY performance comparison claims remain blocked until a later T0042-
 
 The known Noxim build command from `external/noxim`, `./build.sh`, completed successfully. Targeted smokes validated route registration/config loading, same-chiplet local behavior without IA-XY VL traversal debug logs, no-fault inter-chiplet VL/interposer traversal, and explicit-fault fallback from faulty `vl_id=0` to functional `vl_id=1`. These are implementation smokes only and do not support performance claims.
 
+## T0042 Limited IA-XY vs DeFT Comparison
+
+T0042 created a new exploratory artifact set for a limited IA-XY-vs-DEFT comparison after T0041 validated the selectable `INTERPOSER_AWARE_XY` mode. The task did not modify simulator source, standard `XY`, `DEFT`, VN transition restrictions, VL fault injection semantics, LUT schema/use path, topology behavior, traffic semantics, metrics semantics, or runner/analysis source semantics.
+
+### Matrix
+
+The executed matrix was deliberately small:
+
+| Dimension | Values |
+| --- | --- |
+| Routing modes | `INTERPOSER_AWARE_XY`, `DEFT` |
+| Traffic profiles | `uniform`, `localized_40`, `hotspot_3x10` |
+| Fault masks | `0x0000`, `0x1111` |
+| Seeds | `0`, `1` |
+| Simulation window | `-sim 10000` |
+| Warm-up window | `-warmup 1000` |
+| Stats format | JSON |
+| Planned/completed runs | 24 / 24 |
+
+Assumption: Reusing the fixed-window T0025 `-sim 10000` and `-warmup 1000` policy keeps T0042 comparable in shape to previous generated artifacts, but the two-seed/two-mask matrix is not a final sweep.
+
+### Artifact Set
+
+All T0042 artifacts were written under `external/noxim/other/generated/t0042_iaxy_deft_limited_v1/`. Key files are:
+
+- `manifest.json`: command, return-code, log-path, stats-path, matrix, analysis-rule, and claim-limit manifest.
+- `commands.sh`: replayable simulator and DEFT LUT-generation command listing.
+- `summary.csv`: per-run metrics from the existing runner summary surface.
+- `analysis/`: mechanical analysis scaffold produced by `external/noxim/other/deft_analysis_artifacts.py`.
+- `blank_aware_condition_summary.csv`: T0042 blank-aware condition-level summary.
+- `blank_aware_pair_summary.csv`: T0042 IA-XY/DEFT side-by-side readiness summary.
+- `blank_aware_validation.json`: raw manifest/stat/log cross-check report.
+- `stats/`, `logs/`, and `luts/`: per-run JSON stats, per-run stdout/stderr logs, and generated DEFT LUTs for `0x0000` and `0x1111`.
+
+### Result Interpretation
+
+The blank-aware cross-check passed: all 24 runs completed with return code `0`, all 24 JSON stats files and stdout/stderr logs exist, and the generated summaries match raw JSON stats with no recorded mismatches.
+
+Condition-level observations:
+
+- `INTERPOSER_AWARE_XY|hotspot_3x10` injected zero packets for both fault masks and both seeds, so those IA-XY reachability and latency cells remain blank.
+- `INTERPOSER_AWARE_XY|uniform|0x0000` injected packets but received zero packets, so reachability is `0` and latency remains blank.
+- `uniform|0x1111`, `localized_40|0x0000`, and `localized_40|0x1111` have injected and received packets for both IA-XY and DEFT, but the result is descriptive side-by-side evidence only.
+- All DEFT condition cells in this limited matrix had packet injection and packet reception.
+
+Claim limits:
+
+- T0042 supports exploratory report-support discussion only.
+- Do not use T0042 to make rankings, improvement percentages, statistical conclusions, or final-sweep replacement claims.
+- Do not update `final_report/main.tex`, `final_report/main.pdf`, or `final_report.zip` from T0042 without a later explicit report task.
+
+Blocked: Strong final-report claims remain blocked because T0042 is a limited two-seed, two-fault-mask exploratory matrix and still has blank IA-XY hotspot cells.
+
 ## Post-Submission Future Backlog
 
 T0039 records the remaining technical gaps as future backlog items only. These tasks do not block the current final submission package, which remains `final_report/main.pdf`, the current `final_report/` source tree, and `final_report.zip`.
@@ -1419,7 +1472,7 @@ Ordered future backlog:
 | --- | --- | --- |
 | T0040 | Design | Completed IA-XY design: a new `INTERPOSER_AWARE_XY` baseline that is explicitly not standard `XY`. |
 | T0041 | Implementation | Completed selectable `INTERPOSER_AWARE_XY` baseline without modifying existing `XY` or `DEFT`. |
-| T0042 | Experiment | Run a limited IA-XY-vs-DEFT comparison in new artifact directories after the baseline is validated. |
+| T0042 | Experiment | Completed limited IA-XY-vs-DEFT comparison in a new artifact directory with blank-aware claim limits. |
 | T0043 | Design | Define source-cutoff plus post-injection drain/timeout semantics for eventual-delivery analysis. |
 | T0044 | Implementation | Implement and validate the accepted drain policy before any full sweep. |
 | T0045 | Feasibility | Evaluate directional endpoint fault modeling against the current physical bidirectional VL model. |

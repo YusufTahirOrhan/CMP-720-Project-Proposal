@@ -1754,6 +1754,73 @@ T0041 result on 2026-05-11:
 - Final `external/noxim` status shows the intended T0041 source/config changes and no generated final-sweep artifact changes.
 - The smokes validate implementation behavior only. They do not support IA-XY-vs-DEFT performance claims.
 
+## Limited IA-XY vs DeFT Comparison Validation
+
+Purpose:
+
+- Run only the approved T0042 limited IA-XY-vs-DEFT matrix.
+- Preserve standard `XY`, `DEFT`, VN transition restrictions, VL fault injection, LUT schema/use path, topology behavior, traffic semantics, metrics semantics, runner/analysis source semantics, generated final-sweep artifacts, final-report artifacts, and Extended Proposal files.
+- Record commands, return codes, manifest paths, log paths, stats paths, and blank-aware claim limits.
+
+Known validation for T0042:
+
+- Parent repository status: `git status --short --branch`
+- Noxim submodule status: `git -c safe.directory=C:/Projects/CMP-720-Project-Proposal/external/noxim -C external/noxim status --short --branch`
+- Limited matrix launcher from WSL Ubuntu:
+
+```bash
+cd /mnt/c/Projects/CMP-720-Project-Proposal/external/noxim
+python3 other/generated/t0042_iaxy_deft_limited_v1/run_t0042_limited.py
+```
+
+- Mechanical analysis scaffold:
+
+```bash
+cd /mnt/c/Projects/CMP-720-Project-Proposal/external/noxim
+python3 other/deft_analysis_artifacts.py --input-dir other/generated/t0042_iaxy_deft_limited_v1 --output-dir other/generated/t0042_iaxy_deft_limited_v1/analysis --dataset-kind smoke
+```
+
+- Blank-aware cross-check:
+
+```bash
+cd /mnt/c/Projects/CMP-720-Project-Proposal/external/noxim
+python3 other/generated/t0042_iaxy_deft_limited_v1/analyze_t0042_blank_aware.py
+```
+
+T0042 result on 2026-05-11:
+
+- Required startup reading was completed before execution: `AGENTS.md`, `docs/PROGRESS.md`, `docs/TASKS.md`, `docs/ROADMAP.md`, `docs/ARCHITECTURE.md`, `docs/VALIDATION.md`, `docs/DECISIONS.md`, `docs/PROMPTS.md`, `docs/FINAL_REPORT_DRAFT.md`, and `final_report/main.tex`.
+- The T0040 IA-XY design and T0041 IA-XY implementation notes in `docs/ARCHITECTURE.md` were read before execution.
+- Source-document roles were preserved: `Extended_Proposal.pdf` is the primary project requirements source, the original DeFT paper is the primary algorithmic reference, `Proposal.pdf` is initial context only, and the peer evaluation document was ignored completely.
+- Parent repository status before execution was clean on `feat/map-noxim-extension-points...origin/feat/map-noxim-extension-points`.
+- `external/noxim` status before execution was clean on `feat/baseline-noxim...origin/feat/baseline-noxim`.
+- Existing generated artifact directories were confirmed before execution: `t0026_final_sweep_v1`, `t0026_final_analysis_v1`, `t0027_report_support_v1`, and `t0028_final_report_results_v1`.
+- A short implementation/experiment plan and the exact limited matrix were documented before simulator execution.
+- Matrix: routings `INTERPOSER_AWARE_XY` and `DEFT`; traffic profiles `uniform`, `localized_40`, and `hotspot_3x10`; fault masks `0x0000` and `0x1111`; seeds `0` and `1`; `-sim 10000`; `-warmup 1000`; JSON stats; 24 planned runs.
+- New artifact directory: `external/noxim/other/generated/t0042_iaxy_deft_limited_v1/`.
+- A default WSL attempt failed before simulator execution because no default WSL distribution was configured. Command: `wsl -u root -- bash -lc "cd /mnt/c/Projects/CMP-720-Project-Proposal/external/noxim && python3 other/generated/t0042_iaxy_deft_limited_v1/run_t0042_limited.py"`. Return code: `1`.
+- The Ubuntu WSL launch command completed with exit code `0`: `wsl -d Ubuntu -u root -- bash -lc "cd /mnt/c/Projects/CMP-720-Project-Proposal/external/noxim && python3 other/generated/t0042_iaxy_deft_limited_v1/run_t0042_limited.py"`.
+- Run manifest: `external/noxim/other/generated/t0042_iaxy_deft_limited_v1/manifest.json`.
+- Command listing: `external/noxim/other/generated/t0042_iaxy_deft_limited_v1/commands.sh`.
+- Per-run summary: `external/noxim/other/generated/t0042_iaxy_deft_limited_v1/summary.csv`.
+- Per-run log paths are recorded in `manifest.json` and written under `external/noxim/other/generated/t0042_iaxy_deft_limited_v1/logs/`.
+- Per-run JSON stats paths are recorded in `manifest.json` and written under `external/noxim/other/generated/t0042_iaxy_deft_limited_v1/stats/`.
+- Generated DEFT LUTs are under `external/noxim/other/generated/t0042_iaxy_deft_limited_v1/luts/`.
+- Mechanical analysis command completed with exit code `0` and produced `external/noxim/other/generated/t0042_iaxy_deft_limited_v1/analysis/analysis_manifest.json`, `run_summary.csv`, `comparison_summary.csv`, and `report_scaffold.md`.
+- Blank-aware cross-check completed with exit code `0` and produced `blank_aware_condition_summary.csv`, `blank_aware_pair_summary.csv`, `blank_aware_validation.json`, and `blank_aware_report.md`.
+- `blank_aware_validation.json` reports `cross_check_passed: true`, `run_count: 24`, `completed_count: 24`, `return_code_zero_count: 24`, `stats_file_count: 24`, `stdout_file_count: 24`, `stderr_file_count: 24`, no summary metric mismatches, no config mismatches, no missing artifacts, and no unexpected matrix values.
+- IA-XY hotspot cells injected zero packets for both fault masks and both seeds, so the blank-aware pair summary marks those cells `not_comparison_ready_iaxy_empty`.
+- IA-XY uniform/no-fault injected packets but received zero packets, so latency remains blank for that cell.
+- The remaining packet-carrying IA-XY/DEFT cells are descriptive side-by-side only and do not support ranking, improvement, or statistical claims.
+- No source code was changed during T0042. Standard `XY`, `DEFT`, VN transition restrictions, VL fault injection semantics, LUT schema/use path, topology behavior, traffic semantics, metrics semantics, and runner/analysis source semantics were preserved.
+- `git diff --check` completed with exit code `0`; Git reported line-ending conversion warnings for edited Markdown files only.
+- `git -c safe.directory=C:/Projects/CMP-720-Project-Proposal/external/noxim -C external/noxim diff --check` completed with exit code `0`.
+- Final `external/noxim` status was clean on `feat/baseline-noxim...origin/feat/baseline-noxim`; generated T0042 artifacts are ignored under `external/noxim/other/generated/`.
+- A generated-artifact guard returned no changed files for `external/noxim/other/generated/t0026_final_sweep_v1`, `t0026_final_analysis_v1`, `t0027_report_support_v1`, and `t0028_final_report_results_v1`.
+- A final-report and proposal artifact guard returned no changed files for `final_report/main.pdf`, `final_report.zip`, `Extended_Proposal.pdf`, or `Extended_Proposal.zip`.
+- Final parent status showed only modified tracking docs: `docs/ARCHITECTURE.md`, `docs/PROGRESS.md`, `docs/PROMPTS.md`, `docs/TASKS.md`, and `docs/VALIDATION.md`.
+- T0042 does not change the current final submission status and does not update `final_report/main.pdf`, `final_report.zip`, or Extended Proposal files.
+
 ## Metrics Validation
 
 Purpose:

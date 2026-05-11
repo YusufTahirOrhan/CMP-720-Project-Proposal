@@ -440,7 +440,7 @@ Statuses: `TODO`, `IN_PROGRESS`, `DONE`, `BLOCKED`.
 
 ## T0042: Run Limited IA-XY vs DeFT Comparison
 
-- **Status:** TODO
+- **Status:** DONE
 - **Type:** experiment
 - **Objective:** Run a limited, claim-safe comparison between the validated IA-XY baseline and `DEFT`.
 - **Why it exists:** Stronger comparison claims require new validated artifacts produced after a topology-compatible baseline exists.
@@ -451,10 +451,12 @@ Statuses: `TODO`, `IN_PROGRESS`, `DONE`, `BLOCKED`.
 - **Source code changes allowed:** No, unless a blocker is found and a separate implementation task is opened.
 - **Simulation reruns allowed:** Yes, only the explicitly defined limited IA-XY-vs-DEFT matrix in new artifact directories.
 - **Acceptance criteria:** Matrix is documented before execution; generated artifacts are isolated from T0026/T0027/T0028; every run has recorded command, log, return code, and stats file; analysis is blank-aware and claim-safe; no unsupported ranking or improvement claims are made.
-- **Validation method or limitation:** Use the existing runner/analysis surfaces only after T0041 validation passes; cross-check new manifests and stats against summaries; run `git diff --check`.
+- **Validation method or limitation:** Completed with a limited 24-run matrix under `external/noxim/other/generated/t0042_iaxy_deft_limited_v1/`, using existing simulator/config/stat/LUT surfaces and generated T0042 harnesses without modifying runner or analysis source semantics. Cross-checks verified 24 manifest rows, 24 return code `0` rows, 24 JSON stats files, 24 stdout logs, 24 stderr logs, no summary/stat mismatches, no config mismatches, and blank-aware condition and pair summaries. The result is exploratory report-support only.
 - **Dependencies:** T0041.
 - **Risk level:** High, because it produces new experimental artifacts that could affect future claims.
 - **Recommended prompt:** `Start task T0042: Run Limited IA-XY vs DeFT Comparison. First define the exact limited matrix and new artifact directories, then execute only that matrix after confirming T0041 validation. Preserve T0026/T0027/T0028, keep claims blank-aware, update tracking docs, and run git diff --check.`
+- **Files changed:** `docs/TASKS.md`, `docs/PROGRESS.md`, `docs/VALIDATION.md`, `docs/PROMPTS.md`, `docs/ARCHITECTURE.md`, and ignored generated artifacts under `external/noxim/other/generated/t0042_iaxy_deft_limited_v1/`.
+- **Notes:** Completed on 2026-05-11. Matrix: routings `INTERPOSER_AWARE_XY` and `DEFT`; traffic profiles `uniform`, `localized_40`, and `hotspot_3x10`; fault masks `0x0000` and `0x1111`; seeds `0` and `1`; `-sim 10000`; `-warmup 1000`; JSON stats. IA-XY hotspot cells injected zero packets and remain blank-aware. Some other cells support descriptive side-by-side display only, not ranking or improvement claims. Standard `XY`, `DEFT`, VN transition restrictions, VL fault injection semantics, LUT schema/use path, topology behavior, traffic semantics, metrics semantics, runner/analysis source semantics, T0026/T0027/T0028 artifacts, `final_report/main.pdf`, `final_report.zip`, and Extended Proposal files were preserved.
 
 ## T0043: Design Source-Cutoff and Post-Injection Drain Policy
 
