@@ -1563,6 +1563,47 @@ Expected future checks:
 - If a future user reopens one of the deferred experimental directions, begin with a design task that records source changes, validation commands, artifact directories, and claim limits before implementation.
 - If final handoff is requested, perform status and documentation consistency checks only.
 
+## Final Submission Handoff Validation
+
+Purpose:
+
+- Confirm final artifact paths, repository status, tracking-document consistency, and remaining blockers after post-final experimental work is closed.
+- Preserve the generated final-report PDF, generated final-sweep artifacts, report claims, simulator behavior, and source code.
+- Identify any packaging caveats without starting an experimental extension.
+
+Known validation:
+
+- Parent repository status: `git status --short --branch`
+- Noxim submodule status: `git -c safe.directory=C:/Projects/CMP-720-Project-Proposal/external/noxim -C external/noxim status --short --branch`
+- Documentation whitespace check: `git diff --check`
+- Artifact existence and archive-content inspection only. Do not rebuild Noxim, rerun simulations, regenerate the final sweep, regenerate the final-report PDF, install dependencies, or use `./regression.sh --update`.
+
+T0037 result on 2026-05-11:
+
+- Required startup reading was completed before task work: `AGENTS.md`, `docs/PROGRESS.md`, `docs/TASKS.md`, `docs/ROADMAP.md`, `docs/ARCHITECTURE.md`, `docs/VALIDATION.md`, `docs/DECISIONS.md`, `docs/PROMPTS.md`, `docs/FINAL_REPORT_DRAFT.md`, and `final_report/main.tex`.
+- Before status checks or tracking-document edits, a short implementation plan was produced. Assumption: the task is documentation-only and must not change code, generated artifacts, report claims, or simulation outputs. Blocked: none at task start.
+- Source-document roles were preserved: `Extended_Proposal.pdf` is the primary requirements source, the original DeFT paper is the primary algorithmic reference, `Proposal.pdf` is initial context only, and the peer evaluation document was ignored completely.
+- Confirmed final artifact paths: `final_report/main.pdf`, `final_report/main.tex`, `final_report/references.bib`, `final_report/IEEEtran.cls`, `final_report/README.md`, and `final_report/figures/schematic.png`.
+- Confirmed generated PDF path: `final_report/main.pdf`; absolute path: `C:\Projects\CMP-720-Project-Proposal\final_report\main.pdf`; size: 344758 bytes. `final_report/main.log` records `Output written on main.pdf (5 pages, 344758 bytes)`.
+- Final log handoff check found no LaTeX errors, no fatal errors, no unresolved citations, no unresolved references, and no overfull boxes. The remaining layout diagnostics are the previously recorded underfull boxes plus one underfull vbox.
+- Confirmed final report-support paths: `external/noxim/other/generated/t0026_final_sweep_v1/`, `external/noxim/other/generated/t0026_final_analysis_v1/`, `external/noxim/other/generated/t0027_report_support_v1/`, and `external/noxim/other/generated/t0028_final_report_results_v1/report_results_draft.md`.
+- Confirmed final-sweep artifact counts without rerunning anything: 150 JSON stats files, 300 log files, and 5 generated LUT files under `external/noxim/other/generated/t0026_final_sweep_v1/`.
+- Parent repository status before T0037 documentation edits showed branch `feat/map-noxim-extension-points...origin/feat/map-noxim-extension-points` with only the pre-existing untracked `final_report.zip`.
+- The registered Noxim source tree at `external/noxim` was clean before T0037 documentation edits.
+- Handoff caveat: `final_report.zip` is stale. It is untracked, does not include `final_report/main.pdf`, and contains an older `final_report/main.tex` of 24531 bytes while the current source is 27449 bytes. It should not be used as the current final submission package unless refreshed in a separate packaging task.
+- Handoff caveat: `docs/FINAL_REPORT_DRAFT.md` still contains an older note saying PDF generation remains blocked. Current tracking docs and `final_report/main.pdf` supersede that note, and it was left unchanged because T0037 was scoped to tracking-document updates.
+- No source code, report claims, simulator behavior, helper behavior, routing logic, VN transition logic, VL fault injection, LUT schema/use path, topology behavior, traffic semantics, metrics semantics, runner/analysis semantics, generated final-sweep artifact, generated final-report PDF artifact, Extended Proposal file, Noxim rebuild, simulation run, final-sweep regeneration, external dependency installation, regression command, or `./regression.sh --update` was changed.
+- `docs/DECISIONS.md` was not updated because no new durable project decision was made.
+- Final `git diff --check` in the parent repository completed with exit code `0`; Git reported line-ending conversion warnings for edited Markdown files only.
+- Final parent status showed modified tracking docs and the pre-existing untracked `final_report.zip`.
+- Final `external/noxim` status remained clean.
+
+Expected future checks:
+
+- If direct PDF submission is accepted, use `final_report/main.pdf` and the current `final_report/` source tree.
+- If a zip/archive submission is required, refresh the archive in a separate packaging task and verify that it contains the current PDF and source files.
+- Do not start new experimental validation unless the user explicitly opens a new task with a design and validation policy.
+
 ## Metrics Validation
 
 Purpose:

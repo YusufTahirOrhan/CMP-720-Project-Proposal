@@ -2,7 +2,7 @@
 
 ## Current Phase
 
-Phase 9 - Final Analysis and Report Support (post-final experimental work closed)
+Phase 9 - Final Analysis and Report Support (final handoff checked; package refresh optional)
 
 ## Completed Tasks
 
@@ -42,8 +42,9 @@ Phase 9 - Final Analysis and Report Support (post-final experimental work closed
 - `T0034` - Decide Next Gap-Closure Direction and Add Follow-up Tasks.
 - `T0035` - Revise Final Report with T0033 Diagnosis.
 - `T0036` - Post-Final Experimental Extension Design Gate.
+- `T0037` - Final Submission Handoff Check.
 
-DeFT VN assignment behavior, the first VN movement-transition restriction enforcement layer, the offline VL LUT schema/generator, the runtime schema-v1 LUT loading/use path, explicit XY fault-free/fault-injected baseline configuration modes, proposal-required synthetic traffic configuration profiles, machine-readable metrics export, tiny experiment-runner launch support, final-analysis scaffolding, the final sweep policy, the validated T0026 150-run final sweep output set, T0027 blank-aware report-support tables, T0028 claim-safe final report results draft, the T0029 tracked claim-safe Markdown report draft, the T0030 submission-readiness polish, the T0031 IEEE-style LaTeX final report source artifact, the T0032 generated final report PDF, the T0033 blocker diagnosis, the T0034 report-revision direction decision, the T0035 final-report diagnosis revision, and the T0036 post-final experimental design gate now exist for `DEFT_2_5D`. Performance claims remain limited to descriptive, blank-aware report support only. No further experimental work is recommended for the current project phase.
+DeFT VN assignment behavior, the first VN movement-transition restriction enforcement layer, the offline VL LUT schema/generator, the runtime schema-v1 LUT loading/use path, explicit XY fault-free/fault-injected baseline configuration modes, proposal-required synthetic traffic configuration profiles, machine-readable metrics export, tiny experiment-runner launch support, final-analysis scaffolding, the final sweep policy, the validated T0026 150-run final sweep output set, T0027 blank-aware report-support tables, T0028 claim-safe final report results draft, the T0029 tracked claim-safe Markdown report draft, the T0030 submission-readiness polish, the T0031 IEEE-style LaTeX final report source artifact, the T0032 generated final report PDF, the T0033 blocker diagnosis, the T0034 report-revision direction decision, the T0035 final-report diagnosis revision, the T0036 post-final experimental design gate, and the T0037 final submission handoff check now exist for `DEFT_2_5D`. Performance claims remain limited to descriptive, blank-aware report support only. No further experimental work is recommended for the current project phase.
 
 ## In-Progress Tasks
 
@@ -54,6 +55,27 @@ DeFT VN assignment behavior, the first VN movement-transition restriction enforc
 - None.
 
 ## Last Validation Result
+
+- T0037 Final Submission Handoff Check completed as a documentation-only handoff task on 2026-05-11.
+- Required startup reading was completed before task work: `AGENTS.md`, `docs/PROGRESS.md`, `docs/TASKS.md`, `docs/ROADMAP.md`, `docs/ARCHITECTURE.md`, `docs/VALIDATION.md`, `docs/DECISIONS.md`, `docs/PROMPTS.md`, `docs/FINAL_REPORT_DRAFT.md`, and `final_report/main.tex`.
+- Before running commands or editing tracking documents, a short implementation plan was produced. Assumption: T0037 is a documentation-only handoff check and should not change code, generated artifacts, final-report claims, or simulation outputs. Blocked: none at task start.
+- Source-document roles were preserved: `Extended_Proposal.pdf` is the primary project requirements source, the original DeFT paper at `docs/references/DeFT_A_Deadlock-Free_and_Fault-Tolerant_Routing_Algorithm_for_2.5D_Chiplet_Networks.pdf` is the primary algorithmic reference, `Proposal.pdf` is initial context only, and the peer evaluation document was ignored completely.
+- Confirmed final source/report artifacts: `final_report/main.tex` exists, `final_report/main.pdf` exists, `final_report/references.bib` exists, `final_report/IEEEtran.cls` exists, and `final_report/README.md` exists.
+- Confirmed generated PDF path: `final_report/main.pdf`; absolute path: `C:\Projects\CMP-720-Project-Proposal\final_report\main.pdf`; size: 344758 bytes; final log records `Output written on main.pdf (5 pages, 344758 bytes)`.
+- Final report log handoff check found no LaTeX errors, no fatal errors, no unresolved citations, no unresolved references, no overfull boxes, and only the previously recorded underfull box diagnostics plus one underfull vbox.
+- Confirmed final report-support artifact paths exist: `external/noxim/other/generated/t0026_final_sweep_v1/`, `external/noxim/other/generated/t0026_final_analysis_v1/`, `external/noxim/other/generated/t0027_report_support_v1/`, and `external/noxim/other/generated/t0028_final_report_results_v1/report_results_draft.md`.
+- Confirmed T0026 generated artifact counts remain present without rerunning anything: 150 JSON stats files, 300 log files, and 5 generated LUT files under `external/noxim/other/generated/t0026_final_sweep_v1/`.
+- Parent repository status before documentation edits showed branch `feat/map-noxim-extension-points...origin/feat/map-noxim-extension-points` with only the pre-existing untracked `final_report.zip`.
+- The registered Noxim source tree at `external/noxim` remained clean before documentation edits.
+- Handoff caveat: pre-existing `final_report.zip` is stale. It is untracked, does not include `final_report/main.pdf`, and contains an older archived `final_report/main.tex` of 24531 bytes while the current source is 27449 bytes. Do not use `final_report.zip` as the current submission package unless it is refreshed in a separate packaging task.
+- Handoff caveat: `docs/FINAL_REPORT_DRAFT.md` still contains an older submission-format note saying PDF generation remains blocked. The current tracking documents and `final_report/main.pdf` supersede that note. It was left unchanged because T0037 was scoped to tracking-document updates and no report-content edits.
+- `docs/TASKS.md`, `docs/PROGRESS.md`, `docs/VALIDATION.md`, and `docs/PROMPTS.md` were updated with the completed handoff result.
+- `docs/DECISIONS.md` was not updated because no new durable project decision was made.
+- No source code, report claims, simulator behavior, helper behavior, routing logic, VN transition logic, VL fault injection, LUT schema/use path, topology behavior, traffic semantics, metrics semantics, runner/analysis semantics, generated final-sweep artifact, generated final-report PDF artifact, Extended Proposal file, Noxim rebuild, simulation run, final-sweep regeneration, external dependency installation, regression command, or `./regression.sh --update` was changed.
+- Final `git diff --check` in the parent repository completed with exit code `0`; Git reported line-ending conversion warnings for edited Markdown files only.
+- Final parent status showed modified tracking docs and the pre-existing untracked `final_report.zip`.
+- Final `external/noxim` status remained clean.
+- Final handoff status: ready for direct handoff of `final_report/main.pdf` and the current `final_report/` source tree; not ready for zip-based submission if `final_report.zip` is the intended package, because that archive is stale.
 
 - T0036 Post-Final Experimental Extension Design Gate completed as a documentation-only design task on 2026-05-11.
 - Required startup reading was completed before task work: `AGENTS.md`, `docs/PROGRESS.md`, `docs/TASKS.md`, `docs/ROADMAP.md`, `docs/ARCHITECTURE.md`, `docs/VALIDATION.md`, `docs/DECISIONS.md`, `docs/PROMPTS.md`, `docs/FINAL_REPORT_DRAFT.md`, and `final_report/main.tex`.
@@ -702,11 +724,13 @@ External source tree registered during `T0023`:
 - Assumption: Options B, C, and D require separate future design or source-change tasks and should not be started implicitly during final report closure.
 - Assumption: T0036 closes the post-final experimental-extension gate by selecting no further experimental work for the current project phase.
 - Assumption: The current final experimental deliverable is the T0026/T0027/T0028 artifact chain plus the revised T0032 generated PDF at `final_report/main.pdf`.
+- Assumption: T0037 confirmed `final_report/main.pdf` and the current `final_report/` source tree as the direct final handoff artifacts.
 - Blocked: True post-injection drain validation needs a source cut-off plus drain/timeout mechanism beyond the current runner and Noxim `-volume` stop condition.
 - Blocked: Strong inter-chiplet XY-vs-DEFT comparison needs either a newly designed interposer-aware baseline route or a narrower traffic policy that explicitly limits XY comparison to route-compatible traffic.
 - Blocked: Stronger final-report claims remain blocked after T0035; the selected immediate path improved explanation, not measured performance coverage.
 - Blocked: No current PDF-generation blocker remains after T0032; stronger final-report claims remain blocked without a separate approved validation or rerun policy.
 - Blocked: Reopening interposer-aware baseline routing, source-cutoff/drain semantics, route-compatible intra-chiplet comparison, PARSEC/GEM5 traces, directional endpoint faults, or stronger performance claims requires a new explicit task with its own design and validation policy.
+- Blocked: Zip-based final submission is blocked until `final_report.zip` is refreshed or replaced, because the pre-existing archive is stale and does not contain the generated PDF.
 
 ## Open Questions
 
@@ -722,22 +746,23 @@ External source tree registered during `T0023`:
 - Should a future helper add source cut-off and post-injection drain support for eventual-delivery reachability checks?
 - Should the generated final-analysis scaffold blocker text be updated in a future task to reflect the T0025 policy resolutions while still keeping generated scaffold outputs conservative?
 - Should a future report-packaging cleanup install or vendor the exact `IEEEtran.bst` style, or keep the currently installed `ieeetr` BibTeX style used for the generated PDF?
+- If the final submission requires an archive, should `final_report.zip` be refreshed from the current `final_report/` tree and include `final_report/main.pdf`?
 
 ## Next Recommended Task
 
-Start `T0037` only if a final submission handoff check is desired. No further experimental work is recommended after T0036.
+Start `T0038` only if a zip/archive package is required for submission. Otherwise, no further project task is recommended; use `final_report/main.pdf` and the current `final_report/` source tree for handoff. No further experimental work is recommended after T0036/T0037.
 
 ## Next Ready-to-Send Prompt
 
 ```text
-Start task T0037: Final Submission Handoff Check.
+Start task T0038: Refresh Final Submission Package.
 
 Before starting, read AGENTS.md, docs/PROGRESS.md, docs/TASKS.md, docs/ROADMAP.md, docs/ARCHITECTURE.md, docs/VALIDATION.md, docs/DECISIONS.md, docs/PROMPTS.md, docs/FINAL_REPORT_DRAFT.md, and final_report/main.tex.
 
 Continue on the existing Git branch. Do not create or switch task branches.
 
 Goal:
-Perform a documentation-only final handoff check after the post-final experimental gate selected no further experimental work.
+Refresh the final submission package only if an archive is required. The current direct handoff artifacts are `final_report/main.pdf` and the current `final_report/` source tree, but the pre-existing untracked `final_report.zip` is stale and does not contain the generated PDF.
 
 Use `Extended_Proposal.pdf` as the primary project requirements source and the original DeFT paper as the primary algorithmic reference. Use `Proposal.pdf` only as initial context. Ignore the peer evaluation document completely.
 
@@ -748,7 +773,7 @@ Before running commands or editing tracking docs, produce a short implementation
 
 Do not modify source code, report claims, simulator behavior, helper behavior, routing logic, VN transition logic, VL fault injection, LUT schema/use path, topology behavior, traffic semantics, metrics semantics, runner/analysis semantics, generated final-sweep artifacts, generated final-report PDF artifacts, or Extended Proposal files. Do not rebuild Noxim, rerun simulations, regenerate the final sweep, install external dependencies, or use `./regression.sh --update`.
 
-Confirm final artifact paths, repository status, tracking-document consistency, and remaining blockers only. Do not start any experimental extension.
+If an archive is required, create or refresh only the submission archive so it includes the current `final_report/main.pdf`, current `final_report/main.tex`, `final_report/references.bib`, `final_report/IEEEtran.cls`, `final_report/README.md`, and `final_report/figures/schematic.png`. Do not change those files' contents. If no archive is required, record that no package refresh was needed.
 
 Update docs/TASKS.md, docs/PROGRESS.md, docs/VALIDATION.md, and docs/PROMPTS.md with the result. Update docs/DECISIONS.md only if a new durable decision is made.
 
@@ -761,7 +786,7 @@ At the end, provide:
 3. Whether any source code files changed
 4. Validation result
 5. Current project phase
-6. Final handoff status
+6. Final package status
 7. Next recommended task
 8. The next ready-to-send prompt
 9. Suggested branch name, which should be `None; continue on the existing branch`
@@ -778,5 +803,5 @@ None; continue on the existing branch.
 ## Suggested Commit Message
 
 ```text
-docs: close post-final experimental gate
+docs: record final submission handoff
 ```
