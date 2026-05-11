@@ -1366,9 +1366,48 @@ python3 other/deft_experiment_runner.py \
 
 Expected future checks:
 
-- Decide whether to revise the final report with the T0033 diagnosis before PDF generation.
+- T0034 selected final report revision with the T0033 diagnosis before PDF generation; T0035 should perform that revision.
 - If a follow-up rerun is selected, use a new versioned generated-output directory and preserve the T0026/T0027 artifacts unchanged.
 - If eventual-delivery validation is selected, first design and approve source cut-off plus drain/timeout behavior before editing simulator source.
+
+## Gap-Closure Direction Validation
+
+Purpose:
+
+- Decide the safest final-report gap-closure direction after the T0033 blocker diagnosis.
+- Compare report revision, interposer-aware baseline routing, post-injection drain/source-cutoff support, PARSEC/GEM5 trace support, documentation-only finalization, and other possible follow-up paths before any implementation work.
+- Record validation implications for the selected and deferred paths.
+
+Known validation:
+
+- Use existing project tracking documents, `docs/FINAL_REPORT_DRAFT.md`, `final_report/main.tex`, and the registered Noxim source tree at `external/noxim`.
+- Do not rerun simulations, rebuild Noxim, regenerate the final report, regenerate final-sweep outputs, or use `./regression.sh --update`.
+- For documentation-only direction decisions, use `git diff --check` and repository status checks.
+
+T0034 result on 2026-05-11:
+
+- Required startup reading was completed before task work: `AGENTS.md`, `docs/PROGRESS.md`, `docs/TASKS.md`, `docs/ROADMAP.md`, `docs/ARCHITECTURE.md`, `docs/VALIDATION.md`, `docs/DECISIONS.md`, `docs/PROMPTS.md`, `docs/FINAL_REPORT_DRAFT.md`, and `final_report/main.tex`.
+- The registered Noxim source tree at `external/noxim` was inspected for status; it was clean before documentation edits.
+- T0034 selected Option A as the primary next direction: revise the final report with the T0033 diagnosis without adding simulator behavior.
+- Validation implication for Option A: use documentation consistency checks, claim-safety review, `git diff --check`, and optional LaTeX compilation only when TeX tooling is available. Do not run simulations or rebuild Noxim.
+- Validation implication for Option B: an interposer-aware XY-like baseline would require a separate source-design task, simulator build validation, focused route tests, and new versioned comparison artifacts before it could support report claims.
+- Validation implication for Option C: source-cutoff plus post-injection drain would require a separate simulator/runner semantics design, build validation, targeted drain tests, and careful metric interpretation. It would not fix standard XY topology incompatibility by itself.
+- Validation implication for Option D: PARSEC/GEM5 trace support would require external trace-generation or trace-import infrastructure plus separate validation, and is not appropriate for immediate final-report closure.
+- Validation implication for Option E: documenting remaining work only is validation-light but leaves report quality lower than Option A because it does not incorporate the diagnosis.
+- Validation implication for Option F: any other heavier experimental direction should be handled by a post-final design gate before source or simulation work.
+- Added `T0035` for final report revision with T0033 diagnosis and `T0036` as a post-final experimental extension design gate.
+- Added ADR-0041 to record the durable report-revision-over-late-source-change policy.
+- No source code, simulator behavior, helper behavior, routing logic, VN transition logic, VL fault injection, LUT schema/use path, topology behavior, generated final-sweep artifacts, Noxim rebuild, simulation run, final report regeneration, PDF generation, regression command, `./regression.sh --update`, or performance claim was changed.
+- Final `git diff --check` in the parent repository completed with exit code `0`; Git reported line-ending conversion warnings for edited Markdown files only.
+- Final `git -c safe.directory=C:/Projects/CMP-720-Project-Proposal/external/noxim -C external/noxim diff --check` completed with exit code `0`.
+- Final parent status showed modified tracking docs and the pre-existing untracked `final_report.zip`.
+- Final `external/noxim` status remained clean.
+
+Expected future checks:
+
+- T0035 should run `git diff --check` after revising `docs/FINAL_REPORT_DRAFT.md` and `final_report/main.tex`.
+- T0035 may attempt a LaTeX compile only if tooling is available, otherwise it should leave PDF generation to T0032 and record the exact blocker.
+- Any future source-change or simulation-rerun direction must get its own task, design, validation commands, and versioned output directories before implementation.
 
 ## Metrics Validation
 
