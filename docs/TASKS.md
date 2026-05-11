@@ -302,6 +302,26 @@ Statuses: `TODO`, `IN_PROGRESS`, `DONE`, `BLOCKED`.
 - **Validation command:** Use a documented LaTeX build command available in the environment, preferably `latexmk -pdf main.tex` from `final_report/`; if `latexmk` is unavailable, use a standard `pdflatex`/`bibtex`/`pdflatex`/`pdflatex` sequence only when those tools are present.
 - **Notes:** This follow-up is only needed because T0031 could not generate a PDF in the current Windows environment. Do not rerun Noxim, change report claims, or modify simulator source while generating the PDF.
 
+## T0033: Diagnose and Reduce Final-Report Blockers
+
+- **Status:** DONE
+- **Objective:** Diagnose the XY zero-injection and zero-received blockers that limit stronger final-report comparison claims.
+- **Relevant roadmap phase:** Phase 9
+- **Files changed:** `docs/ARCHITECTURE.md`, `docs/DECISIONS.md`, `docs/TASKS.md`, `docs/PROGRESS.md`, `docs/VALIDATION.md`, and `docs/PROMPTS.md`; ignored diagnostic outputs under `external/noxim/other/generated/t0033_xy_diagnostic_warmup0_v1/`.
+- **Acceptance criteria:** Inspect the traffic configs, runner, measurement-window behavior, injection counters, XY route path, and topology connectivity; run only small targeted smokes if needed; explain whether the blockers are config, window, injection probability, destination selection, topology compatibility, missing drain, or expected limitation; do not change simulator source or final-sweep artifacts.
+- **Validation command:** Two-run WSL runner diagnostic from `external/noxim` for `XY` `hotspot_3x10` and `uniform`, fault mask `0x0000`, seed `0`, `--sim 10000`, `--warmup 0`, JSON stats, output `other/generated/t0033_xy_diagnostic_warmup0_v1`; `git diff --check`; parent and submodule status checks.
+- **Notes:** Completed on 2026-05-09 as a diagnosis-only task. Source inspection found that T0020 injection counts are recorded only when a packet head flit leaves the PE after the stats warm-up boundary, and `Routing_XY.cpp` chooses only cardinal XY directions from the global footprint coordinate. The `DEFT_2_5D` topology intentionally wires chiplet cardinal links only inside each 4x4 chiplet and binds missing cross-chiplet cardinal ports to idle ports; `Routing_DEFT.cpp` is the path that selects VL/hub/interposer movement for inter-chiplet traffic. The T0033 warm-up-0 diagnostic completed two runs with return code `0`: `XY|hotspot_3x10|0x0000|seed0` injected 145 packets and received 6, and `XY|uniform|0x0000|seed0` injected 141 packets and received 4. This shows the hotspot table and uniform generator are not empty, and the final-sweep blank cells are caused by the `-warmup 1000` stats window after early XY traffic has already injected, delivered a few same-chiplet or otherwise reachable packets, and then stalled behind routes that cannot cross chiplet boundaries through cardinal XY. Assumption: warm-up-0 diagnostics can reduce blank cells for traceability only; they are not final performance claims. Blocked: a true post-injection drain policy requires a source cut-off plus drain/timeout mechanism that the current runner and simulator do not provide. No simulator source, helper source, routing behavior, VN transition logic, VL fault injection, LUT schema/use path, topology behavior, old final-sweep artifact, Noxim rebuild, full sweep, regression command, `./regression.sh --update`, or final-report performance claim was changed.
+
+## T0034: Define Claim-Safe Follow-Up Rerun or Drain Policy
+
+- **Status:** TODO
+- **Objective:** Decide whether to run a limited claim-safe rerun dataset, implement drain/source-cutoff support, or leave the final report with the current T0033 diagnosis and T0027 limitations.
+- **Relevant roadmap phase:** Phase 9
+- **Files likely to change:** `docs/FINAL_REPORT_DRAFT.md` and `final_report/` only if the accepted policy changes report content; runner/config files only if a config-only rerun policy is selected; simulator source only if an explicitly approved drain/source-cutoff task is selected; tracking docs.
+- **Acceptance criteria:** The selected policy clearly distinguishes diagnostic warm-up-0 data, same-chiplet/intra-chiplet comparison data, full inter-chiplet DeFT data, and any source-supported drain results; old T0026/T0027 artifacts remain untouched; any new generated outputs use a new versioned directory; no unsupported XY-vs-DEFT performance claims are introduced.
+- **Validation command:** To be selected from already documented runner, analysis, LaTeX, and status commands after the policy is chosen. Do not use `./regression.sh --update`.
+- **Notes:** T0033 suggests that a config/runner-only warm-up-0 rerun can produce non-empty diagnostic XY data, but not a strong final inter-chiplet comparison. A proper eventual-delivery drain policy or an interposer-aware XY baseline would require a separate approved source-change task.
+
 ## T0023: Add or Register Noxim Source Tree
 
 - **Status:** DONE

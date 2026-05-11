@@ -1124,6 +1124,36 @@ Assumption: `final_report/` is the final source artifact for IEEE-style LaTeX su
 
 Blocked: PDF generation was not completed in T0031 because `latexmk`, `pdflatex`, `bibtex`, and `tectonic` were not available on the Windows PATH.
 
+## T0033 Final-Report Blocker Diagnosis
+
+`T0033` diagnosed the XY measured-window blockers that limited the T0031 final report. It did not change simulator source, helper source, routing behavior, VN transition logic, VL fault injection, LUT schema/use path, topology behavior, old final-sweep artifacts, or report claims.
+
+Diagnosis grounding:
+
+- `ProcessingElement::recordInjectedPacket()` counts injected packets only when a packet head flit leaves the PE after the configured stats warm-up boundary.
+- `Routing_XY.cpp` compares only `id2Coord(current_id)` and `id2Coord(dst_id)` and selects a cardinal direction. It has no VL, hub, interposer, chiplet-layer, or source/destination chiplet phase logic.
+- `NoC::buildDeft2D()` wires chiplet-layer cardinal links only within each 4x4 chiplet. Cross-chiplet cardinal movement across the global footprint is intentionally not a physical chiplet-layer link.
+- Missing `DEFT_2_5D` cardinal ports are bound to idle ports. A standard XY inter-chiplet path can therefore choose an output that has no corresponding chiplet-layer neighbor.
+- `Routing_DEFT.cpp` is the 2.5D-aware path that selects source-chiplet exit, hub/VL traversal, interposer routing, destination-chiplet entry, and final local routing.
+- The current `-volume` option stops after delivered flits; it is not a post-injection drain phase because it does not stop sources and then drain in-flight traffic until empty or timeout.
+
+Diagnostic smoke:
+
+- A two-run WSL diagnostic used `external/noxim/other/deft_experiment_runner.py` with `XY`, `hotspot_3x10` and `uniform`, fault mask `0x0000`, seed `0`, `--sim 10000`, `--warmup 0`, JSON stats, and output directory `external/noxim/other/generated/t0033_xy_diagnostic_warmup0_v1/`.
+- `XY|hotspot_3x10|0x0000|seed0` injected 145 packets and received 6 packets.
+- `XY|uniform|0x0000|seed0` injected 141 packets and received 4 packets.
+
+Interpretation:
+
+- The `XY|hotspot_3x10` zero-injection cells in T0027 are not caused by an empty hotspot traffic table, an invalid hotspot destination set, or lack of injection probability. They are measured-window cells: with T0026 `-warmup 1000`, early packets can inject before stats are counted, and the XY run can stall before the measured window because inter-chiplet cardinal XY has no valid path on the disconnected chiplet layer.
+- The `XY|localized_40` and `XY|uniform` zero-received cells are also explained by XY route incompatibility plus the fixed warm-up window. Some measured-window packets can be injected, but the existing XY algorithm cannot route unrestricted inter-chiplet traffic through the active interposer.
+- A config/runner-only warm-up-0 diagnostic can produce non-empty XY rows, but it remains a transient diagnostic policy and should not be presented as a strong full inter-chiplet comparison.
+- A claim-safe same-chiplet or intra-chiplet-only comparison could be config-only if its scope is clearly limited. A true unrestricted inter-chiplet XY baseline or a post-injection drain/source-cutoff policy requires a separate approved design and likely source changes.
+
+Assumption: The current standard `XY` baseline is useful as a traceable control configuration, but it is not an interposer-aware baseline for unrestricted `DEFT_2_5D` inter-chiplet traffic.
+
+Blocked: Final-report latency or improvement claims remain unsupported until a follow-up policy either narrows the traffic scope, adds source-supported drain validation, or implements and validates an interposer-aware baseline route.
+
 ## Synthetic Traffic Models
 
 Implemented configuration support:
@@ -1177,6 +1207,7 @@ Planned and partially implemented:
 - Implemented in T0029: A tracked claim-safe Markdown final report draft was assembled at `docs/FINAL_REPORT_DRAFT.md` from the source documents, project documentation, and T0028/T0027/T0026 report-support artifacts.
 - Implemented in T0030: The tracked Markdown final report draft was reviewed and polished for submission readiness while preserving claim-safety constraints, blank cells, validation provenance, assumptions, blockers, and limitations.
 - Implemented in T0031: The reviewed Markdown draft was converted into an IEEE conference-style LaTeX source artifact under `final_report/` using `Extended_Proposal.zip` as the formatting/template reference. PDF generation remains blocked until a TeX toolchain is available.
+- Diagnosed in T0033: The existing `XY` route is cardinal-only and does not traverse VL/hub/interposer paths, so unrestricted inter-chiplet traffic on `DEFT_2_5D` can stall before the T0026 measured window and cannot support strong XY-vs-DEFT latency or improvement claims.
 
 ## Noxim Extension Point Map
 

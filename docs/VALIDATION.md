@@ -1306,6 +1306,70 @@ Expected future checks:
 - Inspect the generated PDF for layout issues, especially wide result tables.
 - Preserve claim-safety constraints if any LaTeX layout edits are needed.
 
+## Final Report Blocker Diagnosis Validation
+
+Purpose:
+
+- Diagnose the measured-window blockers that prevent stronger XY-vs-DEFT final-report comparison claims.
+- Confirm whether the XY hotspot zero-injection cells are traffic/config problems or warm-up/topology interaction.
+- Confirm whether XY zero-received cells are a missing drain problem, a short-window problem, or a route-compatibility limitation.
+
+Known validation:
+
+- Use existing generated T0026 artifacts under `external/noxim/other/generated/t0026_final_sweep_v1/`.
+- Use existing generated T0027 artifacts under `external/noxim/other/generated/t0027_report_support_v1/`.
+- If no simulator source changes are made, do not rebuild Noxim and do not rerun the full final sweep.
+- Small targeted WSL runner diagnostics may use the already documented T0021/T0026 runner surface with new versioned output directories under `external/noxim/other/generated/`.
+- Run `git diff --check`.
+- Do not use `./regression.sh --update`.
+
+T0033 result on 2026-05-09:
+
+- Required startup reading was completed before task work: `AGENTS.md`, `docs/PROGRESS.md`, `docs/TASKS.md`, `docs/ROADMAP.md`, `docs/ARCHITECTURE.md`, `docs/VALIDATION.md`, `docs/DECISIONS.md`, `docs/PROMPTS.md`, `docs/FINAL_REPORT_DRAFT.md`, and `final_report/main.tex`.
+- Before implementation or documentation edits, a short diagnosis plan was produced.
+- Inspected the synthetic traffic configs and tables: `deft_2_5d_traffic_uniform.yaml`, `deft_2_5d_traffic_localized_40.yaml`, `deft_2_5d_traffic_localized_40.txt`, `deft_2_5d_traffic_hotspot_3x10.yaml`, and `deft_2_5d_traffic_hotspot_3x10.txt`.
+- Inspected `external/noxim/other/deft_experiment_runner.py`; the T0026 final sweep used `-sim 10000`, `-warmup 1000`, routing overrides, JSON stats export, and no post-injection drain or PIR override.
+- Inspected `ProcessingElement.cpp`, `GlobalTrafficTable.cpp`, `Routing_XY.cpp`, `Routing_DEFT.cpp`, `Router.cpp`, `NoC.cpp`, `Utils.h`, `DeftTopology.*`, `DeftVirtualNetwork.cpp`, `Main.cpp`, and `ConfigurationManager.cpp` for injection accounting, table traffic, route selection, topology wiring, idle-port behavior, warm-up, and drain-related controls.
+- Confirmed from code that injected-packet stats are counted only when the packet head flit leaves the PE after the stats warm-up boundary.
+- Confirmed from code that standard `XY` uses only cardinal footprint-coordinate movement and never selects VL/hub/interposer traversal.
+- Confirmed from code that `DEFT_2_5D` chiplet cardinal links are wired only inside each 4x4 chiplet, and missing cross-chiplet cardinal ports are bound to idle ports.
+- Confirmed from code that current `-volume` stops after delivered flits and is not a post-injection drain phase with source cut-off.
+- The first sandboxed WSL diagnostic attempt could not see a WSL distribution. The same two-run diagnostic was rerun with approved WSL execution and completed with exit code `0`.
+- Diagnostic command from `external/noxim` in WSL/Linux:
+
+```bash
+python3 other/deft_experiment_runner.py \
+  --routing XY \
+  --traffic hotspot_3x10 --traffic uniform \
+  --fault-mask 0x0000 \
+  --seed 0 \
+  --sim 10000 \
+  --warmup 0 \
+  --stats-format json \
+  --output-dir other/generated/t0033_xy_diagnostic_warmup0_v1 \
+  --execute \
+  --max-execute-runs 2
+```
+
+- The diagnostic wrote ignored artifacts under `external/noxim/other/generated/t0033_xy_diagnostic_warmup0_v1/`.
+- `XY|hotspot_3x10|0x0000|seed0` completed with return code `0`, injected 145 packets, received 6 packets, reachability `0.041379310344827586`, and weighted average latency `5.666666666666667` cycles.
+- `XY|uniform|0x0000|seed0` completed with return code `0`, injected 141 packets, received 4 packets, reachability `0.028368794326241134`, and weighted average latency `6.75` cycles.
+- T0033 diagnosis: the hotspot traffic table is non-empty and hotspot destination selection is not the cause of the T0027 empty hotspot cells.
+- T0033 diagnosis: the T0026/T0027 zero-injection and zero-received XY cells are primarily caused by `-warmup 1000` measuring after early XY traffic has already injected and then stalled behind cardinal routes that cannot traverse the disconnected chiplet layer.
+- T0033 diagnosis: a config/runner-only warm-up-0 policy can create non-empty diagnostic XY data, but it does not create a strong full inter-chiplet comparison because the existing `XY` route remains topology-incompatible for unrestricted inter-chiplet traffic.
+- T0033 diagnosis: source changes would be required for a true post-injection drain/source-cutoff policy, and an interposer-aware XY baseline would also be a separate source-change task if selected.
+- No simulator source, helper source, DeFT routing, VN transition logic, VL fault injection, LUT schema/use path, topology behavior, old final-sweep artifact, Noxim rebuild, full sweep, regression command, `./regression.sh --update`, or final-report performance claim was changed.
+- Final `git diff --check` in the parent repository completed with exit code `0`; Git reported line-ending conversion warnings for edited Markdown files only.
+- Final `git -c safe.directory=C:/Projects/CMP-720-Project-Proposal/external/noxim -C external/noxim diff --check` completed with exit code `0`.
+- Final parent status showed modified tracking docs and the pre-existing untracked `final_report.zip`.
+- Final `external/noxim` status remained clean; the T0033 generated diagnostic output is under the ignored `external/noxim/other/generated/` tree.
+
+Expected future checks:
+
+- Decide whether to revise the final report with the T0033 diagnosis before PDF generation.
+- If a follow-up rerun is selected, use a new versioned generated-output directory and preserve the T0026/T0027 artifacts unchanged.
+- If eventual-delivery validation is selected, first design and approve source cut-off plus drain/timeout behavior before editing simulator source.
+
 ## Metrics Validation
 
 Purpose:

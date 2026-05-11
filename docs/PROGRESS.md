@@ -37,8 +37,9 @@ Phase 9 - Final Analysis and Report Support
 - `T0029` - Assemble Claim-Safe Final Report Draft.
 - `T0030` - Review Final Report Draft for Submission Readiness.
 - `T0031` - Prepare Final Submission Artifact.
+- `T0033` - Diagnose and Reduce Final-Report Blockers.
 
-DeFT VN assignment behavior, the first VN movement-transition restriction enforcement layer, the offline VL LUT schema/generator, the runtime schema-v1 LUT loading/use path, explicit XY fault-free/fault-injected baseline configuration modes, proposal-required synthetic traffic configuration profiles, machine-readable metrics export, tiny experiment-runner launch support, final-analysis scaffolding, the final sweep policy, the validated T0026 150-run final sweep output set, T0027 blank-aware report-support tables, T0028 claim-safe final report results draft, the T0029 tracked claim-safe Markdown report draft, the T0030 submission-readiness polish, and the T0031 IEEE-style LaTeX final report source artifact now exist for `DEFT_2_5D`. Performance claims remain limited to descriptive, blank-aware report support only.
+DeFT VN assignment behavior, the first VN movement-transition restriction enforcement layer, the offline VL LUT schema/generator, the runtime schema-v1 LUT loading/use path, explicit XY fault-free/fault-injected baseline configuration modes, proposal-required synthetic traffic configuration profiles, machine-readable metrics export, tiny experiment-runner launch support, final-analysis scaffolding, the final sweep policy, the validated T0026 150-run final sweep output set, T0027 blank-aware report-support tables, T0028 claim-safe final report results draft, the T0029 tracked claim-safe Markdown report draft, the T0030 submission-readiness polish, the T0031 IEEE-style LaTeX final report source artifact, and the T0033 blocker diagnosis now exist for `DEFT_2_5D`. Performance claims remain limited to descriptive, blank-aware report support only.
 
 ## In-Progress Tasks
 
@@ -50,31 +51,25 @@ DeFT VN assignment behavior, the first VN movement-transition restriction enforc
 
 ## Last Validation Result
 
-- T0031 Prepare Final Submission Artifact completed as a source-artifact task on 2026-05-09.
-- Required startup reading was completed before task work: `AGENTS.md`, `docs/PROGRESS.md`, `docs/TASKS.md`, `docs/ROADMAP.md`, `docs/ARCHITECTURE.md`, `docs/VALIDATION.md`, `docs/DECISIONS.md`, and `docs/PROMPTS.md`.
-- Before running commands or documentation edits, a short implementation plan was produced.
-- Initial parent status showed branch `feat/map-noxim-extension-points...origin/feat/map-noxim-extension-points` with no local file modifications.
+- T0033 Diagnose and Reduce Final-Report Blockers completed as a diagnosis task on 2026-05-09.
+- Required startup reading was completed before task work: `AGENTS.md`, `docs/PROGRESS.md`, `docs/TASKS.md`, `docs/ROADMAP.md`, `docs/ARCHITECTURE.md`, `docs/VALIDATION.md`, `docs/DECISIONS.md`, `docs/PROMPTS.md`, `docs/FINAL_REPORT_DRAFT.md`, and `final_report/main.tex`.
+- Before implementation or documentation edits, a short diagnosis plan was produced.
+- Initial parent status showed branch `feat/map-noxim-extension-points...origin/feat/map-noxim-extension-points` and the pre-existing untracked `final_report.zip`.
 - Initial `external/noxim` status showed branch `feat/baseline-noxim...origin/feat/baseline-noxim` with no local file modifications.
-- Required source paths were inspected: `docs/FINAL_REPORT_DRAFT.md`, `Extended_Proposal.zip`, `Extended_Proposal.pdf`, `Proposal.pdf`, and `docs/references/DeFT_A_Deadlock-Free_and_Fault-Tolerant_Routing_Algorithm_for_2.5D_Chiplet_Networks.pdf`.
-- The explicitly supplied final artifact format is an IEEE conference-style LaTeX final project report.
-- `Extended_Proposal.zip` was inspected and found to contain the style/template sources `conference_101719.tex`, `IEEEtran.cls`, `references.bib`, and `figures/schematic.png`.
-- Created the final LaTeX artifact directory `final_report/`.
-- Created `final_report/main.tex` from `docs/FINAL_REPORT_DRAFT.md` using the Extended Proposal IEEEtran style, author/title convention, package style, bibliography style, and general layout.
-- Created `final_report/references.bib` with only cited entries reused from the Extended Proposal source.
-- Copied `final_report/IEEEtran.cls` and `final_report/figures/schematic.png` from `Extended_Proposal.zip` without overwriting the original archive or proposal files.
-- Created `final_report/README.md` with source hierarchy, build instructions, and the PDF generation blocker.
-- The LaTeX report preserves claim-safety constraints, blank reachability cells, blank latency cells, partial-cell coverage counts, validation provenance, assumptions, blockers, limitations, and descriptive-only result wording.
-- Citation and BibTeX key checks found no cited key missing from `references.bib` and no uncited BibTeX entries.
-- LaTeX source environment count check found balanced `\begin{...}` and `\end{...}` counts.
-- ASCII checks found no non-ASCII characters in `final_report/main.tex`, `final_report/references.bib`, or `final_report/README.md`.
-- LaTeX tooling checks found no `latexmk`, `pdflatex`, `bibtex`, or `tectonic` command available on the Windows PATH, so PDF generation was not attempted successfully.
-- No Noxim rebuild, final-sweep rerun, simulator source change, helper source change, routing behavior change, VN transition change, VL fault-injection change, traffic semantic change, metrics semantic change, runner/analysis semantic change, golden output update, regression command, `./regression.sh --update`, or performance claim was performed.
+- Inspected the T0019 synthetic traffic configs and tables, the T0021 runner command construction, T0026/T0027 generated report-support artifacts, T0020 injected-packet stats code, XY/DEFT routing paths, `DEFT_2_5D` topology wiring, idle-port binding, and the existing `-volume` stop condition.
+- Source inspection found that `ProcessingElement::recordInjectedPacket()` counts packets only when the packet head flit enters the network after the configured stats warm-up boundary.
+- Source inspection found that `Routing_XY.cpp` chooses only one cardinal direction from global footprint coordinates; it has no VL, hub, interposer, or chiplet-layer phase logic.
+- Source inspection found that `DEFT_2_5D` chiplet-layer cardinal links are only wired within each 4x4 chiplet; missing cross-chiplet cardinal ports are bound to idle ports, while `Routing_DEFT.cpp` is the route path that selects VL/hub/interposer traversal for inter-chiplet traffic.
+- A two-run WSL diagnostic used the existing runner only: `XY` `hotspot_3x10` and `uniform`, fault mask `0x0000`, seed `0`, `--sim 10000`, `--warmup 0`, JSON stats, output directory `external/noxim/other/generated/t0033_xy_diagnostic_warmup0_v1/`.
+- The diagnostic completed with return code `0` for both runs. `XY|hotspot_3x10|0x0000|seed0` injected 145 packets, received 6, reachability `0.041379310344827586`, and weighted average latency `5.666666666666667` cycles. `XY|uniform|0x0000|seed0` injected 141 packets, received 4, reachability `0.028368794326241134`, and weighted average latency `6.75` cycles.
+- Diagnosis: the T0027 `XY|hotspot_3x10` zero-injection cells are not caused by an empty traffic table or hotspot destination-selection failure. They are measured-window cells with `-warmup 1000`; packets can inject before warm-up, but by the measured window XY has stalled because cardinal XY cannot traverse the disconnected chiplet layer.
+- Diagnosis: the T0027 `XY|localized_40` and `XY|uniform` zero-received cells are the same compatibility/window issue. Some XY packets enter the network in some measured-window seeds, but the standard XY route path does not provide a valid inter-chiplet path on `DEFT_2_5D`, so no packets are received during the T0026 measured window.
+- Diagnosis: a post-injection drain phase is still needed for eventual-delivery analysis, but current Noxim only provides `-volume` as a delivered-flit stop condition and the current runner has no source cut-off plus drain/timeout policy.
+- No simulator source, helper source, DeFT routing, VN transition logic, VL fault injection, LUT schema/use path, topology behavior, old final-sweep artifact, Noxim rebuild, full sweep, regression command, `./regression.sh --update`, or final-report performance claim was changed.
 - Final `git diff --check` in the parent repository completed with exit code `0`; Git reported line-ending conversion warnings for edited Markdown files only.
 - Final `git -c safe.directory=C:/Projects/CMP-720-Project-Proposal/external/noxim -C external/noxim diff --check` completed with exit code `0`.
-- Final parent status showed modified tracking docs and the new untracked `final_report/` artifact directory.
-- Final `external/noxim` status remained clean.
-- Assumption: `final_report/` is the final LaTeX source artifact and can be compiled once a TeX toolchain is available.
-- Blocked: PDF generation is blocked in the current Windows environment because no LaTeX engine or BibTeX tool was found on the PATH.
+- Final parent status showed modified tracking docs and the pre-existing untracked `final_report.zip`.
+- Final `external/noxim` status remained clean; the T0033 generated diagnostic output is under the ignored `external/noxim/other/generated/` tree.
 
 ## Important Changed Files
 
@@ -448,6 +443,19 @@ Files updated during `T0031` Prepare Final Submission Artifact:
 - `docs/PROMPTS.md`
 - `docs/DECISIONS.md`
 
+Files updated during `T0033` Diagnose and Reduce Final-Report Blockers:
+
+- `docs/ARCHITECTURE.md`
+- `docs/DECISIONS.md`
+- `docs/TASKS.md`
+- `docs/PROGRESS.md`
+- `docs/VALIDATION.md`
+- `docs/PROMPTS.md`
+
+Ignored diagnostic outputs created during `T0033`:
+
+- `external/noxim/other/generated/t0033_xy_diagnostic_warmup0_v1/`
+
 Noxim build files LF-normalized during `T0003`:
 
 - `external/noxim/bin/Makefile`
@@ -564,6 +572,10 @@ External source tree registered during `T0023`:
 - Assumption: After T0030, `docs/FINAL_REPORT_DRAFT.md` is submission-ready as a reviewed Markdown draft, but no converted final artifact exists because no final format was specified.
 - Assumption: After T0031 completion, `final_report/` is the IEEE conference-style LaTeX final report source artifact generated from `docs/FINAL_REPORT_DRAFT.md` and the `Extended_Proposal.zip` template source.
 - Assumption: T0031 did not generate a PDF because no TeX engine or BibTeX tool was available on the Windows PATH.
+- Assumption: T0033 warm-up-0 diagnostic data can explain and reduce blank XY cells for traceability only; it is not a replacement final performance dataset.
+- Assumption: The existing `XY` algorithm is a cardinal 2D footprint route and is not an interposer-aware baseline for unrestricted inter-chiplet traffic on `DEFT_2_5D`.
+- Blocked: True post-injection drain validation needs a source cut-off plus drain/timeout mechanism beyond the current runner and Noxim `-volume` stop condition.
+- Blocked: Strong inter-chiplet XY-vs-DEFT comparison needs either a newly designed interposer-aware baseline route or a narrower traffic policy that explicitly limits XY comparison to route-compatible traffic.
 
 ## Open Questions
 
@@ -579,36 +591,44 @@ External source tree registered during `T0023`:
 - Should a future helper add source cut-off and post-injection drain support for eventual-delivery reachability checks?
 - Should the final report PDF be generated in WSL, another TeX-enabled environment, or after installing a Windows LaTeX distribution?
 - Should the generated final-analysis scaffold blocker text be updated in a future task to reflect the T0025 policy resolutions while still keeping generated scaffold outputs conservative?
+- Should a follow-up report revision include the T0033 blocker diagnosis before PDF generation, or should the current T0031 claim-safe LaTeX artifact remain frozen?
+- Should the next experimental task prioritize an intra-chiplet XY-compatible comparison, a warm-up-0 diagnostic rerun, or a source-supported drain/source-cutoff implementation?
 
 ## Next Recommended Task
 
-Start `T0032` only if a compiled PDF is required from the LaTeX source artifact and a TeX toolchain is available.
+Start `T0034` to define the claim-safe follow-up policy before regenerating report content. Keep `T0032` available for PDF generation after the report content is final or intentionally frozen.
 
 ## Next Ready-to-Send Prompt
 
 ```text
-Start task T0032: Generate Final Report PDF in a TeX-Enabled Environment.
+Start task T0034: Define Claim-Safe Follow-Up Rerun or Drain Policy.
 
-Before starting, read AGENTS.md, docs/PROGRESS.md, docs/TASKS.md, docs/ROADMAP.md, docs/ARCHITECTURE.md, docs/VALIDATION.md, docs/DECISIONS.md, and docs/PROMPTS.md.
+Before starting, read AGENTS.md, docs/PROGRESS.md, docs/TASKS.md, docs/ROADMAP.md, docs/ARCHITECTURE.md, docs/VALIDATION.md, docs/DECISIONS.md, docs/PROMPTS.md, docs/FINAL_REPORT_DRAFT.md, final_report/main.tex, and the T0033 diagnostic output under external/noxim/other/generated/t0033_xy_diagnostic_warmup0_v1/.
 
 Continue on the existing Git branch. Do not create or switch task branches.
 
-Use the final LaTeX source artifact at:
-final_report/main.tex
+Goal: decide and document the safest follow-up policy after T0033 diagnosed the XY final-report blockers.
 
-T0031 created `final_report/` as the IEEE conference-style LaTeX final project report artifact from `docs/FINAL_REPORT_DRAFT.md` and the `Extended_Proposal.zip` template source. T0031 did not generate a PDF because `latexmk`, `pdflatex`, `bibtex`, and `tectonic` were not available on the Windows PATH.
+T0033 found that:
+- `XY|hotspot_3x10` zero-injection cells are measured-window artifacts caused by `-warmup 1000` after early XY traffic has already injected and then stalled.
+- `XY|uniform` and `XY|localized_40` zero-received cells are caused by the same XY-on-DEFT_2_5D route-compatibility limitation.
+- A warm-up-0 two-run diagnostic produced non-empty XY data but is not a final performance dataset.
+- A true post-injection drain policy needs source cut-off plus drain/timeout behavior that the current runner and simulator do not provide.
 
-Goal: compile `final_report/main.tex` into a final PDF without changing report claims. Use `latexmk -pdf main.tex` from `final_report/` if available. If `latexmk` is unavailable but `pdflatex` and `bibtex` are available, use the standard `pdflatex`, `bibtex`, `pdflatex`, `pdflatex` sequence. If no TeX toolchain is available, record the exact blocker and do not claim that a PDF was generated.
+Decide one path:
+- Documentation-only: update the final report to include the T0033 diagnosis, then keep the current T0026/T0027 result limitations.
+- Config/runner-only: define a small versioned rerun policy that is explicitly diagnostic or route-compatible, preserves old artifacts, and cannot be read as a full inter-chiplet performance comparison.
+- Source-change proposal: stop before editing source and write a narrow implementation plan for source cut-off plus drain/timeout or for a new interposer-aware baseline route.
 
-Preserve all claim-safety constraints, blank cells, partial-cell coverage counts, validation provenance, assumptions, blockers, and limitations. Do not fabricate results or performance claims. Do not add deltas, ordering claims, inferential claims, latency comparisons, complete-reachability wording, or unsupported result language. Do not change DeFT routing, VN transition logic, VL fault injection, T0016 generator format, T0017 runtime LUT schema/use path, T0019 traffic profile semantics, T0020 metrics semantics, T0021 runner semantics, or T0022 analysis semantics. Do not use `./regression.sh --update`.
+Do not rerun the full 150-run final sweep. Do not overwrite old final-sweep artifacts. Do not change DeFT routing, VN transition logic, VL fault injection, LUT schema, topology behavior, or simulator source unless the selected path is explicitly a later approved source-change task. Do not use `./regression.sh --update`.
 
 Use `Extended_Proposal.pdf` as the primary project requirements source and the original DeFT paper as the primary algorithmic reference. Use `Proposal.pdf` only as initial context. Ignore the peer evaluation document completely.
 
-Before running commands or documentation edits, produce a short implementation plan. Work only on final PDF generation and validation. Do not modify unrelated files. Clearly mark assumptions as `Assumption` and blockers as `Blocked`.
+Before running commands or documentation edits, produce a short implementation plan. Clearly mark assumptions as `Assumption` and blockers as `Blocked`.
 
-Use only known validation commands. If no simulator source changes are made, do not rebuild Noxim or rerun simulations. Validate the generated PDF path if compilation succeeds, run `git diff --check`, and record any PDF generation warnings or blockers.
+Use only known validation commands. If no simulator source changes are made, do not rebuild Noxim. Run `git diff --check`, and record whether final report regeneration is recommended before PDF generation.
 
-Update docs/ARCHITECTURE.md, docs/TASKS.md, docs/PROGRESS.md, docs/VALIDATION.md, and docs/PROMPTS.md with the result. If a durable implementation or experiment decision becomes clear, update docs/DECISIONS.md too.
+Update docs/ARCHITECTURE.md, docs/TASKS.md, docs/PROGRESS.md, docs/VALIDATION.md, and docs/PROMPTS.md with the result. Update docs/DECISIONS.md if a durable policy decision is made. Update docs/FINAL_REPORT_DRAFT.md and final_report/main.tex only if the selected policy says to regenerate or revise the report.
 
 At the end, provide:
 
@@ -633,5 +653,5 @@ None; continue on the existing branch.
 ## Suggested Commit Message
 
 ```text
-docs: add IEEE LaTeX final report artifact
+docs: diagnose final report comparison blockers
 ```
