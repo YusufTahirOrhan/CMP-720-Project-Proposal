@@ -1209,6 +1209,43 @@ Planned and partially implemented:
 - Implemented in T0031: The reviewed Markdown draft was converted into an IEEE conference-style LaTeX source artifact under `final_report/` using `Extended_Proposal.zip` as the formatting/template reference. PDF generation remains blocked until a TeX toolchain is available.
 - Diagnosed in T0033: The existing `XY` route is cardinal-only and does not traverse VL/hub/interposer paths, so unrestricted inter-chiplet traffic on `DEFT_2_5D` can stall before the T0026 measured window and cannot support strong XY-vs-DEFT latency or improvement claims.
 
+## Post-Submission Future Backlog
+
+T0039 records the remaining technical gaps as future backlog items only. These tasks do not block the current final submission package, which remains `final_report/main.pdf`, the current `final_report/` source tree, and `final_report.zip`.
+
+Future development must preserve these guardrails:
+
+- Do not reinterpret T0026/T0027/T0028 as stronger performance evidence.
+- Do not overwrite generated T0026/T0027/T0028 artifacts.
+- Use new versioned artifact directories for any future experiment.
+- Keep standard `XY` separate from any new interposer-aware baseline.
+- Preserve existing `DEFT` behavior unless a future task explicitly scopes a DeFT change.
+- Preserve claim-safety rules until new validated artifacts support stronger wording.
+
+Ordered future backlog:
+
+| Task | Type | Technical gap |
+| --- | --- | --- |
+| T0040 | Design | Define an interposer-aware XY-like baseline that is explicitly not standard `XY`. |
+| T0041 | Implementation | Add a selectable IA-XY or `INTERPOSER_AWARE_XY` routing mode without modifying existing `XY` or `DEFT`. |
+| T0042 | Experiment | Run a limited IA-XY-vs-DEFT comparison in new artifact directories after the baseline is validated. |
+| T0043 | Design | Define source-cutoff plus post-injection drain/timeout semantics for eventual-delivery analysis. |
+| T0044 | Implementation | Implement and validate the accepted drain policy before any full sweep. |
+| T0045 | Feasibility | Evaluate directional endpoint fault modeling against the current physical bidirectional VL model. |
+| T0046 | Feasibility | Assess PARSEC/GEM5 trace support requirements and validation burden. |
+| T0047 | Implementation | Implement trace ingestion only after a trace format and validation plan are accepted. |
+| T0048 | Report | Regenerate report material only after new validated artifacts exist. |
+
+Assumption: Future backlog work starts with design or feasibility tasks before implementation, except when a prior design task has already accepted the required semantics and validation plan.
+
+Blocked: Stronger unrestricted XY-vs-DEFT claims remain blocked until an interposer-aware baseline is implemented, validated, and evaluated in new artifact directories.
+
+Blocked: Eventual-delivery claims remain blocked until source-cutoff plus drain/timeout semantics are designed, implemented, and validated.
+
+Blocked: Paper-aligned single-direction fault cases remain blocked until directional endpoint fault modeling is evaluated and, if accepted, implemented.
+
+Blocked: PARSEC/GEM5 workload claims remain blocked until a trace pipeline is validated.
+
 ## Noxim Extension Point Map
 
 Recorded during `T0005` from the registered source tree at `external/noxim`. This map identifies existing Noxim extension surfaces only; it does not implement or change DeFT behavior.

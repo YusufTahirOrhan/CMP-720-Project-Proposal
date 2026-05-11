@@ -2,7 +2,7 @@
 
 ## Current Phase
 
-Phase 9 - Final Analysis and Report Support (final archive package refreshed)
+Phase 9 - Final Analysis and Report Support (final package ready; future backlog documented)
 
 ## Completed Tasks
 
@@ -44,8 +44,9 @@ Phase 9 - Final Analysis and Report Support (final archive package refreshed)
 - `T0036` - Post-Final Experimental Extension Design Gate.
 - `T0037` - Final Submission Handoff Check.
 - `T0038` - Refresh Final Submission Package.
+- `T0039` - Analyze Remaining Gaps and Document Future Task Backlog.
 
-DeFT VN assignment behavior, the first VN movement-transition restriction enforcement layer, the offline VL LUT schema/generator, the runtime schema-v1 LUT loading/use path, explicit XY fault-free/fault-injected baseline configuration modes, proposal-required synthetic traffic configuration profiles, machine-readable metrics export, tiny experiment-runner launch support, final-analysis scaffolding, the final sweep policy, the validated T0026 150-run final sweep output set, T0027 blank-aware report-support tables, T0028 claim-safe final report results draft, the T0029 tracked claim-safe Markdown report draft, the T0030 submission-readiness polish, the T0031 IEEE-style LaTeX final report source artifact, the T0032 generated final report PDF, the T0033 blocker diagnosis, the T0034 report-revision direction decision, the T0035 final-report diagnosis revision, the T0036 post-final experimental design gate, the T0037 final submission handoff check, and the T0038 final submission archive refresh now exist for `DEFT_2_5D`. Performance claims remain limited to descriptive, blank-aware report support only. No further experimental work is recommended for the current project phase.
+DeFT VN assignment behavior, the first VN movement-transition restriction enforcement layer, the offline VL LUT schema/generator, the runtime schema-v1 LUT loading/use path, explicit XY fault-free/fault-injected baseline configuration modes, proposal-required synthetic traffic configuration profiles, machine-readable metrics export, tiny experiment-runner launch support, final-analysis scaffolding, the final sweep policy, the validated T0026 150-run final sweep output set, T0027 blank-aware report-support tables, T0028 claim-safe final report results draft, the T0029 tracked claim-safe Markdown report draft, the T0030 submission-readiness polish, the T0031 IEEE-style LaTeX final report source artifact, the T0032 generated final report PDF, the T0033 blocker diagnosis, the T0034 report-revision direction decision, the T0035 final-report diagnosis revision, the T0036 post-final experimental design gate, the T0037 final submission handoff check, the T0038 final submission archive refresh, and the T0039 future backlog documentation now exist for `DEFT_2_5D`. Performance claims remain limited to descriptive, blank-aware report support only. No future backlog item blocks the current final submission.
 
 ## In-Progress Tasks
 
@@ -56,6 +57,20 @@ DeFT VN assignment behavior, the first VN movement-transition restriction enforc
 - None.
 
 ## Last Validation Result
+
+- T0039 Analyze Remaining Gaps and Document Future Task Backlog completed as a documentation-only planning task on 2026-05-11.
+- Required startup reading was completed before task work: `AGENTS.md`, `docs/PROGRESS.md`, `docs/TASKS.md`, `docs/ROADMAP.md`, `docs/ARCHITECTURE.md`, `docs/VALIDATION.md`, `docs/DECISIONS.md`, `docs/PROMPTS.md`, `docs/FINAL_REPORT_DRAFT.md`, and `final_report/main.tex`.
+- Before running commands or editing tracking documents, a short implementation plan was produced. Assumption: T0039 is a documentation/planning task that should not change source code, report artifacts, generated artifacts, or package artifacts. Blocked: none at task start.
+- The supplied T0039 prompt was checked against existing project decisions and was accepted as consistent with ADR-0040, ADR-0041, and ADR-0042.
+- The final package remains ready for handoff: `final_report/main.pdf`, the current `final_report/` source tree, and `final_report.zip`.
+- Added T0039 as the completed backlog-analysis task and added ordered future TODO tasks T0040 through T0048.
+- Ordered future backlog: T0040 Design Interposer-Aware XY Baseline; T0041 Implement Interposer-Aware XY Baseline; T0042 Run Limited IA-XY vs DeFT Comparison; T0043 Design Source-Cutoff and Post-Injection Drain Policy; T0044 Implement and Validate Drain Policy; T0045 Evaluate Directional Fault Modeling; T0046 PARSEC/GEM5 Trace Support Feasibility; T0047 Implement PARSEC/GEM5 Trace Ingestion; T0048 Regenerate Report with New Validated Results.
+- These tasks are future backlog items and do not block current submission. They must not overwrite T0026/T0027/T0028 artifacts, and stronger claims remain blocked until new validated comparison artifacts exist.
+- `docs/TASKS.md`, `docs/PROGRESS.md`, `docs/VALIDATION.md`, `docs/PROMPTS.md`, `docs/ARCHITECTURE.md`, and `docs/DECISIONS.md` were updated.
+- Added ADR-0043 to record that the post-submission backlog is non-blocking and artifact-isolated.
+- No source code, helper source, routing logic, VN transition logic, VL fault injection, LUT schema/use path, topology behavior, traffic semantics, metrics semantics, runner/analysis semantics, generated final-sweep artifact, final-report PDF artifact, final_report.zip, Extended Proposal file, Noxim rebuild, simulation run, final-sweep regeneration, final-report PDF regeneration, regression command, or `./regression.sh --update` was changed.
+- Final `git diff --check` in the parent repository completed with exit code `0`; Git reported line-ending conversion warnings for edited Markdown files only.
+- Final `external/noxim` status remained clean.
 
 - T0038 Refresh Final Submission Package completed as a packaging-only task on 2026-05-11.
 - Required startup reading was completed before task work: `AGENTS.md`, `docs/PROGRESS.md`, `docs/TASKS.md`, `docs/ROADMAP.md`, `docs/ARCHITECTURE.md`, `docs/VALIDATION.md`, `docs/DECISIONS.md`, `docs/PROMPTS.md`, `docs/FINAL_REPORT_DRAFT.md`, and `final_report/main.tex`.
@@ -604,6 +619,30 @@ Files updated during `T0036` Post-Final Experimental Extension Design Gate:
 - `docs/PROMPTS.md`
 - `docs/DECISIONS.md`
 
+Files updated during `T0037` Final Submission Handoff Check:
+
+- `docs/TASKS.md`
+- `docs/PROGRESS.md`
+- `docs/VALIDATION.md`
+- `docs/PROMPTS.md`
+
+Files updated or generated during `T0038` Refresh Final Submission Package:
+
+- `final_report.zip`
+- `docs/TASKS.md`
+- `docs/PROGRESS.md`
+- `docs/VALIDATION.md`
+- `docs/PROMPTS.md`
+
+Files updated during `T0039` Analyze Remaining Gaps and Document Future Task Backlog:
+
+- `docs/TASKS.md`
+- `docs/PROGRESS.md`
+- `docs/VALIDATION.md`
+- `docs/PROMPTS.md`
+- `docs/ARCHITECTURE.md`
+- `docs/DECISIONS.md`
+
 Files updated or generated during `T0032` Generate Final Report PDF:
 
 - `final_report/main.tex`
@@ -746,6 +785,8 @@ External source tree registered during `T0023`:
 - Assumption: T0037 confirmed `final_report/main.pdf` and the current `final_report/` source tree as the direct final handoff artifacts.
 - Assumption: Starting T0038 means a zip/archive package is required for submission.
 - Assumption: After T0038, `final_report.zip` is the current zip-based submission package and includes the current `final_report/main.pdf` plus the allowed current source files.
+- Assumption: T0039 future backlog tasks are post-submission development items and do not block current handoff.
+- Assumption: Future experiment tasks must write to new artifact directories and must not overwrite T0026/T0027/T0028.
 - Blocked: True post-injection drain validation needs a source cut-off plus drain/timeout mechanism beyond the current runner and Noxim `-volume` stop condition.
 - Blocked: Strong inter-chiplet XY-vs-DEFT comparison needs either a newly designed interposer-aware baseline route or a narrower traffic policy that explicitly limits XY comparison to route-compatible traffic.
 - Blocked: Stronger final-report claims remain blocked after T0035; the selected immediate path improved explanation, not measured performance coverage.
@@ -769,12 +810,12 @@ External source tree registered during `T0023`:
 
 ## Next Recommended Task
 
-No further project task is recommended; use `final_report/main.pdf`, the current `final_report/` source tree, and `final_report.zip` for handoff. No further experimental work is recommended after T0036/T0037/T0038.
+None for submission; start the backlog only if more development is required.
 
 ## Next Ready-to-Send Prompt
 
 ```text
-No next project task is recommended. Use final_report/main.pdf, the current final_report/ source tree, and final_report.zip for final handoff. Do not reopen simulator behavior, generated artifacts, report claims, or experimental work unless a new explicit task with its own design and validation policy is created.
+No next task is required for final submission. If more development is required, start T0040: Design Interposer-Aware XY Baseline. Before starting, read AGENTS.md and the required project tracking documents, continue on the existing branch, do not create or switch branches, keep the task design-only, clearly state that IA-XY is not standard XY, do not edit source code or run simulations, update tracking docs, and run git diff --check.
 ```
 
 ## Suggested Branch Name for Next Task
@@ -786,5 +827,5 @@ None; continue on the existing branch.
 ## Suggested Commit Message
 
 ```text
-docs: refresh final submission package
+docs: document future development backlog
 ```

@@ -1642,6 +1642,42 @@ Expected future checks:
 - Use `final_report/main.pdf` and the current `final_report/` source tree for direct handoff.
 - Do not start new experimental validation unless the user explicitly opens a new task with a design and validation policy.
 
+## Future Backlog Planning Validation
+
+Purpose:
+
+- Convert known post-submission gaps into ordered future tasks without changing simulator behavior, report claims, generated artifacts, final-report PDFs, or package artifacts.
+- Preserve current final submission readiness while making future development traceable.
+- Record validation expectations for future design, implementation, experiment, feasibility, and report tasks before any work starts.
+
+Known validation:
+
+- Parent repository status: `git status --short --branch`
+- Noxim submodule status: `git -c safe.directory=C:/Projects/CMP-720-Project-Proposal/external/noxim -C external/noxim status --short --branch`
+- Documentation whitespace check: `git diff --check`
+- Do not rebuild Noxim, rerun simulations, regenerate the final sweep, regenerate the final-report PDF, modify `final_report.zip`, install dependencies, or use `./regression.sh --update`.
+
+T0039 result on 2026-05-11:
+
+- Required startup reading was completed before task work: `AGENTS.md`, `docs/PROGRESS.md`, `docs/TASKS.md`, `docs/ROADMAP.md`, `docs/ARCHITECTURE.md`, `docs/VALIDATION.md`, `docs/DECISIONS.md`, `docs/PROMPTS.md`, `docs/FINAL_REPORT_DRAFT.md`, and `final_report/main.tex`.
+- Before status checks or tracking-document edits, a short implementation plan was produced. Assumption: T0039 is a documentation/planning task and should not modify source, generated artifacts, report PDF artifacts, package artifacts, or report claims. Blocked: none at task start.
+- The supplied future-backlog prompt was accepted as consistent with existing project decisions because it keeps final submission unblocked and treats high-risk work as future design, feasibility, implementation, experiment, or report tasks.
+- Added T0039 as the completed backlog-analysis task and added future TODO tasks T0040 through T0048.
+- The ordered backlog is: T0040 design IA-XY baseline; T0041 implement IA-XY baseline; T0042 run limited IA-XY-vs-DEFT comparison; T0043 design source-cutoff plus drain policy; T0044 implement and validate drain policy; T0045 evaluate directional fault modeling; T0046 assess PARSEC/GEM5 trace feasibility; T0047 implement PARSEC/GEM5 trace ingestion; T0048 regenerate report with new validated results.
+- Future experiment tasks must use new artifact directories and must not overwrite T0026/T0027/T0028.
+- Current final submission remains ready: `final_report/main.pdf`, the current `final_report/` source tree, and `final_report.zip`.
+- Added ADR-0043 to record the durable rule that the post-submission backlog is non-blocking and artifact-isolated.
+- No source code, helper source, routing logic, VN transition logic, VL fault injection, LUT schema/use path, topology behavior, traffic semantics, metrics semantics, runner/analysis semantics, generated final-sweep artifact, final-report PDF artifact, `final_report.zip`, Extended Proposal file, Noxim rebuild, simulation run, final-sweep regeneration, final-report PDF regeneration, external dependency installation, regression command, or `./regression.sh --update` was changed.
+- Final `git diff --check` in the parent repository completed with exit code `0`; Git reported line-ending conversion warnings for edited Markdown files only.
+- Final `external/noxim` status remained clean.
+
+Expected future checks:
+
+- Start backlog tasks only if more development is required after submission.
+- Start design or feasibility tasks before implementation when the task depends on new semantics, external workflows, or claim-impacting validation.
+- Require new artifact directories for any future experiment.
+- Update report text only after new validated artifacts exist.
+
 ## Metrics Validation
 
 Purpose:

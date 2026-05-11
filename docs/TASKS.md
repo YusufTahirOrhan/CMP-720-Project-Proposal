@@ -382,6 +382,186 @@ Statuses: `TODO`, `IN_PROGRESS`, `DONE`, `BLOCKED`.
 - **Validation method or limitation:** Archive-contents inspection and documentation/status validation only. Do not regenerate the PDF or rerun simulations.
 - **Notes:** Completed on 2026-05-11 as a packaging-only task. Starting T0038 was treated as the archive-required path. The previously documented stale `final_report.zip` was not present at task start, so a fresh archive was created. The new `final_report.zip` contains exactly `final_report/main.pdf`, `final_report/main.tex`, `final_report/references.bib`, `final_report/IEEEtran.cls`, `final_report/README.md`, and `final_report/figures/schematic.png`, with entry sizes matching the current files. The archive size is 659238 bytes and SHA-256 is `C54186F6326B288C3C069FB396F23874CBE9A30DAD5913AA38A688E8444B5882`. No final-report PDF, report source, report claims, simulator source, helper behavior, generated final-sweep artifacts, generated final-report PDF artifacts, Noxim rebuild, simulation run, final-sweep regeneration, external dependency installation, regression command, or `./regression.sh --update` was changed. `docs/DECISIONS.md` was not updated because no new durable decision was made. `git diff --check` passed with line-ending warnings for edited Markdown files only.
 
+## T0039: Analyze Remaining Gaps and Document Future Task Backlog
+
+- **Status:** DONE
+- **Type:** documentation/planning
+- **Objective:** Analyze remaining post-package limitations and document an ordered future task backlog.
+- **Why it exists:** T0038 completed the final submission package, but known limitations remain for future development after the current submission.
+- **Relevant roadmap phase:** Phase 9
+- **Scope:** Convert remaining blockers into ordered future tasks with dependencies, risk levels, validation expectations, and claim-safety guardrails.
+- **Out of scope:** Source-code edits, helper-source edits, simulator behavior changes, report-claim changes, generated artifact changes, final-report PDF regeneration, archive changes, Noxim rebuilds, simulation reruns, final-sweep regeneration, external dependency installation, and `./regression.sh --update`.
+- **Files changed:** `docs/TASKS.md`, `docs/PROGRESS.md`, `docs/VALIDATION.md`, `docs/PROMPTS.md`, `docs/ARCHITECTURE.md`, and `docs/DECISIONS.md`.
+- **Source code changes allowed:** No.
+- **Simulation reruns allowed:** No.
+- **Acceptance criteria:** T0040 through T0048 exist as ordered future backlog tasks; each future task records type, objective, rationale, scope, out-of-scope items, likely files, source-code permission, simulation permission, acceptance criteria, validation method or limitation, dependencies, risk level, and recommended prompt; current final submission remains unblocked; `git diff --check` passes.
+- **Validation method or limitation:** Documentation/status validation only with `git diff --check` and `external/noxim` status. Do not run simulator validation.
+- **Dependencies:** T0038 final package completion.
+- **Risk level:** Low, because no source, generated artifact, report PDF, archive, or simulation output is changed.
+- **Notes:** Completed on 2026-05-11 as a documentation-only backlog task. The backlog is explicitly future work and does not block current final submission.
+
+## T0040: Design Interposer-Aware XY Baseline
+
+- **Status:** TODO
+- **Type:** design
+- **Objective:** Define a new routing baseline that intentionally routes inter-chiplet packets through VLs and the active interposer.
+- **Why it exists:** Standard `XY` is cardinal-only on `DEFT_2_5D` and is not a valid unrestricted inter-chiplet baseline, so stronger XY-vs-DEFT claims need a separately designed baseline.
+- **Relevant roadmap phase:** Phase 9 future backlog
+- **Scope:** Specify the IA-XY or `INTERPOSER_AWARE_XY` semantics, route phases, naming, configuration surface, fault-mask behavior, metric interpretation, and validation plan. Clearly state that this is not standard `XY`.
+- **Out of scope:** Source-code edits, simulator reruns, final-sweep regeneration, report-claim changes, generated artifact overwrites, and modifications to existing `XY` or `DEFT` behavior.
+- **Files likely to change:** `docs/ARCHITECTURE.md`, `docs/TASKS.md`, `docs/PROGRESS.md`, `docs/VALIDATION.md`, `docs/PROMPTS.md`, and possibly `docs/DECISIONS.md`.
+- **Source code changes allowed:** No.
+- **Simulation reruns allowed:** No.
+- **Acceptance criteria:** Design document records route phases for same-chiplet, source-chiplet exit, interposer traversal, destination-chiplet entry, and destination-local delivery; records how IA-XY differs from standard `XY`; defines validation commands or explains why implementation validation is deferred; identifies code surfaces likely to change; preserves claim-safety limits.
+- **Validation method or limitation:** Documentation-only validation with `git diff --check` and `external/noxim` status.
+- **Dependencies:** T0039.
+- **Risk level:** Medium, because the design will shape a future routing implementation.
+- **Recommended prompt:** `Start task T0040: Design Interposer-Aware XY Baseline. Read the required project docs, continue on the existing branch, and produce a design-only IA-XY baseline plan that clearly states it is not standard XY. Do not edit source code or run simulations. Update tracking docs and run git diff --check.`
+
+## T0041: Implement Interposer-Aware XY Baseline
+
+- **Status:** TODO
+- **Type:** implementation
+- **Objective:** Add a selectable IA-XY or `INTERPOSER_AWARE_XY` routing mode.
+- **Why it exists:** A fairer unrestricted inter-chiplet comparison requires a baseline that can traverse VLs and the active interposer without changing standard `XY` or `DEFT`.
+- **Relevant roadmap phase:** Phase 9 future backlog
+- **Scope:** Implement a new registered routing algorithm or equivalent selectable mode according to T0040, add explicit config examples, and preserve existing `XY` and `DEFT` behavior.
+- **Out of scope:** Replacing standard `XY`, modifying `DEFT` route selection, changing VN rules, changing VL fault semantics, changing LUT schema/use path, running a full comparison sweep, overwriting T0026/T0027/T0028 artifacts, report updates, and `./regression.sh --update`.
+- **Files likely to change:** `external/noxim/src/routingAlgorithms/*`, `external/noxim/src/GlobalParams.*`, `external/noxim/src/ConfigurationManager.cpp`, `external/noxim/config_examples/*`, `docs/TASKS.md`, `docs/PROGRESS.md`, `docs/VALIDATION.md`, `docs/PROMPTS.md`, `docs/ARCHITECTURE.md`, and possibly `docs/DECISIONS.md`.
+- **Source code changes allowed:** Yes, limited to the new baseline mode and necessary configuration hooks.
+- **Simulation reruns allowed:** Yes, targeted smoke tests only after successful build validation; no full sweep.
+- **Acceptance criteria:** New routing mode is selectable; standard `XY` and `DEFT` behavior are unchanged; build validation passes; focused no-fault and fault-mask smoke tests exercise same-chiplet and inter-chiplet route phases; validation results are recorded.
+- **Validation method or limitation:** Use the known Noxim build command from `external/noxim` and targeted smoke commands defined by T0040. Do not invent a full experiment matrix and do not use `./regression.sh --update`.
+- **Dependencies:** T0040.
+- **Risk level:** High, because it changes routing behavior in a high-risk simulator area.
+- **Recommended prompt:** `Start task T0041: Implement Interposer-Aware XY Baseline. Use the accepted T0040 design, add a new selectable IA-XY mode without modifying existing XY or DEFT behavior, run build validation and targeted smokes only, update tracking docs, and run git diff --check.`
+
+## T0042: Run Limited IA-XY vs DeFT Comparison
+
+- **Status:** TODO
+- **Type:** experiment
+- **Objective:** Run a limited, claim-safe comparison between the validated IA-XY baseline and `DEFT`.
+- **Why it exists:** Stronger comparison claims require new validated artifacts produced after a topology-compatible baseline exists.
+- **Relevant roadmap phase:** Phase 9 future backlog
+- **Scope:** Define exact matrix, seeds, traffic profiles, fault masks, warm-up, simulation window, output directories, analysis rules, and claim limits before execution; run only the approved limited matrix into new artifact directories.
+- **Out of scope:** Overwriting T0026/T0027/T0028 artifacts, full final-sweep regeneration unless explicitly approved, changing simulator/source behavior, changing report claims before analysis review, and `./regression.sh --update`.
+- **Files likely to change:** `docs/TASKS.md`, `docs/PROGRESS.md`, `docs/VALIDATION.md`, `docs/PROMPTS.md`, possibly `docs/ARCHITECTURE.md`, and new ignored generated directories under `external/noxim/other/generated/`.
+- **Source code changes allowed:** No, unless a blocker is found and a separate implementation task is opened.
+- **Simulation reruns allowed:** Yes, only the explicitly defined limited IA-XY-vs-DEFT matrix in new artifact directories.
+- **Acceptance criteria:** Matrix is documented before execution; generated artifacts are isolated from T0026/T0027/T0028; every run has recorded command, log, return code, and stats file; analysis is blank-aware and claim-safe; no unsupported ranking or improvement claims are made.
+- **Validation method or limitation:** Use the existing runner/analysis surfaces only after T0041 validation passes; cross-check new manifests and stats against summaries; run `git diff --check`.
+- **Dependencies:** T0041.
+- **Risk level:** High, because it produces new experimental artifacts that could affect future claims.
+- **Recommended prompt:** `Start task T0042: Run Limited IA-XY vs DeFT Comparison. First define the exact limited matrix and new artifact directories, then execute only that matrix after confirming T0041 validation. Preserve T0026/T0027/T0028, keep claims blank-aware, update tracking docs, and run git diff --check.`
+
+## T0043: Design Source-Cutoff and Post-Injection Drain Policy
+
+- **Status:** TODO
+- **Type:** design
+- **Objective:** Specify how injection should stop and how drain/timeout should be measured for eventual-delivery analysis.
+- **Why it exists:** The current fixed-window policy and Noxim `-volume` behavior do not provide a source-cutoff plus drain phase for eventual-delivery reachability.
+- **Relevant roadmap phase:** Phase 9 future backlog
+- **Scope:** Define source cutoff, drain start, in-flight empty condition, timeout policy, metric denominators, interaction with warm-up, and differences from current `-volume` behavior.
+- **Out of scope:** Source-code edits, simulation reruns, implementation, report claim changes, full sweep planning, and artifact regeneration.
+- **Files likely to change:** `docs/ARCHITECTURE.md`, `docs/TASKS.md`, `docs/PROGRESS.md`, `docs/VALIDATION.md`, `docs/PROMPTS.md`, and possibly `docs/DECISIONS.md`.
+- **Source code changes allowed:** No.
+- **Simulation reruns allowed:** No.
+- **Acceptance criteria:** Design clearly distinguishes source cutoff plus drain/timeout from `-volume`; records metric semantics; defines smoke-test expectations; identifies simulator/runner surfaces likely to change; preserves current fixed-window artifacts as historical final-report support.
+- **Validation method or limitation:** Documentation-only validation with `git diff --check` and `external/noxim` status.
+- **Dependencies:** T0039.
+- **Risk level:** Medium, because the design changes future metric interpretation.
+- **Recommended prompt:** `Start task T0043: Design Source-Cutoff and Post-Injection Drain Policy. Produce a design-only policy that distinguishes drain/timeout from current -volume behavior, defines metrics and validation, updates tracking docs, and runs git diff --check.`
+
+## T0044: Implement and Validate Drain Policy
+
+- **Status:** TODO
+- **Type:** implementation
+- **Objective:** Add source-cutoff plus drain/timeout support if the T0043 design is accepted.
+- **Why it exists:** Eventual-delivery analysis cannot be validated until the simulator and/or runner can stop injection and drain in-flight traffic under a bounded policy.
+- **Relevant roadmap phase:** Phase 9 future backlog
+- **Scope:** Implement only the accepted T0043 semantics, add configuration/runner support as needed, and run targeted validation before any broader experiment.
+- **Out of scope:** Full sweeps before smoke tests pass, changing existing fixed-window metric semantics, overwriting T0026/T0027/T0028, IA-XY implementation, PARSEC/GEM5 work, report claim changes, and `./regression.sh --update`.
+- **Files likely to change:** `external/noxim/src/Main.cpp`, `external/noxim/src/GlobalParams.*`, `external/noxim/src/ConfigurationManager.cpp`, `external/noxim/src/ProcessingElement.*`, `external/noxim/src/GlobalStats.*`, `external/noxim/other/deft_experiment_runner.py`, config examples, and tracking docs.
+- **Source code changes allowed:** Yes, limited to the accepted drain/source-cutoff implementation and necessary runner support.
+- **Simulation reruns allowed:** Yes, targeted validation only after build passes; no full sweep until smoke tests pass and a later experiment task is opened.
+- **Acceptance criteria:** Build passes; source cutoff, drain completion, and timeout are observable; injected/received/in-flight accounting is validated on small cases; fixed-window behavior remains available; validation results are recorded.
+- **Validation method or limitation:** Use known build validation plus T0043-defined targeted drain smokes. Do not use `./regression.sh --update`.
+- **Dependencies:** T0043.
+- **Risk level:** High, because it changes simulator/runner stop semantics and metric interpretation.
+- **Recommended prompt:** `Start task T0044: Implement and Validate Drain Policy. Use the accepted T0043 design, add source-cutoff plus drain/timeout support, run build and targeted smoke validation only, preserve fixed-window behavior, update tracking docs, and run git diff --check.`
+
+## T0045: Evaluate Directional Fault Modeling
+
+- **Status:** TODO
+- **Type:** design/feasibility
+- **Objective:** Analyze whether the simulator should support single-direction endpoint fault modeling in addition to the current physical bidirectional VL fault model.
+- **Why it exists:** The current implementation uses 16 physical bidirectional VLs, while the DeFT paper's fault-rate interpretation includes directional VL accounting and single-direction cases.
+- **Relevant roadmap phase:** Phase 9 future backlog
+- **Scope:** Compare physical bidirectional and directional endpoint fault models, identify schema/config/runtime impacts, document paper compatibility, and recommend whether to implement.
+- **Out of scope:** Source-code edits, fault-injection behavior changes, LUT schema changes, simulation reruns, artifact regeneration, and report claim changes.
+- **Files likely to change:** `docs/ARCHITECTURE.md`, `docs/DECISIONS.md`, `docs/TASKS.md`, `docs/PROGRESS.md`, `docs/VALIDATION.md`, and `docs/PROMPTS.md`.
+- **Source code changes allowed:** No.
+- **Simulation reruns allowed:** No.
+- **Acceptance criteria:** Feasibility note explains how single-direction endpoint faults would map to VL IDs, masks, LUT generation, runtime lookup, validation, and paper fault-rate wording; recommends implement/defer with risks.
+- **Validation method or limitation:** Documentation-only validation with `git diff --check` and `external/noxim` status.
+- **Dependencies:** T0039.
+- **Risk level:** Medium, because implementation would affect fault injection, LUTs, and result interpretation.
+- **Recommended prompt:** `Start task T0045: Evaluate Directional Fault Modeling. Analyze compatibility between the current 16 physical bidirectional VL model and directional endpoint faults, produce a feasibility recommendation, update tracking docs, and run git diff --check.`
+
+## T0046: PARSEC/GEM5 Trace Support Feasibility
+
+- **Status:** TODO
+- **Type:** feasibility
+- **Objective:** Assess required external dependencies, trace format, workload mapping, and validation burden for PARSEC/GEM5 trace evaluation.
+- **Why it exists:** PARSEC/GEM5 trace evaluation remains unvalidated and must not be claimed until a reproducible pipeline exists.
+- **Relevant roadmap phase:** Phase 9 future backlog
+- **Scope:** Identify trace source requirements, expected format, router/workload mapping, dependency setup, data volume, reproducibility concerns, and minimal smoke validation plan.
+- **Out of scope:** Installing dependencies, importing traces, source-code edits, simulations, report claim changes, and claiming PARSEC support.
+- **Files likely to change:** `docs/ARCHITECTURE.md`, `docs/TASKS.md`, `docs/PROGRESS.md`, `docs/VALIDATION.md`, `docs/PROMPTS.md`, and possibly `docs/DECISIONS.md`.
+- **Source code changes allowed:** No.
+- **Simulation reruns allowed:** No.
+- **Acceptance criteria:** Feasibility document records dependency list, trace format assumptions, workload-to-router mapping, validation burden, blockers, and a go/no-go recommendation.
+- **Validation method or limitation:** Documentation-only validation with `git diff --check`; no network install or external trace generation.
+- **Dependencies:** T0039.
+- **Risk level:** High, because it may require external tools and large validation effort.
+- **Recommended prompt:** `Start task T0046: PARSEC/GEM5 Trace Support Feasibility. Assess dependencies, trace format, workload mapping, and validation burden without installing tools or claiming support. Update tracking docs and run git diff --check.`
+
+## T0047: Implement PARSEC/GEM5 Trace Ingestion
+
+- **Status:** TODO
+- **Type:** implementation
+- **Objective:** Implement trace ingestion only after T0046 defines the trace format and validation plan.
+- **Why it exists:** Real-application traffic cannot be evaluated until the simulator or helper pipeline can ingest a validated trace format.
+- **Relevant roadmap phase:** Phase 9 future backlog
+- **Scope:** Add only the accepted trace parser/import path, mapping checks, small example trace support, and smoke-test workflow.
+- **Out of scope:** Large workload sweeps before small trace smokes pass, unsupported PARSEC claims, IA-XY work, drain-policy work, report updates before validated artifacts exist, and `./regression.sh --update`.
+- **Files likely to change:** `external/noxim/other/*`, `external/noxim/src/ProcessingElement.*` or traffic-table surfaces if required by T0046, config examples, and tracking docs.
+- **Source code changes allowed:** Yes, only after T0046 accepts a trace format and validation plan.
+- **Simulation reruns allowed:** Yes, small trace smoke tests only before any large workload.
+- **Acceptance criteria:** Parser/import path accepts the documented trace format; invalid traces fail clearly; a tiny trace smoke validates routing launch and stats export; no PARSEC-scale claim is made.
+- **Validation method or limitation:** Use T0046-defined small trace smokes plus build validation if C++ source changes are required. Do not run large workloads until a later experiment task is opened.
+- **Dependencies:** T0046.
+- **Risk level:** High, because it may affect traffic generation and depend on external trace quality.
+- **Recommended prompt:** `Start task T0047: Implement PARSEC/GEM5 Trace Ingestion. Use the accepted T0046 feasibility plan, implement only the trace ingestion path and tiny smoke validation, avoid large workloads or support claims, update tracking docs, and run git diff --check.`
+
+## T0048: Regenerate Report with New Validated Results
+
+- **Status:** TODO
+- **Type:** report
+- **Objective:** Update the report only after new validated artifacts exist.
+- **Why it exists:** Stronger claims or additional comparisons require report updates that preserve claim-safety and cite new validated artifact directories.
+- **Relevant roadmap phase:** Phase 9 future backlog
+- **Scope:** Review new validated artifacts, update `docs/FINAL_REPORT_DRAFT.md` and `final_report/main.tex` only if claims are supported, regenerate PDF only when a TeX toolchain is available, and package only if requested.
+- **Out of scope:** Simulator/source changes, new experiments, overwriting old artifacts, unsupported performance claims, hidden metric reinterpretation, and `./regression.sh --update`.
+- **Files likely to change:** `docs/FINAL_REPORT_DRAFT.md`, `final_report/main.tex`, possibly `final_report/main.pdf`, `final_report.zip` if explicitly requested, `docs/TASKS.md`, `docs/PROGRESS.md`, `docs/VALIDATION.md`, and `docs/PROMPTS.md`.
+- **Source code changes allowed:** No.
+- **Simulation reruns allowed:** No.
+- **Acceptance criteria:** Report updates cite only validated artifacts; blank-aware rules remain intact; any new claims are explicitly supported by denominators and validation records; PDF/package status is recorded; old final-report artifacts are not changed unless explicitly in scope.
+- **Validation method or limitation:** Documentation/report validation, LaTeX build only if available and in scope, `git diff --check`, and artifact provenance checks.
+- **Dependencies:** At least one validated future artifact set from T0042, T0044 follow-up experiments, T0045 follow-up implementation/experiments, or T0047 follow-up experiments.
+- **Risk level:** Medium, because it can alter final report wording and claims.
+- **Recommended prompt:** `Start task T0048: Regenerate Report with New Validated Results. Use only new validated artifacts, preserve claim-safety rules, update report source and PDF only if in scope, avoid unsupported claims, update tracking docs, and run git diff --check.`
+
 ## T0023: Add or Register Noxim Source Tree
 
 - **Status:** DONE
