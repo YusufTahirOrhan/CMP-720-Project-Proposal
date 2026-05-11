@@ -369,18 +369,18 @@ Statuses: `TODO`, `IN_PROGRESS`, `DONE`, `BLOCKED`.
 
 ## T0038: Refresh Final Submission Package
 
-- **Status:** TODO
+- **Status:** DONE
 - **Objective:** Refresh a final submission archive only if a zip/archive package is required.
 - **Why it exists:** T0037 found that the pre-existing untracked `final_report.zip` is stale and does not include the generated PDF.
 - **Relevant roadmap phase:** Phase 9
 - **Scope:** Create or refresh only the submission archive so it contains the current final-report PDF and source files.
 - **Out of scope:** Source-code edits, report-claim changes, simulator/helper behavior changes, generated final-sweep artifact changes, generated final-report PDF changes, Noxim rebuilds, simulation reruns, external dependency installation, and `./regression.sh --update`.
-- **Files likely to change:** `final_report.zip`, `docs/TASKS.md`, `docs/PROGRESS.md`, `docs/VALIDATION.md`, and `docs/PROMPTS.md`.
+- **Files changed:** `final_report.zip`, `docs/TASKS.md`, `docs/PROGRESS.md`, `docs/VALIDATION.md`, and `docs/PROMPTS.md`.
 - **Source code changes allowed:** No.
 - **Simulation reruns allowed:** No.
 - **Acceptance criteria:** If an archive is required, it includes the current `final_report/main.pdf`, `final_report/main.tex`, `final_report/references.bib`, `final_report/IEEEtran.cls`, `final_report/README.md`, and `final_report/figures/schematic.png`; if no archive is required, the task records that no package refresh was needed; `git diff --check` passes.
 - **Validation method or limitation:** Archive-contents inspection and documentation/status validation only. Do not regenerate the PDF or rerun simulations.
-- **Recommended prompt:** `Start task T0038: Refresh Final Submission Package. Before starting, read AGENTS.md, docs/PROGRESS.md, docs/TASKS.md, docs/ROADMAP.md, docs/ARCHITECTURE.md, docs/VALIDATION.md, docs/DECISIONS.md, docs/PROMPTS.md, docs/FINAL_REPORT_DRAFT.md, and final_report/main.tex. Continue on the existing Git branch. Do not create or switch task branches. Refresh only the final submission archive if one is required. Include the current final_report/main.pdf and current final_report source files. Do not modify source code, report claims, generated final-sweep artifacts, generated final-report PDF artifacts, simulator/helper behavior, or Extended Proposal files. Do not rebuild Noxim, rerun simulations, regenerate the final sweep, install dependencies, or use ./regression.sh --update. Update the tracking docs, run git diff --check, and report package status, validation, branch guidance, commit message, and blockers.`
+- **Notes:** Completed on 2026-05-11 as a packaging-only task. Starting T0038 was treated as the archive-required path. The previously documented stale `final_report.zip` was not present at task start, so a fresh archive was created. The new `final_report.zip` contains exactly `final_report/main.pdf`, `final_report/main.tex`, `final_report/references.bib`, `final_report/IEEEtran.cls`, `final_report/README.md`, and `final_report/figures/schematic.png`, with entry sizes matching the current files. The archive size is 659238 bytes and SHA-256 is `C54186F6326B288C3C069FB396F23874CBE9A30DAD5913AA38A688E8444B5882`. No final-report PDF, report source, report claims, simulator source, helper behavior, generated final-sweep artifacts, generated final-report PDF artifacts, Noxim rebuild, simulation run, final-sweep regeneration, external dependency installation, regression command, or `./regression.sh --update` was changed. `docs/DECISIONS.md` was not updated because no new durable decision was made. `git diff --check` passed with line-ending warnings for edited Markdown files only.
 
 ## T0023: Add or Register Noxim Source Tree
 

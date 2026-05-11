@@ -1604,6 +1604,44 @@ Expected future checks:
 - If a zip/archive submission is required, refresh the archive in a separate packaging task and verify that it contains the current PDF and source files.
 - Do not start new experimental validation unless the user explicitly opens a new task with a design and validation policy.
 
+## Final Submission Package Validation
+
+Purpose:
+
+- Refresh and verify the final zip/archive package only when a zip/archive submission is required.
+- Preserve the generated final-report PDF, generated final-sweep artifacts, report claims, simulator behavior, and source code.
+- Confirm that the package includes the current PDF and allowed current report-source files.
+
+Known validation:
+
+- Parent repository status: `git status --short --branch`
+- Noxim submodule status: `git -c safe.directory=C:/Projects/CMP-720-Project-Proposal/external/noxim -C external/noxim status --short --branch`
+- Archive content inspection using PowerShell/.NET ZIP APIs.
+- Documentation whitespace check: `git diff --check`
+- Do not rebuild Noxim, rerun simulations, regenerate the final sweep, regenerate the final-report PDF, install dependencies, or use `./regression.sh --update`.
+
+T0038 result on 2026-05-11:
+
+- Required startup reading was completed before task work: `AGENTS.md`, `docs/PROGRESS.md`, `docs/TASKS.md`, `docs/ROADMAP.md`, `docs/ARCHITECTURE.md`, `docs/VALIDATION.md`, `docs/DECISIONS.md`, `docs/PROMPTS.md`, `docs/FINAL_REPORT_DRAFT.md`, and `final_report/main.tex`.
+- Before status checks, package creation, or tracking-document edits, a short implementation plan was produced. Assumption: opening T0038 means a zip/archive package is required for submission. Blocked: none at task start.
+- Confirmed current package inputs before archive creation: `final_report/main.pdf` (344758 bytes), `final_report/main.tex` (27449 bytes), `final_report/references.bib` (2683 bytes), `final_report/IEEEtran.cls` (281957 bytes), `final_report/README.md` (1296 bytes), and `final_report/figures/schematic.png` (241184 bytes).
+- Parent repository status before archive creation showed branch `feat/map-noxim-extension-points...origin/feat/map-noxim-extension-points` with no tracked or untracked files listed.
+- The registered Noxim source tree at `external/noxim` remained clean before archive creation.
+- The previously documented stale `final_report.zip` was not present at task start, so T0038 created a fresh `final_report.zip`.
+- The fresh archive contains exactly these entries: `final_report/main.pdf`, `final_report/main.tex`, `final_report/references.bib`, `final_report/IEEEtran.cls`, `final_report/README.md`, and `final_report/figures/schematic.png`.
+- Verified archive entry sizes match the current files. The archive size is 659238 bytes and its SHA-256 hash is `C54186F6326B288C3C069FB396F23874CBE9A30DAD5913AA38A688E8444B5882`.
+- No source code, report claims, simulator behavior, helper behavior, routing logic, VN transition logic, VL fault injection, LUT schema/use path, topology behavior, traffic semantics, metrics semantics, runner/analysis semantics, generated final-sweep artifact, generated final-report PDF artifact, Extended Proposal file, Noxim rebuild, simulation run, final-sweep regeneration, external dependency installation, regression command, or `./regression.sh --update` was changed.
+- `docs/DECISIONS.md` was not updated because no new durable project decision was made.
+- Final `git diff --check` in the parent repository completed with exit code `0`; Git reported line-ending conversion warnings for edited Markdown files only.
+- Final parent status showed modified tracking docs and untracked `final_report.zip`.
+- Final `external/noxim` status remained clean.
+
+Expected future checks:
+
+- Use `final_report.zip` only if zip-based submission is needed.
+- Use `final_report/main.pdf` and the current `final_report/` source tree for direct handoff.
+- Do not start new experimental validation unless the user explicitly opens a new task with a design and validation policy.
+
 ## Metrics Validation
 
 Purpose:
