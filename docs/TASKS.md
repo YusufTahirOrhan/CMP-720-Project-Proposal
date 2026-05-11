@@ -402,14 +402,14 @@ Statuses: `TODO`, `IN_PROGRESS`, `DONE`, `BLOCKED`.
 
 ## T0040: Design Interposer-Aware XY Baseline
 
-- **Status:** TODO
+- **Status:** DONE
 - **Type:** design
 - **Objective:** Define a new routing baseline that intentionally routes inter-chiplet packets through VLs and the active interposer.
 - **Why it exists:** Standard `XY` is cardinal-only on `DEFT_2_5D` and is not a valid unrestricted inter-chiplet baseline, so stronger XY-vs-DEFT claims need a separately designed baseline.
 - **Relevant roadmap phase:** Phase 9 future backlog
 - **Scope:** Specify the IA-XY or `INTERPOSER_AWARE_XY` semantics, route phases, naming, configuration surface, fault-mask behavior, metric interpretation, and validation plan. Clearly state that this is not standard `XY`.
 - **Out of scope:** Source-code edits, simulator reruns, final-sweep regeneration, report-claim changes, generated artifact overwrites, and modifications to existing `XY` or `DEFT` behavior.
-- **Files likely to change:** `docs/ARCHITECTURE.md`, `docs/TASKS.md`, `docs/PROGRESS.md`, `docs/VALIDATION.md`, `docs/PROMPTS.md`, and possibly `docs/DECISIONS.md`.
+- **Files changed:** `docs/ARCHITECTURE.md`, `docs/TASKS.md`, `docs/PROGRESS.md`, `docs/VALIDATION.md`, `docs/PROMPTS.md`, and `docs/DECISIONS.md`.
 - **Source code changes allowed:** No.
 - **Simulation reruns allowed:** No.
 - **Acceptance criteria:** Design document records route phases for same-chiplet, source-chiplet exit, interposer traversal, destination-chiplet entry, and destination-local delivery; records how IA-XY differs from standard `XY`; defines validation commands or explains why implementation validation is deferred; identifies code surfaces likely to change; preserves claim-safety limits.
@@ -417,6 +417,7 @@ Statuses: `TODO`, `IN_PROGRESS`, `DONE`, `BLOCKED`.
 - **Dependencies:** T0039.
 - **Risk level:** Medium, because the design will shape a future routing implementation.
 - **Recommended prompt:** `Start task T0040: Design Interposer-Aware XY Baseline. Read the required project docs, continue on the existing branch, and produce a design-only IA-XY baseline plan that clearly states it is not standard XY. Do not edit source code or run simulations. Update tracking docs and run git diff --check.`
+- **Notes:** Completed on 2026-05-11 as a design-only documentation task. IA-XY is defined as a new proposed `INTERPOSER_AWARE_XY` baseline, not standard `XY`. Standard `XY` remains cardinal-only and unchanged. Future implementation must add a separate selectable mode, preserve `XY` and `DEFT`, use new validation artifacts, and avoid stronger claims until IA-XY is implemented, validated, and evaluated in a later task.
 
 ## T0041: Implement Interposer-Aware XY Baseline
 
@@ -431,7 +432,7 @@ Statuses: `TODO`, `IN_PROGRESS`, `DONE`, `BLOCKED`.
 - **Source code changes allowed:** Yes, limited to the new baseline mode and necessary configuration hooks.
 - **Simulation reruns allowed:** Yes, targeted smoke tests only after successful build validation; no full sweep.
 - **Acceptance criteria:** New routing mode is selectable; standard `XY` and `DEFT` behavior are unchanged; build validation passes; focused no-fault and fault-mask smoke tests exercise same-chiplet and inter-chiplet route phases; validation results are recorded.
-- **Validation method or limitation:** Use the known Noxim build command from `external/noxim` and targeted smoke commands defined by T0040. Do not invent a full experiment matrix and do not use `./regression.sh --update`.
+- **Validation method or limitation:** Use the known Noxim build command from `external/noxim` and the T0040 validation plan. Define concrete targeted smoke commands in T0041 only after the new config files and any tiny traffic inputs exist. Do not invent a full experiment matrix and do not use `./regression.sh --update`.
 - **Dependencies:** T0040.
 - **Risk level:** High, because it changes routing behavior in a high-risk simulator area.
 - **Recommended prompt:** `Start task T0041: Implement Interposer-Aware XY Baseline. Use the accepted T0040 design, add a new selectable IA-XY mode without modifying existing XY or DEFT behavior, run build validation and targeted smokes only, update tracking docs, and run git diff --check.`

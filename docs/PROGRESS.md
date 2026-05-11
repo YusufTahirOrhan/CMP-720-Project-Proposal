@@ -2,7 +2,7 @@
 
 ## Current Phase
 
-Phase 9 - Final Analysis and Report Support (final package ready; future backlog documented)
+Phase 9 - Final Analysis and Report Support (final package ready; IA-XY future design documented)
 
 ## Completed Tasks
 
@@ -45,8 +45,9 @@ Phase 9 - Final Analysis and Report Support (final package ready; future backlog
 - `T0037` - Final Submission Handoff Check.
 - `T0038` - Refresh Final Submission Package.
 - `T0039` - Analyze Remaining Gaps and Document Future Task Backlog.
+- `T0040` - Design Interposer-Aware XY Baseline.
 
-DeFT VN assignment behavior, the first VN movement-transition restriction enforcement layer, the offline VL LUT schema/generator, the runtime schema-v1 LUT loading/use path, explicit XY fault-free/fault-injected baseline configuration modes, proposal-required synthetic traffic configuration profiles, machine-readable metrics export, tiny experiment-runner launch support, final-analysis scaffolding, the final sweep policy, the validated T0026 150-run final sweep output set, T0027 blank-aware report-support tables, T0028 claim-safe final report results draft, the T0029 tracked claim-safe Markdown report draft, the T0030 submission-readiness polish, the T0031 IEEE-style LaTeX final report source artifact, the T0032 generated final report PDF, the T0033 blocker diagnosis, the T0034 report-revision direction decision, the T0035 final-report diagnosis revision, the T0036 post-final experimental design gate, the T0037 final submission handoff check, the T0038 final submission archive refresh, and the T0039 future backlog documentation now exist for `DEFT_2_5D`. Performance claims remain limited to descriptive, blank-aware report support only. No future backlog item blocks the current final submission.
+DeFT VN assignment behavior, the first VN movement-transition restriction enforcement layer, the offline VL LUT schema/generator, the runtime schema-v1 LUT loading/use path, explicit XY fault-free/fault-injected baseline configuration modes, proposal-required synthetic traffic configuration profiles, machine-readable metrics export, tiny experiment-runner launch support, final-analysis scaffolding, the final sweep policy, the validated T0026 150-run final sweep output set, T0027 blank-aware report-support tables, T0028 claim-safe final report results draft, the T0029 tracked claim-safe Markdown report draft, the T0030 submission-readiness polish, the T0031 IEEE-style LaTeX final report source artifact, the T0032 generated final report PDF, the T0033 blocker diagnosis, the T0034 report-revision direction decision, the T0035 final-report diagnosis revision, the T0036 post-final experimental design gate, the T0037 final submission handoff check, the T0038 final submission archive refresh, the T0039 future backlog documentation, and the T0040 IA-XY baseline design now exist for `DEFT_2_5D`. Performance claims remain limited to descriptive, blank-aware report support only. No future backlog item blocks the current final submission.
 
 ## In-Progress Tasks
 
@@ -57,6 +58,20 @@ DeFT VN assignment behavior, the first VN movement-transition restriction enforc
 - None.
 
 ## Last Validation Result
+
+- T0040 Design Interposer-Aware XY Baseline completed as a design-only documentation task on 2026-05-11.
+- Required startup reading was completed before task work: `AGENTS.md`, `docs/PROGRESS.md`, `docs/TASKS.md`, `docs/ROADMAP.md`, `docs/ARCHITECTURE.md`, `docs/VALIDATION.md`, `docs/DECISIONS.md`, `docs/PROMPTS.md`, `docs/FINAL_REPORT_DRAFT.md`, and `final_report/main.tex`.
+- Before editing tracking documents, a short implementation plan was produced. Assumption: T0040 is design-only and must not change source code, helper source, simulator behavior, report artifacts, generated artifacts, package artifacts, or final-report claims. Blocked: implementation and experiment claims remain future tasks.
+- Source-document roles were preserved: `Extended_Proposal.pdf` is the primary project requirements source, the original DeFT paper at `docs/references/DeFT_A_Deadlock-Free_and_Fault-Tolerant_Routing_Algorithm_for_2.5D_Chiplet_Networks.pdf` is the primary algorithmic reference, `Proposal.pdf` is initial context only, and the peer evaluation document was ignored completely.
+- Read-only source inspection confirmed standard `XY` is cardinal-only in `external/noxim/src/routingAlgorithms/Routing_XY.cpp`, while `DEFT` is the current 2.5D-aware route that selects VL/interposer phases through `external/noxim/src/routingAlgorithms/Routing_DEFT.cpp`.
+- Added the IA-XY design to `docs/ARCHITECTURE.md`: IA-XY is a new proposed `INTERPOSER_AWARE_XY` baseline, not standard `XY`; standard `XY` remains cardinal-only and unchanged.
+- IA-XY future behavior is phased: same-chiplet local XY; source-chiplet local XY to a selected functional source VL; VL traversal to the active interposer; interposer XY traversal; destination-side functional VL traversal into the destination chiplet; destination-local XY to the final destination.
+- IA-XY may avoid known faulty physical VLs through existing `DeftTopology` functional-state queries, but it must not use the DeFT schema-v1 LUT, DeFT VL optimization, or new traffic/metric semantics.
+- Added ADR-0044 to record that IA-XY is a separate interposer-aware baseline and not a reinterpretation of standard `XY`.
+- `docs/TASKS.md`, `docs/PROGRESS.md`, `docs/VALIDATION.md`, `docs/PROMPTS.md`, `docs/ARCHITECTURE.md`, and `docs/DECISIONS.md` were updated.
+- No source code, helper source, routing logic, VN transition logic, VL fault injection, LUT schema/use path, topology behavior, traffic semantics, metrics semantics, runner/analysis semantics, generated final-sweep artifact, final-report PDF artifact, `final_report.zip`, Extended Proposal file, Noxim rebuild, simulation run, final-sweep regeneration, final-report PDF regeneration, regression command, or `./regression.sh --update` was changed.
+- Final `git diff --check` in the parent repository completed with exit code `0`; Git reported line-ending conversion warnings for edited Markdown files only.
+- Final `external/noxim` status remained clean.
 
 - T0039 Analyze Remaining Gaps and Document Future Task Backlog completed as a documentation-only planning task on 2026-05-11.
 - Required startup reading was completed before task work: `AGENTS.md`, `docs/PROGRESS.md`, `docs/TASKS.md`, `docs/ROADMAP.md`, `docs/ARCHITECTURE.md`, `docs/VALIDATION.md`, `docs/DECISIONS.md`, `docs/PROMPTS.md`, `docs/FINAL_REPORT_DRAFT.md`, and `final_report/main.tex`.
@@ -643,6 +658,15 @@ Files updated during `T0039` Analyze Remaining Gaps and Document Future Task Bac
 - `docs/ARCHITECTURE.md`
 - `docs/DECISIONS.md`
 
+Files updated during `T0040` Design Interposer-Aware XY Baseline:
+
+- `docs/TASKS.md`
+- `docs/PROGRESS.md`
+- `docs/VALIDATION.md`
+- `docs/PROMPTS.md`
+- `docs/ARCHITECTURE.md`
+- `docs/DECISIONS.md`
+
 Files updated or generated during `T0032` Generate Final Report PDF:
 
 - `final_report/main.tex`
@@ -787,17 +811,23 @@ External source tree registered during `T0023`:
 - Assumption: After T0038, `final_report.zip` is the current zip-based submission package and includes the current `final_report/main.pdf` plus the allowed current source files.
 - Assumption: T0039 future backlog tasks are post-submission development items and do not block current handoff.
 - Assumption: Future experiment tasks must write to new artifact directories and must not overwrite T0026/T0027/T0028.
+- Assumption: IA-XY is a new proposed `INTERPOSER_AWARE_XY` baseline and is not standard `XY`.
+- Assumption: Standard `XY` remains cardinal-only and unchanged for future work.
+- Assumption: Future IA-XY implementation should use existing `DeftTopology` VL endpoint and functional-state queries before adding new topology helpers.
+- Assumption: IA-XY design alone supports no performance claim and does not change the current final submission status.
 - Blocked: True post-injection drain validation needs a source cut-off plus drain/timeout mechanism beyond the current runner and Noxim `-volume` stop condition.
-- Blocked: Strong inter-chiplet XY-vs-DEFT comparison needs either a newly designed interposer-aware baseline route or a narrower traffic policy that explicitly limits XY comparison to route-compatible traffic.
+- Blocked: Strong inter-chiplet XY-vs-DEFT comparison needs IA-XY implementation, validation, and new versioned experiment artifacts, or a narrower traffic policy that explicitly limits XY comparison to route-compatible traffic.
 - Blocked: Stronger final-report claims remain blocked after T0035; the selected immediate path improved explanation, not measured performance coverage.
 - Blocked: No current PDF-generation blocker remains after T0032; stronger final-report claims remain blocked without a separate approved validation or rerun policy.
-- Blocked: Reopening interposer-aware baseline routing, source-cutoff/drain semantics, route-compatible intra-chiplet comparison, PARSEC/GEM5 traces, directional endpoint faults, or stronger performance claims requires a new explicit task with its own design and validation policy.
+- Blocked: IA-XY performance claims remain blocked until T0041 implements the new mode and T0042 or a later experiment task generates validated artifacts.
+- Blocked: Reopening source-cutoff/drain semantics, route-compatible intra-chiplet comparison, PARSEC/GEM5 traces, directional endpoint faults, or stronger performance claims requires a new explicit task with its own design and validation policy.
 
 ## Open Questions
 
 - Are GEM5/PARSEC traces required for final delivery, or are synthetic traffic experiments sufficient?
 - Should WSL be configured persistently with `ldconfig` for the local SystemC library, or should future Noxim runs keep using a per-process `LD_LIBRARY_PATH`?
 - Should final DeFT routing keep using `DIRECTION_HUB` as the physical Vertical Link carrier, or introduce explicit semantic Up/Down ports after the LUT design is complete?
+- Should IA-XY T0041 reuse `DIRECTION_HUB` as the physical VL carrier under the existing VN filter, or should explicit Up/Down semantics be designed first?
 - Should a future `deft_vl_lut.v2` add `destination_router_id` for destination-router-granular entry VL optimization?
 - How should final traffic-profile-specific LUT generation encode non-uniform `T_inter_r` inputs?
 - Should final hotspot experiments keep hotspot routers `9`, `13`, and `41`, or should an explicit source-document or instructor-provided hotspot-node set replace them?
@@ -810,12 +840,26 @@ External source tree registered during `T0023`:
 
 ## Next Recommended Task
 
-None for submission; start the backlog only if more development is required.
+T0041: Implement Interposer-Aware XY Baseline, only if more development is required after the current final submission.
 
 ## Next Ready-to-Send Prompt
 
 ```text
-No next task is required for final submission. If more development is required, start T0040: Design Interposer-Aware XY Baseline. Before starting, read AGENTS.md and the required project tracking documents, continue on the existing branch, do not create or switch branches, keep the task design-only, clearly state that IA-XY is not standard XY, do not edit source code or run simulations, update tracking docs, and run git diff --check.
+Start task T0041: Implement Interposer-Aware XY Baseline.
+
+Before starting, read AGENTS.md and the required project tracking documents, including the T0040 IA-XY design in docs/ARCHITECTURE.md.
+
+Continue on the existing Git branch. Do not create or switch task branches.
+
+Use Extended_Proposal.pdf as the primary project requirements source and the original DeFT paper as the primary algorithmic reference. Use Proposal.pdf only as initial context. Ignore the peer evaluation document completely.
+
+Use the registered Noxim source tree at external/noxim.
+
+Goal: add a separately selectable INTERPOSER_AWARE_XY routing mode according to the T0040 design. Preserve standard XY as cardinal-only and unchanged. Preserve DEFT routing, VN transition restrictions, VL fault injection, LUT schema/use path, topology behavior, traffic semantics, metrics semantics, runner/analysis semantics, generated final-sweep artifacts, final_report/main.pdf, final_report.zip, and Extended Proposal files.
+
+Run build validation and targeted smokes only after the new mode builds. Do not run a full comparison sweep, do not regenerate the final sweep, do not use ./regression.sh --update, do not invent results, and do not strengthen unsupported claims.
+
+Update tracking docs and run git diff --check. Check that unrelated generated final-sweep artifacts are not changed and record external/noxim status.
 ```
 
 ## Suggested Branch Name for Next Task
@@ -827,5 +871,5 @@ None; continue on the existing branch.
 ## Suggested Commit Message
 
 ```text
-docs: document future development backlog
+docs: design interposer-aware xy baseline
 ```

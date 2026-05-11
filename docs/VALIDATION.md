@@ -1678,6 +1678,46 @@ Expected future checks:
 - Require new artifact directories for any future experiment.
 - Update report text only after new validated artifacts exist.
 
+## Interposer-Aware XY Baseline Design Validation
+
+Purpose:
+
+- Record the IA-XY baseline design before any routing implementation.
+- Preserve the distinction between standard `XY` and the proposed interposer-aware `IA-XY` baseline.
+- Define future implementation validation without changing simulator source, helper source, generated artifacts, final-report artifacts, or report claims during T0040.
+
+Known validation for T0040:
+
+- Parent repository status: `git status --short --branch`
+- Noxim submodule status: `git -c safe.directory=C:/Projects/CMP-720-Project-Proposal/external/noxim -C external/noxim status --short --branch`
+- Documentation whitespace check: `git diff --check`
+- Source-document and source-tree inspection only. Do not rebuild Noxim, rerun simulations, regenerate the final sweep, regenerate the final-report PDF, modify `final_report.zip`, or use `./regression.sh --update`.
+
+T0040 result on 2026-05-11:
+
+- Required startup reading was completed before task work: `AGENTS.md`, `docs/PROGRESS.md`, `docs/TASKS.md`, `docs/ROADMAP.md`, `docs/ARCHITECTURE.md`, `docs/VALIDATION.md`, `docs/DECISIONS.md`, `docs/PROMPTS.md`, `docs/FINAL_REPORT_DRAFT.md`, and `final_report/main.tex`.
+- Before editing tracking documents, a short implementation plan was produced. Assumption: T0040 is design-only and must not change source code, report artifacts, generated artifacts, package artifacts, or simulator behavior. Blocked: implementation and experiment claims remain future tasks.
+- Source-document checks confirmed that `Extended_Proposal.pdf` is the primary project requirements source, the original DeFT paper is the primary algorithmic reference, `Proposal.pdf` is initial context only, and the peer evaluation document was ignored completely.
+- Read-only source inspection used `external/noxim/src/routingAlgorithms/Routing_XY.cpp`, `external/noxim/src/routingAlgorithms/Routing_DEFT.cpp`, `external/noxim/src/routingAlgorithms/RoutingAlgorithms.cpp`, `external/noxim/src/GlobalParams.h`, `external/noxim/src/ConfigurationManager.cpp`, `external/noxim/src/DeftTopology.h`, `external/noxim/src/DeftVirtualNetwork.cpp`, `external/noxim/src/Router.cpp`, `external/noxim/bin/Makefile`, and `external/noxim/bin/power.yaml`.
+- The design defines IA-XY as a new proposed `INTERPOSER_AWARE_XY` baseline, not standard `XY`.
+- Standard `XY` remains cardinal-only and unchanged.
+- IA-XY future behavior is phased: same-chiplet local XY; source-chiplet local XY to a selected functional source VL; VL traversal to the active interposer; interposer XY to a selected functional destination entry; VL traversal into the destination chiplet; destination-local XY to the final destination.
+- IA-XY may avoid known faulty physical VLs through current `DeftTopology` functional-state queries, but it must not use the DeFT schema-v1 LUT, DeFT VL optimization, or new traffic/metric semantics.
+- Added ADR-0044 to record the durable design decision that IA-XY is a separate interposer-aware baseline and not a reinterpretation of standard `XY`.
+- No source code, helper source, routing logic, VN transition logic, VL fault injection, LUT schema/use path, topology behavior, traffic semantics, metrics semantics, runner/analysis semantics, generated final-sweep artifact, final-report PDF artifact, `final_report.zip`, Extended Proposal file, Noxim rebuild, simulation run, final-sweep regeneration, final-report PDF regeneration, regression command, or `./regression.sh --update` was changed.
+- Final `git diff --check` in the parent repository completed with exit code `0`; Git reported line-ending conversion warnings for edited Markdown files only.
+- Final parent status showed modified tracking docs only: `docs/ARCHITECTURE.md`, `docs/DECISIONS.md`, `docs/PROGRESS.md`, `docs/PROMPTS.md`, `docs/TASKS.md`, and `docs/VALIDATION.md`.
+- Final `external/noxim` status remained clean.
+
+Expected future T0041 checks:
+
+- Confirm `external/noxim` is clean before source edits.
+- Use the known Noxim build command from `external/noxim`: `./build.sh`.
+- Add a separately selectable `INTERPOSER_AWARE_XY` routing mode without changing standard `XY` or `DEFT`.
+- Run targeted smokes only after the new mode builds: route registration/config loading, same-chiplet local XY behavior, inter-chiplet no-fault VL/interposer traversal, and explicit-fault fallback to an alternate functional VL.
+- Define concrete smoke commands in T0041 only after the new config files and any tiny hardcoded traffic inputs exist.
+- Do not run a full IA-XY-vs-DeFT matrix, do not overwrite T0026/T0027/T0028, and do not use `./regression.sh --update`.
+
 ## Metrics Validation
 
 Purpose:

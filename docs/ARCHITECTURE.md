@@ -1209,6 +1209,146 @@ Planned and partially implemented:
 - Implemented in T0031: The reviewed Markdown draft was converted into an IEEE conference-style LaTeX source artifact under `final_report/` using `Extended_Proposal.zip` as the formatting/template reference. PDF generation remains blocked until a TeX toolchain is available.
 - Diagnosed in T0033: The existing `XY` route is cardinal-only and does not traverse VL/hub/interposer paths, so unrestricted inter-chiplet traffic on `DEFT_2_5D` can stall before the T0026 measured window and cannot support strong XY-vs-DEFT latency or improvement claims.
 
+## T0040 Interposer-Aware XY Baseline Design
+
+T0040 defines a future comparison baseline only. It does not implement a routing algorithm, change simulator behavior, run simulations, regenerate artifacts, or change final-report claims.
+
+### Purpose And Rationale
+
+The proposed baseline is named Interposer-Aware XY, abbreviated `IA-XY` in documentation and recommended as `INTERPOSER_AWARE_XY` for the future routing string. Its purpose is to provide a topology-compatible, deterministic baseline for unrestricted inter-chiplet traffic on `DEFT_2_5D`.
+
+Standard `XY` remains useful as a limited control baseline, but it is not enough for unrestricted inter-chiplet comparison. The current `external/noxim/src/routingAlgorithms/Routing_XY.cpp` implementation compares only `id2Coord(current_id)` and `id2Coord(dst_id)`, then returns one cardinal direction. It does not choose `DIRECTION_HUB`, does not inspect Vertical Links, does not distinguish chiplet and interposer layers, and does not route through active-interposer phases. In `DEFT_2_5D`, chiplet-layer cardinal links are intentionally local to each 4x4 chiplet, so a cardinal-only route can request movement across a nonexistent chiplet-to-chiplet cardinal boundary.
+
+IA-XY is therefore not standard `XY`. It is a new proposed baseline that intentionally routes inter-chiplet packets through source-side Vertical Links, the active interposer, and destination-side Vertical Links. Future reports and tables must label it separately from `XY`.
+
+### High-Level Routing Behavior
+
+IA-XY should use deterministic phase routing:
+
+- Same-chiplet packets: route with ordinary dimension-order XY inside the source chiplet and do not enter the interposer.
+- Inter-chiplet packets on the source chiplet: choose a functional source-side exit VL, route by local chiplet XY to that boundary router, then traverse the VL down to the interposer through the existing physical VL carrier.
+- Interposer phase: route by dimension-order XY over the active-interposer footprint from the source exit interposer endpoint to the selected destination entry interposer endpoint.
+- Destination entry: traverse the selected functional destination-side VL up into the destination chiplet.
+- Destination-local phase: route by local chiplet XY from the destination boundary router to the final destination router.
+
+The design should be deterministic and simple. It should not use the DeFT schema-v1 VL LUT, traffic-demand optimization, load-balancing cost function, or adaptive VL optimization. It may use current startup VL functional state to avoid known faulty physical VLs, because selecting a nonfunctional VL would not be a meaningful topology-compatible baseline under fault injection.
+
+Assumption: IA-XY uses the existing 16 physical bidirectional VL model and the existing `DeftTopology` endpoint and functional-state queries. It does not resolve directional endpoint fault modeling.
+
+Blocked: Exact tie-breaking constants are deferred to T0041, but the implementation should document them before running any smoke simulation. A safe default is stable deterministic ordering by shortest Manhattan path on the active-interposer footprint, then lower `vl_id`.
+
+### Entering And Exiting The Interposer
+
+For an inter-chiplet packet, IA-XY needs one source-side exit VL and one destination-side entry VL:
+
+- Source exit selection should choose a functional VL owned by the source chiplet. A directional preference may choose the source chiplet boundary slot that faces the destination chiplet when possible. If that preferred VL is faulty, IA-XY should fall back to another functional source-chiplet VL using deterministic tie-breaking.
+- Destination entry selection should choose a functional VL owned by the destination chiplet. The preferred entry should minimize interposer traversal distance from the selected source exit endpoint, with stable tie-breaking.
+- At the source boundary router, IA-XY should output the existing physical VL carrier direction only when the selected physical VL is functional and the current router is the selected boundary endpoint.
+- At the destination interposer endpoint, IA-XY should output the existing physical VL carrier direction only when the selected physical VL is functional and the current router is the selected interposer endpoint.
+- If either chiplet has no functional VL despite startup validation, IA-XY should fail closed by returning no legal output direction rather than silently falling back to invalid chiplet-layer cardinal movement.
+
+Assumption: In the current implementation, physical VL traversal is carried by `DIRECTION_HUB`. IA-XY may reuse that carrier in T0041, but it must not redefine the project-wide Up/Down semantics or change VN transition logic.
+
+### Relationship To Existing XY And DeFT
+
+Standard `XY`:
+
+- Remains unchanged.
+- Remains cardinal-only.
+- Remains the route named `XY`.
+- Must not be reinterpreted as interposer-aware in documentation, configs, analysis, or report prose.
+
+IA-XY:
+
+- Is a new baseline route, not a correction or replacement of standard `XY`.
+- Reuses the `DEFT_2_5D` topology model and VL endpoint inventory.
+- Uses deterministic XY movement inside each phase.
+- May avoid known faulty physical VLs using current fault state, but does not use DeFT LUT optimization.
+- Should keep metrics semantics, traffic semantics, topology behavior, fault semantics, and runner/analysis semantics unchanged unless a future task explicitly scopes a change.
+
+DeFT:
+
+- Remains the algorithmic route under comparison.
+- Continues to use schema-v1 LUT selection and existing VN rules.
+- Must not be modified by IA-XY implementation.
+
+Because `DeftVirtualNetwork::isEnabled()` is currently topology-scoped for `DEFT_2_5D`, future IA-XY implementation must verify how the existing VN assignment and movement filters interact with IA-XY hub/VL traversal. T0041 should not weaken or bypass VN transition restrictions. If IA-XY needs routing-specific VN behavior, that is a separate design task.
+
+### Naming And Configuration Recommendation
+
+Recommended public names:
+
+- Documentation label: `IA-XY`.
+- Routing string: `INTERPOSER_AWARE_XY`.
+- Example future config name: `deft_2_5d_interposer_aware_xy_baseline.yaml`.
+
+Avoid naming the mode just `XY` or `XY_2_5D`, because that can imply standard XY semantics. `INTERPOSER_AWARE_XY` is verbose but clear that the route intentionally uses the interposer.
+
+### Expected Future Implementation Touch Points
+
+Likely T0041 source and configuration surfaces:
+
+- `external/noxim/src/routingAlgorithms/Routing_INTERPOSER_AWARE_XY.h` and `external/noxim/src/routingAlgorithms/Routing_INTERPOSER_AWARE_XY.cpp` for the new registered routing algorithm.
+- `external/noxim/src/routingAlgorithms/RoutingAlgorithms.*` only if registry behavior needs updates beyond the existing self-registration pattern.
+- `external/noxim/src/GlobalParams.h` for an optional routing-name constant.
+- `external/noxim/src/ConfigurationManager.cpp` for help text and any validation that the new route is selected only with compatible topology assumptions.
+- `external/noxim/src/DeftTopology.*` only if a missing read-only helper is required; existing mapping, boundary-router, VL endpoint, and functional-state helpers should be preferred.
+- `external/noxim/src/DeftVirtualNetwork.*` should not be changed during T0041 unless a new task explicitly scopes VN behavior. T0041 should first work with the existing VN filter.
+- `external/noxim/config_examples/deft_2_5d_interposer_aware_xy_baseline.yaml` for a minimal selectable config.
+- `external/noxim/bin/power.yaml` only if the future implementation chooses to add an explicit power entry rather than relying on the default routing power entry.
+- Tracking docs: `docs/TASKS.md`, `docs/PROGRESS.md`, `docs/VALIDATION.md`, `docs/PROMPTS.md`, `docs/ARCHITECTURE.md`, and possibly `docs/DECISIONS.md`.
+
+### Future Validation Plan
+
+T0041 should validate implementation in stages:
+
+- Confirm `external/noxim` is clean before source edits.
+- Build with the known Noxim build command from `external/noxim`: `./build.sh`.
+- Confirm the new routing string is listed or accepted without changing standard `XY` help text semantics.
+- Run a no-traffic or tiny construction smoke only after the new route builds, to confirm configuration loading and route registration.
+- Run a focused same-chiplet packet smoke where IA-XY should behave like local XY and should not enter the interposer.
+- Run a focused inter-chiplet no-fault smoke where the packet traverses source local XY, source VL, interposer XY, destination VL, and destination local XY.
+- Run a focused explicit-fault smoke where the preferred source or destination VL is faulty and IA-XY selects a different functional VL.
+- Run a negative smoke if feasible where an invalid/no-functional-VL state fails closed, but do not change fault-mask validation merely to create this case.
+- Confirm standard `XY` and `DEFT` route files are unchanged except for allowed documentation or registry references.
+- Run `git diff --check` and record `external/noxim` status.
+
+Concrete simulator commands should be selected in T0041 only after the new config files and any tiny hardcoded traffic inputs exist. Do not run a full IA-XY-vs-DeFT matrix in T0041.
+
+### Risks And Open Questions
+
+- Risk: IA-XY may look too similar to DeFT if it uses the same source/destination VL selections. Keep IA-XY deterministic and non-LUT-based.
+- Risk: IA-XY could violate current VN movement filters if its hub traversal phases are not aligned with existing `DEFT_2_5D` VN behavior.
+- Risk: A simple nearest-VL policy may still create congestion or poor reachability under fixed-window injection; that is acceptable for a baseline but must be reported descriptively.
+- Risk: Reusing `DIRECTION_HUB` continues the current physical carrier convention and does not settle explicit Up/Down port semantics.
+- Open question: Should IA-XY choose the source exit and destination entry independently by nearest Manhattan distance, or use a directional preferred slot first?
+- Open question: Should IA-XY use one VC or the existing two VC requirement for `DEFT_2_5D`? Current topology validation requires two VCs, so T0041 should preserve that unless a separate task changes it.
+- Open question: Should power modeling add an explicit `INTERPOSER_AWARE_XY` entry or use the existing default routing power parameters?
+
+### Future T0041 Acceptance Criteria
+
+T0041 should be accepted only if:
+
+- `INTERPOSER_AWARE_XY` is a separately selectable routing mode.
+- Standard `XY` remains cardinal-only and unchanged.
+- `DEFT` routing, LUT loading/use, VN transition restrictions, VL fault injection, topology behavior, traffic semantics, metrics semantics, and runner/analysis semantics remain unchanged.
+- Same-chiplet IA-XY routes stay on the chiplet layer.
+- Inter-chiplet IA-XY routes enter the interposer through a functional source VL and exit through a functional destination VL.
+- Faulted preferred VLs are avoided when an alternate functional VL exists.
+- Build validation and targeted smokes pass and are recorded.
+- No generated T0026/T0027/T0028 artifacts, `final_report/main.pdf`, `final_report.zip`, or Extended Proposal files are changed.
+
+### Claim-Safety Rules For Future Experiments
+
+IA-XY design alone supports no performance claim. Future report or experiment updates must follow these rules:
+
+- Do not compare IA-XY to DeFT until T0041 validates IA-XY and a later T0042-style experiment creates new versioned artifacts.
+- Do not overwrite T0026/T0027/T0028 artifacts or reinterpret existing `XY` blank cells as IA-XY evidence.
+- Label all tables and prose with `IA-XY` or `INTERPOSER_AWARE_XY`, not `XY`.
+- Preserve blank-aware denominators: reachability is blank when no packets are injected, and latency is blank when no packets are received.
+- Avoid improvement, ranking, latency-comparison, or complete-reachability language unless supported by new validated artifacts.
+- Keep the current final submission status unchanged until a future explicit report task accepts new validated results.
+
 ## Post-Submission Future Backlog
 
 T0039 records the remaining technical gaps as future backlog items only. These tasks do not block the current final submission package, which remains `final_report/main.pdf`, the current `final_report/` source tree, and `final_report.zip`.
@@ -1226,7 +1366,7 @@ Ordered future backlog:
 
 | Task | Type | Technical gap |
 | --- | --- | --- |
-| T0040 | Design | Define an interposer-aware XY-like baseline that is explicitly not standard `XY`. |
+| T0040 | Design | Completed IA-XY design: a new `INTERPOSER_AWARE_XY` baseline that is explicitly not standard `XY`. |
 | T0041 | Implementation | Add a selectable IA-XY or `INTERPOSER_AWARE_XY` routing mode without modifying existing `XY` or `DEFT`. |
 | T0042 | Experiment | Run a limited IA-XY-vs-DEFT comparison in new artifact directories after the baseline is validated. |
 | T0043 | Design | Define source-cutoff plus post-injection drain/timeout semantics for eventual-delivery analysis. |
