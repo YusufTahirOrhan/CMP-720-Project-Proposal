@@ -1349,6 +1349,57 @@ IA-XY design alone supports no performance claim. Future report or experiment up
 - Avoid improvement, ranking, latency-comparison, or complete-reachability language unless supported by new validated artifacts.
 - Keep the current final submission status unchanged until a future explicit report task accepts new validated results.
 
+## T0041 Interposer-Aware XY Baseline Implementation
+
+T0041 implements the T0040 design as a selectable Noxim routing mode named `INTERPOSER_AWARE_XY`. The implementation is a new baseline route and does not reinterpret or replace standard `XY`.
+
+### Implemented Surfaces
+
+- `external/noxim/src/routingAlgorithms/Routing_INTERPOSER_AWARE_XY.h`
+- `external/noxim/src/routingAlgorithms/Routing_INTERPOSER_AWARE_XY.cpp`
+- `external/noxim/src/GlobalParams.h`
+- `external/noxim/src/ConfigurationManager.cpp`
+- `external/noxim/bin/power.yaml`
+- `external/noxim/config_examples/deft_2_5d_interposer_aware_xy_baseline.yaml`
+- `external/noxim/config_examples/deft_2_5d_ia_xy_smoke_same_chiplet.txt`
+- `external/noxim/config_examples/deft_2_5d_ia_xy_smoke_inter_chiplet.txt`
+
+The route self-registers through the existing routing-algorithm registration pattern. Configuration validation allows `INTERPOSER_AWARE_XY` only with `DEFT_2_5D`, and help text exposes the new routing string. The minimal config leaves the DeFT LUT filename empty because IA-XY does not use schema-v1 LUT selection.
+
+### Route Phases
+
+- Same-chiplet packets route with local dimension-order XY on the chiplet layer and do not enter the interposer.
+- Inter-chiplet packets select a functional source-chiplet VL and a functional destination-chiplet VL using current `DeftTopology` endpoint and functional-state queries.
+- Source-chiplet traversal uses local XY to the selected source boundary router.
+- Source VL traversal uses the existing physical VL carrier, `DIRECTION_HUB`, from chiplet to active interposer.
+- Active-interposer traversal uses dimension-order XY between selected interposer endpoints.
+- Destination VL traversal uses `DIRECTION_HUB` from active interposer to the selected destination boundary router.
+- Destination-chiplet traversal uses local XY to the final chiplet router.
+
+If a needed topology mapping or functional VL is unavailable, IA-XY fails closed by returning no legal output direction instead of falling back to invalid chiplet-layer cardinal movement.
+
+### VL Selection Policy
+
+IA-XY does not use the DeFT schema-v1 LUT, DeFT VL optimization, traffic-demand optimization, or load-balanced adaptive selection. For each inter-chiplet packet, it evaluates all functional source-chiplet VLs against all functional destination-chiplet VLs and chooses the pair with the smallest deterministic Manhattan path score:
+
+- source router to source boundary router,
+- source interposer endpoint to destination interposer endpoint,
+- destination boundary router to final destination router.
+
+Ties are resolved by lower source `vl_id`, then lower destination `vl_id`. This policy gives deterministic behavior and explicit fallback away from known faulty physical VLs without turning IA-XY into DeFT.
+
+### Preservation Notes
+
+`external/noxim/src/routingAlgorithms/Routing_XY.cpp` and `external/noxim/src/routingAlgorithms/Routing_DEFT.cpp` were not modified. T0041 did not change VN transition restrictions, VL fault injection semantics, LUT schema/use path, topology construction, traffic semantics, metrics semantics, runner/analysis semantics, generated T0026/T0027/T0028 artifacts, `final_report/main.pdf`, `final_report.zip`, or Extended Proposal files.
+
+Assumption: IA-XY reuses the existing topology-scoped two-VC validation and VN filter for `DEFT_2_5D`; it does not introduce routing-specific VN behavior.
+
+Blocked: IA-XY performance comparison claims remain blocked until a later T0042-style experiment defines a limited matrix and produces new versioned artifacts.
+
+### T0041 Validation Summary
+
+The known Noxim build command from `external/noxim`, `./build.sh`, completed successfully. Targeted smokes validated route registration/config loading, same-chiplet local behavior without IA-XY VL traversal debug logs, no-fault inter-chiplet VL/interposer traversal, and explicit-fault fallback from faulty `vl_id=0` to functional `vl_id=1`. These are implementation smokes only and do not support performance claims.
+
 ## Post-Submission Future Backlog
 
 T0039 records the remaining technical gaps as future backlog items only. These tasks do not block the current final submission package, which remains `final_report/main.pdf`, the current `final_report/` source tree, and `final_report.zip`.
@@ -1367,7 +1418,7 @@ Ordered future backlog:
 | Task | Type | Technical gap |
 | --- | --- | --- |
 | T0040 | Design | Completed IA-XY design: a new `INTERPOSER_AWARE_XY` baseline that is explicitly not standard `XY`. |
-| T0041 | Implementation | Add a selectable IA-XY or `INTERPOSER_AWARE_XY` routing mode without modifying existing `XY` or `DEFT`. |
+| T0041 | Implementation | Completed selectable `INTERPOSER_AWARE_XY` baseline without modifying existing `XY` or `DEFT`. |
 | T0042 | Experiment | Run a limited IA-XY-vs-DEFT comparison in new artifact directories after the baseline is validated. |
 | T0043 | Design | Define source-cutoff plus post-injection drain/timeout semantics for eventual-delivery analysis. |
 | T0044 | Implementation | Implement and validate the accepted drain policy before any full sweep. |

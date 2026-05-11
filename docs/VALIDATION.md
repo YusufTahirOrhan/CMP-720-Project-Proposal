@@ -1718,6 +1718,42 @@ Expected future T0041 checks:
 - Define concrete smoke commands in T0041 only after the new config files and any tiny hardcoded traffic inputs exist.
 - Do not run a full IA-XY-vs-DeFT matrix, do not overwrite T0026/T0027/T0028, and do not use `./regression.sh --update`.
 
+## Interposer-Aware XY Baseline Implementation Validation
+
+Purpose:
+
+- Validate that `INTERPOSER_AWARE_XY` is separately selectable and scoped to `DEFT_2_5D`.
+- Validate same-chiplet IA-XY behavior without interposer traversal.
+- Validate inter-chiplet IA-XY behavior through functional VLs and the active interposer.
+- Validate explicit-fault fallback to another functional VL when possible.
+- Preserve standard `XY`, `DEFT`, VN transition restrictions, VL fault injection, LUT schema/use path, topology behavior, traffic semantics, metrics semantics, runner/analysis semantics, generated final-sweep artifacts, final-report artifacts, and Extended Proposal files.
+
+Known validation for T0041:
+
+- Build from `external/noxim`: `./build.sh`
+- Route registration/config loading smoke from `external/noxim/bin`: run `./noxim` with `../config_examples/deft_2_5d_interposer_aware_xy_baseline.yaml`, `-seed 0`, `-sim 20`, and `-warmup 0`.
+- Same-chiplet smoke: run `INTERPOSER_AWARE_XY` with hardcoded traffic `../config_examples/deft_2_5d_ia_xy_smoke_same_chiplet.txt` containing `0 3`, debug router logging, JSON stats export, `-sim 80`, and `-warmup 0`.
+- Inter-chiplet no-fault smoke: run `INTERPOSER_AWARE_XY` with hardcoded traffic `../config_examples/deft_2_5d_ia_xy_smoke_inter_chiplet.txt` containing `0 63`, debug router logging, JSON stats export, `-sim 160`, and `-warmup 0`.
+- Explicit-fault fallback smoke: repeat the inter-chiplet smoke with `-deft_faulty_vls 0`.
+- Whitespace checks: `git diff --check` in the parent repository and `git -c safe.directory=C:/Projects/CMP-720-Project-Proposal/external/noxim -C external/noxim diff --check`.
+- Generated-artifact guard: check that `external/noxim/other/generated/t0026_final_sweep_v1`, `t0026_final_analysis_v1`, `t0027_report_support_v1`, and `t0028_final_report_results_v1` have no changed files.
+
+T0041 result on 2026-05-11:
+
+- Required startup reading was completed before task work, including `AGENTS.md`, all required tracking documents, `docs/FINAL_REPORT_DRAFT.md`, and `final_report/main.tex`.
+- Parent repository and `external/noxim` were clean before source edits, using the documented safe-directory form for `external/noxim`.
+- `./build.sh` completed with exit code `0` in WSL Ubuntu. The only compiler warnings were pre-existing `Router.cpp` warnings.
+- Route registration/config loading smoke completed with exit code `0`, reported routing `INTERPOSER_AWARE_XY`, DeFT LUT disabled, active fault mask `0x0000`, and four functional VLs per chiplet.
+- Same-chiplet `0 -> 3` smoke completed with exit code `0`, injected and received one packet/eight flits, and produced no `IA-XY` VL traversal debug entries.
+- Inter-chiplet no-fault `0 -> 63` smoke completed with exit code `0`, injected and received one packet/eight flits, and logged source exit `vl_id=0` plus destination entry `vl_id=12`.
+- Explicit-fault `0 -> 63` smoke with `-deft_faulty_vls 0` completed with exit code `0`, reported active fault mask `0x0001`, injected and received one packet/eight flits, and logged fallback source exit `vl_id=1` instead of faulty `vl_id=0`.
+- External `diff --check` completed with exit code `0`.
+- Final parent `git diff --check` completed with exit code `0`; Git reported line-ending conversion warnings for edited Markdown files only.
+- The generated-artifact guard returned no changed files for T0026/T0027/T0028 artifact directories.
+- The final-report and Extended Proposal artifact status guard returned no changed files for `final_report/main.pdf`, `final_report.zip`, `Extended_Proposal.pdf`, or `Extended_Proposal.zip`.
+- Final `external/noxim` status shows the intended T0041 source/config changes and no generated final-sweep artifact changes.
+- The smokes validate implementation behavior only. They do not support IA-XY-vs-DEFT performance claims.
+
 ## Metrics Validation
 
 Purpose:

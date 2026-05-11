@@ -421,21 +421,22 @@ Statuses: `TODO`, `IN_PROGRESS`, `DONE`, `BLOCKED`.
 
 ## T0041: Implement Interposer-Aware XY Baseline
 
-- **Status:** TODO
+- **Status:** DONE
 - **Type:** implementation
 - **Objective:** Add a selectable IA-XY or `INTERPOSER_AWARE_XY` routing mode.
 - **Why it exists:** A fairer unrestricted inter-chiplet comparison requires a baseline that can traverse VLs and the active interposer without changing standard `XY` or `DEFT`.
 - **Relevant roadmap phase:** Phase 9 future backlog
 - **Scope:** Implement a new registered routing algorithm or equivalent selectable mode according to T0040, add explicit config examples, and preserve existing `XY` and `DEFT` behavior.
 - **Out of scope:** Replacing standard `XY`, modifying `DEFT` route selection, changing VN rules, changing VL fault semantics, changing LUT schema/use path, running a full comparison sweep, overwriting T0026/T0027/T0028 artifacts, report updates, and `./regression.sh --update`.
-- **Files likely to change:** `external/noxim/src/routingAlgorithms/*`, `external/noxim/src/GlobalParams.*`, `external/noxim/src/ConfigurationManager.cpp`, `external/noxim/config_examples/*`, `docs/TASKS.md`, `docs/PROGRESS.md`, `docs/VALIDATION.md`, `docs/PROMPTS.md`, `docs/ARCHITECTURE.md`, and possibly `docs/DECISIONS.md`.
+- **Files changed:** `external/noxim/src/routingAlgorithms/Routing_INTERPOSER_AWARE_XY.h`, `external/noxim/src/routingAlgorithms/Routing_INTERPOSER_AWARE_XY.cpp`, `external/noxim/src/GlobalParams.h`, `external/noxim/src/ConfigurationManager.cpp`, `external/noxim/bin/power.yaml`, `external/noxim/config_examples/deft_2_5d_interposer_aware_xy_baseline.yaml`, `external/noxim/config_examples/deft_2_5d_ia_xy_smoke_same_chiplet.txt`, `external/noxim/config_examples/deft_2_5d_ia_xy_smoke_inter_chiplet.txt`, `docs/TASKS.md`, `docs/PROGRESS.md`, `docs/VALIDATION.md`, `docs/PROMPTS.md`, `docs/ARCHITECTURE.md`, and `docs/DECISIONS.md`.
 - **Source code changes allowed:** Yes, limited to the new baseline mode and necessary configuration hooks.
 - **Simulation reruns allowed:** Yes, targeted smoke tests only after successful build validation; no full sweep.
 - **Acceptance criteria:** New routing mode is selectable; standard `XY` and `DEFT` behavior are unchanged; build validation passes; focused no-fault and fault-mask smoke tests exercise same-chiplet and inter-chiplet route phases; validation results are recorded.
-- **Validation method or limitation:** Use the known Noxim build command from `external/noxim` and the T0040 validation plan. Define concrete targeted smoke commands in T0041 only after the new config files and any tiny traffic inputs exist. Do not invent a full experiment matrix and do not use `./regression.sh --update`.
+- **Validation method or limitation:** Completed with the known Noxim build command from `external/noxim` (`./build.sh`) and targeted smokes only: route registration/config loading, same-chiplet `0 -> 3` no-interposer smoke, inter-chiplet `0 -> 63` no-fault VL/interposer smoke, and explicit `-deft_faulty_vls 0` fallback smoke. Do not treat these smokes as performance evidence.
 - **Dependencies:** T0040.
 - **Risk level:** High, because it changes routing behavior in a high-risk simulator area.
 - **Recommended prompt:** `Start task T0041: Implement Interposer-Aware XY Baseline. Use the accepted T0040 design, add a new selectable IA-XY mode without modifying existing XY or DEFT behavior, run build validation and targeted smokes only, update tracking docs, and run git diff --check.`
+- **Notes:** Completed on 2026-05-11. `INTERPOSER_AWARE_XY` is separately selectable on `DEFT_2_5D`; it does not use the DeFT schema-v1 LUT or DeFT VL optimization, and it avoids known faulty physical VLs through existing `DeftTopology` functional-state queries. Standard `XY`, `DEFT`, VN transition restrictions, VL fault injection, topology behavior, traffic semantics, metrics semantics, runner/analysis semantics, T0026/T0027/T0028 artifacts, `final_report/main.pdf`, `final_report.zip`, and Extended Proposal files were preserved.
 
 ## T0042: Run Limited IA-XY vs DeFT Comparison
 
