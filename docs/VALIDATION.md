@@ -1526,6 +1526,43 @@ Expected future checks:
 - If the PDF is packaged for submission, include `final_report/main.pdf` and the revised `final_report/main.tex`; optionally install or vendor exact `IEEEtran.bst` in a separate report-packaging cleanup if exact IEEEtran bibliography styling is required.
 - If visual page inspection is requested, review `final_report/main.pdf` for final-page column balance and the underfull-box regions involving long path/code strings.
 
+## Post-Final Experimental Extension Gate Validation
+
+Purpose:
+
+- Decide whether to start any high-risk experimental extension after final report revision and PDF generation.
+- Compare the deferred options before any implementation: interposer-aware XY-like baseline routing, source-cutoff plus post-injection drain, route-compatible intra-chiplet comparison, PARSEC/GEM5 trace support, and no further experimental work.
+- Record dependencies, risks, validation requirements, and blockers without modifying simulator source, report claims, generated artifacts, or final-report PDFs.
+
+Known validation:
+
+- Use existing project tracking documents, `docs/FINAL_REPORT_DRAFT.md`, `final_report/main.tex`, `Extended_Proposal.pdf`, `Proposal.pdf`, the original DeFT paper, and the registered Noxim source tree at `external/noxim`.
+- Do not rerun simulations, rebuild Noxim, regenerate the final sweep, modify generated final-report PDF artifacts, install external dependencies, or use `./regression.sh --update`.
+- For documentation-only gate decisions, use `git diff --check`, parent repository status, and `external/noxim` status checks.
+
+T0036 result on 2026-05-11:
+
+- Required startup reading was completed before task work: `AGENTS.md`, `docs/PROGRESS.md`, `docs/TASKS.md`, `docs/ROADMAP.md`, `docs/ARCHITECTURE.md`, `docs/VALIDATION.md`, `docs/DECISIONS.md`, `docs/PROMPTS.md`, `docs/FINAL_REPORT_DRAFT.md`, and `final_report/main.tex`.
+- Before running commands or editing tracking documents, a short implementation plan was produced.
+- Source-document checks used `Extended_Proposal.pdf` as the primary project requirements source and the original DeFT paper as the primary algorithmic reference. `Proposal.pdf` remained initial context only, and the peer evaluation document was ignored.
+- T0036 selected no further experimental work for the current project phase.
+- Validation implication for an interposer-aware XY-like baseline: would require a new routing design, source changes, Noxim build validation, route-level tests, regression or focused smokes, and new versioned comparison artifacts before any claim.
+- Validation implication for source-cutoff plus post-injection drain: would require simulator/runner semantics design, source changes, build validation, drain/timeout tests, metric interpretation review, and new artifacts. It would not solve standard `XY` topology incompatibility by itself.
+- Validation implication for route-compatible intra-chiplet comparison: could be lower risk than unrestricted inter-chiplet baseline work, but it would require an explicitly scoped traffic policy, config validation, artifact regeneration in a new output directory, and careful report wording because it would not evaluate the central inter-chiplet DeFT case.
+- Validation implication for PARSEC/GEM5 trace support: would require external trace generation or import infrastructure, workload mapping, trace validation, simulator launch validation, and new analysis artifacts.
+- Validation implication for no further experimental work: use documentation/status validation only and preserve the current final report PDF and final-sweep artifacts.
+- Added ADR-0042 to record the durable decision to stop experimental work after the final report rather than start a high-risk post-final extension.
+- No source code, report claims, simulator behavior, helper behavior, routing logic, VN transition logic, VL fault injection, LUT schema/use path, topology behavior, traffic semantics, metrics semantics, runner/analysis semantics, generated final-sweep artifact, generated final-report PDF artifact, Extended Proposal file, Noxim rebuild, simulation run, final-sweep regeneration, external dependency installation, regression command, or `./regression.sh --update` was changed.
+- Final `git diff --check` in the parent repository completed with exit code `0`; Git reported line-ending conversion warnings for edited Markdown files only.
+- Final parent status showed modified tracking docs and the pre-existing untracked `final_report.zip`.
+- Final `external/noxim` status remained clean.
+
+Expected future checks:
+
+- Do not start experimental validation after T0036 unless the user explicitly opens a new task.
+- If a future user reopens one of the deferred experimental directions, begin with a design task that records source changes, validation commands, artifact directories, and claim limits before implementation.
+- If final handoff is requested, perform status and documentation consistency checks only.
+
 ## Metrics Validation
 
 Purpose:

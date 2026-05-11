@@ -2,7 +2,7 @@
 
 ## Current Phase
 
-Phase 9 - Final Analysis and Report Support
+Phase 9 - Final Analysis and Report Support (post-final experimental work closed)
 
 ## Completed Tasks
 
@@ -41,8 +41,9 @@ Phase 9 - Final Analysis and Report Support
 - `T0033` - Diagnose and Reduce Final-Report Blockers.
 - `T0034` - Decide Next Gap-Closure Direction and Add Follow-up Tasks.
 - `T0035` - Revise Final Report with T0033 Diagnosis.
+- `T0036` - Post-Final Experimental Extension Design Gate.
 
-DeFT VN assignment behavior, the first VN movement-transition restriction enforcement layer, the offline VL LUT schema/generator, the runtime schema-v1 LUT loading/use path, explicit XY fault-free/fault-injected baseline configuration modes, proposal-required synthetic traffic configuration profiles, machine-readable metrics export, tiny experiment-runner launch support, final-analysis scaffolding, the final sweep policy, the validated T0026 150-run final sweep output set, T0027 blank-aware report-support tables, T0028 claim-safe final report results draft, the T0029 tracked claim-safe Markdown report draft, the T0030 submission-readiness polish, the T0031 IEEE-style LaTeX final report source artifact, the T0032 generated final report PDF, the T0033 blocker diagnosis, the T0034 report-revision direction decision, and the T0035 final-report diagnosis revision now exist for `DEFT_2_5D`. Performance claims remain limited to descriptive, blank-aware report support only.
+DeFT VN assignment behavior, the first VN movement-transition restriction enforcement layer, the offline VL LUT schema/generator, the runtime schema-v1 LUT loading/use path, explicit XY fault-free/fault-injected baseline configuration modes, proposal-required synthetic traffic configuration profiles, machine-readable metrics export, tiny experiment-runner launch support, final-analysis scaffolding, the final sweep policy, the validated T0026 150-run final sweep output set, T0027 blank-aware report-support tables, T0028 claim-safe final report results draft, the T0029 tracked claim-safe Markdown report draft, the T0030 submission-readiness polish, the T0031 IEEE-style LaTeX final report source artifact, the T0032 generated final report PDF, the T0033 blocker diagnosis, the T0034 report-revision direction decision, the T0035 final-report diagnosis revision, and the T0036 post-final experimental design gate now exist for `DEFT_2_5D`. Performance claims remain limited to descriptive, blank-aware report support only. No further experimental work is recommended for the current project phase.
 
 ## In-Progress Tasks
 
@@ -53,6 +54,27 @@ DeFT VN assignment behavior, the first VN movement-transition restriction enforc
 - None.
 
 ## Last Validation Result
+
+- T0036 Post-Final Experimental Extension Design Gate completed as a documentation-only design task on 2026-05-11.
+- Required startup reading was completed before task work: `AGENTS.md`, `docs/PROGRESS.md`, `docs/TASKS.md`, `docs/ROADMAP.md`, `docs/ARCHITECTURE.md`, `docs/VALIDATION.md`, `docs/DECISIONS.md`, `docs/PROMPTS.md`, `docs/FINAL_REPORT_DRAFT.md`, and `final_report/main.tex`.
+- Before running commands or editing tracking documents, a short implementation plan was produced. Assumption: T0036 was limited to documentation-only future-work selection. Blocked: stronger experimental claims remain blocked without new design, source changes, and validation.
+- Parent repository status before documentation edits showed branch `feat/map-noxim-extension-points...origin/feat/map-noxim-extension-points` and the pre-existing untracked `final_report.zip`.
+- The registered Noxim source tree at `external/noxim` remained clean before documentation edits.
+- Source-document checks used `Extended_Proposal.pdf` as the primary project requirements source and the original DeFT paper as the primary algorithmic reference. `Proposal.pdf` remained initial context only, and the peer evaluation document was ignored completely.
+- The local source checks confirmed the proposal requirement for synthetic traffic, real-application PARSEC/GEM5 trace context, VL fault scenarios, and reachability/latency/throughput metrics, and confirmed the DeFT paper's reliance on design-time VL selection, two-VC/VN deadlock avoidance, reachability/latency claims, and PARSEC/GEM5 evaluation in the original study.
+- T0036 revisited the deferred T0034 options: interposer-aware XY-like baseline, source-cutoff plus post-injection drain policy, explicitly route-compatible intra-chiplet comparison, PARSEC/GEM5 trace support, and no further experimental work.
+- Selected future-work direction: no further experimental work for the current project phase.
+- Rationale: after T0035 report revision and T0032 PDF generation, every experimental extension option either changes source behavior, changes simulator/runner semantics, narrows the study away from unrestricted inter-chiplet DeFT evaluation, or requires external trace infrastructure. Starting one now would risk new blockers without improving the already generated claim-safe final artifact.
+- Interposer-aware XY-like baseline remains future research only because it requires new routing behavior, build validation, focused route tests, and new versioned comparison artifacts before supporting claims.
+- Source-cutoff plus post-injection drain remains future research only because it requires simulator/runner stop-semantics design, build validation, targeted drain tests, and metric-interpretation changes, and it does not fix standard `XY` topology incompatibility by itself.
+- Route-compatible intra-chiplet comparison remains future research only because it would be a narrower control study outside the central inter-chiplet DeFT requirement and would not strengthen the existing final report without a separate approved validation policy.
+- PARSEC/GEM5 trace support remains future research only because it requires external trace generation/import infrastructure, workload mapping, and validation before inclusion.
+- `docs/TASKS.md`, `docs/PROGRESS.md`, `docs/VALIDATION.md`, `docs/PROMPTS.md`, and `docs/DECISIONS.md` were updated with the completed gate result.
+- Added ADR-0042 to record the durable decision to stop experimental work after the final report rather than start a high-risk post-final extension.
+- No source code, report claims, simulator behavior, helper behavior, routing logic, VN transition logic, VL fault injection, LUT schema/use path, topology behavior, traffic semantics, metrics semantics, runner/analysis semantics, generated final-sweep artifact, generated final-report PDF artifact, Extended Proposal file, Noxim rebuild, simulation run, final-sweep regeneration, external dependency installation, regression command, or `./regression.sh --update` was changed.
+- Final `git diff --check` in the parent repository completed with exit code `0`; Git reported line-ending conversion warnings for edited Markdown files only.
+- Final parent status showed modified tracking docs and the pre-existing untracked `final_report.zip`.
+- Final `external/noxim` status remained clean.
 
 - T0032 Generate Final Report PDF in a TeX-Enabled Environment completed on 2026-05-11.
 - Required startup reading was completed before retrying the PDF generation task: `AGENTS.md`, `docs/PROGRESS.md`, `docs/TASKS.md`, `docs/ROADMAP.md`, `docs/ARCHITECTURE.md`, `docs/VALIDATION.md`, `docs/DECISIONS.md`, `docs/PROMPTS.md`, `docs/FINAL_REPORT_DRAFT.md`, and `final_report/main.tex`.
@@ -533,6 +555,14 @@ Files updated during `T0035` Revise Final Report with T0033 Diagnosis:
 - `docs/VALIDATION.md`
 - `docs/PROMPTS.md`
 
+Files updated during `T0036` Post-Final Experimental Extension Design Gate:
+
+- `docs/TASKS.md`
+- `docs/PROGRESS.md`
+- `docs/VALIDATION.md`
+- `docs/PROMPTS.md`
+- `docs/DECISIONS.md`
+
 Files updated or generated during `T0032` Generate Final Report PDF:
 
 - `final_report/main.tex`
@@ -670,10 +700,13 @@ External source tree registered during `T0023`:
 - Assumption: T0032 generated the current PDF at `final_report/main.pdf` from the revised `final_report/main.tex` without changing report claims.
 - Assumption: The T0032 TeX compatibility edits are formatting/build-surface only: remove an unused `algorithmic` package import and use the installed `ieeetr` bibliography style because `IEEEtran.bst` was not available.
 - Assumption: Options B, C, and D require separate future design or source-change tasks and should not be started implicitly during final report closure.
+- Assumption: T0036 closes the post-final experimental-extension gate by selecting no further experimental work for the current project phase.
+- Assumption: The current final experimental deliverable is the T0026/T0027/T0028 artifact chain plus the revised T0032 generated PDF at `final_report/main.pdf`.
 - Blocked: True post-injection drain validation needs a source cut-off plus drain/timeout mechanism beyond the current runner and Noxim `-volume` stop condition.
 - Blocked: Strong inter-chiplet XY-vs-DEFT comparison needs either a newly designed interposer-aware baseline route or a narrower traffic policy that explicitly limits XY comparison to route-compatible traffic.
 - Blocked: Stronger final-report claims remain blocked after T0035; the selected immediate path improved explanation, not measured performance coverage.
 - Blocked: No current PDF-generation blocker remains after T0032; stronger final-report claims remain blocked without a separate approved validation or rerun policy.
+- Blocked: Reopening interposer-aware baseline routing, source-cutoff/drain semantics, route-compatible intra-chiplet comparison, PARSEC/GEM5 traces, directional endpoint faults, or stronger performance claims requires a new explicit task with its own design and validation policy.
 
 ## Open Questions
 
@@ -689,23 +722,22 @@ External source tree registered during `T0023`:
 - Should a future helper add source cut-off and post-injection drain support for eventual-delivery reachability checks?
 - Should the generated final-analysis scaffold blocker text be updated in a future task to reflect the T0025 policy resolutions while still keeping generated scaffold outputs conservative?
 - Should a future report-packaging cleanup install or vendor the exact `IEEEtran.bst` style, or keep the currently installed `ieeetr` BibTeX style used for the generated PDF?
-- After final report closure, should future experimental work prioritize an interposer-aware baseline, a source-supported drain/source-cutoff policy, an explicitly intra-chiplet comparison, PARSEC/GEM5 traces, or no further simulator work?
 
 ## Next Recommended Task
 
-Start `T0036` to run the post-final experimental extension design gate now that the revised final report PDF has been generated. Keep it design-only unless the user explicitly selects a later source-change or simulation task.
+Start `T0037` only if a final submission handoff check is desired. No further experimental work is recommended after T0036.
 
 ## Next Ready-to-Send Prompt
 
 ```text
-Start task T0036: Post-Final Experimental Extension Design Gate.
+Start task T0037: Final Submission Handoff Check.
 
 Before starting, read AGENTS.md, docs/PROGRESS.md, docs/TASKS.md, docs/ROADMAP.md, docs/ARCHITECTURE.md, docs/VALIDATION.md, docs/DECISIONS.md, docs/PROMPTS.md, docs/FINAL_REPORT_DRAFT.md, and final_report/main.tex.
 
 Continue on the existing Git branch. Do not create or switch task branches.
 
 Goal:
-After final report revision and PDF generation, decide whether any high-risk experimental extension should be designed as future work.
+Perform a documentation-only final handoff check after the post-final experimental gate selected no further experimental work.
 
 Use `Extended_Proposal.pdf` as the primary project requirements source and the original DeFT paper as the primary algorithmic reference. Use `Proposal.pdf` only as initial context. Ignore the peer evaluation document completely.
 
@@ -716,7 +748,7 @@ Before running commands or editing tracking docs, produce a short implementation
 
 Do not modify source code, report claims, simulator behavior, helper behavior, routing logic, VN transition logic, VL fault injection, LUT schema/use path, topology behavior, traffic semantics, metrics semantics, runner/analysis semantics, generated final-sweep artifacts, generated final-report PDF artifacts, or Extended Proposal files. Do not rebuild Noxim, rerun simulations, regenerate the final sweep, install external dependencies, or use `./regression.sh --update`.
 
-Revisit the deferred T0034 options: interposer-aware XY-like baseline, source-cutoff plus post-injection drain policy, explicitly route-compatible intra-chiplet comparison, PARSEC/GEM5 trace support, or no further experimental work. Produce a design-only recommendation for whether to pursue one later task or stop experimental work after the final report. Record risks, validation requirements, dependencies, and blockers before any implementation.
+Confirm final artifact paths, repository status, tracking-document consistency, and remaining blockers only. Do not start any experimental extension.
 
 Update docs/TASKS.md, docs/PROGRESS.md, docs/VALIDATION.md, and docs/PROMPTS.md with the result. Update docs/DECISIONS.md only if a new durable decision is made.
 
@@ -729,7 +761,7 @@ At the end, provide:
 3. Whether any source code files changed
 4. Validation result
 5. Current project phase
-6. Selected future-work direction
+6. Final handoff status
 7. Next recommended task
 8. The next ready-to-send prompt
 9. Suggested branch name, which should be `None; continue on the existing branch`
@@ -746,5 +778,5 @@ None; continue on the existing branch.
 ## Suggested Commit Message
 
 ```text
-docs: generate final report pdf
+docs: close post-final experimental gate
 ```

@@ -339,18 +339,33 @@ Statuses: `TODO`, `IN_PROGRESS`, `DONE`, `BLOCKED`.
 
 ## T0036: Post-Final Experimental Extension Design Gate
 
-- **Status:** TODO
+- **Status:** DONE
 - **Objective:** After the final report artifact is revised and PDF generation is handled or explicitly blocked, decide whether any high-risk experimental extension should be designed as future work.
 - **Why it exists:** T0034 deferred Options B, C, and D because they require source behavior changes, substantial validation, or external dependencies that are not appropriate before final report closure.
 - **Relevant roadmap phase:** Phase 9
 - **Scope:** Revisit the deferred experimental directions after final report closure: interposer-aware XY-like baseline, source-cutoff plus post-injection drain, route-compatible intra-chiplet comparison policy, and PARSEC/GEM5 trace support. Produce a design-only recommendation and, if appropriate, split one selected direction into a future implementation task.
 - **Out of scope:** Source-code edits, simulation reruns, final-sweep reruns, report claim changes, generated artifact overwrites, Noxim rebuilds, external dependency installation, and `./regression.sh --update`.
-- **Files likely to change:** `docs/TASKS.md`, `docs/PROGRESS.md`, `docs/VALIDATION.md`, `docs/PROMPTS.md`, and `docs/DECISIONS.md` if a durable future-work decision is made.
+- **Files changed:** `docs/TASKS.md`, `docs/PROGRESS.md`, `docs/VALIDATION.md`, `docs/PROMPTS.md`, and `docs/DECISIONS.md`.
 - **Source code changes allowed:** No.
 - **Simulation reruns allowed:** No.
 - **Acceptance criteria:** The task either selects one future experimental extension for a later source-change design/implementation task or explicitly records that no further experimental work should be attempted; risks, validation requirements, and dependencies are documented before any code or simulation work.
 - **Validation method or limitation:** Documentation/status validation only with `git diff --check` and repository status checks. Any future source or simulation validation must be assigned to a later explicit task.
-- **Recommended prompt:** `Start task T0036: Post-Final Experimental Extension Design Gate. Before starting, read AGENTS.md, docs/PROGRESS.md, docs/TASKS.md, docs/ROADMAP.md, docs/ARCHITECTURE.md, docs/VALIDATION.md, docs/DECISIONS.md, docs/PROMPTS.md, docs/FINAL_REPORT_DRAFT.md, and final_report/main.tex. Continue on the existing branch. Do not modify source code, rerun simulations, rebuild Noxim, regenerate final-sweep artifacts, install external dependencies, or use ./regression.sh --update. Revisit the deferred T0034 options only after the final report revision and PDF status are settled. Produce a design-only recommendation for whether to pursue an interposer-aware XY-like baseline, a source-cutoff plus post-injection drain policy, an intra-chiplet route-compatible comparison, PARSEC/GEM5 trace support, or no further experimental work. Update the tracking docs, run git diff --check, and report the selected future direction, validation implications, next task prompt, branch guidance, commit message, and blockers.`
+- **Notes:** Completed on 2026-05-11 as a documentation-only design gate after the revised final report PDF was generated. The selected direction is no further experimental work for this project phase. An interposer-aware XY-like baseline was not selected because it requires new routing behavior, build validation, targeted route tests, and a new versioned comparison data set before it could support claims. A source-cutoff plus post-injection drain policy was not selected because it changes simulator/runner stop semantics, requires new metric interpretation, and still would not make standard `XY` topology-compatible with unrestricted inter-chiplet traffic. A route-compatible intra-chiplet comparison was not selected because it narrows away from the inter-chiplet DeFT requirement and would create a separate limited study after the final PDF is already complete. PARSEC/GEM5 trace support was not selected because it requires external trace-generation or import infrastructure and substantial validation. Assumption: the current final-report PDF and T0026/T0027/T0028 artifact chain are the terminal experimental deliverable unless the user explicitly reopens the project with a new task. Blocked: stronger claims remain blocked by missing interposer-aware baseline routing, missing source-cutoff/drain semantics, missing directional endpoint fault modeling, and missing validated PARSEC/GEM5 trace workflow. ADR-0042 records the durable decision.
+
+## T0037: Final Submission Handoff Check
+
+- **Status:** TODO
+- **Objective:** Perform a documentation-only final handoff check after experimental work is closed.
+- **Why it exists:** T0036 selected no further experimental work, so the only recommended follow-up is an administrative readiness check if the user wants one.
+- **Relevant roadmap phase:** Phase 9
+- **Scope:** Confirm final artifact paths, repository status, tracking-document consistency, and remaining blockers without changing report claims or generated artifacts.
+- **Out of scope:** Source-code edits, simulator/helper behavior changes, report content changes, generated final-sweep artifact changes, generated final-report PDF changes, Noxim rebuilds, simulation reruns, external dependency installation, and `./regression.sh --update`.
+- **Files likely to change:** `docs/TASKS.md`, `docs/PROGRESS.md`, `docs/VALIDATION.md`, and `docs/PROMPTS.md`.
+- **Source code changes allowed:** No.
+- **Simulation reruns allowed:** No.
+- **Acceptance criteria:** Final artifact paths and repository status are recorded; no experimental extension is started; `git diff --check` passes.
+- **Validation method or limitation:** Documentation/status validation only with `git status --short --branch`, `git diff --check`, and `external/noxim` status checks.
+- **Recommended prompt:** `Start task T0037: Final Submission Handoff Check. Before starting, read AGENTS.md, docs/PROGRESS.md, docs/TASKS.md, docs/ROADMAP.md, docs/ARCHITECTURE.md, docs/VALIDATION.md, docs/DECISIONS.md, docs/PROMPTS.md, docs/FINAL_REPORT_DRAFT.md, and final_report/main.tex. Continue on the existing Git branch. Do not create or switch task branches. Do not modify source code, report claims, simulator behavior, helper behavior, routing logic, VN transition logic, VL fault injection, LUT schema/use path, topology behavior, traffic semantics, metrics semantics, runner/analysis semantics, generated final-sweep artifacts, generated final-report PDF artifacts, or Extended Proposal files. Do not rebuild Noxim, rerun simulations, regenerate the final sweep, install external dependencies, or use ./regression.sh --update. Confirm final artifact paths, repository status, tracking-document consistency, and remaining blockers only. Update the tracking docs, run git diff --check, and report final handoff status, validation, next task guidance, branch guidance, commit message, and blockers.`
 
 ## T0023: Add or Register Noxim Source Tree
 
