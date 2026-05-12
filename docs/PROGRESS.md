@@ -2,7 +2,7 @@
 
 ## Current Phase
 
-Phase 9 - Final Analysis and Report Support (final package ready; opt-in source-cutoff/drain mode implemented and smoke-validated)
+Phase 9 - Final Analysis and Report Support (final package ready; opt-in drain mode smoke-validated; directional fault support deferred)
 
 ## Completed Tasks
 
@@ -50,8 +50,9 @@ Phase 9 - Final Analysis and Report Support (final package ready; opt-in source-
 - `T0042` - Run Limited IA-XY vs DeFT Comparison.
 - `T0043` - Design Source-Cutoff and Post-Injection Drain Policy.
 - `T0044` - Implement and Validate Drain Policy.
+- `T0045` - Evaluate Directional Fault Modeling.
 
-DeFT VN assignment behavior, the first VN movement-transition restriction enforcement layer, the offline VL LUT schema/generator, the runtime schema-v1 LUT loading/use path, explicit XY fault-free/fault-injected baseline configuration modes, proposal-required synthetic traffic configuration profiles, machine-readable metrics export, tiny experiment-runner launch support, final-analysis scaffolding, the final sweep policy, the validated T0026 150-run final sweep output set, T0027 blank-aware report-support tables, T0028 claim-safe final report results draft, the T0029 tracked claim-safe Markdown report draft, the T0030 submission-readiness polish, the T0031 IEEE-style LaTeX final report source artifact, the T0032 generated final report PDF, the T0033 blocker diagnosis, the T0034 report-revision direction decision, the T0035 final-report diagnosis revision, the T0036 post-final experimental design gate, the T0037 final submission handoff check, the T0038 final submission archive refresh, the T0039 future backlog documentation, the T0040 IA-XY baseline design, the T0041 IA-XY baseline implementation, the T0042 limited IA-XY-vs-DEFT artifact set, the T0043 source-cutoff/drain policy design, and the T0044 opt-in drain-mode implementation with targeted smoke validation now exist for `DEFT_2_5D`. Performance claims remain limited to descriptive, blank-aware report support only. No future backlog item blocks the current final submission.
+DeFT VN assignment behavior, the first VN movement-transition restriction enforcement layer, the offline VL LUT schema/generator, the runtime schema-v1 LUT loading/use path, explicit XY fault-free/fault-injected baseline configuration modes, proposal-required synthetic traffic configuration profiles, machine-readable metrics export, tiny experiment-runner launch support, final-analysis scaffolding, the final sweep policy, the validated T0026 150-run final sweep output set, T0027 blank-aware report-support tables, T0028 claim-safe final report results draft, the T0029 tracked claim-safe Markdown report draft, the T0030 submission-readiness polish, the T0031 IEEE-style LaTeX final report source artifact, the T0032 generated final report PDF, the T0033 blocker diagnosis, the T0034 report-revision direction decision, the T0035 final-report diagnosis revision, the T0036 post-final experimental design gate, the T0037 final submission handoff check, the T0038 final submission archive refresh, the T0039 future backlog documentation, the T0040 IA-XY baseline design, the T0041 IA-XY baseline implementation, the T0042 limited IA-XY-vs-DEFT artifact set, the T0043 source-cutoff/drain policy design, the T0044 opt-in drain-mode implementation with targeted smoke validation, and the T0045 directional fault-model feasibility decision now exist for `DEFT_2_5D`. Performance claims remain limited to descriptive, blank-aware report support only. No future backlog item blocks the current final submission.
 
 ## In-Progress Tasks
 
@@ -62,6 +63,22 @@ DeFT VN assignment behavior, the first VN movement-transition restriction enforc
 - None.
 
 ## Last Validation Result
+
+- T0045 Evaluate Directional Fault Modeling completed as a documentation-only feasibility task on 2026-05-12.
+- Required startup reading was completed before task work: `AGENTS.md`, `docs/PROGRESS.md`, `docs/TASKS.md`, `docs/ROADMAP.md`, `docs/ARCHITECTURE.md`, `docs/VALIDATION.md`, `docs/DECISIONS.md`, `docs/PROMPTS.md`, `docs/FINAL_REPORT_DRAFT.md`, and `final_report/main.tex`.
+- Source-document roles were preserved: `Extended_Proposal.pdf` is the primary project requirements source, the original DeFT paper at `docs/references/DeFT_A_Deadlock-Free_and_Fault-Tolerant_Routing_Algorithm_for_2.5D_Chiplet_Networks.pdf` is the primary algorithmic reference, `Proposal.pdf` is initial context only, and the peer evaluation document was ignored completely.
+- Parent repository status before edits was clean on `feat/map-noxim-extension-points...origin/feat/map-noxim-extension-points`; `external/noxim` status before edits was clean on `feat/baseline-noxim...origin/feat/baseline-noxim`.
+- Before editing, a short feasibility plan was produced. Assumption: T0045 is documentation-only and should make no simulator, LUT, topology, routing, or artifact changes. Blocked: no blocker at task start; implementation of single-direction fault cases remains blocked unless this feasibility task accepts a follow-up implementation policy.
+- Source-document inspection found the core ambiguity: the extended proposal describes four bidirectional VLs per chiplet but also lists 3.125% with one faulty VL up to 25% with eight faulty VLs; the original DeFT paper describes four bidirectional VLs per chiplet and reports four-chiplet reachability over `total VLs=32`.
+- Read-only source inspection confirmed that the current implementation uses 16 physical bidirectional VL IDs, one `is_functional` flag per physical VL, physical fault IDs in `deft_faulty_vertical_links` / `-deft_faulty_vls`, schema-v1 `fault_mask_id` over physical VL bits, physical-mask LUT generation, runtime active-mask derivation from nonfunctional physical VLs, and physical functional-state checks in both `DEFT` and IA-XY traversal paths.
+- T0045 recommends deferring directional endpoint support. ADR-0048 records the durable policy: preserve the current 16-physical-VL model as the default and as the only interpretation of existing artifacts; implement directional endpoint support only through a future versioned fault-model task with per-direction state, new config/CLI fields, schema-v2 LUT generation/runtime lookup, directional route checks, new validation, new artifact directories, and explicit result labels.
+- No source code, simulator behavior, standard `XY`, `DEFT`, VN transition restrictions, VL fault injection semantics, LUT schema/use path, topology behavior, generated artifacts, simulations, Noxim rebuild, final-report PDF, `final_report.zip`, Extended Proposal files, or `./regression.sh --update` was changed.
+- `docs/TASKS.md`, `docs/PROGRESS.md`, `docs/VALIDATION.md`, `docs/PROMPTS.md`, `docs/ARCHITECTURE.md`, and `docs/DECISIONS.md` were updated for T0045 traceability and the directional fault-model deferral decision.
+- `git diff --check` completed with exit code `0`; Git reported line-ending conversion warnings for edited Markdown files only.
+- Final `external/noxim` status remained clean on `feat/baseline-noxim...origin/feat/baseline-noxim`.
+- The generated-artifact guard returned no changed files for T0026/T0027/T0028 or T0042 generated directories.
+- The final-report and Extended Proposal artifact guard returned no changed files for `final_report/main.pdf`, `final_report.zip`, `Extended_Proposal.pdf`, or `Extended_Proposal.zip`.
+- Final parent status shows only modified tracking docs: `docs/ARCHITECTURE.md`, `docs/DECISIONS.md`, `docs/PROGRESS.md`, `docs/PROMPTS.md`, `docs/TASKS.md`, and `docs/VALIDATION.md`.
 
 - T0044 Implement and Validate Drain Policy completed on 2026-05-12.
 - Required startup reading was completed before task work: `AGENTS.md`, `docs/PROGRESS.md`, `docs/TASKS.md`, `docs/ROADMAP.md`, `docs/ARCHITECTURE.md`, `docs/VALIDATION.md`, `docs/DECISIONS.md`, `docs/PROMPTS.md`, `docs/FINAL_REPORT_DRAFT.md`, and `final_report/main.tex`.
@@ -941,11 +958,15 @@ External source tree registered during `T0023`:
 - Assumption: T0044 drain mode is opt-in and does not reinterpret historical fixed-window artifacts or current `-volume` output.
 - Assumption: T0044 source-gated warm-up is the first supported drain-mode warm-up policy; a preloaded warm-up with flush would require a separate design task.
 - Assumption: T0044 targeted smokes validate implementation mechanics only and do not create final experiment evidence.
+- Assumption: T0045 interprets the original paper's four-chiplet `total VLs=32` wording as directional endpoint or channel accounting over the same 16 physical bidirectional VL objects.
+- Assumption: Existing T0026/T0027/T0028, T0042, and T0044 artifacts remain physical-model artifacts and must not be reinterpreted as directional endpoint experiments.
+- Assumption: Future directional endpoint support should preserve physical VL identity while adding per-direction state and a versioned LUT/config boundary.
 - Blocked: Strong inter-chiplet IA-XY-vs-DEFT comparison needs new versioned experiment artifacts and blank-aware analysis, or a narrower traffic policy that explicitly limits comparison to route-compatible traffic.
 - Blocked: Stronger final-report claims remain blocked after T0035; the selected immediate path improved explanation, not measured performance coverage.
 - Blocked: No current PDF-generation blocker remains after T0032; stronger final-report claims remain blocked without a separate approved validation or rerun policy.
 - Blocked: Strong IA-XY performance claims remain blocked after T0042 because the new artifact set is limited, two-seed exploratory data and still contains blank IA-XY hotspot cells.
 - Blocked: Eventual-delivery claims remain blocked after T0044 until a later explicit experiment task defines timeout policy, creates new versioned drain-mode artifacts, and performs claim-safe analysis.
+- Blocked: Paper-aligned single-direction fault experiments remain blocked after T0045 until a future versioned directional fault model, directional LUT path, runtime lookup, and validation policy exist.
 - Blocked: Reopening source-cutoff/drain semantics, route-compatible intra-chiplet comparison, PARSEC/GEM5 traces, directional endpoint faults, or stronger performance claims requires a new explicit task with its own design and validation policy.
 
 ## Open Questions
@@ -957,19 +978,19 @@ External source tree registered during `T0023`:
 - How should final traffic-profile-specific LUT generation encode non-uniform `T_inter_r` inputs?
 - Should final hotspot experiments keep hotspot routers `9`, `13`, and `41`, or should an explicit source-document or instructor-provided hotspot-node set replace them?
 - Why did Git fail to create task branch refs in the current Windows worktree? This is no longer operationally important because user instruction now forbids automatic task branch creation.
-- Should a future implementation add directional endpoint fault modeling for the original paper's single-direction 3.125% fault case?
+- Should deferred directional endpoint fault support be prioritized before trace feasibility if future report claims need the original paper's single-direction 3.125% case?
 - Should a later experiment policy select one global drain timeout, or traffic-profile-specific timeout budgets after T0044 smokes exist?
 - Should the generated final-analysis scaffold blocker text be updated in a future task to reflect the T0025 policy resolutions while still keeping generated scaffold outputs conservative?
 - Should a future report-packaging cleanup install or vendor the exact `IEEEtran.bst` style, or keep the currently installed `ieeetr` BibTeX style used for the generated PDF?
 
 ## Next Recommended Task
 
-T0045: Evaluate Directional Fault Modeling, only if more development is required after the current final submission.
+T0046: PARSEC/GEM5 Trace Support Feasibility, only if more development is required after the current final submission.
 
 ## Next Ready-to-Send Prompt
 
 ```text
-Start task T0045: Evaluate Directional Fault Modeling.
+Start task T0046: PARSEC/GEM5 Trace Support Feasibility.
 
 Before starting, read:
 - AGENTS.md
@@ -989,23 +1010,27 @@ Use Extended_Proposal.pdf as the primary project requirements source and the ori
 
 Use the registered Noxim source tree at external/noxim.
 
-Goal: evaluate whether the simulator should support directional endpoint fault modeling in addition to the current physical bidirectional VL fault model.
+Goal: assess the dependency, trace-format, workload-mapping, and validation burden for PARSEC/GEM5 trace support without implementing it.
 
 Before editing:
-- Produce a short feasibility plan.
 - Check parent repository status.
 - Check external/noxim status.
+- Produce a short feasibility plan.
 - Clearly mark assumptions as `Assumption`.
 - Clearly mark blockers as `Blocked`.
 
 Scope:
-- Compare the current 16 physical bidirectional VL model with the original paper's directional endpoint fault interpretation.
-- Identify impacts to fault masks, LUT generation, runtime lookup, topology state, validation, and result interpretation.
-- Recommend implement, defer, or reject directional endpoint support.
+- Identify likely GEM5/PARSEC dependencies and whether they are already available.
+- Identify expected trace format requirements and minimal fields needed by Noxim.
+- Propose workload-to-router and timing mapping options.
+- Identify validation burden, blockers, artifact policy, and claim-safety limits.
+- Recommend implement, defer, or reject trace ingestion.
 - Update tracking docs and docs/DECISIONS.md only if a durable policy decision is made.
 
 Do not:
 - Edit source code.
+- Install dependencies.
+- Import or generate large traces.
 - Run simulations.
 - Rebuild Noxim.
 - Modify standard XY route behavior.
@@ -1014,6 +1039,8 @@ Do not:
 - Modify VL fault injection semantics.
 - Modify LUT schema or runtime LUT use path.
 - Modify topology behavior.
+- Modify traffic generation behavior.
+- Modify metrics, runner, or analysis behavior.
 - Regenerate final sweep artifacts.
 - Regenerate final_report/main.pdf.
 - Modify final_report/main.pdf.
@@ -1040,5 +1067,5 @@ None; continue on the existing branch.
 ## Suggested Commit Message
 
 ```text
-feat: implement drain policy
+docs: evaluate directional fault modeling
 ```

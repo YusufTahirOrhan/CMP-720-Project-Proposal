@@ -1907,6 +1907,40 @@ T0044 result on 2026-05-12:
 - The final-report and proposal artifact guard returned no changed files for `final_report/main.pdf`, `final_report.zip`, `Extended_Proposal.pdf`, or `Extended_Proposal.zip`.
 - Final parent status shows modified tracking docs plus the modified nested `external/noxim` source tree; no protected final-report, package, or Extended Proposal artifacts are modified.
 
+## Directional Endpoint Fault Modeling Feasibility Validation
+
+Purpose:
+
+- Compare the current physical bidirectional VL fault model with the original DeFT paper's directional fault-rate interpretation.
+- Record the implementation surfaces that would be affected by directional endpoint faults.
+- Preserve existing simulator behavior, source code, schema-v1 LUTs, generated artifacts, final-report artifacts, package artifacts, and Extended Proposal files.
+
+Known validation for T0045:
+
+- Parent repository status before edits: `git status --short --branch`
+- Noxim source-tree status before and after edits: `git status --short --branch` from `external/noxim`
+- Documentation whitespace check: `git diff --check`
+- Generated-artifact guard for T0026/T0027/T0028 and T0042 generated directories.
+- Final-report and proposal artifact guard for `final_report/main.pdf`, `final_report.zip`, `Extended_Proposal.pdf`, and `Extended_Proposal.zip`.
+- Do not rebuild Noxim, run simulations, regenerate final sweeps, regenerate `final_report/main.pdf`, modify `final_report.zip`, modify Extended Proposal files, or use `./regression.sh --update`.
+
+T0045 result on 2026-05-12:
+
+- Required startup reading was completed before task work: `AGENTS.md`, `docs/PROGRESS.md`, `docs/TASKS.md`, `docs/ROADMAP.md`, `docs/ARCHITECTURE.md`, `docs/VALIDATION.md`, `docs/DECISIONS.md`, `docs/PROMPTS.md`, `docs/FINAL_REPORT_DRAFT.md`, and `final_report/main.tex`.
+- Source-document roles were preserved: `Extended_Proposal.pdf` is the primary project requirements source, the original DeFT paper is the primary algorithmic reference, `Proposal.pdf` is initial context only, and the peer evaluation document was ignored completely.
+- Parent repository status before edits was clean on `feat/map-noxim-extension-points...origin/feat/map-noxim-extension-points`.
+- `external/noxim` status before edits was clean on `feat/baseline-noxim...origin/feat/baseline-noxim`.
+- Before editing, a short feasibility plan was produced. Assumption: T0045 is documentation-only and should make no simulator, LUT, topology, routing, or artifact changes. Blocked: no blocker at task start; implementation of single-direction fault cases remains blocked unless this feasibility task accepts a follow-up implementation policy.
+- Source-document inspection found the extended proposal's tension between four bidirectional VLs per chiplet and 3.125% through 25% fault-rate wording, and found the original DeFT paper's four-chiplet `total VLs=32` reachability denominator.
+- Read-only source inspection confirmed that current fault injection, validation, LUT generation, runtime lookup, stats labels, runner masks, `DEFT`, and IA-XY use physical bidirectional VL state and physical fault masks.
+- T0045 records a deferral decision in ADR-0048: preserve the existing physical model and existing artifacts; add directional endpoint support only through a future versioned fault-model task with per-direction state, new config/CLI fields, schema-v2 LUT generation/runtime lookup, directional route checks, new validation, and new artifact directories.
+- No source code, simulator behavior, standard `XY`, `DEFT`, VN transition restrictions, VL fault injection semantics, LUT schema/use path, topology behavior, generated artifacts, simulations, Noxim rebuild, final-report PDF, package artifact, Extended Proposal file, or `./regression.sh --update` was changed.
+- `git diff --check` completed with exit code `0`; Git reported line-ending conversion warnings for edited Markdown files only.
+- Final `external/noxim` status remained clean on `feat/baseline-noxim...origin/feat/baseline-noxim`.
+- The generated-artifact guard returned no changed files for `external/noxim/other/generated/t0026_final_sweep_v1`, `t0026_final_analysis_v1`, `t0027_report_support_v1`, `t0028_final_report_results_v1`, or `t0042_iaxy_deft_limited_v1`.
+- The final-report and proposal artifact guard returned no changed files for `final_report/main.pdf`, `final_report.zip`, `Extended_Proposal.pdf`, or `Extended_Proposal.zip`.
+- Final parent status showed only modified tracking docs: `docs/ARCHITECTURE.md`, `docs/DECISIONS.md`, `docs/PROGRESS.md`, `docs/PROMPTS.md`, `docs/TASKS.md`, and `docs/VALIDATION.md`.
+
 ## Metrics Validation
 
 Purpose:

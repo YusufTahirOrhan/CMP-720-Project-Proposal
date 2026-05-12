@@ -500,7 +500,7 @@ Statuses: `TODO`, `IN_PROGRESS`, `DONE`, `BLOCKED`.
 
 ## T0045: Evaluate Directional Fault Modeling
 
-- **Status:** TODO
+- **Status:** DONE
 - **Type:** design/feasibility
 - **Objective:** Analyze whether the simulator should support single-direction endpoint fault modeling in addition to the current physical bidirectional VL fault model.
 - **Why it exists:** The current implementation uses 16 physical bidirectional VLs, while the DeFT paper's fault-rate interpretation includes directional VL accounting and single-direction cases.
@@ -510,11 +510,13 @@ Statuses: `TODO`, `IN_PROGRESS`, `DONE`, `BLOCKED`.
 - **Files likely to change:** `docs/ARCHITECTURE.md`, `docs/DECISIONS.md`, `docs/TASKS.md`, `docs/PROGRESS.md`, `docs/VALIDATION.md`, and `docs/PROMPTS.md`.
 - **Source code changes allowed:** No.
 - **Simulation reruns allowed:** No.
-- **Acceptance criteria:** Feasibility note explains how single-direction endpoint faults would map to VL IDs, masks, LUT generation, runtime lookup, validation, and paper fault-rate wording; recommends implement/defer with risks.
-- **Validation method or limitation:** Documentation-only validation with `git diff --check` and `external/noxim` status.
+- **Acceptance criteria:** Completed. Feasibility note explains how single-direction endpoint faults would map to VL IDs, masks, LUT generation, runtime lookup, validation, and paper fault-rate wording; recommends deferring support behind a future versioned fault-model task.
+- **Validation method or limitation:** Documentation-only validation with `git diff --check`, `external/noxim` status, and protected-artifact guards.
 - **Dependencies:** T0039.
 - **Risk level:** Medium, because implementation would affect fault injection, LUTs, and result interpretation.
 - **Recommended prompt:** `Start task T0045: Evaluate Directional Fault Modeling. Analyze compatibility between the current 16 physical bidirectional VL model and directional endpoint faults, produce a feasibility recommendation, update tracking docs, and run git diff --check.`
+- **Files changed:** `docs/ARCHITECTURE.md`, `docs/DECISIONS.md`, `docs/TASKS.md`, `docs/PROGRESS.md`, `docs/VALIDATION.md`, and `docs/PROMPTS.md`.
+- **Notes:** Completed on 2026-05-12 as a documentation-only feasibility task. The current simulator remains a 16 physical bidirectional VL model: one `VerticalLinkInfo::is_functional` state per physical VL, 16-bit physical `fault_mask_id` keys in `deft_vl_lut.v1`, physical fault masks in the runner and generator, and physical functional-state checks in `DEFT` and IA-XY routing. T0045 recommends deferring directional endpoint support because it would require explicit per-direction state, new config/CLI fields, schema-v2 LUT generation/runtime lookup, directional route checks, new validation, new artifact directories, and clear result labels. Existing T0026/T0027/T0028, T0042, T0044, final-report, package, and Extended Proposal artifacts were preserved and must not be reinterpreted as single-direction fault evidence.
 
 ## T0046: PARSEC/GEM5 Trace Support Feasibility
 

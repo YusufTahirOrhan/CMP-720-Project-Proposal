@@ -1662,6 +1662,75 @@ Assumption: Source-gated warm-up remains the first supported drain-mode warm-up 
 
 Blocked: Stronger eventual-delivery report claims still require a later explicit experiment task that chooses timeout budgets, creates new versioned drain-mode artifacts, and performs claim-safe analysis.
 
+## T0045 Directional Endpoint Fault Modeling Feasibility
+
+T0045 evaluates whether the simulator should add directional endpoint faults in addition to the current physical bidirectional VL fault model. It is documentation-only and does not change simulator source, fault injection behavior, routing behavior, LUT schema/use path, topology behavior, generated artifacts, final-report artifacts, package artifacts, or Extended Proposal files.
+
+### Source Alignment
+
+`Extended_Proposal.pdf` is internally mixed: it describes four bidirectional VLs per chiplet, but also states a fault-rate range from 3.125% with one faulty VL up to 25% with eight faulty VLs. The original DeFT paper resolves the denominator more clearly for evaluation by describing four bidirectional VLs per chiplet while reporting reachability for a four-chiplet system with `total VLs=32`.
+
+Assumption: The most consistent interpretation is that the physical system has 16 bidirectional VL objects, while the paper's 32-count fault-rate denominator is directional endpoint or channel accounting over those same physical VLs.
+
+### Current Implementation Model
+
+The current implementation deliberately uses 16 physical bidirectional VL IDs:
+
+- `DeftTopology::VerticalLinkCount` is `ChipletCount * VerticalLinksPerChiplet`, or 16.
+- Each `VerticalLinkInfo` has one `is_functional` flag.
+- `DeftFaultInjection` validates explicit/generated masks over physical VL IDs `0..15` and marks a physical VL faulty through `setVerticalLinkFunctional(vl_id, false)`.
+- `deft_vl_lut.v1` uses `fault_mask_id` as a fixed-width hexadecimal bitset over the same 16 physical VL IDs.
+- The LUT generator filters both source exits and destination entries through the same physical functional set.
+- Runtime lookup derives the active mask from nonfunctional physical VLs and checks `link->is_functional` for both source-exit and destination-entry traversal.
+- IA-XY also selects only from `functionalVerticalLinksForChiplet()`, so it inherits the same physical bidirectional fault semantics.
+
+Assumption: Existing T0026/T0027/T0028 and T0042 artifacts remain physical-model artifacts and must not be reinterpreted as directional endpoint experiments.
+
+### Directional Endpoint Model
+
+A future directional model should keep physical VL identity and add a derived directional state rather than replacing `VerticalLinkInfo::vl_id`. One compact mapping would be:
+
+```text
+directional_endpoint_id = vl_id * 2 + direction
+direction = 0: chiplet_to_interposer
+direction = 1: interposer_to_chiplet
+```
+
+Under that mapping, a source-side exit consumes the `chiplet_to_interposer` direction of the selected source VL, while a destination-side entry consumes the `interposer_to_chiplet` direction of the selected destination VL. A single directional fault would block only the matching traversal direction. The opposite direction of the same physical VL could remain usable.
+
+### Impact Summary
+
+| Surface | Current physical model | Directional endpoint impact |
+| --- | --- | --- |
+| Fault masks | 16-bit physical masks; bit `vl_id` disables both directions. | Add a 32-bit directional mask or a new fault-model field. Physical masks must remain supported for old artifacts and configs. |
+| Fault injection | One mutable `is_functional` flag per physical VL. | Add per-direction functional state and new CLI/YAML selectors. A physical-fault convenience mode may set both endpoint bits. |
+| Mask validation | Rejects masks that leave a chiplet with zero functional physical VLs. | Validate at least one usable source-exit direction and one usable destination-entry direction per chiplet for unrestricted inter-chiplet traffic. |
+| LUT generation | `functional_vl_ids(mask)` filters physical VLs for both source and destination optimization. | Filter source exits by chiplet-to-interposer state and destination entries by interposer-to-chiplet state. Existing schema v1 cannot express this safely. |
+| Runtime lookup | Active `fault_mask_id` comes from nonfunctional physical VLs and keys schema-v1 entries. | Requires schema v2 or an explicit fault-model discriminator so runtime and LUT generator agree on directional state. |
+| Routing checks | `DEFT` and IA-XY both check one physical `is_functional` flag before hub traversal. | Routing must check the direction being traversed: source exit versus destination entry. |
+| Topology state | Physical link wiring remains bidirectional regardless of fault state; routing avoids nonfunctional VLs. | Wiring can remain physical, but topology/fault query APIs need directional availability without changing graph construction. |
+| Validation | Existing source smokes and final artifacts validate the physical model only. | Needs new unit-style mask checks, LUT generation checks, runtime route checks, and small directional smoke cases before any sweep. |
+| Result interpretation | Physical rates are reported over 16 VLs and as directional-equivalent rates over 32 channels when both directions fail together. | Directional runs must report directional rates over 32 endpoints and must not be aggregated with physical-model runs without labels. |
+
+### Recommendation
+
+Recommendation: Defer directional endpoint support for the current project state.
+
+Rationale:
+
+- The current physical bidirectional model is internally consistent, already validated, and aligned with the implementation's stable 16 physical VL inventory.
+- Directional endpoint support is useful for paper-aligned single-direction cases, especially the original paper's 3.125% one-direction case.
+- Implementing it safely would touch high-risk surfaces: fault masks, LUT schema/generation, runtime lookup, topology state queries, route traversal checks, runner manifests, analysis labels, and validation policy.
+- Adding it without a new schema/config boundary would risk silently mixing physical and directional fault semantics.
+
+Durable policy:
+
+- Preserve the current 16-physical-VL model as the default and as the only interpretation of existing artifacts.
+- Do not retrofit directional semantics into `deft_vl_lut.v1`, existing physical masks, or historical result directories.
+- If directional endpoint support is later required, implement it through an explicit future design/implementation task that introduces a versioned directional fault model, likely `deft_vl_lut.v2`, new config/CLI fields, new artifact directories, and claim-safe analysis labels.
+
+Blocked: Paper-aligned single-direction fault experiments remain blocked until a future task implements and validates directional endpoint state, directional LUT generation, runtime directional lookup, and directional result labeling.
+
 ## Post-Submission Future Backlog
 
 T0039 records the remaining technical gaps as future backlog items only. These tasks do not block the current final submission package, which remains `final_report/main.pdf`, the current `final_report/` source tree, and `final_report.zip`.
@@ -1685,7 +1754,7 @@ Ordered future backlog:
 | T0042 | Experiment | Completed limited IA-XY-vs-DEFT comparison in a new artifact directory with blank-aware claim limits. |
 | T0043 | Design | Completed source-cutoff plus post-injection drain/timeout policy for eventual-delivery analysis. |
 | T0044 | Implementation | Completed opt-in source-cutoff plus post-injection drain/timeout support with targeted smokes. |
-| T0045 | Feasibility | Evaluate directional endpoint fault modeling against the current physical bidirectional VL model. |
+| T0045 | Feasibility | Completed directional endpoint fault modeling evaluation; support is deferred behind a future versioned fault-model design. |
 | T0046 | Feasibility | Assess PARSEC/GEM5 trace support requirements and validation burden. |
 | T0047 | Implementation | Implement trace ingestion only after a trace format and validation plan are accepted. |
 | T0048 | Report | Regenerate report material only after new validated artifacts exist. |
@@ -1696,7 +1765,7 @@ Blocked: Stronger unrestricted XY-vs-DEFT claims remain blocked until an interpo
 
 Blocked: Eventual-delivery claims remain blocked until the T0044 drain mode is used by a later explicit experiment task to create new versioned artifacts and claim-safe analysis.
 
-Blocked: Paper-aligned single-direction fault cases remain blocked until directional endpoint fault modeling is evaluated and, if accepted, implemented.
+Blocked: Paper-aligned single-direction fault cases remain blocked until directional endpoint fault support is implemented through a future versioned fault-model and LUT-schema task.
 
 Blocked: PARSEC/GEM5 workload claims remain blocked until a trace pipeline is validated.
 
