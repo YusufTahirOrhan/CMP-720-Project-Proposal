@@ -2,7 +2,7 @@
 
 ## Current Phase
 
-Phase 9 - Final Analysis and Report Support (final package ready; limited IA-XY-vs-DEFT comparison completed)
+Phase 9 - Final Analysis and Report Support (final package ready; source-cutoff/drain policy designed)
 
 ## Completed Tasks
 
@@ -48,8 +48,9 @@ Phase 9 - Final Analysis and Report Support (final package ready; limited IA-XY-
 - `T0040` - Design Interposer-Aware XY Baseline.
 - `T0041` - Implement Interposer-Aware XY Baseline.
 - `T0042` - Run Limited IA-XY vs DeFT Comparison.
+- `T0043` - Design Source-Cutoff and Post-Injection Drain Policy.
 
-DeFT VN assignment behavior, the first VN movement-transition restriction enforcement layer, the offline VL LUT schema/generator, the runtime schema-v1 LUT loading/use path, explicit XY fault-free/fault-injected baseline configuration modes, proposal-required synthetic traffic configuration profiles, machine-readable metrics export, tiny experiment-runner launch support, final-analysis scaffolding, the final sweep policy, the validated T0026 150-run final sweep output set, T0027 blank-aware report-support tables, T0028 claim-safe final report results draft, the T0029 tracked claim-safe Markdown report draft, the T0030 submission-readiness polish, the T0031 IEEE-style LaTeX final report source artifact, the T0032 generated final report PDF, the T0033 blocker diagnosis, the T0034 report-revision direction decision, the T0035 final-report diagnosis revision, the T0036 post-final experimental design gate, the T0037 final submission handoff check, the T0038 final submission archive refresh, the T0039 future backlog documentation, the T0040 IA-XY baseline design, the T0041 IA-XY baseline implementation, and the T0042 limited IA-XY-vs-DEFT artifact set now exist for `DEFT_2_5D`. Performance claims remain limited to descriptive, blank-aware report support only. No future backlog item blocks the current final submission.
+DeFT VN assignment behavior, the first VN movement-transition restriction enforcement layer, the offline VL LUT schema/generator, the runtime schema-v1 LUT loading/use path, explicit XY fault-free/fault-injected baseline configuration modes, proposal-required synthetic traffic configuration profiles, machine-readable metrics export, tiny experiment-runner launch support, final-analysis scaffolding, the final sweep policy, the validated T0026 150-run final sweep output set, T0027 blank-aware report-support tables, T0028 claim-safe final report results draft, the T0029 tracked claim-safe Markdown report draft, the T0030 submission-readiness polish, the T0031 IEEE-style LaTeX final report source artifact, the T0032 generated final report PDF, the T0033 blocker diagnosis, the T0034 report-revision direction decision, the T0035 final-report diagnosis revision, the T0036 post-final experimental design gate, the T0037 final submission handoff check, the T0038 final submission archive refresh, the T0039 future backlog documentation, the T0040 IA-XY baseline design, the T0041 IA-XY baseline implementation, the T0042 limited IA-XY-vs-DEFT artifact set, and the T0043 source-cutoff/drain policy design now exist for `DEFT_2_5D`. Performance claims remain limited to descriptive, blank-aware report support only. No future backlog item blocks the current final submission.
 
 ## In-Progress Tasks
 
@@ -60,6 +61,25 @@ DeFT VN assignment behavior, the first VN movement-transition restriction enforc
 - None.
 
 ## Last Validation Result
+
+- T0043 Design Source-Cutoff and Post-Injection Drain Policy completed as a design-only documentation task on 2026-05-12.
+- Required startup reading was completed before task work: `AGENTS.md`, `docs/PROGRESS.md`, `docs/TASKS.md`, `docs/ROADMAP.md`, `docs/ARCHITECTURE.md`, `docs/VALIDATION.md`, `docs/DECISIONS.md`, `docs/PROMPTS.md`, `docs/FINAL_REPORT_DRAFT.md`, and `final_report/main.tex`.
+- Source-document roles were preserved: `Extended_Proposal.pdf` is the primary project requirements source, the original DeFT paper at `docs/references/DeFT_A_Deadlock-Free_and_Fault-Tolerant_Routing_Algorithm_for_2.5D_Chiplet_Networks.pdf` is the primary algorithmic reference, `Proposal.pdf` is initial context only, and the peer evaluation document was ignored completely.
+- Parent repository status before edits was clean on `feat/map-noxim-extension-points...origin/feat/map-noxim-extension-points`.
+- A plain `external/noxim` status command hit Git's safe-directory guard; the documented safe-directory status command then reported `external/noxim` clean on `feat/baseline-noxim...origin/feat/baseline-noxim`.
+- Before editing, a short design plan was produced. Assumption: T0043 is design-only and must preserve current fixed-window artifacts and final submission artifacts as historical evidence. Blocked: eventual-delivery claims remain blocked until a later implementation task adds and validates the accepted cutoff/drain/timeout behavior.
+- Read-only source inspection confirmed current `-sim` behavior is a fixed continuous-injection run, current Noxim `-volume` stops on delivered flits rather than source cutoff plus empty-network drain, `ProcessingElement.cpp` owns source generation and injection counters, and `GlobalStats.cpp` exports the current fixed-window denominator fields.
+- Added the T0043 design to `docs/ARCHITECTURE.md`: source cutoff, drain start, source quiescence, in-flight empty condition, explicit timeout, metric denominators, warm-up interaction, difference from fixed-window `-sim`, difference from current `-volume`, future implementation surfaces, and future smoke-test expectations.
+- Added ADR-0046 to record the durable decision that source-cutoff plus drain/timeout is an opt-in future eventual-delivery mode, not a reinterpretation of existing fixed-window artifacts.
+- The policy keeps warm-up source-gated in first drain-mode implementation unless a later task explicitly designs preloaded warm-up with its own flush rule.
+- T0026/T0027/T0028 remain the historical final fixed-window artifact chain. T0042 remains a limited exploratory fixed-window IA-XY-vs-DEFT artifact set. None were regenerated, overwritten, or reinterpreted as eventual-delivery evidence.
+- No simulator source, helper source, routing logic, standard `XY`, `DEFT`, VN transition restrictions, VL fault injection semantics, LUT schema/use path, topology behavior, traffic semantics, metrics semantics, runner/analysis semantics, Noxim rebuild, simulation run, final-sweep regeneration, final-report PDF regeneration, package artifact, Extended Proposal file, or `./regression.sh --update` was changed.
+- `git diff --check` completed with exit code `0`; Git reported line-ending conversion warnings for edited Markdown files only.
+- Final `external/noxim` status remained clean on `feat/baseline-noxim...origin/feat/baseline-noxim`.
+- The generated-artifact guard returned no changed files for T0026/T0027/T0028 or T0042 generated directories.
+- The final-report and Extended Proposal artifact guard returned no changed files for `final_report/main.pdf`, `final_report.zip`, `Extended_Proposal.pdf`, or `Extended_Proposal.zip`.
+- Final parent status shows only modified tracking docs: `docs/ARCHITECTURE.md`, `docs/DECISIONS.md`, `docs/PROGRESS.md`, `docs/PROMPTS.md`, `docs/TASKS.md`, and `docs/VALIDATION.md`.
+- The next implementation task should be T0044 only if the user wants to add the accepted opt-in drain mode and run targeted smokes.
 
 - T0042 Run Limited IA-XY vs DeFT Comparison completed on 2026-05-11.
 - Required startup reading was completed before experiment work: `AGENTS.md`, `docs/PROGRESS.md`, `docs/TASKS.md`, `docs/ROADMAP.md`, `docs/ARCHITECTURE.md`, `docs/VALIDATION.md`, `docs/DECISIONS.md`, `docs/PROMPTS.md`, `docs/FINAL_REPORT_DRAFT.md`, and `final_report/main.tex`.
@@ -891,11 +911,15 @@ External source tree registered during `T0023`:
 - Assumption: T0042 is a limited exploratory artifact set, not a final sweep, because it uses two seeds and two fault masks rather than the T0025 five-seed/five-mask policy.
 - Assumption: T0042 blank-aware condition-level reachability is total received packets divided by total injected packets, and condition-level latency is received-packet-weighted and blank when no packets are received.
 - Assumption: T0042 can support future report discussion only after a separate report task decides whether and how to incorporate it without strengthening unsupported claims.
-- Blocked: True post-injection drain validation needs a source cut-off plus drain/timeout mechanism beyond the current runner and Noxim `-volume` stop condition.
+- Assumption: T0043 source-cutoff plus drain/timeout is an opt-in future eventual-delivery mode and does not reinterpret current fixed-window artifacts.
+- Assumption: T0043 first-implementation warm-up behavior should be source-gated unless a later task explicitly designs a preloaded warm-up and flush rule.
+- Assumption: T0043 drain-mode reachability is measured received packets divided by measured injected packets after source cutoff and drain completion or timeout; it is blank when no measured packets were injected.
+- Blocked: True post-injection drain validation needs T0044 or a later implementation task to add the accepted source-cutoff plus drain/timeout mechanism beyond the current runner and Noxim `-volume` stop condition.
 - Blocked: Strong inter-chiplet IA-XY-vs-DEFT comparison needs new versioned experiment artifacts and blank-aware analysis, or a narrower traffic policy that explicitly limits comparison to route-compatible traffic.
 - Blocked: Stronger final-report claims remain blocked after T0035; the selected immediate path improved explanation, not measured performance coverage.
 - Blocked: No current PDF-generation blocker remains after T0032; stronger final-report claims remain blocked without a separate approved validation or rerun policy.
 - Blocked: Strong IA-XY performance claims remain blocked after T0042 because the new artifact set is limited, two-seed exploratory data and still contains blank IA-XY hotspot cells.
+- Blocked: Eventual-delivery claims remain blocked after T0043 until the opt-in drain mode is implemented, validated with targeted smokes, and used to create new versioned artifacts.
 - Blocked: Reopening source-cutoff/drain semantics, route-compatible intra-chiplet comparison, PARSEC/GEM5 traces, directional endpoint faults, or stronger performance claims requires a new explicit task with its own design and validation policy.
 
 ## Open Questions
@@ -909,20 +933,33 @@ External source tree registered during `T0023`:
 - Why did Git fail to create task branch refs in the current Windows worktree? This is no longer operationally important because user instruction now forbids automatic task branch creation.
 - Should future validation add a documented packet-carrying hardcoded inter-chiplet DeFT smoke once the allowed smoke command and expected behavior are designed?
 - Should a future implementation add directional endpoint fault modeling for the original paper's single-direction 3.125% fault case?
-- Should a future helper add source cut-off and post-injection drain support for eventual-delivery reachability checks?
+- Should T0044 implement drain mode directly in simulator phase control, or use a runner-assisted loop around smaller simulator advances if that proves safer?
+- Should a later experiment policy select one global drain timeout, or traffic-profile-specific timeout budgets after T0044 smokes exist?
 - Should the generated final-analysis scaffold blocker text be updated in a future task to reflect the T0025 policy resolutions while still keeping generated scaffold outputs conservative?
 - Should a future report-packaging cleanup install or vendor the exact `IEEEtran.bst` style, or keep the currently installed `ieeetr` BibTeX style used for the generated PDF?
 
 ## Next Recommended Task
 
-T0043: Design Source-Cutoff and Post-Injection Drain Policy, only if more development is required after the current final submission.
+T0044: Implement and Validate Drain Policy, only if more development is required after the current final submission.
 
 ## Next Ready-to-Send Prompt
 
 ```text
-Start task T0043: Design Source-Cutoff and Post-Injection Drain Policy.
+Start task T0044: Implement and Validate Drain Policy.
 
-Before starting, read AGENTS.md and the required project tracking documents, including docs/VALIDATION.md, docs/DECISIONS.md, docs/PROMPTS.md, docs/FINAL_REPORT_DRAFT.md, and final_report/main.tex.
+Before starting, read:
+- AGENTS.md
+- docs/PROGRESS.md
+- docs/TASKS.md
+- docs/ROADMAP.md
+- docs/ARCHITECTURE.md
+- docs/VALIDATION.md
+- docs/DECISIONS.md
+- docs/PROMPTS.md
+- docs/FINAL_REPORT_DRAFT.md
+- final_report/main.tex
+
+Also read the T0043 source-cutoff and post-injection drain policy in docs/ARCHITECTURE.md and ADR-0046 in docs/DECISIONS.md.
 
 Continue on the existing Git branch. Do not create or switch task branches.
 
@@ -930,13 +967,52 @@ Use Extended_Proposal.pdf as the primary project requirements source and the ori
 
 Use the registered Noxim source tree at external/noxim.
 
-Goal: design, but do not implement, a source-cutoff and post-injection drain/timeout policy for eventual-delivery analysis.
+Goal: implement only the accepted opt-in T0043 source-cutoff plus post-injection drain/timeout mode for eventual-delivery analysis, then validate it with targeted smokes.
 
-Before editing, produce a short design plan. Define source cutoff, drain start, in-flight empty condition, timeout policy, metric denominators, warm-up interaction, and how this differs from current fixed-window `-sim` and Noxim `-volume` behavior.
+Before editing:
+- Produce a short implementation plan.
+- Check parent repository status.
+- Check external/noxim status.
+- Clearly mark assumptions as `Assumption`.
+- Clearly mark blockers as `Blocked`.
 
-Do not edit simulator source, helper source, routing logic, VN transition restrictions, VL fault injection semantics, LUT schema/use path, topology behavior, traffic semantics, metrics semantics, runner/analysis semantics, generated artifacts, final_report/main.pdf, final_report.zip, or Extended Proposal files. Do not rebuild Noxim, rerun simulations, regenerate final sweeps, regenerate the final report PDF, use ./regression.sh --update, invent results, or strengthen unsupported claims.
+Implementation scope:
+- Add opt-in source cutoff.
+- Add drain start and explicit timeout handling.
+- Add in-flight empty detection for source queues, router buffers, relevant VL/hub carrier state, reservations, and measured injected/received counts.
+- Add drain-mode stop reason and denominator export fields.
+- Preserve existing fixed-window `-sim` behavior when drain mode is disabled.
+- Preserve current Noxim `-volume` behavior unless a compatibility note is explicitly needed.
+- Add only the minimal runner/config support needed for targeted drain smokes.
 
-Update docs/TASKS.md, docs/PROGRESS.md, docs/VALIDATION.md, docs/PROMPTS.md, and docs/ARCHITECTURE.md. Update docs/DECISIONS.md only if a new durable policy decision is made. Run git diff --check and record external/noxim status.
+Do not:
+- Modify standard XY route behavior.
+- Modify DEFT routing behavior.
+- Modify VN transition restrictions.
+- Modify VL fault injection semantics.
+- Modify LUT schema or runtime LUT use path.
+- Modify topology behavior.
+- Modify existing fixed-window metric semantics.
+- Modify existing runner/analysis defaults outside opt-in drain mode.
+- Regenerate final sweep artifacts.
+- Regenerate final_report/main.pdf.
+- Modify final_report/main.pdf.
+- Modify final_report.zip.
+- Modify Extended Proposal files.
+- Use ./regression.sh --update.
+- Invent results or strengthen unsupported claims.
+
+Validation:
+- Run the known build command from external/noxim: ./build.sh.
+- Define exact smoke commands before running them.
+- Run targeted smokes only: no-traffic immediate drain, same-chiplet hardcoded delivery, inter-chiplet DEFT delivery with no-fault LUT, cutoff suppression, timeout, warm-up gating, and disabled-mode compatibility.
+- Run git diff --check.
+- Run external/noxim diff --check if source files changed.
+- Check external/noxim status after validation.
+- Confirm T0026/T0027/T0028 and T0042 generated artifacts were not changed.
+- Confirm final_report/main.pdf, final_report.zip, and Extended Proposal files were not changed.
+
+Update docs/TASKS.md, docs/PROGRESS.md, docs/VALIDATION.md, docs/PROMPTS.md, docs/ARCHITECTURE.md, and docs/DECISIONS.md only if a new durable policy decision is made.
 ```
 
 ## Suggested Branch Name for Next Task
@@ -948,5 +1024,5 @@ None; continue on the existing branch.
 ## Suggested Commit Message
 
 ```text
-test: run limited ia-xy deft comparison
+docs: design source cutoff drain policy
 ```

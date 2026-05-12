@@ -460,7 +460,7 @@ Statuses: `TODO`, `IN_PROGRESS`, `DONE`, `BLOCKED`.
 
 ## T0043: Design Source-Cutoff and Post-Injection Drain Policy
 
-- **Status:** TODO
+- **Status:** DONE
 - **Type:** design
 - **Objective:** Specify how injection should stop and how drain/timeout should be measured for eventual-delivery analysis.
 - **Why it exists:** The current fixed-window policy and Noxim `-volume` behavior do not provide a source-cutoff plus drain phase for eventual-delivery reachability.
@@ -471,10 +471,12 @@ Statuses: `TODO`, `IN_PROGRESS`, `DONE`, `BLOCKED`.
 - **Source code changes allowed:** No.
 - **Simulation reruns allowed:** No.
 - **Acceptance criteria:** Design clearly distinguishes source cutoff plus drain/timeout from `-volume`; records metric semantics; defines smoke-test expectations; identifies simulator/runner surfaces likely to change; preserves current fixed-window artifacts as historical final-report support.
-- **Validation method or limitation:** Documentation-only validation with `git diff --check` and `external/noxim` status.
+- **Validation method or limitation:** Documentation-only validation with `git diff --check`, `external/noxim` status, and artifact-preservation guards.
 - **Dependencies:** T0039.
 - **Risk level:** Medium, because the design changes future metric interpretation.
 - **Recommended prompt:** `Start task T0043: Design Source-Cutoff and Post-Injection Drain Policy. Produce a design-only policy that distinguishes drain/timeout from current -volume behavior, defines metrics and validation, updates tracking docs, and runs git diff --check.`
+- **Files changed:** `docs/ARCHITECTURE.md`, `docs/TASKS.md`, `docs/PROGRESS.md`, `docs/VALIDATION.md`, `docs/PROMPTS.md`, and `docs/DECISIONS.md`.
+- **Notes:** Completed on 2026-05-12 as a design-only documentation task. The policy defines an opt-in future eventual-delivery mode with source cutoff, drain start, source quiescence, in-flight empty checks, explicit timeout, metric denominators, warm-up gating, differences from fixed-window `-sim`, differences from current Noxim `-volume`, future simulator/runner surfaces, and expected T0044 smoke cases. T0026/T0027/T0028 and T0042 remain historical fixed-window artifacts and were not regenerated or reinterpreted. No simulator source, helper source, routing logic, standard `XY`, `DEFT`, VN transition restrictions, VL fault injection semantics, LUT schema/use path, topology behavior, traffic semantics, metrics semantics, runner/analysis semantics, final-report artifacts, package artifacts, or Extended Proposal files were changed.
 
 ## T0044: Implement and Validate Drain Policy
 
@@ -485,11 +487,11 @@ Statuses: `TODO`, `IN_PROGRESS`, `DONE`, `BLOCKED`.
 - **Relevant roadmap phase:** Phase 9 future backlog
 - **Scope:** Implement only the accepted T0043 semantics, add configuration/runner support as needed, and run targeted validation before any broader experiment.
 - **Out of scope:** Full sweeps before smoke tests pass, changing existing fixed-window metric semantics, overwriting T0026/T0027/T0028, IA-XY implementation, PARSEC/GEM5 work, report claim changes, and `./regression.sh --update`.
-- **Files likely to change:** `external/noxim/src/Main.cpp`, `external/noxim/src/GlobalParams.*`, `external/noxim/src/ConfigurationManager.cpp`, `external/noxim/src/ProcessingElement.*`, `external/noxim/src/GlobalStats.*`, `external/noxim/other/deft_experiment_runner.py`, config examples, and tracking docs.
+- **Files likely to change:** `external/noxim/src/Main.cpp`, `external/noxim/src/GlobalParams.*`, `external/noxim/src/ConfigurationManager.cpp`, `external/noxim/src/ProcessingElement.*`, `external/noxim/src/Router.*`, `external/noxim/src/Buffer.*`, `external/noxim/src/NoC.*`, `external/noxim/src/Stats.*`, `external/noxim/src/GlobalStats.*`, `external/noxim/other/deft_experiment_runner.py`, config examples, and tracking docs.
 - **Source code changes allowed:** Yes, limited to the accepted drain/source-cutoff implementation and necessary runner support.
 - **Simulation reruns allowed:** Yes, targeted validation only after build passes; no full sweep until smoke tests pass and a later experiment task is opened.
-- **Acceptance criteria:** Build passes; source cutoff, drain completion, and timeout are observable; injected/received/in-flight accounting is validated on small cases; fixed-window behavior remains available; validation results are recorded.
-- **Validation method or limitation:** Use known build validation plus T0043-defined targeted drain smokes. Do not use `./regression.sh --update`.
+- **Acceptance criteria:** Build passes; source cutoff, drain completion, source quiescence, timeout, and stop reason are observable; injected/received/in-flight accounting is validated on small cases; fixed-window `-sim` and current `-volume` behavior remain available when drain mode is disabled; validation results are recorded.
+- **Validation method or limitation:** Use known build validation plus T0043-defined targeted drain smokes: no-traffic immediate drain, same-chiplet hardcoded delivery, inter-chiplet `DEFT` delivery, cutoff suppression, timeout, warm-up gating, and disabled-mode compatibility. Do not use `./regression.sh --update`.
 - **Dependencies:** T0043.
 - **Risk level:** High, because it changes simulator/runner stop semantics and metric interpretation.
 - **Recommended prompt:** `Start task T0044: Implement and Validate Drain Policy. Use the accepted T0043 design, add source-cutoff plus drain/timeout support, run build and targeted smoke validation only, preserve fixed-window behavior, update tracking docs, and run git diff --check.`

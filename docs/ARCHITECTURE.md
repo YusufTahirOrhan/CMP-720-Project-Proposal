@@ -1453,6 +1453,179 @@ Claim limits:
 
 Blocked: Strong final-report claims remain blocked because T0042 is a limited two-seed, two-fault-mask exploratory matrix and still has blank IA-XY hotspot cells.
 
+## T0043 Source-Cutoff and Post-Injection Drain Policy Design
+
+T0043 defines a future eventual-delivery measurement mode. It is a design-only policy and does not change current simulator behavior, helper behavior, routing logic, traffic semantics, metric exports, runner semantics, generated artifacts, or report claims.
+
+Source alignment:
+
+- `Extended_Proposal.pdf` is the primary requirements source for evaluating synthetic traffic, permanent VL fault scenarios, and reachability, latency, and throughput.
+- The original DeFT paper is the primary algorithmic reference for 2.5D inter-chiplet routing through source-side VL selection, active-interposer traversal, destination-side VL entry, VN separation, and VL-fault tolerance.
+- `Proposal.pdf` remains initial context only.
+
+### Purpose
+
+Current fixed-window experiments measure delivery only inside a continuous-injection time window. That is useful as historical final-report support, but it does not answer an eventual-delivery question: after sources stop adding new work, does the already accepted measured traffic eventually leave the network, and within what bounded drain time?
+
+The T0043 policy defines the semantics that a later T0044 implementation should add before any eventual-delivery experiment or report claim.
+
+Assumption: The policy is an additional mode. Existing fixed-window behavior remains the default and remains the interpretation for T0026/T0027/T0028 and T0042 artifacts.
+
+Blocked: Eventual-delivery claims remain blocked until the policy is implemented, smoke-tested, and used to create new versioned artifacts.
+
+### Source Cutoff
+
+Source cutoff is a configured measured-traffic boundary after reset and any accepted warm-up handling. At the cutoff boundary:
+
+- Processing elements stop admitting new measured packets.
+- Random, table-based, and hardcoded traffic events at or after the cutoff are suppressed for the measured run.
+- Packets already accepted before cutoff remain valid measured packets and may continue emitting body and tail flits.
+- Packets are counted in the measured denominator only when their head flit enters the network during the measured injection interval.
+
+The measured injection interval is:
+
+```text
+measurement_start_cycle <= head_flit_injection_cycle < source_cutoff_cycle
+```
+
+The first implementation should expose the interval explicitly, for example as a drain mode with `source_cutoff_cycles` measured from `measurement_start_cycle`. The exact option names are left to T0044, but the semantics are fixed by this design.
+
+Assumption: Packet admission is the source-cutoff concept; the future implementation may still need to emit remaining flits of packets whose heads were accepted before cutoff.
+
+### Drain Start
+
+The drain phase begins at the cutoff boundary. No new measured packet heads may be admitted after this point. The drain phase is not complete until the in-flight empty condition is true.
+
+For reporting, a future implementation should distinguish:
+
+- `source_cutoff_cycle`: when new measured packet heads stop.
+- `drain_start_cycle`: the same cycle boundary used to start timeout accounting.
+- `sources_quiesced_cycle`: the first cycle when all source-local queues have emitted the remaining flits of accepted measured packets, if this is later than the cutoff.
+- `drain_completed_cycle`: the first cycle when the in-flight empty condition is true.
+
+This distinction avoids hiding source-side queued flits inside the network-drain result.
+
+### In-Flight Empty Condition
+
+The in-flight empty condition is true only when all measured accepted traffic has either been delivered or, on timeout, is explicitly reported as undelivered. A later implementation should treat the network as empty only when all of these are true:
+
+- Every source PE packet queue is empty, including packets accepted before cutoff whose body or tail flits have not yet entered the router.
+- Every router input buffer, including all directions and VCs used by `DEFT_2_5D`, is empty for measured traffic.
+- Every hub/VL carrier buffer or signal path used by the topology has no measured flit in transit.
+- No reservation-table state remains for a measured packet.
+- `total_received_packets == total_injected_packets` and `total_received_flits == total_injected_flits` for measured packets.
+
+If the future implementation cannot tag measured flits separately from warm-up or unmeasured traffic, it must prevent unmeasured traffic from entering the network during the eventual-delivery measurement.
+
+### Timeout Policy
+
+Eventual-delivery mode must be bounded. A later implementation should require an explicit `drain_timeout_cycles` value whenever drain mode is enabled.
+
+Timeout accounting starts at `drain_start_cycle`. The run stops with `stop_reason = drain_completed` if the in-flight empty condition becomes true before the timeout. It stops with `stop_reason = drain_timeout` if:
+
+```text
+current_cycle >= drain_start_cycle + drain_timeout_cycles
+```
+
+and the in-flight empty condition is still false.
+
+Timeout is a validation result, not a simulator crash. The stats export should report the remaining measured in-flight counts at timeout, including at least undelivered packets and undelivered flits.
+
+Blocked: T0043 does not select final experiment timeout values. A later experiment-policy task must choose final values after T0044 smoke validation exists.
+
+### Metric Denominators
+
+Drain-mode exports should make denominators explicit instead of reusing the fixed-window denominator silently.
+
+For measured packets:
+
+- `measured_injected_packets`: packet heads injected in `[measurement_start_cycle, source_cutoff_cycle)`.
+- `measured_received_packets`: measured packets delivered before drain completion or timeout.
+- `reachability_ratio`: `measured_received_packets / measured_injected_packets`; blank/null when `measured_injected_packets == 0`.
+- `global_average_delay_cycles`: received-packet-weighted average over measured received packets only; blank/null when `measured_received_packets == 0`.
+- `undelivered_packets_at_stop`: `measured_injected_packets - measured_received_packets`.
+- `measured_received_flits`: measured flits received before drain completion or timeout.
+- `drain_elapsed_cycles`: `stop_cycle - drain_start_cycle`.
+- `total_measured_elapsed_cycles`: `stop_cycle - measurement_start_cycle`.
+- `drain_mode_network_throughput_flits_per_cycle`: `measured_received_flits / total_measured_elapsed_cycles`; blank/null if elapsed cycles are zero.
+
+The future implementation may also export fixed-window-compatible fields for continuity, but it must not relabel drain-mode values as if they were generated by the old `-sim` denominator.
+
+### Warm-Up Interaction
+
+Warm-up is the riskiest denominator interaction because current fixed-window runs allow traffic during warm-up while stats ignore early injection and reception. For eventual-delivery analysis, unmeasured warm-up traffic can prevent a clean empty-network test.
+
+T0043 accepts the following policy for future implementation:
+
+- In drain mode, the clean measured injection interval starts at `measurement_start_cycle = reset_time + stats_warm_up_time`.
+- During warm-up, measured traffic generation is gated off unless a later task explicitly designs a preloaded-warm-up mode with its own flush rule.
+- Counters used for drain-mode denominators start at `measurement_start_cycle`.
+- Source cutoff must be strictly after `measurement_start_cycle`.
+- Any final experiment that uses warm-up must report whether warm-up was source-gated or preloaded-and-flushed.
+
+Assumption: The first implementation should use source-gated warm-up for deterministic smoke tests, because current Noxim does not have a separate measured-flit tag that can ignore pre-warm-up traffic during empty detection.
+
+### Difference From Fixed-Window `-sim`
+
+Current `-sim` behavior runs one continuous-injection simulation for a configured number of cycles after reset. Sources may continue generating until the simulation ends. The final stats are finite-window measurements over the configured stats window, and packets can remain in flight at the end.
+
+The drain policy differs as follows:
+
+- It stops new measured packet admission at a source cutoff.
+- It continues simulation after cutoff only to drain accepted traffic or reach timeout.
+- It uses actual stop reason and actual measured elapsed cycles in denominator reporting.
+- It can distinguish completed delivery from timeout with remaining in-flight traffic.
+- It does not reinterpret T0026/T0027/T0028 or T0042 fixed-window artifacts.
+
+### Difference From Current Noxim `-volume`
+
+Current Noxim `-volume` stops when a delivered-flit counter reaches a configured threshold or when the maximum simulation cycles are reached. It is not a source-cutoff or eventual-delivery mechanism.
+
+The drain policy differs from `-volume` because:
+
+- `-volume` does not stop source packet generation before waiting for drain.
+- `-volume` is based on delivered flits, not on a known accepted packet denominator.
+- `-volume` may stop while source queues, router buffers, or in-flight packets still exist.
+- `-volume` does not prove all accepted measured packets were delivered.
+- `-volume` does not define warm-up-safe measured traffic ownership.
+- `-volume` does not export drain-completion versus timeout stop reasons.
+
+The current `-volume` behavior should remain unchanged unless a later task explicitly scopes compatibility updates.
+
+### Future Implementation Surfaces
+
+T0044 is likely to touch these surfaces if the design is accepted:
+
+- `external/noxim/src/GlobalParams.h` and `external/noxim/src/GlobalParams.cpp` for drain-mode configuration fields.
+- `external/noxim/src/ConfigurationManager.cpp` for YAML/CLI parsing and validation.
+- `external/noxim/src/Main.cpp` for phased execution, timeout accounting, stop reason, and final status export.
+- `external/noxim/src/ProcessingElement.h` and `external/noxim/src/ProcessingElement.cpp` for source gating, accepted-packet ownership, and source queue-empty queries.
+- `external/noxim/src/Router.h` and `external/noxim/src/Router.cpp` for router buffer-empty and reservation-empty queries.
+- `external/noxim/src/Buffer.*`, `external/noxim/src/NoC.*`, and any active hub/VL carrier surface needed for global in-flight checks.
+- `external/noxim/src/Stats.*` and `external/noxim/src/GlobalStats.*` for drain-mode counters, denominators, stop reason fields, and JSON/CSV export.
+- `external/noxim/other/deft_experiment_runner.py` for an opt-in drain-mode launch surface.
+- `external/noxim/other/deft_analysis_artifacts.py` or a new versioned analysis helper for drain-mode fields.
+
+T0044 must preserve existing fixed-window defaults and must not change standard `XY`, `DEFT`, VN transition restrictions, VL fault injection semantics, LUT schema/use path, topology behavior, traffic semantics outside the opt-in source gate, or existing runner/analysis behavior outside opt-in drain mode.
+
+### Expected Future Smoke Cases
+
+T0044 should define exact commands only after the implementation and configs exist. The expected smoke cases are:
+
+- No-traffic drain smoke: no measured packets accepted; drain completes immediately; reachability and latency are blank/null, not zero.
+- Single same-chiplet hardcoded packet before cutoff: one packet accepted, delivered, and drained with `stop_reason = drain_completed`.
+- Single inter-chiplet `DEFT` hardcoded packet before cutoff with a no-fault LUT: one packet accepted, delivered, and drained.
+- Source-cutoff suppression smoke: a hardcoded packet scheduled before cutoff is accepted, while a hardcoded packet scheduled at or after cutoff is not admitted.
+- Timeout smoke: a deliberately topology-incompatible or otherwise blocked packet stops with `stop_reason = drain_timeout`, nonzero undelivered counts, and no crash.
+- Warm-up gating smoke: with nonzero warm-up, no measured traffic is accepted before `measurement_start_cycle`, and denominators count only packets whose heads enter during the measured injection interval.
+- Compatibility smoke: with drain mode disabled, existing fixed-window `-sim` behavior and current `-volume` behavior remain available.
+
+### Artifact Preservation
+
+T0026/T0027/T0028 remain the historical fixed-window final-report artifact chain. T0042 remains a limited exploratory fixed-window IA-XY-vs-DEFT artifact set. T0043 does not regenerate, revise, or reinterpret those outputs.
+
+Blocked: Stronger eventual-delivery report claims require new versioned artifacts created after T0044 implementation and validation.
+
 ## Post-Submission Future Backlog
 
 T0039 records the remaining technical gaps as future backlog items only. These tasks do not block the current final submission package, which remains `final_report/main.pdf`, the current `final_report/` source tree, and `final_report.zip`.
@@ -1460,7 +1633,8 @@ T0039 records the remaining technical gaps as future backlog items only. These t
 Future development must preserve these guardrails:
 
 - Do not reinterpret T0026/T0027/T0028 as stronger performance evidence.
-- Do not overwrite generated T0026/T0027/T0028 artifacts.
+- Do not reinterpret T0042 as stronger performance evidence.
+- Do not overwrite generated T0026/T0027/T0028 or T0042 artifacts.
 - Use new versioned artifact directories for any future experiment.
 - Keep standard `XY` separate from any new interposer-aware baseline.
 - Preserve existing `DEFT` behavior unless a future task explicitly scopes a DeFT change.
@@ -1473,7 +1647,7 @@ Ordered future backlog:
 | T0040 | Design | Completed IA-XY design: a new `INTERPOSER_AWARE_XY` baseline that is explicitly not standard `XY`. |
 | T0041 | Implementation | Completed selectable `INTERPOSER_AWARE_XY` baseline without modifying existing `XY` or `DEFT`. |
 | T0042 | Experiment | Completed limited IA-XY-vs-DEFT comparison in a new artifact directory with blank-aware claim limits. |
-| T0043 | Design | Define source-cutoff plus post-injection drain/timeout semantics for eventual-delivery analysis. |
+| T0043 | Design | Completed source-cutoff plus post-injection drain/timeout policy for eventual-delivery analysis. |
 | T0044 | Implementation | Implement and validate the accepted drain policy before any full sweep. |
 | T0045 | Feasibility | Evaluate directional endpoint fault modeling against the current physical bidirectional VL model. |
 | T0046 | Feasibility | Assess PARSEC/GEM5 trace support requirements and validation burden. |
@@ -1484,7 +1658,7 @@ Assumption: Future backlog work starts with design or feasibility tasks before i
 
 Blocked: Stronger unrestricted XY-vs-DEFT claims remain blocked until an interposer-aware baseline is implemented, validated, and evaluated in new artifact directories.
 
-Blocked: Eventual-delivery claims remain blocked until source-cutoff plus drain/timeout semantics are designed, implemented, and validated.
+Blocked: Eventual-delivery claims remain blocked until source-cutoff plus drain/timeout semantics are implemented, validated, and used to create new versioned artifacts.
 
 Blocked: Paper-aligned single-direction fault cases remain blocked until directional endpoint fault modeling is evaluated and, if accepted, implemented.
 

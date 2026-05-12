@@ -1821,6 +1821,51 @@ T0042 result on 2026-05-11:
 - Final parent status showed only modified tracking docs: `docs/ARCHITECTURE.md`, `docs/PROGRESS.md`, `docs/PROMPTS.md`, `docs/TASKS.md`, and `docs/VALIDATION.md`.
 - T0042 does not change the current final submission status and does not update `final_report/main.pdf`, `final_report.zip`, or Extended Proposal files.
 
+## Source-Cutoff and Post-Injection Drain Policy Design Validation
+
+Purpose:
+
+- Record source-cutoff plus drain/timeout semantics before implementation.
+- Preserve T0026/T0027/T0028 and T0042 as historical fixed-window artifacts.
+- Confirm the policy is design-only and does not modify simulator source, helper source, routing behavior, traffic behavior, metric exports, runner semantics, generated artifacts, final-report artifacts, package artifacts, or Extended Proposal files.
+
+Known validation for T0043:
+
+- Parent repository status before edits: `git status --short --branch`
+- Noxim submodule status before and after edits: `git -c safe.directory=C:/Projects/CMP-720-Project-Proposal/external/noxim -C external/noxim status --short --branch`
+- Documentation whitespace check: `git diff --check`
+- Generated-artifact guard for T0026/T0027/T0028 and T0042 generated directories.
+- Final-report and proposal artifact guard for `final_report/main.pdf`, `final_report.zip`, `Extended_Proposal.pdf`, and `Extended_Proposal.zip`.
+- Do not rebuild Noxim, run simulations, regenerate final sweeps, regenerate `final_report/main.pdf`, modify `final_report.zip`, modify Extended Proposal files, or use `./regression.sh --update`.
+
+T0043 result on 2026-05-12:
+
+- Required startup reading was completed before task work: `AGENTS.md`, `docs/PROGRESS.md`, `docs/TASKS.md`, `docs/ROADMAP.md`, `docs/ARCHITECTURE.md`, `docs/VALIDATION.md`, `docs/DECISIONS.md`, `docs/PROMPTS.md`, `docs/FINAL_REPORT_DRAFT.md`, and `final_report/main.tex`.
+- Source-document roles were preserved: `Extended_Proposal.pdf` is the primary project requirements source, the original DeFT paper is the primary algorithmic reference, `Proposal.pdf` is initial context only, and the peer evaluation document was ignored completely.
+- Parent repository status before edits was clean on `feat/map-noxim-extension-points...origin/feat/map-noxim-extension-points`.
+- A plain `external/noxim` status command hit Git's safe-directory guard; the documented safe-directory status command was then used and reported a clean `external/noxim` worktree on `feat/baseline-noxim...origin/feat/baseline-noxim`.
+- Before editing, a short design plan was produced. Assumption: T0043 is design-only and must preserve current fixed-window artifacts and final submission artifacts as historical evidence. Blocked: eventual-delivery claims remain blocked until a later implementation task adds and validates the accepted cutoff/drain/timeout behavior.
+- Read-only source inspection confirmed current `-sim` runs a fixed continuous-injection window through `Main.cpp`, current `-volume` stops on delivered flits through `Router.cpp` and does not provide source cutoff, `ProcessingElement.cpp` owns packet generation and injection counters, and `GlobalStats.cpp` exports the current fixed-window denominator fields.
+- The accepted design defines source cutoff, drain start, source quiescence, in-flight empty, explicit timeout, metric denominators, warm-up interaction, differences from fixed-window `-sim`, differences from current Noxim `-volume`, likely future implementation surfaces, and expected future smoke cases.
+- T0043 records drain mode as an opt-in future mode. Current fixed-window `-sim` and current `-volume` behavior remain the existing behavior unless T0044 explicitly implements an opt-in drain mode.
+- No simulator source, helper source, routing logic, standard `XY`, `DEFT`, VN transition restrictions, VL fault injection semantics, LUT schema/use path, topology behavior, traffic semantics, metrics semantics, runner/analysis semantics, Noxim build, simulation run, final-sweep regeneration, final-report PDF regeneration, package artifact, Extended Proposal file, or `./regression.sh --update` was changed.
+- T0026/T0027/T0028 final fixed-window artifacts and the T0042 exploratory fixed-window artifact set remain historical artifacts. T0043 does not reinterpret them as eventual-delivery evidence.
+- T0043 adds ADR-0046 to record the durable opt-in source-cutoff plus drain policy.
+- `git diff --check` completed with exit code `0`; Git reported line-ending conversion warnings for edited Markdown files only.
+- Final `external/noxim` status remained clean on `feat/baseline-noxim...origin/feat/baseline-noxim`.
+- The generated-artifact guard returned no changed files for `external/noxim/other/generated/t0026_final_sweep_v1`, `t0026_final_analysis_v1`, `t0027_report_support_v1`, `t0028_final_report_results_v1`, or `t0042_iaxy_deft_limited_v1`.
+- The final-report and proposal artifact guard returned no changed files for `final_report/main.pdf`, `final_report.zip`, `Extended_Proposal.pdf`, or `Extended_Proposal.zip`.
+- Final parent status showed only modified tracking docs: `docs/ARCHITECTURE.md`, `docs/DECISIONS.md`, `docs/PROGRESS.md`, `docs/PROMPTS.md`, `docs/TASKS.md`, and `docs/VALIDATION.md`.
+
+Expected future T0044 checks:
+
+- Build from `external/noxim` with the known command `./build.sh` after source changes.
+- Validate no-traffic immediate drain, single same-chiplet hardcoded delivery, single inter-chiplet `DEFT` delivery with a no-fault LUT, cutoff suppression, timeout, warm-up gating, and disabled-mode compatibility.
+- Confirm fixed-window `-sim` behavior remains available with drain mode disabled.
+- Confirm current `-volume` behavior remains available unless T0044 explicitly scopes a compatibility update.
+- Confirm exported drain-mode fields include stop reason, source cutoff, drain start, source quiescence when available, completion or timeout cycle, measured injected/received counts, denominator fields, and remaining in-flight counts.
+- Preserve T0026/T0027/T0028 and T0042 generated artifacts; write any future experiment artifacts to a new versioned directory.
+
 ## Metrics Validation
 
 Purpose:
