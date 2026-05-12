@@ -1811,3 +1811,480 @@ At the end, provide:
 - **Next ready-to-send prompt:** See `docs/PROGRESS.md`.
 - **Suggested branch name for next task:** None; continue on the existing branch.
 - **Suggested commit message:** `feat: add final analysis scaffolding`
+
+## 2026-05-09: Start T0025 Define Final Sweep Policy
+
+- **Date:** 2026-05-09
+- **Prompt summary:** Define the final sweep policy before running or interpreting final sweeps, including exact matrix, fault-rate accounting, simulation length, warm-up/drain policy, seed count, traffic profiles, routing modes, validation checks, and result-claim rules.
+- **Full prompt:**
+
+```text
+Start task T0025: Define Final Sweep Policy.
+
+Before starting, read AGENTS.md, docs/PROGRESS.md, docs/TASKS.md, docs/ROADMAP.md, docs/ARCHITECTURE.md, docs/VALIDATION.md, docs/DECISIONS.md, and docs/PROMPTS.md.
+
+Continue on the existing Git branch. Do not create or switch task branches.
+
+Use the registered Noxim source tree at:
+external/noxim
+
+external/noxim is the Noxim submodule and modifiable project fork from:
+https://github.com/YusufTahirOrhan/noxim
+
+T0007 through T0021 implemented the DEFT_2_5D topology, physical VL model, boundary-router inventory, permanent startup VL faults, fault-mask validation, VN assignment and transition filtering, schema-v1 VL LUT generator/runtime loading, XY baseline configs, synthetic traffic configs, metrics export, and a tiny traceable experiment runner. T0022 added final-analysis scaffolding with external/noxim/other/deft_analysis_artifacts.py, which consumes T0021 manifests and T0020 stats exports but marks smoke-only or missing final-sweep data as Blocked and sets claims_allowed to false.
+
+Goal: define the final sweep policy before running or interpreting final sweeps. Focus on deciding the exact experiment matrix, fault-rate accounting basis, simulation length, warm-up/drain policy, seed count, traffic profiles, routing modes, validation checks, and result-claim rules. Keep this as a policy/documentation task unless a narrow helper update is clearly required.
+
+Do not run full sweeps in this task unless explicitly requested. Do not fabricate results or performance claims. Do not change DeFT routing, VN transition logic, VL fault injection, T0016 generator format, T0017 runtime LUT schema/use path, T0019 traffic profile semantics, T0020 metrics semantics, T0021 runner semantics, or T0022 analysis semantics unless source inspection proves a narrow compatibility fix is required.
+
+Use Extended_Proposal.pdf as the primary project requirements source and the original DeFT paper at docs/references/DeFT_A_Deadlock-Free_and_Fault-Tolerant_Routing_Algorithm_for_2.5D_Chiplet_Networks.pdf as the primary algorithmic reference. Use Proposal.pdf only as initial context. Ignore the peer evaluation document completely.
+
+Before coding or documentation edits, produce a short implementation plan. Work only on the selected final sweep policy task. Do not modify unrelated files. Clearly mark assumptions as Assumption and blockers as Blocked.
+
+Use only known validation commands. If no simulator source changes are made, do not rebuild Noxim. Documentation/status validation is sufficient unless the task explicitly changes a helper. Do not use ./regression.sh --update.
+
+Update docs/ARCHITECTURE.md, docs/TASKS.md, docs/PROGRESS.md, docs/VALIDATION.md, and docs/PROMPTS.md with the result. If a durable implementation or experiment decision becomes clear, update docs/DECISIONS.md too.
+
+At the end, provide:
+
+1. Created files
+2. Modified files
+3. Whether any source code files changed
+4. Validation result
+5. Current project phase
+6. Next recommended task
+7. The next ready-to-send prompt
+8. Suggested branch name for the next task, which should be None; continue on the existing branch
+9. Suggested commit message
+10. Unknowns or blockers
+```
+
+- **Result summary:** T0025 completed as a documentation-only policy task. The final executable sweep is exactly 150 runs: `XY` and `DEFT` over `uniform`, `localized_40`, and `hotspot_3x10`; physical fault masks `0x0000`, `0x0001`, `0x0011`, `0x0111`, and `0x1111`; seeds `0..4`; `-sim 10000`; `-warmup 1000`; and JSON stats. The policy resolves final fault-rate accounting for the current implementation by using physical bidirectional VL masks and reporting matching directional-equivalent percentages for the paper's 32-channel wording. It also defines no-drain fixed-window semantics, validation gates, and result-claim rules. No source code, helper code, full sweep, Noxim rebuild, golden outputs, or performance claims were changed.
+- **Follow-up tasks:** Start `T0026` to run the final sweep matrix and regenerate final analysis artifacts.
+- **Next ready-to-send prompt:** See `docs/PROGRESS.md`.
+- **Suggested branch name for next task:** None; continue on the existing branch.
+- **Suggested commit message:** `docs: define final sweep policy`
+
+## 2026-05-09: Start T0026 Run Final Sweep Matrix
+
+- **Date:** 2026-05-09
+- **Prompt summary:** Run the T0025 150-run final sweep matrix after first validating the dry-run manifest, regenerate final analysis artifacts, cross-check all generated tables against raw manifests and JSON stats, and update tracking documents without changing simulator behavior.
+- **Full prompt:**
+
+```text
+Start task T0026: Run Final Sweep Matrix.
+
+Before starting, read AGENTS.md, docs/PROGRESS.md, docs/TASKS.md, docs/ROADMAP.md, docs/ARCHITECTURE.md, docs/VALIDATION.md, docs/DECISIONS.md, and docs/PROMPTS.md.
+
+Continue on the existing Git branch. Do not create or switch task branches.
+
+Use the registered Noxim source tree at:
+external/noxim
+
+external/noxim is the Noxim submodule and modifiable project fork from:
+https://github.com/YusufTahirOrhan/noxim
+
+T0007 through T0021 implemented the DEFT_2_5D topology, physical VL model, boundary-router inventory, permanent startup VL faults, fault-mask validation, VN assignment and transition filtering, schema-v1 VL LUT generator/runtime loading, XY baseline configs, synthetic traffic configs, metrics export, and a tiny traceable experiment runner. T0022 added final-analysis scaffolding with external/noxim/other/deft_analysis_artifacts.py. T0025 defined the final sweep policy as exactly 150 runs:
+
+- routing modes: XY, DEFT
+- traffic profiles: uniform, localized_40, hotspot_3x10
+- physical fault masks: 0x0000, 0x0001, 0x0011, 0x0111, 0x1111
+- seeds: 0, 1, 2, 3, 4
+- simulation window: -sim 10000
+- stats warm-up: -warmup 1000
+- stats format: json
+
+Goal: run the T0025 final sweep matrix and regenerate final analysis artifacts from completed outputs. First run the dry-run command and verify that the manifest contains exactly 150 planned runs and the full Cartesian product. Then execute the same matrix only if the dry-run manifest is correct.
+
+Use this dry-run command from external/noxim in WSL/Linux:
+
+python3 other/deft_experiment_runner.py \
+  --routing XY --routing DEFT \
+  --traffic uniform --traffic localized_40 --traffic hotspot_3x10 \
+  --fault-mask 0x0000 --fault-mask 0x0001 --fault-mask 0x0011 --fault-mask 0x0111 --fault-mask 0x1111 \
+  --seed 0 --seed 1 --seed 2 --seed 3 --seed 4 \
+  --sim 10000 \
+  --warmup 1000 \
+  --stats-format json \
+  --output-dir other/generated/t0026_final_sweep_v1
+
+If the dry-run manifest is correct, execute the final sweep with the same command plus:
+
+--execute --max-execute-runs 150
+
+After execution, run the final analysis helper from the parent repository against the completed output directory and write artifacts under external/noxim/other/generated/t0026_final_analysis_v1.
+
+Do not fabricate results or performance claims. Do not change DeFT routing, VN transition logic, VL fault injection, T0016 generator format, T0017 runtime LUT schema/use path, T0019 traffic profile semantics, T0020 metrics semantics, T0021 runner semantics, or T0022 analysis semantics unless source inspection proves a narrow compatibility fix is required. Do not use ./regression.sh --update.
+
+Use Extended_Proposal.pdf as the primary project requirements source and the original DeFT paper at docs/references/DeFT_A_Deadlock-Free_and_Fault-Tolerant_Routing_Algorithm_for_2.5D_Chiplet_Networks.pdf as the primary algorithmic reference. Use Proposal.pdf only as initial context. Ignore the peer evaluation document completely.
+
+Before running commands or documentation edits, produce a short implementation plan. Work only on the selected final sweep task. Do not modify unrelated files. Clearly mark assumptions as Assumption and blockers as Blocked.
+
+Use only known validation commands. If no simulator source changes are made, do not rebuild Noxim. Validate that the executed manifest has mode: execute, run_count: 150, and every run has status: completed and return_code: 0. Validate that every JSON stats file exists and contains the T0020 metric fields. Cross-check final analysis tables against raw manifests and per-run JSON stats before making any report-support statements.
+
+Update docs/ARCHITECTURE.md, docs/TASKS.md, docs/PROGRESS.md, docs/VALIDATION.md, and docs/PROMPTS.md with the result. If a durable implementation or experiment decision becomes clear, update docs/DECISIONS.md too.
+
+At the end, provide:
+
+1. Created files
+2. Modified files
+3. Whether any source code files changed
+4. Validation result
+5. Current project phase
+6. Next recommended task
+7. The next ready-to-send prompt
+8. Suggested branch name for the next task, which should be None; continue on the existing branch
+9. Suggested commit message
+10. Unknowns or blockers
+```
+
+- **Result summary:** T0026 completed. The dry-run manifest contained `mode: dry_run`, `run_count: 150`, and the full Cartesian product. The executed manifest contained `mode: execute`, `run_count: 150`, 150 completed runs, and 150 return code `0` runs. All 150 JSON stats files exist and contain the T0020 metric fields. Final analysis artifacts were regenerated with `--dataset-kind final_sweep` under `external/noxim/other/generated/t0026_final_analysis_v1`, and the generated run-summary/comparison tables cross-checked cleanly against the raw manifest and per-run JSON stats. No simulator source, helper source, routing behavior, VN transition logic, VL fault injection, LUT schemas, traffic semantics, metrics semantics, runner semantics, analysis semantics, golden outputs, or performance claims were changed.
+- **Follow-up tasks:** Start `T0027` to review final sweep results for report-support tables and claim-safe interpretation.
+- **Next ready-to-send prompt:** See `docs/PROGRESS.md`.
+- **Suggested branch name for next task:** None; continue on the existing branch.
+- **Suggested commit message:** `docs: record final sweep execution`
+
+## 2026-05-09: Start T0027 Review Final Sweep Results for Report Support
+
+- **Date:** 2026-05-09
+- **Prompt summary:** Review the completed T0026 final sweep outputs for claim-safe report support, distinguish measured values from empty cells and limitations, avoid rerunning simulations, and update tracking documents.
+- **Full prompt:**
+
+```text
+Start task T0027: Review Final Sweep Results for Report Support.
+
+Before starting, read AGENTS.md, docs/PROGRESS.md, docs/TASKS.md, docs/ROADMAP.md, docs/ARCHITECTURE.md, docs/VALIDATION.md, docs/DECISIONS.md, and docs/PROMPTS.md.
+
+Continue on the existing Git branch. Do not create or switch task branches.
+
+Use the registered Noxim source tree at:
+external/noxim
+
+external/noxim is the Noxim submodule and modifiable project fork from:
+https://github.com/YusufTahirOrhan/noxim
+
+T0026 executed the T0025 final sweep matrix and regenerated final analysis artifacts:
+
+- final sweep output: `external/noxim/other/generated/t0026_final_sweep_v1`
+- final analysis output: `external/noxim/other/generated/t0026_final_analysis_v1`
+
+The executed manifest has `mode: execute`, `run_count: 150`, 150 completed runs, and 150 return code `0` runs. All 150 JSON stats files exist and contain the T0020 fields. The generated analysis tables contain 150 run-summary rows and 30 comparison groups, and a raw-artifact cross-check found zero mismatches. The analysis helper still sets `claims_allowed: false`, and T0026 observed 54 individual runs with zero injected packets in the measured stats window.
+
+Goal: review the completed T0026 outputs for report support without fabricating results. Produce claim-safe tables or notes that distinguish measured values, empty cells, and limitations. Do not rerun simulations unless source inspection and the documented validation status prove a narrow follow-up command is required and you document the reason first.
+
+Do not fabricate results or performance claims. Do not change DeFT routing, VN transition logic, VL fault injection, T0016 generator format, T0017 runtime LUT schema/use path, T0019 traffic profile semantics, T0020 metrics semantics, T0021 runner semantics, or T0022 analysis semantics unless source inspection proves a narrow compatibility fix is required. Do not use `./regression.sh --update`.
+
+Use `Extended_Proposal.pdf` as the primary project requirements source and the original DeFT paper at `docs/references/DeFT_A_Deadlock-Free_and_Fault-Tolerant_Routing_Algorithm_for_2.5D_Chiplet_Networks.pdf` as the primary algorithmic reference. Use `Proposal.pdf` only as initial context. Ignore the peer evaluation document completely.
+
+Before running commands or documentation edits, produce a short implementation plan. Work only on the selected final-sweep review task. Do not modify unrelated files. Clearly mark assumptions as `Assumption` and blockers as `Blocked`.
+
+Use only known validation commands. If no simulator source changes are made, do not rebuild Noxim. Use the existing generated T0026 manifests, summary CSVs, analysis CSVs, and JSON stats for review. Cross-check any derived table or statement against raw artifacts before recording it.
+
+Update docs/ARCHITECTURE.md, docs/TASKS.md, docs/PROGRESS.md, docs/VALIDATION.md, and docs/PROMPTS.md with the result. If a durable implementation or experiment decision becomes clear, update docs/DECISIONS.md too.
+
+At the end, provide:
+
+1. Created files
+2. Modified files
+3. Whether any source code files changed
+4. Validation result
+5. Current project phase
+6. Next recommended task
+7. The next ready-to-send prompt
+8. Suggested branch name for the next task, which should be `None; continue on the existing branch`
+9. Suggested commit message
+10. Unknowns or blockers
+```
+
+- **Result summary:** T0027 completed. Generated ignored report-support artifacts under `external/noxim/other/generated/t0027_report_support_v1/`: `manifest.json`, `condition_summary.csv`, `xy_deft_pair_summary.csv`, `zero_injection_runs.csv`, `coverage_by_routing_traffic.csv`, and `report_notes.md`. The review derived condition and pair tables from the T0026 executed manifest and raw JSON stats, then cross-checked them against T0026 `summary.csv`, analysis `run_summary.csv`, and analysis `comparison_summary.csv` with zero mismatches. T0027 classified 30 condition cells as 12 complete-injection cells, 13 partial-injection cells, and 5 empty-injection cells; all empty cells are `XY|hotspot_3x10`. No XY/DEFT pair supports latency comparison because the XY side has zero received packets wherever it injected packets. No simulator source, helper source, routing behavior, VN transition logic, VL fault injection, LUT schemas, traffic semantics, metrics semantics, runner semantics, analysis semantics, golden outputs, rerun, rebuild, or performance claim was changed.
+- **Follow-up tasks:** Start `T0028` to draft claim-safe final report results text from the T0027 report-support artifacts.
+- **Next ready-to-send prompt:** See `docs/PROGRESS.md`.
+- **Suggested branch name for next task:** None; continue on the existing branch.
+- **Suggested commit message:** `docs: review final sweep report support`
+
+## 2026-05-09: Start T0028 Draft Claim-Safe Final Report Results Text
+
+- **Date:** 2026-05-09
+- **Prompt summary:** Draft claim-safe final report results text and tables from T0027 report-support artifacts, preserving blank cells and limitations without rerunning simulations or making unsupported claims.
+- **Full prompt:**
+
+```text
+Start task T0028: Draft Claim-Safe Final Report Results Text.
+
+Before starting, read AGENTS.md, docs/PROGRESS.md, docs/TASKS.md, docs/ROADMAP.md, docs/ARCHITECTURE.md, docs/VALIDATION.md, docs/DECISIONS.md, and docs/PROMPTS.md.
+
+Continue on the existing Git branch. Do not create or switch task branches.
+
+Use the registered Noxim source tree at:
+external/noxim
+
+external/noxim is the Noxim submodule and modifiable project fork from:
+https://github.com/YusufTahirOrhan/noxim
+
+T0027 reviewed the completed T0026 final sweep artifacts and generated claim-safe report-support outputs:
+
+- final sweep output: `external/noxim/other/generated/t0026_final_sweep_v1`
+- final analysis output: `external/noxim/other/generated/t0026_final_analysis_v1`
+- final report-support output: `external/noxim/other/generated/t0027_report_support_v1`
+
+The T0027 report-support manifest records 150 raw stats rows, 30 condition cells, 15 XY/DEFT pair rows, 54 individual zero-injection runs, 5 empty-injection condition cells, 13 partial-injection condition cells, 12 complete-injection condition cells, and zero cross-check mismatches. It keeps `claims_allowed: false`.
+
+Goal: draft claim-safe final report results text and tables from the T0027 report-support artifacts without fabricating results or making unsupported performance claims. Preserve blank cells and limitations explicitly. Do not rerun simulations unless source inspection and documented validation status prove a narrow follow-up command is required and you document the reason first.
+
+Do not fabricate results or performance claims. Do not change DeFT routing, VN transition logic, VL fault injection, T0016 generator format, T0017 runtime LUT schema/use path, T0019 traffic profile semantics, T0020 metrics semantics, T0021 runner semantics, or T0022 analysis semantics unless source inspection proves a narrow compatibility fix is required. Do not use `./regression.sh --update`.
+
+Use `Extended_Proposal.pdf` as the primary project requirements source and the original DeFT paper at `docs/references/DeFT_A_Deadlock-Free_and_Fault-Tolerant_Routing_Algorithm_for_2.5D_Chiplet_Networks.pdf` as the primary algorithmic reference. Use `Proposal.pdf` only as initial context. Ignore the peer evaluation document completely.
+
+Before running commands or documentation edits, produce a short implementation plan. Work only on the selected report-results drafting task. Do not modify unrelated files. Clearly mark assumptions as `Assumption` and blockers as `Blocked`.
+
+Use only known validation commands. If no simulator source changes are made, do not rebuild Noxim. Use the existing generated T0027 report-support tables and, when needed, cross-check statements against the T0026 raw artifacts before recording them.
+
+Update docs/ARCHITECTURE.md, docs/TASKS.md, docs/PROGRESS.md, docs/VALIDATION.md, and docs/PROMPTS.md with the result. If a durable implementation or experiment decision becomes clear, update docs/DECISIONS.md too.
+
+At the end, provide:
+
+1. Created files
+2. Modified files
+3. Whether any source code files changed
+4. Validation result
+5. Current project phase
+6. Next recommended task
+7. The next ready-to-send prompt
+8. Suggested branch name for the next task, which should be `None; continue on the existing branch`
+9. Suggested commit message
+10. Unknowns or blockers
+```
+
+- **Result summary:** T0028 completed. Created ignored generated report-draft artifacts under `external/noxim/other/generated/t0028_final_report_results_v1/`: `manifest.json` and `report_results_draft.md`. The draft converts T0027 report-support artifacts into claim-safe descriptive report prose and Markdown tables while preserving blank reachability, blank latency, partial-cell coverage counts, zero-injection notes, and the T0027 limitations. It keeps `claims_allowed: false` and makes no improvement, delta, statistical-significance, latency-comparison, 100% reachability, or unsupported performance claim. No simulator source, helper source, routing behavior, VN transition logic, VL fault injection, LUT schemas, traffic semantics, metrics semantics, runner/analysis semantics, golden outputs, rerun, rebuild, or regression command was changed.
+- **Follow-up tasks:** Start `T0029` to assemble a claim-safe final report draft using the T0028 results text and the existing project documentation.
+- **Next ready-to-send prompt:** See `docs/PROGRESS.md`.
+- **Suggested branch name for next task:** None; continue on the existing branch.
+- **Suggested commit message:** `docs: draft claim-safe final report results`
+
+## 2026-05-09: Start T0029 Assemble Claim-Safe Final Report Draft
+
+- **Date:** 2026-05-09
+- **Prompt summary:** Assemble a claim-safe final report draft from the source documents, existing project documentation, and T0028/T0027/T0026 report-support artifacts without rerunning simulations or adding unsupported result language.
+- **Full prompt summary:** The user requested task `T0029`, required startup reading of all project tracking documents, required continuing on the existing branch, required using `external/noxim` and the generated T0026/T0027/T0028 artifacts, and required assembling a claim-safe final report draft. The prompt emphasized `Extended_Proposal.pdf` as the primary requirements source, the local original DeFT paper as the algorithmic reference, `Proposal.pdf` as initial context, and the peer evaluation document as out of scope. It also required preserving assumptions, blockers, blank cells, partial-cell coverage counts, validation provenance, and limitations; avoiding unsupported result language, latency comparisons, and complete-reachability wording; not rerunning simulations or rebuilding Noxim unless narrowly justified; not using `./regression.sh --update`; updating the tracking documents; and reporting created files, modified files, source-code status, validation, phase, next task, next prompt, branch guidance, commit message, and blockers.
+- **Result summary:** T0029 completed. Created `docs/FINAL_REPORT_DRAFT.md` as the tracked claim-safe Markdown final report draft. The draft assembles source scope, abstract, introduction, background, implementation summary, evaluation method, validation provenance, T0028-derived results tables, limitations, conclusion, and references. It preserves blank reachability, blank latency, partial-cell coverage counts, zero-injection notes, assumptions, blockers, and validation provenance. It does not rerun simulations, rebuild Noxim, change source/helper behavior, update golden outputs, or add unsupported performance language.
+- **Follow-up tasks:** Start `T0030` to review `docs/FINAL_REPORT_DRAFT.md` for submission readiness and optional format conversion if explicitly required.
+- **Next ready-to-send prompt:** See `docs/PROGRESS.md`.
+- **Suggested branch name for next task:** None; continue on the existing branch.
+- **Suggested commit message:** `docs: assemble claim-safe final report draft`
+
+## 2026-05-09: Start T0030 Review Final Report Draft for Submission Readiness
+
+- **Date:** 2026-05-09
+- **Prompt summary:** Review and polish the tracked claim-safe Markdown final report draft for submission readiness without changing validated claims, simulator behavior, or report-support semantics.
+- **Full prompt summary:** The user requested task `T0030`, required startup reading of all project tracking documents, required continuing on the existing branch, required using `external/noxim` and `docs/FINAL_REPORT_DRAFT.md`, and required polishing the final report draft for final-delivery structure, citation wording, table readability, and submission readiness. The prompt emphasized preserving all claim-safety constraints, blank cells, partial-cell coverage counts, validation provenance, assumptions, blockers, and limitations. It prohibited fabricated results, performance claims, deltas, rankings, inferential claims, latency comparisons, complete-reachability wording, unsupported result language, simulator/source behavior changes, runner/analysis semantic changes, and `./regression.sh --update`. It also required recording any requested final submission format and validation method before conversion, updating the project tracking documents, and reporting created files, modified files, source-code status, validation, phase, next task, next prompt, branch guidance, commit message, and blockers.
+- **Result summary:** T0030 completed. `docs/FINAL_REPORT_DRAFT.md` was reviewed and polished for submission readiness. The title/front matter, source-scoped citation wording, evaluation table label, condition-table status legend, pair-readiness wording, and references were improved while preserving every measured value, blank reachability cell, blank latency cell, partial-cell coverage count, validation provenance item, assumption, blocker, limitation, and `claims_allowed: false` wording. No final artifact conversion was performed because no PDF, DOCX, PPTX, or other required output format was specified. No simulator source, helper source, routing behavior, VN transition logic, VL fault injection, LUT schema, traffic semantic, metrics semantic, runner/analysis semantic, golden output, rebuild, rerun, or performance claim was changed.
+- **Follow-up tasks:** Start `T0031` to confirm the required final submission format and produce a final artifact only when the format is explicitly specified.
+- **Next ready-to-send prompt:** See `docs/PROGRESS.md`.
+- **Suggested branch name for next task:** None; continue on the existing branch.
+- **Suggested commit message:** `docs: polish final report draft for submission`
+
+## 2026-05-09: Start T0031 Prepare Final Submission Artifact
+
+- **Date:** 2026-05-09
+- **Prompt summary:** Confirm the required final submission format and prepare the final artifact only if the format is explicitly specified; otherwise record the task as blocked.
+- **Full prompt summary:** The user requested task `T0031`, required startup reading of all project tracking documents, required continuing on the existing branch, required using `external/noxim` and the reviewed tracked report draft at `docs/FINAL_REPORT_DRAFT.md`, and required preserving all claim-safety constraints, blank cells, partial-cell coverage counts, validation provenance, assumptions, blockers, and limitations. The prompt explicitly prohibited guessing a conversion target, fabricated results, unsupported result language, simulator behavior changes, reruns, rebuilds, and `./regression.sh --update`. It required using `Extended_Proposal.pdf` as the primary requirements source, the original DeFT paper as the algorithmic reference, and `Proposal.pdf` only as initial context.
+- **Result summary:** T0031 is blocked. Source-document inspection found no explicit final submission artifact format. `Extended_Proposal.pdf` calls for finalizing the project report but does not specify PDF, DOCX, PPTX, Markdown, or another target format. `Proposal.pdf` contains initial proposal submission instructions for proposal source and compiled PDF files, but it is initial context only and does not define the final report format. No final artifact conversion was performed, and no simulator source, helper source, routing behavior, VN transition logic, VL fault injection, traffic semantics, metrics semantics, runner/analysis semantics, rebuild, rerun, regression command, or performance claim was changed.
+- **Follow-up tasks:** Resume `T0031` after the required final submission format is explicitly supplied.
+- **Next ready-to-send prompt:** See `docs/PROGRESS.md`.
+- **Suggested branch name for next task:** None; continue on the existing branch.
+- **Suggested commit message:** `docs: record final artifact format blocker`
+
+## 2026-05-09: Resume T0031 with IEEE LaTeX Final Report Format
+
+- **Date:** 2026-05-09
+- **Prompt summary:** Resume T0031 and create an IEEE conference-style LaTeX final project report artifact from the reviewed Markdown draft, using `Extended_Proposal.zip` as the LaTeX formatting/template reference.
+- **Full prompt summary:** The user explicitly supplied the required final artifact format as an IEEE conference-style LaTeX final project report. The prompt required using `docs/FINAL_REPORT_DRAFT.md` as the content source, `Extended_Proposal.zip` as the LaTeX template reference, `Extended_Proposal.pdf` as the primary project requirements source if clarification was needed, `Proposal.pdf` as initial context only, and ignoring the peer evaluation document. It required creating a `final_report/` directory with LaTeX source, bibliography, figures if needed, and useful build notes. It prohibited overwriting Extended Proposal files, modifying source code, rebuilding Noxim, rerunning simulations, changing simulator behavior, or using `./regression.sh --update`. It required preserving claim-safety constraints, validation provenance, assumptions, blockers, limitations, partial-result notes, blank cells, and distinctions among implemented work, validated behavior, config-only support, and blocked or future work. It also required inspecting the archive and draft before creating the artifact, producing a short plan, running `git diff --check`, attempting LaTeX compilation if tooling was available, updating tracking documents, and reporting created files, modified files, artifact path, PDF status, source-code status, validation, phase, next task, branch guidance, commit message, and blockers.
+- **Result summary:** T0031 completed as a source-artifact task. Created `final_report/main.tex`, `final_report/references.bib`, `final_report/README.md`, copied `final_report/IEEEtran.cls`, and copied `final_report/figures/schematic.png` from `Extended_Proposal.zip`. The LaTeX report follows IEEEtran conference style and preserves claim-safe wording, blank cells, partial-cell coverage counts, validation provenance, assumptions, blockers, and limitations from `docs/FINAL_REPORT_DRAFT.md`. Citation checks found no missing or uncited BibTeX entries, begin/end checks were balanced, and new text files were ASCII-only. PDF generation was blocked because `latexmk`, `pdflatex`, `bibtex`, and `tectonic` were not available on the Windows PATH. No simulator source, helper source, routing behavior, VN transition logic, VL fault injection, traffic semantics, metrics semantics, runner/analysis semantics, rebuild, rerun, regression command, or performance claim was changed.
+- **Follow-up tasks:** Start `T0032` only if a compiled PDF is required and a TeX toolchain is available.
+- **Next ready-to-send prompt:** See `docs/PROGRESS.md`.
+- **Suggested branch name for next task:** None; continue on the existing branch.
+- **Suggested commit message:** `docs: add IEEE LaTeX final report artifact`
+
+## 2026-05-09: Start T0033 Diagnose Final-Report Blockers
+
+- **Date:** 2026-05-09
+- **Prompt summary:** Diagnose and reduce the final-report blockers that prevent stronger XY-vs-DEFT comparison, especially XY hotspot zero-injection cells, XY localized/uniform zero-received cells, missing post-injection drain policy, and whether a small rerun can produce non-empty claim-safe data.
+- **Full prompt summary:** The user requested a new task after T0031 and required startup reading of all project tracking documents, `docs/FINAL_REPORT_DRAFT.md`, and `final_report/main.tex`. The prompt required using `external/noxim`, starting as diagnosis rather than implementation, inspecting synthetic traffic configs, runner configuration, injection rate, warm-up, simulation window, traffic distribution, and stop conditions. It prohibited modifying DeFT routing, VN transition logic, VL fault injection, LUT schema, topology behavior, source code, old final-sweep artifacts, rebuilding, full-sweep reruns, and `./regression.sh --update`. It allowed only small targeted smoke simulations, preferred one or two focused XY hotspot/uniform runs, required `git diff --check`, and required updating tracking documents. The final answer had to report causes of the XY hotspot zero-injection cells, XY zero-received cells, whether drain is needed, whether config/runner changes are enough, whether source changes are required, the next task, whether the final report should be regenerated, and a commit message.
+- **Result summary:** T0033 completed as a diagnosis task. Source inspection showed that injected packets are counted only when a packet head flit leaves the PE after the stats warm-up boundary, while standard `XY` on `DEFT_2_5D` is cardinal-only and cannot traverse VL/hub/interposer paths. `DEFT_2_5D` chiplet cardinal links are wired only within each 4x4 chiplet, and missing cross-chiplet cardinal ports are idle-bound. A two-run warm-up-0 WSL diagnostic under `external/noxim/other/generated/t0033_xy_diagnostic_warmup0_v1/` completed with return code `0`: `XY|hotspot_3x10|0x0000|seed0` injected 145 packets and received 6, and `XY|uniform|0x0000|seed0` injected 141 packets and received 4. Therefore the hotspot table and uniform generator are not empty; the T0027 blank cells are due to the `-warmup 1000` measured window after early XY traffic has injected and then stalled behind route-incompatible inter-chiplet paths. The current `-volume` stop condition is not a post-injection drain phase. No simulator source, helper source, routing behavior, VN transition logic, VL fault injection, LUT schema/use path, topology behavior, old final-sweep artifact, rebuild, full sweep, regression command, or performance claim was changed.
+- **Follow-up tasks:** Start `T0034` to define a claim-safe follow-up rerun, report revision, or drain/source-cutoff policy before regenerating report content.
+- **Next ready-to-send prompt:** See `docs/PROGRESS.md`.
+- **Suggested branch name for next task:** None; continue on the existing branch.
+- **Suggested commit message:** `docs: diagnose final report comparison blockers`
+
+## 2026-05-11: Start T0034 Decide Next Gap-Closure Direction and Add Follow-up Tasks
+
+- **Date:** 2026-05-11
+- **Prompt summary:** Evaluate the current project state after T0033 and choose the most reasonable next direction among report revision, interposer-aware XY-like baseline implementation, post-injection drain/source-cutoff support, PARSEC/GEM5 trace support, documentation-only finalization, or another path.
+- **Full prompt summary:** The user requested task `T0034`, required startup reading of all project tracking documents, `docs/FINAL_REPORT_DRAFT.md`, and `final_report/main.tex`, and required using the registered Noxim source tree at `external/noxim`. The prompt summarized the T0033 findings: XY hotspot zero-injection cells were measured-window artifacts after `-warmup 1000`; XY uniform/localized zero-received cells were caused by standard cardinal-only `XY` being topology-incompatible with unrestricted inter-chiplet traffic on `DEFT_2_5D`; post-injection drain is needed for eventual-delivery analysis but would not fix XY incompatibility; config/runner-only fixes can support limited diagnostics but not strong unrestricted inter-chiplet XY-vs-DEFT comparison; source changes are required only for true drain/source-cutoff support or an interposer-aware XY baseline. The user prohibited code implementation, final-sweep reruns, simulations except already documented documentation-safe validation, final report regeneration, `./regression.sh --update`, and invented results. The user required comparing Options A through F on benefit, risk, time cost, source-code impact, validation burden, external dependency burden, final-report quality, possible new blockers, and late-project appropriateness; recommending exactly one primary direction; adding small ordered follow-up tasks; and updating `docs/TASKS.md`, `docs/PROGRESS.md`, `docs/VALIDATION.md`, `docs/PROMPTS.md`, and `docs/DECISIONS.md` if a durable decision was made.
+- **Result summary:** T0034 completed as a documentation-only decision task. Option A was selected as the primary next direction: revise the final report using the T0033 diagnosis without adding new simulator behavior. Option A was preferred because it improves report quality and traceability with low risk, no source-code impact, no external dependency burden, and documentation-only validation. Option B could eventually improve baseline comparability but requires new routing behavior and substantial validation. Option C could support eventual-delivery analysis but requires simulator/runner semantic changes and does not fix standard XY topology incompatibility. Option D has high external dependency and validation burden. Option E is safe but leaves the report less informative than Option A. Option F was recorded as a post-final design gate for deferred experimental extensions. Added `T0035` to revise the final report with the T0033 diagnosis and `T0036` as a post-final experimental extension design gate. Added ADR-0041 to record the durable decision to prioritize claim-safe report revision over late simulator behavior changes. `git diff --check` and the `external/noxim` diff check passed, with line-ending warnings for edited Markdown files only. No source code, simulator behavior, helper behavior, routing logic, VN transition logic, VL fault injection, LUT schema/use path, topology behavior, generated final-sweep artifact, Noxim rebuild, simulation run, final report regeneration, PDF generation, regression command, or performance claim was changed.
+- **Follow-up tasks:** Start `T0035` to revise `docs/FINAL_REPORT_DRAFT.md` and `final_report/main.tex` with the T0033 diagnosis before PDF generation.
+- **Next ready-to-send prompt:** See `docs/PROGRESS.md`.
+- **Suggested branch name for next task:** None; continue on the existing branch.
+- **Suggested commit message:** `docs: choose final report revision path`
+
+## 2026-05-11: Start T0035 Revise Final Report with T0033 Diagnosis
+
+- **Date:** 2026-05-11
+- **Prompt summary:** Revise the claim-safe Markdown final report draft and IEEE LaTeX source so they explain the T0033 XY blocker diagnosis without adding simulator behavior or unsupported results.
+- **Full prompt summary:** The user requested task `T0035`, required startup reading of all project tracking documents plus `docs/FINAL_REPORT_DRAFT.md` and `final_report/main.tex`, required continuing on the existing Git branch, and required using `external/noxim` as the registered Noxim source tree. The prompt required updating `docs/FINAL_REPORT_DRAFT.md` and `final_report/main.tex` so they incorporate T0033 as explanatory provenance only: `XY|hotspot_3x10` zero-injection cells are measured-window artifacts caused by `-warmup 1000` after early XY traffic injected and stalled; `XY|uniform` and `XY|localized_40` zero-received cells are caused by standard cardinal-only `XY` being topology-incompatible with unrestricted inter-chiplet `DEFT_2_5D` traffic; a post-injection drain/source-cutoff policy is needed for eventual-delivery analysis but would not by itself fix standard XY topology incompatibility; and warm-up-0 T0033 diagnostic values must not be presented as final performance results. The prompt required preserving T0026/T0027/T0028 as the only final report-support data set, using `Extended_Proposal.pdf` as the primary requirements source, the original DeFT paper as the primary algorithmic reference, `Proposal.pdf` only as initial context, and ignoring the peer evaluation document. It prohibited source/helper/routing/VN/VL/LUT/topology/traffic/metrics/runner/analysis changes, generated final-sweep artifact changes, Extended Proposal file changes, Noxim rebuilds, simulation reruns, final-sweep regeneration, `./regression.sh --update`, invented results, and unsupported performance claims. It required a short plan before editing, `git diff --check`, optional LaTeX compilation only if tooling was available, tracking-document updates, and a final report of files, validation, phase, next task, PDF-generation status, next prompt, branch guidance, commit message, and blockers.
+- **Result summary:** T0035 completed as a report/documentation-only task. `docs/FINAL_REPORT_DRAFT.md` and `final_report/main.tex` now explain the T0033 diagnosis while preserving blank cells, measured values, limitations, assumptions, blockers, and descriptive-only wording. The reports state that the hotspot XY blank cells are fixed-window measured-window artifacts after `-warmup 1000`, that uniform/localized XY zero-received cells come from standard cardinal-only XY being topology-incompatible with unrestricted inter-chiplet `DEFT_2_5D` traffic, that a drain/source-cutoff policy is future work for eventual-delivery analysis but not a fix for standard XY topology incompatibility, and that T0033 warm-up-0 diagnostics are traceability evidence only. No source code, simulator behavior, helper behavior, generated final-sweep artifact, rebuild, rerun, regression command, or performance claim was changed. PDF generation was not attempted because `latexmk`, `pdflatex`, `bibtex`, and `tectonic` were unavailable on the Windows PATH.
+- **Follow-up tasks:** Start `T0032` to compile the revised `final_report/main.tex` into a PDF in a TeX-enabled environment.
+- **Next ready-to-send prompt:** See `docs/PROGRESS.md`.
+- **Suggested branch name for next task:** None; continue on the existing branch.
+- **Suggested commit message:** `docs: revise final report with xy diagnosis`
+
+## 2026-05-11: Start T0032 Generate Final Report PDF in a TeX-Enabled Environment
+
+- **Date:** 2026-05-11
+- **Prompt summary:** Compile the revised IEEE LaTeX final report source at `final_report/main.tex` into a PDF after T0035 incorporated the T0033 diagnosis, or record the exact TeX-environment blocker if no toolchain is available.
+- **Full prompt summary:** The user requested task `T0032`, required startup reading of all project tracking documents plus `docs/FINAL_REPORT_DRAFT.md` and `final_report/main.tex`, required continuing on the existing branch, and required using `external/noxim` as the registered Noxim source tree. The prompt required compiling from `final_report/` with `latexmk -pdf main.tex` if available, or `pdflatex`/`bibtex`/`pdflatex`/`pdflatex` if `latexmk` was unavailable but both fallback tools existed. It required recording the generated PDF path and any warnings or layout blockers, or recording the exact blocker and leaving PDF generation blocked if no TeX toolchain was available. It prohibited modifying report claims, simulator source, helper source, routing logic, VN transition logic, VL fault injection, LUT schema/use path, topology behavior, traffic semantics, metrics semantics, runner/analysis semantics, generated final-sweep artifacts, Extended Proposal files, rebuilding Noxim, rerunning simulations, regenerating the final sweep, using `./regression.sh --update`, or adding unsupported performance claims.
+- **Result summary:** T0032 is blocked. `final_report/main.tex`, `final_report/references.bib`, and `final_report/IEEEtran.cls` are present, but Windows PATH does not expose `latexmk`, `pdflatex`, `bibtex`, or `tectonic`; common Windows TeX install locations checked during T0032 did not expose a visible TeX install; and `wsl -l -v` reported no installed WSL distributions. LaTeX compilation was not attempted, no PDF was generated, and no warnings or layout blockers could be inspected. `git diff --check` passed with line-ending warnings for edited Markdown files only. No report claims, simulator source, helper source, generated final-sweep artifacts, rebuild, rerun, regression command, or performance claim was changed.
+- **Follow-up tasks:** Resolve the TeX-environment blocker, then continue `T0032` to compile the revised final report PDF.
+- **Next ready-to-send prompt:** See `docs/PROGRESS.md`.
+- **Suggested branch name for next task:** None; continue on the existing branch.
+- **Suggested commit message:** `docs: record final report pdf generation blocker`
+
+## 2026-05-11: Continue T0032 After TeX Toolchain Blocker Check
+
+- **Date:** 2026-05-11
+- **Prompt summary:** Continue T0032 after the TeX toolchain blocker was expected to be resolved, first confirming tool availability, then compiling the report or recording the exact remaining blocker.
+- **Full prompt summary:** The user requested continuing `T0032`, required startup reading of all project tracking documents plus `docs/FINAL_REPORT_DRAFT.md` and `final_report/main.tex`, required continuing on the existing branch, and prohibited modifying report claims, source code, simulator behavior, generated final-sweep artifacts, or Extended Proposal files. The prompt required first confirming that a TeX toolchain is available, preferring `latexmk -pdf main.tex` from `final_report/`, with a fallback to `pdflatex`/`bibtex`/`pdflatex`/`pdflatex` only when both fallback tools are available. It required recording the generated PDF path, warnings, and layout blockers, or the exact blocker if tooling remained unavailable, updating tracking docs, and running `git diff --check`.
+- **Result summary:** The T0032 continuation attempt remains blocked. Windows PATH still does not expose `latexmk`, `pdflatex`, `bibtex`, or `tectonic`; common Windows TeX install locations checked during the continuation did not expose a visible TeX install; and `wsl -l -v` still reported no installed WSL distributions. LaTeX compilation was not attempted, no PDF was generated, and no warnings or layout blockers could be inspected. `git diff --check` passed with line-ending warnings for edited Markdown files only. No report claims, source code, simulator behavior, generated final-sweep artifacts, rebuild, rerun, regression command, or performance claim was changed.
+- **Follow-up tasks:** Resolve the TeX-environment blocker, then continue `T0032` to compile the revised final report PDF.
+- **Next ready-to-send prompt:** See `docs/PROGRESS.md`.
+- **Suggested branch name for next task:** None; continue on the existing branch.
+- **Suggested commit message:** `docs: record continued pdf generation blocker`
+
+## 2026-05-11: Retry T0032 After WSL `pdflatex` Installation
+
+- **Date:** 2026-05-11
+- **Prompt summary:** Retry T0032 after the user reported that `pdflatex` was installed on WSL Ubuntu.
+- **Full prompt:**
+
+```text
+Ok retry, I installed pdflatex on wsl ubuntu
+```
+
+- **Result summary:** T0032 completed. The sandbox-visible WSL check still reported no installed distributions, but an approved outside-sandbox WSL check found Ubuntu running under WSL 2. Windows PATH still did not expose TeX tools, and WSL did not expose `latexmk`, but WSL did expose `/usr/bin/pdflatex` and `/usr/bin/bibtex`. The fallback sequence was run from `final_report/`. Two claim-neutral TeX compatibility edits were made in `final_report/main.tex`: remove the unused `algorithmic` package import because `algorithmic.sty` was missing, and switch the bibliography style from unavailable `IEEEtran` to installed `ieeetr` because `IEEEtran.bst` was not available locally. The final PDF was generated at `final_report/main.pdf`; final log inspection found no unresolved citations or references, no LaTeX errors, no fatal errors, no overfull boxes, and BibTeX zero warnings. Remaining diagnostics were 43 underfull box messages, one underfull vbox, and the standard IEEEtran final-page column-balance reminder. No report claims, source code, simulator behavior, generated final-sweep artifacts, rebuild, rerun, regression command, or performance claim was changed.
+- **Follow-up tasks:** Start `T0036` to perform the post-final experimental extension design gate.
+- **Next ready-to-send prompt:** See `docs/PROGRESS.md`.
+- **Suggested branch name for next task:** None; continue on the existing branch.
+- **Suggested commit message:** `docs: generate final report pdf`
+
+## 2026-05-11: Start T0036 Post-Final Experimental Extension Design Gate
+
+- **Date:** 2026-05-11
+- **Prompt summary:** After final report revision and PDF generation, decide whether any high-risk experimental extension should be designed as future work or whether experimental work should stop.
+- **Full prompt summary:** The user requested task `T0036`, required startup reading of all project tracking documents plus `docs/FINAL_REPORT_DRAFT.md` and `final_report/main.tex`, required continuing on the existing Git branch, and prohibited creating or switching branches. The prompt required using `Extended_Proposal.pdf` as the primary project requirements source, the original DeFT paper as the primary algorithmic reference, `Proposal.pdf` only as initial context, and ignoring the peer evaluation document. It required using the registered Noxim source tree at `external/noxim` for context only. The task was design-only and prohibited source-code edits, report-claim changes, simulator/helper behavior changes, routing/VN/VL/LUT/topology/traffic/metrics/runner/analysis changes, generated final-sweep artifact changes, generated final-report PDF artifact changes, Extended Proposal file changes, Noxim rebuilds, simulation reruns, final-sweep regeneration, external dependency installation, and `./regression.sh --update`. The user required revisiting the deferred T0034 options: interposer-aware XY-like baseline, source-cutoff plus post-injection drain policy, explicitly route-compatible intra-chiplet comparison, PARSEC/GEM5 trace support, or no further experimental work; recording risks, validation requirements, dependencies, and blockers before implementation; updating tracking docs; updating `docs/DECISIONS.md` only if a durable decision was made; and running `git diff --check`.
+- **Result summary:** T0036 completed as a documentation-only design gate. The selected future-work direction is no further experimental work for the current project phase. Interposer-aware XY-like routing was not selected because it requires new routing behavior, build validation, focused route tests, and new versioned comparison artifacts. Source-cutoff plus post-injection drain was not selected because it changes simulator/runner stop semantics, requires metric-interpretation work, and does not fix standard `XY` topology incompatibility by itself. A route-compatible intra-chiplet comparison was not selected because it narrows away from the central unrestricted inter-chiplet DeFT case and would need a separate validation and report policy. PARSEC/GEM5 trace support was not selected because it requires external trace-generation or import infrastructure, workload mapping, and substantial validation. Added ADR-0042 to record the durable decision to stop experimental work after final report closure. No source code, report claims, simulator behavior, helper behavior, generated final-sweep artifacts, generated final-report PDF artifacts, rebuild, rerun, external dependency installation, regression command, or performance claim was changed.
+- **Follow-up tasks:** No further experimental task is recommended. Start `T0037` only if a final submission handoff check is desired.
+- **Next ready-to-send prompt:** See `docs/PROGRESS.md`.
+- **Suggested branch name for next task:** None; continue on the existing branch.
+- **Suggested commit message:** `docs: close post-final experimental gate`
+
+## 2026-05-11: Start T0037 Final Submission Handoff Check
+
+- **Date:** 2026-05-11
+- **Prompt summary:** Perform a documentation-only final handoff check after T0036 selected no further experimental work.
+- **Full prompt summary:** The user requested task `T0037`, required startup reading of all project tracking documents plus `docs/FINAL_REPORT_DRAFT.md` and `final_report/main.tex`, required continuing on the existing Git branch, and prohibited creating or switching task branches. The prompt required using `Extended_Proposal.pdf` as the primary project requirements source, the original DeFT paper as the primary algorithmic reference, `Proposal.pdf` only as initial context, and ignoring the peer evaluation document completely. The prompt required using the registered Noxim source tree at `external/noxim`, producing a short implementation plan before commands or tracking-document edits, and clearly marking assumptions and blockers. The task prohibited source-code edits, report-claim changes, simulator/helper behavior changes, routing/VN/VL/LUT/topology/traffic/metrics/runner/analysis changes, generated final-sweep artifact changes, generated final-report PDF artifact changes, Extended Proposal file changes, Noxim rebuilds, simulation reruns, final-sweep regeneration, external dependency installation, and `./regression.sh --update`. The user required confirming final artifact paths, repository status, tracking-document consistency, and remaining blockers only, updating `docs/TASKS.md`, `docs/PROGRESS.md`, `docs/VALIDATION.md`, and `docs/PROMPTS.md`, updating `docs/DECISIONS.md` only if a new durable decision was made, running `git diff --check`, and reporting final handoff details.
+- **Result summary:** T0037 completed as a documentation-only handoff check. Confirmed `final_report/main.pdf` exists at `C:\Projects\CMP-720-Project-Proposal\final_report\main.pdf` with size 344758 bytes, and `final_report/main.log` records a 5-page PDF output. Confirmed current `final_report/main.tex`, `references.bib`, `IEEEtran.cls`, `README.md`, and `figures/schematic.png` are present. Confirmed T0026/T0027/T0028 report-support artifact paths are present, including 150 T0026 JSON stats files, 300 log files, and 5 generated LUT files. Parent repository status before documentation edits showed only the pre-existing untracked `final_report.zip`, and `external/noxim` remained clean. The handoff caveat is that `final_report.zip` is stale: it is untracked, does not contain `final_report/main.pdf`, and contains an older `main.tex`, so it should not be used as the current final submission package unless refreshed separately. `docs/FINAL_REPORT_DRAFT.md` also still contains an older PDF-blocked note, but current tracking docs and the generated PDF supersede it; it was left unchanged because T0037 did not edit report content. Final `git diff --check` completed with exit code `0`, with line-ending conversion warnings for edited Markdown files only. No source code, report claims, simulator behavior, generated final-sweep artifacts, generated final-report PDF artifacts, rebuild, rerun, external dependency installation, regression command, or performance claim was changed.
+- **Follow-up tasks:** Start `T0038` only if a zip/archive package is required for submission. Otherwise no further project task is recommended, and no further experimental work is recommended.
+- **Next ready-to-send prompt:** See `docs/PROGRESS.md`.
+- **Suggested branch name for next task:** None; continue on the existing branch.
+- **Suggested commit message:** `docs: record final submission handoff`
+
+## 2026-05-11: Start T0038 Refresh Final Submission Package
+
+- **Date:** 2026-05-11
+- **Prompt summary:** Refresh the final submission package only if an archive is required, preserving report contents, simulator behavior, generated artifacts, and final-report PDF artifacts.
+- **Full prompt summary:** The user requested task `T0038`, required startup reading of all project tracking documents plus `docs/FINAL_REPORT_DRAFT.md` and `final_report/main.tex`, required continuing on the existing Git branch, and prohibited creating or switching task branches. The prompt required using `Extended_Proposal.pdf` as the primary project requirements source, the original DeFT paper as the primary algorithmic reference, `Proposal.pdf` only as initial context, and ignoring the peer evaluation document completely. It required using `external/noxim` as the registered Noxim source tree, producing a short implementation plan before commands or tracking-document edits, and clearly marking assumptions and blockers. The task prohibited source-code edits, report-claim changes, simulator/helper behavior changes, routing/VN/VL/LUT/topology/traffic/metrics/runner/analysis changes, generated final-sweep artifact changes, generated final-report PDF artifact changes, Extended Proposal file changes, Noxim rebuilds, simulation reruns, final-sweep regeneration, external dependency installation, and `./regression.sh --update`. If an archive was required, the prompt required refreshing only the submission archive so it included current `final_report/main.pdf`, current `final_report/main.tex`, `final_report/references.bib`, `final_report/IEEEtran.cls`, `final_report/README.md`, and `final_report/figures/schematic.png`.
+- **Result summary:** T0038 completed as a packaging-only task. Starting T0038 was treated as the archive-required path. The previously documented stale `final_report.zip` was not present at task start, so a fresh archive was created. The new `final_report.zip` contains exactly the six allowed entries with `final_report/...` paths, including the generated `final_report/main.pdf`; entry sizes match the current files. The archive size is 659238 bytes and SHA-256 is `C54186F6326B288C3C069FB396F23874CBE9A30DAD5913AA38A688E8444B5882`. No report source, generated PDF artifact, report claim, source code, simulator behavior, generated final-sweep artifact, rebuild, rerun, external dependency installation, regression command, or performance claim was changed.
+- **Follow-up tasks:** No further project task is recommended. Use `final_report/main.pdf`, the current `final_report/` source tree, and `final_report.zip` for final handoff.
+- **Next ready-to-send prompt:** No next project task is recommended. Use the current final handoff artifacts unless a new explicit task with its own design and validation policy is opened.
+- **Suggested branch name for next task:** None; continue on the existing branch.
+- **Suggested commit message:** `docs: refresh final submission package`
+
+## 2026-05-11: Start T0039 Analyze Remaining Gaps and Document Future Task Backlog
+
+- **Date:** 2026-05-11
+- **Prompt summary:** Analyze the remaining limitations after final package creation and document an ordered future backlog without changing source code, generated artifacts, final-report artifacts, or report claims.
+- **Full prompt summary:** The user requested task `T0039`, required startup reading of all project tracking documents plus `docs/FINAL_REPORT_DRAFT.md` and `final_report/main.tex`, required continuing on the existing Git branch, and prohibited creating or switching task branches. The prompt asked Codex to first check whether the GPT-generated task list was appropriate and to proceed only if it fit the project; otherwise, Codex should inform the user. The task was documentation/planning only and prohibited modifying simulator source, helper source, routing logic, VN transition logic, VL fault injection, LUT schema/use path, topology behavior, traffic semantics, metrics semantics, runner/analysis semantics, generated final-sweep artifacts, `final_report.zip`, `final_report/main.pdf`, and Extended Proposal files. It also prohibited rebuilding Noxim, rerunning simulations, regenerating the final sweep, regenerating the final report PDF, using `./regression.sh --update`, inventing results, or strengthening unsupported claims. The requested backlog covered interposer-aware XY design and implementation, limited IA-XY-vs-DEFT comparison, source-cutoff plus drain design and implementation, directional fault modeling feasibility, PARSEC/GEM5 feasibility and ingestion, and report regeneration only after new validated artifacts exist.
+- **Result summary:** T0039 completed as a documentation-only backlog task. The supplied prompt was accepted as consistent with the existing project decisions because it preserves final submission readiness, keeps high-risk work as future tasks, and requires new artifact directories for future experiments. Added T0039 as completed and added TODO tasks T0040 through T0048. Added architecture notes for the post-submission backlog, validation notes for future backlog planning, progress updates that the final package remains ready for handoff, and ADR-0043 to record the durable rule that the backlog is non-blocking and artifact-isolated. No source code, helper source, simulator behavior, generated final-sweep artifacts, final-report PDF artifact, `final_report.zip`, rebuild, rerun, external dependency installation, regression command, or performance claim was changed.
+- **Follow-up tasks:** None for submission. Start T0040 only if more development is required.
+- **Next ready-to-send prompt:** `No next task is required for final submission. If more development is required, start T0040: Design Interposer-Aware XY Baseline. Before starting, read AGENTS.md and the required project tracking documents, continue on the existing branch, do not create or switch branches, keep the task design-only, clearly state that IA-XY is not standard XY, do not edit source code or run simulations, update tracking docs, and run git diff --check.`
+- **Suggested branch name for next task:** None; continue on the existing branch.
+- **Suggested commit message:** `docs: document future development backlog`
+
+## 2026-05-11: Start T0040 Design Interposer-Aware XY Baseline
+
+- **Date:** 2026-05-11
+- **Prompt summary:** Design a new Interposer-Aware XY baseline for future comparison against `DEFT_2_5D`, as a documentation-only task.
+- **Full prompt summary:** The user requested task `T0040`, required startup reading of all project tracking documents plus `docs/FINAL_REPORT_DRAFT.md` and `final_report/main.tex`, required continuing on the existing Git branch, and prohibited creating or switching task branches. The prompt required using `Extended_Proposal.pdf` as the primary project requirements source, the original DeFT paper as the primary algorithmic reference, `Proposal.pdf` only as initial context, and ignoring the peer evaluation document completely. The prompt required using the registered Noxim source tree at `external/noxim`, and it scoped the task to design/planning only. The design had to state clearly that IA-XY is not standard XY, because standard XY is cardinal-only and remains unchanged; IA-XY should be a new baseline that intentionally routes inter-chiplet packets through Vertical Links and the interposer. The task prohibited source-code edits, helper-source edits, routing logic changes, VN transition changes, VL fault injection changes, LUT schema/use path changes, topology behavior changes, traffic/metrics/runner/analysis semantic changes, generated final-sweep artifact changes, `final_report.zip`, `final_report/main.pdf`, Extended Proposal file changes, Noxim rebuilds, simulation reruns, final-sweep regeneration, final-report PDF regeneration, `./regression.sh --update`, invented results, and unsupported stronger claims. The requested design contents included purpose and rationale, why standard XY is insufficient, route behavior, interposer entry/exit, relationship to existing XY and DeFT, naming, future source files, validation plan, risks, open questions, future implementation acceptance criteria, and claim-safety rules.
+- **Result summary:** T0040 completed as a design-only documentation task. Added the IA-XY design to `docs/ARCHITECTURE.md`, marked T0040 done in `docs/TASKS.md`, recorded validation expectations in `docs/VALIDATION.md`, added progress and next prompt updates in `docs/PROGRESS.md`, and added ADR-0044 in `docs/DECISIONS.md`. IA-XY is defined as a new proposed `INTERPOSER_AWARE_XY` baseline, not standard `XY`; standard `XY` remains cardinal-only and unchanged. The future route design uses same-chiplet local XY, source-chiplet local XY to a functional source VL, active-interposer XY traversal, destination-side functional VL traversal, and destination-local XY. No source code, helper source, simulator behavior, generated artifacts, final-report artifacts, package artifacts, rebuild, rerun, regression command, or performance claim was changed.
+- **Follow-up tasks:** Start `T0041` only if more development is required after the current final submission.
+- **Next ready-to-send prompt:** See `docs/PROGRESS.md`.
+- **Suggested branch name for next task:** None; continue on the existing branch.
+- **Suggested commit message:** `docs: design interposer-aware xy baseline`
+
+## 2026-05-11: Start T0041 Implement Interposer-Aware XY Baseline
+
+- **Date:** 2026-05-11
+- **Prompt summary:** Implement a separately selectable `INTERPOSER_AWARE_XY` routing mode according to the accepted T0040 IA-XY design.
+- **Full prompt summary:** The user requested task `T0041`, required startup reading of `AGENTS.md`, all required tracking documents, `docs/FINAL_REPORT_DRAFT.md`, and `final_report/main.tex`, and required reading the T0040 IA-XY design in `docs/ARCHITECTURE.md`. The user required continuing on the existing Git branch, using `Extended_Proposal.pdf` as the primary project requirements source, the original DeFT paper as the primary algorithmic reference, `Proposal.pdf` only as initial context, ignoring the peer evaluation document completely, and using the registered Noxim source tree at `external/noxim`. The goal was to add a new baseline route named `INTERPOSER_AWARE_XY` that preserves standard `XY` as cardinal-only and unchanged, preserves `DEFT`, VN transition restrictions, VL fault injection, LUT schema/use path, topology behavior, traffic semantics, metrics semantics, runner/analysis semantics, generated final-sweep artifacts, final-report artifacts, and Extended Proposal files. The user required a short plan before coding, parent and `external/noxim` status checks, build validation using `./build.sh`, targeted smokes only, concrete smoke commands before running them, no full comparison matrix, no final-sweep regeneration, no report PDF regeneration, no `./regression.sh --update`, no invented results, and tracking-document updates.
+- **Result summary:** T0041 completed. Added a new self-registered `INTERPOSER_AWARE_XY` route in `external/noxim/src/routingAlgorithms/Routing_INTERPOSER_AWARE_XY.*`, added the routing string constant, help/config visibility, a `DEFT_2_5D` topology guard, a matching power-model entry, a minimal config example, and tiny hardcoded traffic files for same-chiplet and inter-chiplet smokes. IA-XY routes same-chiplet packets with local XY only. Inter-chiplet IA-XY selects a functional source VL and functional destination VL using existing `DeftTopology` queries, routes source-local XY, traverses the source VL through `DIRECTION_HUB`, routes XY on the active interposer, traverses the destination VL through `DIRECTION_HUB`, and routes destination-local XY. It does not use the DeFT schema-v1 LUT or DeFT VL optimization. Standard `XY`, `DEFT`, VN transition restrictions, VL fault injection, topology behavior, traffic semantics, metrics semantics, runner/analysis semantics, generated T0026/T0027/T0028 artifacts, `final_report/main.pdf`, `final_report.zip`, and Extended Proposal files were preserved.
+- **Validation summary:** The known Noxim build command `./build.sh` completed with exit code `0` in WSL Ubuntu. Route registration/config loading smoke passed with routing `INTERPOSER_AWARE_XY`, DeFT LUT disabled, active fault mask `0x0000`, and four functional VLs per chiplet. Same-chiplet `0 -> 3` smoke passed, delivered one packet/eight flits, and had no IA-XY VL traversal debug entries. Inter-chiplet no-fault `0 -> 63` smoke passed and logged source exit `vl_id=0` plus destination entry `vl_id=12`. Explicit-fault fallback with `-deft_faulty_vls 0` passed and logged fallback source exit `vl_id=1` instead of faulty `vl_id=0`. External `diff --check` passed and generated T0026/T0027/T0028 artifact directories had no changed files. These smokes are implementation validation only, not performance evidence.
+- **Follow-up tasks:** Start `T0042` only if more development is required, to define and run a limited, claim-safe IA-XY-vs-DEFT comparison in new artifact directories.
+- **Next ready-to-send prompt:** See `docs/PROGRESS.md`.
+- **Suggested branch name for next task:** None; continue on the existing branch.
+- **Suggested commit message:** `feat: implement interposer-aware xy baseline`
+
+## 2026-05-11: Start T0042 Run Limited IA-XY vs DeFT Comparison
+
+- **Date:** 2026-05-11
+- **Prompt summary:** Run a limited, claim-safe IA-XY-vs-DEFT comparison using the validated `INTERPOSER_AWARE_XY` route and new artifact directories only.
+- **Full prompt summary:** The user requested task `T0042`, required startup reading of all project tracking documents plus `docs/FINAL_REPORT_DRAFT.md` and `final_report/main.tex`, and specifically required reading the T0040 IA-XY design and T0041 IA-XY implementation notes in `docs/ARCHITECTURE.md`. The user required continuing on the existing Git branch, using `Extended_Proposal.pdf` as the primary requirements source, using the original DeFT paper as the primary algorithmic reference, using `Proposal.pdf` only as initial context, and ignoring the peer evaluation document completely. The goal was to run a limited, claim-safe `INTERPOSER_AWARE_XY` vs `DEFT` comparison now that IA-XY had build and smoke validation. The prompt required producing an experiment plan before execution, checking parent and `external/noxim` status, defining the exact matrix before running anything, using new artifact directories under `external/noxim/other/generated/t0042_iaxy_deft_limited_v1/`, preserving blank-aware interpretation rules, and treating results as exploratory/report-support only unless fully supported by validated artifacts. The task prohibited simulator source modifications unless an unavoidable blocker was found, standard `XY` changes, `DEFT` routing changes, VN transition changes, VL fault injection changes, LUT schema/use path changes, topology/traffic/metrics/runner/analysis semantic changes, T0026/T0027/T0028 artifact overwrites, final sweep regeneration, final report PDF/package changes, Extended Proposal changes, `./regression.sh --update`, invented results, and unsupported stronger claims.
+- **Result summary:** T0042 completed. The exact limited matrix was documented before simulator execution: routings `INTERPOSER_AWARE_XY` and `DEFT`; traffic profiles `uniform`, `localized_40`, and `hotspot_3x10`; fault masks `0x0000` and `0x1111`; seeds `0` and `1`; `-sim 10000`; `-warmup 1000`; JSON stats; 24 planned runs. All artifacts were written under `external/noxim/other/generated/t0042_iaxy_deft_limited_v1/`. The Ubuntu WSL run completed with exit code `0`, producing `manifest.json`, `commands.sh`, `summary.csv`, 24 JSON stats files, 24 stdout logs, 24 stderr logs, and generated DEFT LUTs for the two masks. The mechanical analysis scaffold and T0042 blank-aware cross-check both completed with exit code `0`; `blank_aware_validation.json` reports `cross_check_passed: true` with no summary/stat mismatches, no config mismatches, and no missing artifacts. IA-XY hotspot cells injected zero packets and remain blank-aware. The packet-carrying IA-XY/DEFT cells are descriptive side-by-side evidence only and do not support ranking, improvement percentages, statistical conclusions, or final-report claim changes. No simulator source code, standard `XY`, `DEFT`, VN transition restrictions, VL fault injection semantics, LUT schema/use path, topology behavior, traffic semantics, metrics semantics, runner/analysis source semantics, T0026/T0027/T0028 artifacts, final-report artifacts, package artifacts, or Extended Proposal files were changed.
+- **Follow-up tasks:** Start `T0043` only if more development is required, to design source-cutoff plus post-injection drain/timeout semantics before any eventual-delivery implementation or experiment.
+- **Next ready-to-send prompt:** See `docs/PROGRESS.md`.
+- **Suggested branch name for next task:** None; continue on the existing branch.
+- **Suggested commit message:** `test: run limited ia-xy deft comparison`
+
+## 2026-05-12: Start T0043 Design Source-Cutoff and Post-Injection Drain Policy
+
+- **Date:** 2026-05-12
+- **Prompt summary:** Design, but do not implement, a source-cutoff and post-injection drain/timeout policy for eventual-delivery analysis.
+- **Full prompt summary:** The user requested task `T0043`, required startup reading of all project tracking documents plus `docs/FINAL_REPORT_DRAFT.md` and `final_report/main.tex`, required continuing on the existing Git branch, and prohibited creating or switching task branches. The prompt required using `Extended_Proposal.pdf` as the primary project requirements source, the original DeFT paper as the primary algorithmic reference, `Proposal.pdf` only as initial context, and ignoring the peer evaluation document completely. The prompt required using the registered Noxim source tree at `external/noxim`. The task goal was to design source cutoff, drain start, in-flight empty condition, timeout policy, metric denominators, warm-up interaction, differences from current fixed-window `-sim`, differences from current Noxim `-volume`, future simulator/runner surfaces, and smoke-test cases for a later implementation task. The prompt prohibited simulator source edits, helper source edits, routing logic changes, standard `XY` changes, `DEFT` changes, VN transition changes, VL fault injection changes, LUT schema/use path changes, topology behavior changes, traffic semantics changes, metrics semantics changes, runner/analysis semantics changes, simulations, Noxim rebuilds, final-sweep regeneration, final-report PDF regeneration, final-report package changes, Extended Proposal file changes, `./regression.sh --update`, invented results, and unsupported stronger claims.
+- **Result summary:** T0043 completed as a design-only documentation task. Added the source-cutoff plus drain/timeout policy to `docs/ARCHITECTURE.md`, marked T0043 done and refined T0044 expectations in `docs/TASKS.md`, recorded validation expectations in `docs/VALIDATION.md`, updated progress and the next ready-to-send T0044 prompt in `docs/PROGRESS.md`, and added ADR-0046 in `docs/DECISIONS.md`. The policy defines an opt-in future eventual-delivery mode: measured packet heads are admitted only before a source cutoff, drain timeout starts at the cutoff boundary, completion requires source queues, router buffers, relevant VL/hub carrier state, reservations, and measured injected/received counts to be empty, and exports must report stop reason, denominator counts, timing fields, and remaining in-flight counts. It distinguishes this from fixed-window `-sim` and current Noxim `-volume`. T0026/T0027/T0028 and T0042 remain historical fixed-window artifacts and were not regenerated or reinterpreted. No source code, helper source, simulator behavior, routing behavior, traffic behavior, metric export behavior, runner behavior, generated artifacts, final-report artifacts, package artifacts, rebuild, rerun, regression command, or performance claim was changed.
+- **Follow-up tasks:** Start `T0044` only if more development is required, to implement the accepted opt-in drain mode and run targeted validation smokes before any broader eventual-delivery experiment.
+- **Next ready-to-send prompt:** See `docs/PROGRESS.md`.
+- **Suggested branch name for next task:** None; continue on the existing branch.
+- **Suggested commit message:** `docs: design source cutoff drain policy`
+
+## 2026-05-12: Start T0044 Implement and Validate Drain Policy
+
+- **Date:** 2026-05-12
+- **Prompt summary:** Implement the accepted opt-in T0043 source-cutoff plus post-injection drain/timeout mode and validate it with targeted smokes only.
+- **Full prompt summary:** The user requested task `T0044`, required startup reading of all project tracking documents plus `docs/FINAL_REPORT_DRAFT.md` and `final_report/main.tex`, and specifically required reading the T0043 source-cutoff and post-injection drain policy in `docs/ARCHITECTURE.md` and ADR-0046 in `docs/DECISIONS.md`. The user required continuing on the existing Git branch without creating or switching branches, using `Extended_Proposal.pdf` as the primary requirements source, using the original DeFT paper as the primary algorithmic reference, using `Proposal.pdf` only as initial context, ignoring the peer evaluation document completely, and using the registered Noxim source tree at `external/noxim`. The goal was to implement only the accepted opt-in source-cutoff plus drain/timeout mode for eventual-delivery analysis, preserve fixed-window `-sim` behavior and current `-volume` behavior when drain mode is disabled, add explicit in-flight empty detection and denominator export fields, and run targeted smokes only. The prompt prohibited modifying standard `XY`, `DEFT`, VN transition restrictions, VL fault injection semantics, LUT schema/use path, topology behavior, existing fixed-window metric semantics, existing runner/analysis defaults outside opt-in drain mode, generated final-sweep artifacts, `final_report/main.pdf`, `final_report.zip`, Extended Proposal files, and `./regression.sh --update`.
+- **Result summary:** T0044 completed. Added opt-in drain mode selected by `-drain_mode` or `-drain`, with YAML/CLI fields for source cutoff and explicit timeout. Drain mode gates source admission during warm-up, admits measured packet heads only before the cutoff, drains accepted traffic after cutoff, and stops with `drain_completed` or `drain_timeout`. Empty detection covers source queues, router buffers, router reservations, pending hub/VL handshakes, and measured injected/received packet and flit balances. Drain-mode JSON/CSV exports include explicit stop reason, timing fields, measured injected/received denominators, undelivered counts, elapsed-cycle denominators, drain throughput, and remaining in-flight counts. Fixed-window `-sim` behavior remains the default, and current `-volume` behavior remains available when drain mode is disabled. Added ADR-0047 because drain mode and `-volume` are mutually exclusive stop policies.
+- **Validation summary:** The known `external/noxim` build command `./build.sh` passed after an initial WSL timeout and incremental rerun. Targeted smokes passed under ignored `external/noxim/other/generated/t0044_drain_smokes/`: no-traffic immediate drain, same-chiplet hardcoded delivery, inter-chiplet `DEFT` delivery with no-fault LUT, cutoff suppression, timeout, warm-up gating, disabled fixed-window compatibility, and disabled `-volume` compatibility. The timeout smoke stopped with `drain_timeout` and nonzero remaining in-flight counts; all delivery smokes completed with expected injected/received packet counts; disabled-mode smokes exported no drain fields. The first inline Bash/Python JSON verifier had a here-document delimiter issue after simulator commands completed, then a PowerShell JSON verifier passed. No standard `XY`, `DEFT`, VN transition restrictions, VL fault injection semantics, LUT schema/use path, topology behavior, runner/analysis defaults, generated final-sweep artifacts, final-report artifacts, package artifacts, or Extended Proposal files were changed.
+- **Follow-up tasks:** Start `T0045` only if more development is required, to evaluate directional endpoint fault modeling against the current physical bidirectional VL model before any fault-model implementation.
+- **Next ready-to-send prompt:** See `docs/PROGRESS.md`.
+- **Suggested branch name for next task:** None; continue on the existing branch.
+- **Suggested commit message:** `feat: implement drain policy`
+
+## 2026-05-12: Start T0045 Evaluate Directional Fault Modeling
+
+- **Date:** 2026-05-12
+- **Prompt summary:** Evaluate whether the simulator should support directional endpoint fault modeling in addition to the current physical bidirectional VL fault model.
+- **Full prompt summary:** The user requested task `T0045`, required startup reading of all project tracking documents plus `docs/FINAL_REPORT_DRAFT.md` and `final_report/main.tex`, required continuing on the existing Git branch without creating or switching branches, and required using `Extended_Proposal.pdf` as the primary requirements source, the original DeFT paper as the primary algorithmic reference, `Proposal.pdf` only as initial context, and ignoring the peer evaluation document completely. The task required using the registered Noxim source tree at `external/noxim`, producing a short feasibility plan before editing, checking parent and `external/noxim` status, and clearly marking assumptions and blockers. The scope was to compare the current 16 physical bidirectional VL model with the paper's directional endpoint interpretation, identify impacts to fault masks, LUT generation, runtime lookup, topology state, validation, and result interpretation, and recommend implement, defer, or reject directional endpoint support. The task prohibited source-code edits, simulations, Noxim rebuilds, standard `XY` changes, `DEFT` changes, VN transition changes, VL fault injection semantic changes, LUT schema/use path changes, topology behavior changes, generated final-sweep artifacts, `final_report/main.pdf`, `final_report.zip`, Extended Proposal files, `./regression.sh --update`, invented results, and unsupported stronger claims.
+- **Result summary:** T0045 completed as a documentation-only feasibility task. Source-document inspection confirmed the central ambiguity: the extended proposal describes four bidirectional VLs per chiplet while using 3.125% through 25% fault-rate wording, and the original DeFT paper reports four-chiplet reachability over `total VLs=32` while also describing four bidirectional VLs per chiplet. Read-only source inspection confirmed that the current implementation uses 16 physical bidirectional VL IDs, one functional state per physical VL, physical fault masks in configuration and runner surfaces, schema-v1 LUT keys over 16 physical bits, and physical functional-state checks in `DEFT` and IA-XY routing. Added the T0045 feasibility analysis to `docs/ARCHITECTURE.md` and added ADR-0048 to defer directional endpoint support behind a future versioned fault-model design. Existing T0026/T0027/T0028, T0042, T0044, final-report, package, and Extended Proposal artifacts remain physical-model artifacts and must not be reinterpreted as single-direction fault evidence.
+- **Validation summary:** Documentation-only validation ran with `git diff --check`, final `external/noxim` status, generated-artifact guards for T0026/T0027/T0028 and T0042, and final-report/proposal artifact guards. No source code, simulator behavior, standard `XY`, `DEFT`, VN transition restrictions, VL fault injection semantics, LUT schema/use path, topology behavior, generated artifacts, simulations, Noxim rebuild, final-report PDF, package artifact, Extended Proposal file, regression command, or performance claim changed.
+- **Follow-up tasks:** Start `T0046` only if more development is required, to assess PARSEC/GEM5 trace support feasibility without installing dependencies or claiming trace support.
+- **Next ready-to-send prompt:** See `docs/PROGRESS.md`.
+- **Suggested branch name for next task:** None; continue on the existing branch.
+- **Suggested commit message:** `docs: evaluate directional fault modeling`

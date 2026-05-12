@@ -894,7 +894,265 @@ Assumption: T0022 analysis inputs are runner outputs produced by T0021 and metri
 
 Blocked: No validated final sweep output set exists yet. The only available completed runner output is the T0021 20-cycle seed-0 localized XY/DEFT execute smoke with no VL faults, which validates export and analysis shape only.
 
-Blocked: Final fault-rate accounting, final simulation window, seed count, warm-up/drain policy, and result-claim rules remain future decisions.
+Resolved in T0025: Final fault-rate accounting, simulation window, seed count, warm-up/drain policy, and result-claim rules are documented below. Final sweep outputs are still missing until a later task executes the policy.
+
+## T0025 Final Sweep Policy
+
+`T0025` defines the final sweep policy before final runs are executed or interpreted. It does not run full sweeps, change simulator behavior, rebuild Noxim, update golden regression outputs, or make performance claims.
+
+Source alignment:
+
+- `Extended_Proposal.pdf` requires cycle-accurate Noxim evaluation under Uniform, Localized, and Hotspot synthetic traffic, progressive permanent VL fault injection up to 25%, and metrics for reachability, average latency, and network throughput.
+- The original DeFT paper evaluates a four-chiplet system with four bidirectional VLs per chiplet, two VCs for fairness, 8-flit packets, 4-flit buffers, Uniform/Localized/Hotspot synthetic traffic, offline VL selection optimized under Uniform traffic, and reachability under 3.125% to 25% fault-injection rates over the paper's reported `total VLs=32` accounting.
+- The current implementation models 16 physical bidirectional VL IDs. A startup fault disables one physical bidirectional VL object and therefore both directional movements over that physical VL.
+
+Final executable matrix:
+
+| Dimension | Values |
+| --- | --- |
+| Routing modes | `XY`, `DEFT` |
+| Traffic profiles | `uniform`, `localized_40`, `hotspot_3x10` |
+| Physical fault masks | `0x0000`, `0x0001`, `0x0011`, `0x0111`, `0x1111` |
+| Physical faulty VL IDs | `[]`, `[0]`, `[0,4]`, `[0,4,8]`, `[0,4,8,12]` |
+| Physical fault rates over 16 bidirectional VLs | 0%, 6.25%, 12.5%, 18.75%, 25% |
+| Paper-aligned directional-equivalent rates over 32 directional channels | 0%, 6.25%, 12.5%, 18.75%, 25% |
+| Seeds | `0`, `1`, `2`, `3`, `4` |
+| Simulation window | `-sim 10000` cycles |
+| Stats warm-up | `-warmup 1000` cycles |
+| Stats format | `json` |
+
+This policy produces exactly `2 routing modes * 3 traffic profiles * 5 fault masks * 5 seeds = 150` simulator runs.
+
+Fault-rate accounting policy:
+
+- Final commands use explicit physical fault masks because T0010/T0011/T0016/T0017/T0021 all use physical bidirectional VL IDs `0..15`.
+- Report fault rates as physical bidirectional percentages over 16 VLs and, when comparing to the paper, as directional-equivalent percentages over 32 channels. For this implementation, the numeric rates are equal because one physical bidirectional VL fault disables both directions.
+- Assumption: A permanent physical VL or microbump failure disables both directions of that physical VL in this implementation.
+- Blocked: The paper's 3.125% single-direction fault case cannot be represented without adding directional endpoint fault modeling. T0025 does not change the fault-injection model, so no final claim may state that single-direction 3.125% cases were evaluated.
+
+Warm-up and drain policy:
+
+- Use a fixed simulation window with continuous packet injection for all profiles.
+- Use `1000` cycles of stats warm-up so the measured window is not dominated by startup transients.
+- Do not use a post-injection drain phase in this policy. The current runner does not expose a source cut-off plus drain window, and Noxim's existing `max_volume_to_be_drained` is not a post-injection drain policy.
+- Assumption: T0020 reachability remains the finite-window metric `received packets / injected packets` over the measured stats window.
+- Blocked: Eventual-delivery reachability after quiescing injection requires a future drain-capable validation design or helper update.
+
+Final runner command shape:
+
+```bash
+python3 other/deft_experiment_runner.py \
+  --routing XY --routing DEFT \
+  --traffic uniform --traffic localized_40 --traffic hotspot_3x10 \
+  --fault-mask 0x0000 --fault-mask 0x0001 --fault-mask 0x0011 --fault-mask 0x0111 --fault-mask 0x1111 \
+  --seed 0 --seed 1 --seed 2 --seed 3 --seed 4 \
+  --sim 10000 \
+  --warmup 1000 \
+  --stats-format json \
+  --output-dir other/generated/t0026_final_sweep_v1
+```
+
+Execution, when explicitly requested in a later task, should use the same command with `--execute --max-execute-runs 150` from `external/noxim` in WSL/Linux.
+
+Validation gates before final claims:
+
+- A dry-run manifest must contain exactly 150 planned runs and the full Cartesian product above.
+- Every `DEFT` run must have a generated schema-v1 LUT provenance entry, and every `XY` run must leave the DeFT LUT disabled.
+- Every fault mask must pass the current connected-chiplet validation rule and must not disconnect any chiplet.
+- Executed final-sweep manifests must report `mode: execute`, `run_count: 150`, `status: completed`, and `return_code: 0` for every run.
+- Every expected JSON stats file must exist and contain the T0020 fields for routing mode, traffic distribution, active fault mask, injected and received packet/flit counts, reachability ratio, average latency, and throughput.
+- Final analysis must be regenerated from the completed sweep output using `external/noxim/other/deft_analysis_artifacts.py`, and the generated tables must be cross-checked against the raw manifest and per-run JSON stats before report text uses them.
+
+Result-claim rules:
+
+- No performance, reachability, latency, or throughput claim may use smoke runs, dry-run manifests, incomplete runs, failed runs, missing stats files, or generated grouped means that have not been cross-checked against raw artifacts.
+- Claims must be paired by identical traffic profile, fault mask, seed, simulation window, and warm-up window. Cross-profile or cross-fault comparisons must be described as separate conditions.
+- A statement that DeFT maintains `100%` measured reachability is allowed only for cells where every DeFT seed has `reachability_ratio == 1.0` in the exported JSON stats. Otherwise, report the exact measured finite-window reachability values and do not use "100%" wording.
+- Latency and throughput comparisons are valid only when both compared routing modes have completed runs and nonzero received packet counts. If a baseline has low reachability, report it as a reliability limitation before interpreting its latency or throughput.
+- With five seeds, report descriptive statistics only: mean plus min/max or per-seed table. Do not claim statistical significance unless a later task increases the sample size and defines a statistical test.
+- Literature baselines (`MTR`, `RC`) may be discussed only conceptually from the source documents because they are not implemented in this repository.
+
+## T0026 Final Sweep Execution
+
+`T0026` executed the T0025 final matrix and regenerated final analysis artifacts. It did not change simulator source, helper source, DeFT routing behavior, VN transition logic, Vertical Link fault injection, LUT schemas, traffic-profile semantics, metrics semantics, runner semantics, analysis semantics, golden regression outputs, or `./regression.sh --update`.
+
+Generated ignored sweep artifacts:
+
+- `external/noxim/other/generated/t0026_final_sweep_v1/manifest.json`.
+- `external/noxim/other/generated/t0026_final_sweep_v1/commands.sh`.
+- `external/noxim/other/generated/t0026_final_sweep_v1/summary.csv`.
+- `external/noxim/other/generated/t0026_final_sweep_v1/logs/`.
+- `external/noxim/other/generated/t0026_final_sweep_v1/luts/`.
+- `external/noxim/other/generated/t0026_final_sweep_v1/stats/`.
+
+Generated ignored analysis artifacts:
+
+- `external/noxim/other/generated/t0026_final_analysis_v1/analysis_manifest.json`.
+- `external/noxim/other/generated/t0026_final_analysis_v1/run_summary.csv`.
+- `external/noxim/other/generated/t0026_final_analysis_v1/comparison_summary.csv`.
+- `external/noxim/other/generated/t0026_final_analysis_v1/report_scaffold.md`.
+
+Validation outcome:
+
+- The dry-run manifest contained `mode: dry_run`, `run_count: 150`, 150 planned runs, and the full Cartesian product of routing modes, traffic profiles, fault masks, and seeds from T0025.
+- The executed manifest contained `mode: execute`, `run_count: 150`, 150 completed runs, and 150 return code `0` runs.
+- All 150 expected JSON stats files exist and contain the T0020 fields for routing mode, traffic distribution, active fault mask, injected and received packet/flit counts, reachability ratio, average latency, and throughput.
+- The analysis helper was run with `--dataset-kind final_sweep` and produced 150 run-summary rows and 30 comparison-summary groups.
+- A raw-artifact cross-check found zero mismatches between `run_summary.csv`, `comparison_summary.csv`, the executed manifest, and per-run JSON stats.
+
+Assumption: T0026 analysis tables are mechanical report-support summaries only. The helper intentionally keeps `claims_allowed: false`, so final report text still needs a separate interpretation step before using the grouped means.
+
+Blocked: 54 individual runs reported zero injected packets in the measured window. Report interpretation must handle those empty cells explicitly and must not turn missing reachability or latency values into performance claims.
+
+## T0027 Final Sweep Report-Support Review
+
+`T0027` reviewed the completed T0026 final sweep outputs and generated blank-aware report-support artifacts. It did not rerun simulations, rebuild Noxim, change simulator source, change helper source, change DeFT routing behavior, change VN transition logic, change Vertical Link fault injection, change LUT schemas, change traffic-profile semantics, change metrics semantics, change runner or analysis semantics, update golden outputs, or use `./regression.sh --update`.
+
+Generated ignored report-support artifacts:
+
+- `external/noxim/other/generated/t0027_report_support_v1/manifest.json`.
+- `external/noxim/other/generated/t0027_report_support_v1/condition_summary.csv`.
+- `external/noxim/other/generated/t0027_report_support_v1/xy_deft_pair_summary.csv`.
+- `external/noxim/other/generated/t0027_report_support_v1/zero_injection_runs.csv`.
+- `external/noxim/other/generated/t0027_report_support_v1/coverage_by_routing_traffic.csv`.
+- `external/noxim/other/generated/t0027_report_support_v1/report_notes.md`.
+
+Review outcome:
+
+- The T0027 condition and pair tables were derived from the T0026 executed manifest and raw JSON stats, then cross-checked against T0026 `summary.csv`, analysis `run_summary.csv`, and analysis `comparison_summary.csv`.
+- The cross-check found zero mismatches across 150 completed raw stats rows, 30 condition cells, and 15 XY/DEFT pair rows.
+- The 30 condition cells are classified as 12 complete-injection cells, 13 partial-injection cells, and 5 empty-injection cells.
+- The 54 zero-injection runs are preserved in `zero_injection_runs.csv` rather than folded into claims.
+- All 5 empty-injection condition cells are `XY|hotspot_3x10`.
+- `XY|uniform` and `XY|localized_40` are partial-injection cells and have zero received packets in the measured window.
+- No XY/DEFT pair supports latency comparison because the XY side has zero received packets in every pair where it injected packets.
+
+Assumption: T0027 uses blank reachability when `total_injected_packets == 0`, because the denominator is absent.
+
+Assumption: T0027 uses blank latency when `total_received_packets == 0`, because no packet delay samples exist.
+
+Blocked: T0027 tables support descriptive, claim-safe report drafting only. Empty or partial injection cells cannot support unqualified performance claims, and final report prose must either accept those limitations or define a follow-up validation/rerun policy before claiming more.
+
+## T0028 Claim-Safe Final Report Results Draft
+
+`T0028` converted the T0027 report-support artifacts into a final-report-ready results draft without changing simulator behavior or rerunning simulations.
+
+Generated ignored report-draft artifacts:
+
+- `external/noxim/other/generated/t0028_final_report_results_v1/manifest.json`.
+- `external/noxim/other/generated/t0028_final_report_results_v1/report_results_draft.md`.
+
+Drafting outcome:
+
+- The draft uses the T0027 manifest, condition summary, XY/DEFT pair summary, coverage table, zero-injection list, and report notes as the only result sources.
+- The draft records the T0025/T0026 matrix shape: `XY` and `DEFT`; `uniform`, `localized_40`, and `hotspot_3x10`; fault masks `0x0000`, `0x0001`, `0x0011`, `0x0111`, and `0x1111`; seeds `0..4`; `-sim 10000`; `-warmup 1000`.
+- The draft preserves T0027 counts: 150 completed raw stats rows, 30 condition cells, 15 XY/DEFT pair rows, 54 individual zero-injection runs, 12 complete-injection cells, 13 partial-injection cells, 5 empty-injection cells, and zero cross-check mismatches.
+- Blank reachability remains blank when no packets were injected.
+- Blank latency remains blank when no packets were received.
+- Partial cells keep nonempty and empty seed counts beside descriptive metrics.
+- No deltas, improvement percentages, statistical-significance statements, unqualified performance claims, or latency comparisons are introduced.
+
+Assumption: T0028 text is report-ready descriptive support, not a new analysis layer. It should be integrated into a final report only with its coverage counts, blank cells, and limitations intact.
+
+Blocked: Stronger claims, non-empty XY hotspot cells, latency comparisons, the original paper's single-direction 3.125% fault case, and eventual-delivery reachability after a drain phase still require separate documented validation or rerun policy.
+
+## T0029 Claim-Safe Final Report Draft Assembly
+
+`T0029` assembled the tracked Markdown final report draft at `docs/FINAL_REPORT_DRAFT.md`. It uses `Extended_Proposal.pdf` as the primary requirements source, the original DeFT paper as the primary algorithmic reference, `Proposal.pdf` as initial context, project documentation for implementation traceability, and the T0028/T0027/T0026 artifacts for results text and validation provenance.
+
+Report draft structure:
+
+- Claim safety notice and source scope.
+- Abstract, introduction, background, implementation summary, evaluation method, validation provenance, results, limitations, conclusion, and references.
+- T0028-derived artifact readiness, coverage, condition-level descriptive metrics, pair-readiness, and zero-injection summary tables.
+
+The draft preserves the T0027/T0028 interpretation rules:
+
+- Blank reachability means no injected-packet denominator exists in that measured cell.
+- Blank latency means no received-packet delay samples exist in that measured cell.
+- Partial cells must keep nonempty and empty seed counts beside descriptive metrics.
+- The final report draft uses `claims_allowed: false` result language and does not add deltas, ranking, latency comparison, inferential claims, or complete-reachability language.
+
+Assumption: `docs/FINAL_REPORT_DRAFT.md` is the current tracked claim-safe manuscript draft, not a new result-analysis layer.
+
+Blocked: Submission formatting, real-application PARSEC/GEM5 trace coverage, non-empty XY hotspot measurements, latency comparisons, single-direction fault modeling, and eventual-delivery checks require separate documented follow-up tasks before they can change the report claims.
+
+## T0030 Final Report Submission-Readiness Review
+
+`T0030` reviewed and polished the tracked Markdown draft at `docs/FINAL_REPORT_DRAFT.md` without changing simulator behavior or report-support measurements.
+
+Review outcome:
+
+- The report title and draft-status front matter now identify the reviewed Markdown draft as the current deliverable.
+- The claim-safety notice remains explicit and now records that no PDF, DOCX, PPTX, or other final artifact format was requested during T0030.
+- Source-scope wording now separates project requirements, DeFT algorithmic reference material, initial context, and validation provenance.
+- The evaluation-method table labels physical fault rates as percentages.
+- The condition-level metrics table keeps all measured values and blank cells intact, and adds a status-label legend for readability.
+- The references list now describes each source role without introducing unsupported bibliographic details.
+
+The review preserved the T0027/T0028 interpretation rules:
+
+- Blank reachability remains blank when no packets were injected.
+- Blank latency remains blank when no packets were received.
+- Partial cells keep nonempty and empty seed counts beside descriptive metrics.
+- No deltas, ordering claims, inferential claims, latency comparisons, complete-reachability wording, or unsupported performance language were added.
+
+Assumption: `docs/FINAL_REPORT_DRAFT.md` is submission-ready as a reviewed Markdown draft and is the content source for the final LaTeX artifact.
+
+Blocked: A compiled final-report PDF still requires a TeX-enabled environment.
+
+## T0031 IEEE LaTeX Final Submission Artifact
+
+`T0031` converted the reviewed Markdown draft at `docs/FINAL_REPORT_DRAFT.md` into an IEEE conference-style LaTeX final report artifact after the required format was explicitly supplied.
+
+Artifact outcome:
+
+- `Extended_Proposal.zip` was used as the formatting/template reference. Its usable source tree contains `conference_101719.tex`, `IEEEtran.cls`, `references.bib`, and `figures/schematic.png`.
+- `final_report/main.tex` uses `\documentclass[conference]{IEEEtran}`, the same IEEE bibliography style, the same author/title convention family, and the same general proposal package/layout style.
+- `final_report/references.bib` reuses only cited entries from the Extended Proposal bibliography.
+- `final_report/IEEEtran.cls` and `final_report/figures/schematic.png` were copied from `Extended_Proposal.zip` so the final artifact is self-contained without overwriting the original proposal archive.
+- `final_report/README.md` records source hierarchy, build instructions, and the PDF-generation blocker.
+
+The LaTeX report preserves the T0027/T0028 interpretation rules:
+
+- Blank reachability remains blank when no packets were injected.
+- Blank latency remains blank when no packets were received.
+- Partial cells keep nonempty and empty seed counts beside descriptive metrics.
+- No deltas, ordering claims, inferential claims, latency comparisons, complete-reachability wording, or unsupported performance language were added.
+
+Assumption: `final_report/` is the final source artifact for IEEE-style LaTeX submission.
+
+Blocked: PDF generation was not completed in T0031 because `latexmk`, `pdflatex`, `bibtex`, and `tectonic` were not available on the Windows PATH.
+
+## T0033 Final-Report Blocker Diagnosis
+
+`T0033` diagnosed the XY measured-window blockers that limited the T0031 final report. It did not change simulator source, helper source, routing behavior, VN transition logic, VL fault injection, LUT schema/use path, topology behavior, old final-sweep artifacts, or report claims.
+
+Diagnosis grounding:
+
+- `ProcessingElement::recordInjectedPacket()` counts injected packets only when a packet head flit leaves the PE after the configured stats warm-up boundary.
+- `Routing_XY.cpp` compares only `id2Coord(current_id)` and `id2Coord(dst_id)` and selects a cardinal direction. It has no VL, hub, interposer, chiplet-layer, or source/destination chiplet phase logic.
+- `NoC::buildDeft2D()` wires chiplet-layer cardinal links only within each 4x4 chiplet. Cross-chiplet cardinal movement across the global footprint is intentionally not a physical chiplet-layer link.
+- Missing `DEFT_2_5D` cardinal ports are bound to idle ports. A standard XY inter-chiplet path can therefore choose an output that has no corresponding chiplet-layer neighbor.
+- `Routing_DEFT.cpp` is the 2.5D-aware path that selects source-chiplet exit, hub/VL traversal, interposer routing, destination-chiplet entry, and final local routing.
+- The current `-volume` option stops after delivered flits; it is not a post-injection drain phase because it does not stop sources and then drain in-flight traffic until empty or timeout.
+
+Diagnostic smoke:
+
+- A two-run WSL diagnostic used `external/noxim/other/deft_experiment_runner.py` with `XY`, `hotspot_3x10` and `uniform`, fault mask `0x0000`, seed `0`, `--sim 10000`, `--warmup 0`, JSON stats, and output directory `external/noxim/other/generated/t0033_xy_diagnostic_warmup0_v1/`.
+- `XY|hotspot_3x10|0x0000|seed0` injected 145 packets and received 6 packets.
+- `XY|uniform|0x0000|seed0` injected 141 packets and received 4 packets.
+
+Interpretation:
+
+- The `XY|hotspot_3x10` zero-injection cells in T0027 are not caused by an empty hotspot traffic table, an invalid hotspot destination set, or lack of injection probability. They are measured-window cells: with T0026 `-warmup 1000`, early packets can inject before stats are counted, and the XY run can stall before the measured window because inter-chiplet cardinal XY has no valid path on the disconnected chiplet layer.
+- The `XY|localized_40` and `XY|uniform` zero-received cells are also explained by XY route incompatibility plus the fixed warm-up window. Some measured-window packets can be injected, but the existing XY algorithm cannot route unrestricted inter-chiplet traffic through the active interposer.
+- A config/runner-only warm-up-0 diagnostic can produce non-empty XY rows, but it remains a transient diagnostic policy and should not be presented as a strong full inter-chiplet comparison.
+- A claim-safe same-chiplet or intra-chiplet-only comparison could be config-only if its scope is clearly limited. A true unrestricted inter-chiplet XY baseline or a post-injection drain/source-cutoff policy requires a separate approved design and likely source changes.
+
+Assumption: The current standard `XY` baseline is useful as a traceable control configuration, but it is not an interposer-aware baseline for unrestricted `DEFT_2_5D` inter-chiplet traffic.
+
+Blocked: Final-report latency or improvement claims remain unsupported until a follow-up policy either narrows the traffic scope, adds source-supported drain validation, or implements and validates an interposer-aware baseline route.
 
 ## Synthetic Traffic Models
 
@@ -911,9 +1169,12 @@ Planned:
 - Static Vertical Link faults injected at simulation startup.
 - Fault rates up to 25%.
 - No chiplet may be completely disconnected from the interposer.
-- Current implementation validates masks over 16 physical bidirectional VL IDs and flags four faulty physical VLs as the current physical 25% target.
+- Current implementation validates masks over 16 physical bidirectional VL IDs.
+- T0025 final-sweep policy uses explicit physical masks `0x0000`, `0x0001`, `0x0011`, `0x0111`, and `0x1111`, corresponding to 0%, 6.25%, 12.5%, 18.75%, and 25% of the physical bidirectional VL model.
 
-Assumption: The proposal contains ambiguity around whether percentages are counted over physical bidirectional Vertical Links or directional links. The original paper reports 32 total Vertical Links for the four-chiplet fault analysis, which suggests directional or endpoint-level counting. This must be resolved before final experiment automation.
+Assumption: For final reporting, a physical bidirectional VL fault is also reported as disabling two directional channels in the paper's 32-channel accounting, so the T0025 physical rates have the same numeric directional-equivalent rates.
+
+Blocked: Single-direction fault scenarios, including the original paper's 3.125% one-direction case, are not represented by the current physical bidirectional fault model.
 
 ## Evaluation Metrics
 
@@ -939,9 +1200,574 @@ Planned and partially implemented:
 - Implemented in T0020: CSV/JSON metrics export includes routing mode, traffic mode, active fault mask, reachability, average latency, and throughput fields.
 - Implemented in T0021: `external/noxim/other/deft_experiment_runner.py` can plan and execute tiny XY/DEFT comparison runs that reuse those configs, CLI surfaces, generated temporary LUTs, and stats exports.
 - Implemented in T0022: `external/noxim/other/deft_analysis_artifacts.py` can turn runner manifests and stats exports into traceable analysis tables and a Markdown report scaffold while blocking final claims when inputs are smoke-only or final sweeps are missing.
-- Planned: XY routing in a packet-carrying fault-free scenario establishes the upper-bound reference after experiment validation exists.
-- Planned: XY routing with injected faults demonstrates baseline degradation, failures, or deadlock behavior after experiment validation exists.
-- Planned: DeFT runs use the same T0019 traffic profiles with explicit DEFT routing and matching LUT/fault settings for fair comparison.
+- Implemented in T0025: The final comparison policy uses the same traffic, seed, simulation, warm-up, and physical fault-mask cells for `XY` and `DEFT`, with `XY` providing fault-free and fault-injected baseline behavior and `DEFT` using generated schema-v1 LUTs for matching fault masks.
+- Implemented in T0026: The T0025 150-run final matrix completed with return code `0` for every run, final analysis artifacts were regenerated with the final-sweep label, and generated tables were cross-checked against the raw manifest and JSON stats before any report claim.
+- Implemented in T0027: Blank-aware report-support tables classify complete, partial, and empty measured cells; preserve the 54 zero-injection runs; and avoid pairwise improvement or latency claims where the measured denominators are absent.
+- Implemented in T0028: Claim-safe final report results prose and Markdown tables were drafted from T0027/T0026 artifacts while preserving blank cells, partial-cell coverage counts, and `claims_allowed: false`.
+- Implemented in T0029: A tracked claim-safe Markdown final report draft was assembled at `docs/FINAL_REPORT_DRAFT.md` from the source documents, project documentation, and T0028/T0027/T0026 report-support artifacts.
+- Implemented in T0030: The tracked Markdown final report draft was reviewed and polished for submission readiness while preserving claim-safety constraints, blank cells, validation provenance, assumptions, blockers, and limitations.
+- Implemented in T0031: The reviewed Markdown draft was converted into an IEEE conference-style LaTeX source artifact under `final_report/` using `Extended_Proposal.zip` as the formatting/template reference. PDF generation remains blocked until a TeX toolchain is available.
+- Diagnosed in T0033: The existing `XY` route is cardinal-only and does not traverse VL/hub/interposer paths, so unrestricted inter-chiplet traffic on `DEFT_2_5D` can stall before the T0026 measured window and cannot support strong XY-vs-DEFT latency or improvement claims.
+
+## T0040 Interposer-Aware XY Baseline Design
+
+T0040 defines a future comparison baseline only. It does not implement a routing algorithm, change simulator behavior, run simulations, regenerate artifacts, or change final-report claims.
+
+### Purpose And Rationale
+
+The proposed baseline is named Interposer-Aware XY, abbreviated `IA-XY` in documentation and recommended as `INTERPOSER_AWARE_XY` for the future routing string. Its purpose is to provide a topology-compatible, deterministic baseline for unrestricted inter-chiplet traffic on `DEFT_2_5D`.
+
+Standard `XY` remains useful as a limited control baseline, but it is not enough for unrestricted inter-chiplet comparison. The current `external/noxim/src/routingAlgorithms/Routing_XY.cpp` implementation compares only `id2Coord(current_id)` and `id2Coord(dst_id)`, then returns one cardinal direction. It does not choose `DIRECTION_HUB`, does not inspect Vertical Links, does not distinguish chiplet and interposer layers, and does not route through active-interposer phases. In `DEFT_2_5D`, chiplet-layer cardinal links are intentionally local to each 4x4 chiplet, so a cardinal-only route can request movement across a nonexistent chiplet-to-chiplet cardinal boundary.
+
+IA-XY is therefore not standard `XY`. It is a new proposed baseline that intentionally routes inter-chiplet packets through source-side Vertical Links, the active interposer, and destination-side Vertical Links. Future reports and tables must label it separately from `XY`.
+
+### High-Level Routing Behavior
+
+IA-XY should use deterministic phase routing:
+
+- Same-chiplet packets: route with ordinary dimension-order XY inside the source chiplet and do not enter the interposer.
+- Inter-chiplet packets on the source chiplet: choose a functional source-side exit VL, route by local chiplet XY to that boundary router, then traverse the VL down to the interposer through the existing physical VL carrier.
+- Interposer phase: route by dimension-order XY over the active-interposer footprint from the source exit interposer endpoint to the selected destination entry interposer endpoint.
+- Destination entry: traverse the selected functional destination-side VL up into the destination chiplet.
+- Destination-local phase: route by local chiplet XY from the destination boundary router to the final destination router.
+
+The design should be deterministic and simple. It should not use the DeFT schema-v1 VL LUT, traffic-demand optimization, load-balancing cost function, or adaptive VL optimization. It may use current startup VL functional state to avoid known faulty physical VLs, because selecting a nonfunctional VL would not be a meaningful topology-compatible baseline under fault injection.
+
+Assumption: IA-XY uses the existing 16 physical bidirectional VL model and the existing `DeftTopology` endpoint and functional-state queries. It does not resolve directional endpoint fault modeling.
+
+Blocked: Exact tie-breaking constants are deferred to T0041, but the implementation should document them before running any smoke simulation. A safe default is stable deterministic ordering by shortest Manhattan path on the active-interposer footprint, then lower `vl_id`.
+
+### Entering And Exiting The Interposer
+
+For an inter-chiplet packet, IA-XY needs one source-side exit VL and one destination-side entry VL:
+
+- Source exit selection should choose a functional VL owned by the source chiplet. A directional preference may choose the source chiplet boundary slot that faces the destination chiplet when possible. If that preferred VL is faulty, IA-XY should fall back to another functional source-chiplet VL using deterministic tie-breaking.
+- Destination entry selection should choose a functional VL owned by the destination chiplet. The preferred entry should minimize interposer traversal distance from the selected source exit endpoint, with stable tie-breaking.
+- At the source boundary router, IA-XY should output the existing physical VL carrier direction only when the selected physical VL is functional and the current router is the selected boundary endpoint.
+- At the destination interposer endpoint, IA-XY should output the existing physical VL carrier direction only when the selected physical VL is functional and the current router is the selected interposer endpoint.
+- If either chiplet has no functional VL despite startup validation, IA-XY should fail closed by returning no legal output direction rather than silently falling back to invalid chiplet-layer cardinal movement.
+
+Assumption: In the current implementation, physical VL traversal is carried by `DIRECTION_HUB`. IA-XY may reuse that carrier in T0041, but it must not redefine the project-wide Up/Down semantics or change VN transition logic.
+
+### Relationship To Existing XY And DeFT
+
+Standard `XY`:
+
+- Remains unchanged.
+- Remains cardinal-only.
+- Remains the route named `XY`.
+- Must not be reinterpreted as interposer-aware in documentation, configs, analysis, or report prose.
+
+IA-XY:
+
+- Is a new baseline route, not a correction or replacement of standard `XY`.
+- Reuses the `DEFT_2_5D` topology model and VL endpoint inventory.
+- Uses deterministic XY movement inside each phase.
+- May avoid known faulty physical VLs using current fault state, but does not use DeFT LUT optimization.
+- Should keep metrics semantics, traffic semantics, topology behavior, fault semantics, and runner/analysis semantics unchanged unless a future task explicitly scopes a change.
+
+DeFT:
+
+- Remains the algorithmic route under comparison.
+- Continues to use schema-v1 LUT selection and existing VN rules.
+- Must not be modified by IA-XY implementation.
+
+Because `DeftVirtualNetwork::isEnabled()` is currently topology-scoped for `DEFT_2_5D`, future IA-XY implementation must verify how the existing VN assignment and movement filters interact with IA-XY hub/VL traversal. T0041 should not weaken or bypass VN transition restrictions. If IA-XY needs routing-specific VN behavior, that is a separate design task.
+
+### Naming And Configuration Recommendation
+
+Recommended public names:
+
+- Documentation label: `IA-XY`.
+- Routing string: `INTERPOSER_AWARE_XY`.
+- Example future config name: `deft_2_5d_interposer_aware_xy_baseline.yaml`.
+
+Avoid naming the mode just `XY` or `XY_2_5D`, because that can imply standard XY semantics. `INTERPOSER_AWARE_XY` is verbose but clear that the route intentionally uses the interposer.
+
+### Expected Future Implementation Touch Points
+
+Likely T0041 source and configuration surfaces:
+
+- `external/noxim/src/routingAlgorithms/Routing_INTERPOSER_AWARE_XY.h` and `external/noxim/src/routingAlgorithms/Routing_INTERPOSER_AWARE_XY.cpp` for the new registered routing algorithm.
+- `external/noxim/src/routingAlgorithms/RoutingAlgorithms.*` only if registry behavior needs updates beyond the existing self-registration pattern.
+- `external/noxim/src/GlobalParams.h` for an optional routing-name constant.
+- `external/noxim/src/ConfigurationManager.cpp` for help text and any validation that the new route is selected only with compatible topology assumptions.
+- `external/noxim/src/DeftTopology.*` only if a missing read-only helper is required; existing mapping, boundary-router, VL endpoint, and functional-state helpers should be preferred.
+- `external/noxim/src/DeftVirtualNetwork.*` should not be changed during T0041 unless a new task explicitly scopes VN behavior. T0041 should first work with the existing VN filter.
+- `external/noxim/config_examples/deft_2_5d_interposer_aware_xy_baseline.yaml` for a minimal selectable config.
+- `external/noxim/bin/power.yaml` only if the future implementation chooses to add an explicit power entry rather than relying on the default routing power entry.
+- Tracking docs: `docs/TASKS.md`, `docs/PROGRESS.md`, `docs/VALIDATION.md`, `docs/PROMPTS.md`, `docs/ARCHITECTURE.md`, and possibly `docs/DECISIONS.md`.
+
+### Future Validation Plan
+
+T0041 should validate implementation in stages:
+
+- Confirm `external/noxim` is clean before source edits.
+- Build with the known Noxim build command from `external/noxim`: `./build.sh`.
+- Confirm the new routing string is listed or accepted without changing standard `XY` help text semantics.
+- Run a no-traffic or tiny construction smoke only after the new route builds, to confirm configuration loading and route registration.
+- Run a focused same-chiplet packet smoke where IA-XY should behave like local XY and should not enter the interposer.
+- Run a focused inter-chiplet no-fault smoke where the packet traverses source local XY, source VL, interposer XY, destination VL, and destination local XY.
+- Run a focused explicit-fault smoke where the preferred source or destination VL is faulty and IA-XY selects a different functional VL.
+- Run a negative smoke if feasible where an invalid/no-functional-VL state fails closed, but do not change fault-mask validation merely to create this case.
+- Confirm standard `XY` and `DEFT` route files are unchanged except for allowed documentation or registry references.
+- Run `git diff --check` and record `external/noxim` status.
+
+Concrete simulator commands should be selected in T0041 only after the new config files and any tiny hardcoded traffic inputs exist. Do not run a full IA-XY-vs-DeFT matrix in T0041.
+
+### Risks And Open Questions
+
+- Risk: IA-XY may look too similar to DeFT if it uses the same source/destination VL selections. Keep IA-XY deterministic and non-LUT-based.
+- Risk: IA-XY could violate current VN movement filters if its hub traversal phases are not aligned with existing `DEFT_2_5D` VN behavior.
+- Risk: A simple nearest-VL policy may still create congestion or poor reachability under fixed-window injection; that is acceptable for a baseline but must be reported descriptively.
+- Risk: Reusing `DIRECTION_HUB` continues the current physical carrier convention and does not settle explicit Up/Down port semantics.
+- Open question: Should IA-XY choose the source exit and destination entry independently by nearest Manhattan distance, or use a directional preferred slot first?
+- Open question: Should IA-XY use one VC or the existing two VC requirement for `DEFT_2_5D`? Current topology validation requires two VCs, so T0041 should preserve that unless a separate task changes it.
+- Open question: Should power modeling add an explicit `INTERPOSER_AWARE_XY` entry or use the existing default routing power parameters?
+
+### Future T0041 Acceptance Criteria
+
+T0041 should be accepted only if:
+
+- `INTERPOSER_AWARE_XY` is a separately selectable routing mode.
+- Standard `XY` remains cardinal-only and unchanged.
+- `DEFT` routing, LUT loading/use, VN transition restrictions, VL fault injection, topology behavior, traffic semantics, metrics semantics, and runner/analysis semantics remain unchanged.
+- Same-chiplet IA-XY routes stay on the chiplet layer.
+- Inter-chiplet IA-XY routes enter the interposer through a functional source VL and exit through a functional destination VL.
+- Faulted preferred VLs are avoided when an alternate functional VL exists.
+- Build validation and targeted smokes pass and are recorded.
+- No generated T0026/T0027/T0028 artifacts, `final_report/main.pdf`, `final_report.zip`, or Extended Proposal files are changed.
+
+### Claim-Safety Rules For Future Experiments
+
+IA-XY design alone supports no performance claim. Future report or experiment updates must follow these rules:
+
+- Do not compare IA-XY to DeFT until T0041 validates IA-XY and a later T0042-style experiment creates new versioned artifacts.
+- Do not overwrite T0026/T0027/T0028 artifacts or reinterpret existing `XY` blank cells as IA-XY evidence.
+- Label all tables and prose with `IA-XY` or `INTERPOSER_AWARE_XY`, not `XY`.
+- Preserve blank-aware denominators: reachability is blank when no packets are injected, and latency is blank when no packets are received.
+- Avoid improvement, ranking, latency-comparison, or complete-reachability language unless supported by new validated artifacts.
+- Keep the current final submission status unchanged until a future explicit report task accepts new validated results.
+
+## T0041 Interposer-Aware XY Baseline Implementation
+
+T0041 implements the T0040 design as a selectable Noxim routing mode named `INTERPOSER_AWARE_XY`. The implementation is a new baseline route and does not reinterpret or replace standard `XY`.
+
+### Implemented Surfaces
+
+- `external/noxim/src/routingAlgorithms/Routing_INTERPOSER_AWARE_XY.h`
+- `external/noxim/src/routingAlgorithms/Routing_INTERPOSER_AWARE_XY.cpp`
+- `external/noxim/src/GlobalParams.h`
+- `external/noxim/src/ConfigurationManager.cpp`
+- `external/noxim/bin/power.yaml`
+- `external/noxim/config_examples/deft_2_5d_interposer_aware_xy_baseline.yaml`
+- `external/noxim/config_examples/deft_2_5d_ia_xy_smoke_same_chiplet.txt`
+- `external/noxim/config_examples/deft_2_5d_ia_xy_smoke_inter_chiplet.txt`
+
+The route self-registers through the existing routing-algorithm registration pattern. Configuration validation allows `INTERPOSER_AWARE_XY` only with `DEFT_2_5D`, and help text exposes the new routing string. The minimal config leaves the DeFT LUT filename empty because IA-XY does not use schema-v1 LUT selection.
+
+### Route Phases
+
+- Same-chiplet packets route with local dimension-order XY on the chiplet layer and do not enter the interposer.
+- Inter-chiplet packets select a functional source-chiplet VL and a functional destination-chiplet VL using current `DeftTopology` endpoint and functional-state queries.
+- Source-chiplet traversal uses local XY to the selected source boundary router.
+- Source VL traversal uses the existing physical VL carrier, `DIRECTION_HUB`, from chiplet to active interposer.
+- Active-interposer traversal uses dimension-order XY between selected interposer endpoints.
+- Destination VL traversal uses `DIRECTION_HUB` from active interposer to the selected destination boundary router.
+- Destination-chiplet traversal uses local XY to the final chiplet router.
+
+If a needed topology mapping or functional VL is unavailable, IA-XY fails closed by returning no legal output direction instead of falling back to invalid chiplet-layer cardinal movement.
+
+### VL Selection Policy
+
+IA-XY does not use the DeFT schema-v1 LUT, DeFT VL optimization, traffic-demand optimization, or load-balanced adaptive selection. For each inter-chiplet packet, it evaluates all functional source-chiplet VLs against all functional destination-chiplet VLs and chooses the pair with the smallest deterministic Manhattan path score:
+
+- source router to source boundary router,
+- source interposer endpoint to destination interposer endpoint,
+- destination boundary router to final destination router.
+
+Ties are resolved by lower source `vl_id`, then lower destination `vl_id`. This policy gives deterministic behavior and explicit fallback away from known faulty physical VLs without turning IA-XY into DeFT.
+
+### Preservation Notes
+
+`external/noxim/src/routingAlgorithms/Routing_XY.cpp` and `external/noxim/src/routingAlgorithms/Routing_DEFT.cpp` were not modified. T0041 did not change VN transition restrictions, VL fault injection semantics, LUT schema/use path, topology construction, traffic semantics, metrics semantics, runner/analysis semantics, generated T0026/T0027/T0028 artifacts, `final_report/main.pdf`, `final_report.zip`, or Extended Proposal files.
+
+Assumption: IA-XY reuses the existing topology-scoped two-VC validation and VN filter for `DEFT_2_5D`; it does not introduce routing-specific VN behavior.
+
+Blocked: IA-XY performance comparison claims remain blocked until a later T0042-style experiment defines a limited matrix and produces new versioned artifacts.
+
+### T0041 Validation Summary
+
+The known Noxim build command from `external/noxim`, `./build.sh`, completed successfully. Targeted smokes validated route registration/config loading, same-chiplet local behavior without IA-XY VL traversal debug logs, no-fault inter-chiplet VL/interposer traversal, and explicit-fault fallback from faulty `vl_id=0` to functional `vl_id=1`. These are implementation smokes only and do not support performance claims.
+
+## T0042 Limited IA-XY vs DeFT Comparison
+
+T0042 created a new exploratory artifact set for a limited IA-XY-vs-DEFT comparison after T0041 validated the selectable `INTERPOSER_AWARE_XY` mode. The task did not modify simulator source, standard `XY`, `DEFT`, VN transition restrictions, VL fault injection semantics, LUT schema/use path, topology behavior, traffic semantics, metrics semantics, or runner/analysis source semantics.
+
+### Matrix
+
+The executed matrix was deliberately small:
+
+| Dimension | Values |
+| --- | --- |
+| Routing modes | `INTERPOSER_AWARE_XY`, `DEFT` |
+| Traffic profiles | `uniform`, `localized_40`, `hotspot_3x10` |
+| Fault masks | `0x0000`, `0x1111` |
+| Seeds | `0`, `1` |
+| Simulation window | `-sim 10000` |
+| Warm-up window | `-warmup 1000` |
+| Stats format | JSON |
+| Planned/completed runs | 24 / 24 |
+
+Assumption: Reusing the fixed-window T0025 `-sim 10000` and `-warmup 1000` policy keeps T0042 comparable in shape to previous generated artifacts, but the two-seed/two-mask matrix is not a final sweep.
+
+### Artifact Set
+
+All T0042 artifacts were written under `external/noxim/other/generated/t0042_iaxy_deft_limited_v1/`. Key files are:
+
+- `manifest.json`: command, return-code, log-path, stats-path, matrix, analysis-rule, and claim-limit manifest.
+- `commands.sh`: replayable simulator and DEFT LUT-generation command listing.
+- `summary.csv`: per-run metrics from the existing runner summary surface.
+- `analysis/`: mechanical analysis scaffold produced by `external/noxim/other/deft_analysis_artifacts.py`.
+- `blank_aware_condition_summary.csv`: T0042 blank-aware condition-level summary.
+- `blank_aware_pair_summary.csv`: T0042 IA-XY/DEFT side-by-side readiness summary.
+- `blank_aware_validation.json`: raw manifest/stat/log cross-check report.
+- `stats/`, `logs/`, and `luts/`: per-run JSON stats, per-run stdout/stderr logs, and generated DEFT LUTs for `0x0000` and `0x1111`.
+
+### Result Interpretation
+
+The blank-aware cross-check passed: all 24 runs completed with return code `0`, all 24 JSON stats files and stdout/stderr logs exist, and the generated summaries match raw JSON stats with no recorded mismatches.
+
+Condition-level observations:
+
+- `INTERPOSER_AWARE_XY|hotspot_3x10` injected zero packets for both fault masks and both seeds, so those IA-XY reachability and latency cells remain blank.
+- `INTERPOSER_AWARE_XY|uniform|0x0000` injected packets but received zero packets, so reachability is `0` and latency remains blank.
+- `uniform|0x1111`, `localized_40|0x0000`, and `localized_40|0x1111` have injected and received packets for both IA-XY and DEFT, but the result is descriptive side-by-side evidence only.
+- All DEFT condition cells in this limited matrix had packet injection and packet reception.
+
+Claim limits:
+
+- T0042 supports exploratory report-support discussion only.
+- Do not use T0042 to make rankings, improvement percentages, statistical conclusions, or final-sweep replacement claims.
+- Do not update `final_report/main.tex`, `final_report/main.pdf`, or `final_report.zip` from T0042 without a later explicit report task.
+
+Blocked: Strong final-report claims remain blocked because T0042 is a limited two-seed, two-fault-mask exploratory matrix and still has blank IA-XY hotspot cells.
+
+## T0043 Source-Cutoff and Post-Injection Drain Policy Design
+
+T0043 defines a future eventual-delivery measurement mode. It is a design-only policy and does not change current simulator behavior, helper behavior, routing logic, traffic semantics, metric exports, runner semantics, generated artifacts, or report claims.
+
+Source alignment:
+
+- `Extended_Proposal.pdf` is the primary requirements source for evaluating synthetic traffic, permanent VL fault scenarios, and reachability, latency, and throughput.
+- The original DeFT paper is the primary algorithmic reference for 2.5D inter-chiplet routing through source-side VL selection, active-interposer traversal, destination-side VL entry, VN separation, and VL-fault tolerance.
+- `Proposal.pdf` remains initial context only.
+
+### Purpose
+
+Current fixed-window experiments measure delivery only inside a continuous-injection time window. That is useful as historical final-report support, but it does not answer an eventual-delivery question: after sources stop adding new work, does the already accepted measured traffic eventually leave the network, and within what bounded drain time?
+
+The T0043 policy defines the semantics that the later T0044 implementation follows before any eventual-delivery experiment or report claim.
+
+Assumption: The policy is an additional mode. Existing fixed-window behavior remains the default and remains the interpretation for T0026/T0027/T0028 and T0042 artifacts.
+
+Blocked: Eventual-delivery claims remain blocked after T0044 smoke validation until a later experiment task uses drain mode to create new versioned artifacts.
+
+### Source Cutoff
+
+Source cutoff is a configured measured-traffic boundary after reset and any accepted warm-up handling. At the cutoff boundary:
+
+- Processing elements stop admitting new measured packets.
+- Random, table-based, and hardcoded traffic events at or after the cutoff are suppressed for the measured run.
+- Packets already accepted before cutoff remain valid measured packets and may continue emitting body and tail flits.
+- Packets are counted in the measured denominator only when their head flit enters the network during the measured injection interval.
+
+The measured injection interval is:
+
+```text
+measurement_start_cycle <= head_flit_injection_cycle < source_cutoff_cycle
+```
+
+The first implementation exposes the interval explicitly as an opt-in drain mode with a source-cutoff duration measured from `measurement_start_cycle`. T0044 records the exact option names in the implementation note below.
+
+Assumption: Packet admission is the source-cutoff concept; the future implementation may still need to emit remaining flits of packets whose heads were accepted before cutoff.
+
+### Drain Start
+
+The drain phase begins at the cutoff boundary. No new measured packet heads may be admitted after this point. The drain phase is not complete until the in-flight empty condition is true.
+
+For reporting, a future implementation should distinguish:
+
+- `source_cutoff_cycle`: when new measured packet heads stop.
+- `drain_start_cycle`: the same cycle boundary used to start timeout accounting.
+- `sources_quiesced_cycle`: the first cycle when all source-local queues have emitted the remaining flits of accepted measured packets, if this is later than the cutoff.
+- `drain_completed_cycle`: the first cycle when the in-flight empty condition is true.
+
+This distinction avoids hiding source-side queued flits inside the network-drain result.
+
+### In-Flight Empty Condition
+
+The in-flight empty condition is true only when all measured accepted traffic has either been delivered or, on timeout, is explicitly reported as undelivered. A later implementation should treat the network as empty only when all of these are true:
+
+- Every source PE packet queue is empty, including packets accepted before cutoff whose body or tail flits have not yet entered the router.
+- Every router input buffer, including all directions and VCs used by `DEFT_2_5D`, is empty for measured traffic.
+- Every hub/VL carrier buffer or signal path used by the topology has no measured flit in transit.
+- No reservation-table state remains for a measured packet.
+- `total_received_packets == total_injected_packets` and `total_received_flits == total_injected_flits` for measured packets.
+
+If the future implementation cannot tag measured flits separately from warm-up or unmeasured traffic, it must prevent unmeasured traffic from entering the network during the eventual-delivery measurement.
+
+### Timeout Policy
+
+Eventual-delivery mode must be bounded. A later implementation should require an explicit `drain_timeout_cycles` value whenever drain mode is enabled.
+
+Timeout accounting starts at `drain_start_cycle`. The run stops with `stop_reason = drain_completed` if the in-flight empty condition becomes true before the timeout. It stops with `stop_reason = drain_timeout` if:
+
+```text
+current_cycle >= drain_start_cycle + drain_timeout_cycles
+```
+
+and the in-flight empty condition is still false.
+
+Timeout is a validation result, not a simulator crash. The stats export should report the remaining measured in-flight counts at timeout, including at least undelivered packets and undelivered flits.
+
+Blocked: T0043 does not select final experiment timeout values. A later experiment-policy task must choose final values after T0044 smoke validation exists.
+
+### Metric Denominators
+
+Drain-mode exports should make denominators explicit instead of reusing the fixed-window denominator silently.
+
+For measured packets:
+
+- `measured_injected_packets`: packet heads injected in `[measurement_start_cycle, source_cutoff_cycle)`.
+- `measured_received_packets`: measured packets delivered before drain completion or timeout.
+- `reachability_ratio`: `measured_received_packets / measured_injected_packets`; blank/null when `measured_injected_packets == 0`.
+- `global_average_delay_cycles`: received-packet-weighted average over measured received packets only; blank/null when `measured_received_packets == 0`.
+- `undelivered_packets_at_stop`: `measured_injected_packets - measured_received_packets`.
+- `measured_received_flits`: measured flits received before drain completion or timeout.
+- `drain_elapsed_cycles`: `stop_cycle - drain_start_cycle`.
+- `total_measured_elapsed_cycles`: `stop_cycle - measurement_start_cycle`.
+- `drain_mode_network_throughput_flits_per_cycle`: `measured_received_flits / total_measured_elapsed_cycles`; blank/null if elapsed cycles are zero.
+
+The future implementation may also export fixed-window-compatible fields for continuity, but it must not relabel drain-mode values as if they were generated by the old `-sim` denominator.
+
+### Warm-Up Interaction
+
+Warm-up is the riskiest denominator interaction because current fixed-window runs allow traffic during warm-up while stats ignore early injection and reception. For eventual-delivery analysis, unmeasured warm-up traffic can prevent a clean empty-network test.
+
+T0043 accepts the following policy for future implementation:
+
+- In drain mode, the clean measured injection interval starts at `measurement_start_cycle = reset_time + stats_warm_up_time`.
+- During warm-up, measured traffic generation is gated off unless a later task explicitly designs a preloaded-warm-up mode with its own flush rule.
+- Counters used for drain-mode denominators start at `measurement_start_cycle`.
+- Source cutoff must be strictly after `measurement_start_cycle`.
+- Any final experiment that uses warm-up must report whether warm-up was source-gated or preloaded-and-flushed.
+
+Assumption: The first implementation should use source-gated warm-up for deterministic smoke tests, because current Noxim does not have a separate measured-flit tag that can ignore pre-warm-up traffic during empty detection.
+
+### Difference From Fixed-Window `-sim`
+
+Current `-sim` behavior runs one continuous-injection simulation for a configured number of cycles after reset. Sources may continue generating until the simulation ends. The final stats are finite-window measurements over the configured stats window, and packets can remain in flight at the end.
+
+The drain policy differs as follows:
+
+- It stops new measured packet admission at a source cutoff.
+- It continues simulation after cutoff only to drain accepted traffic or reach timeout.
+- It uses actual stop reason and actual measured elapsed cycles in denominator reporting.
+- It can distinguish completed delivery from timeout with remaining in-flight traffic.
+- It does not reinterpret T0026/T0027/T0028 or T0042 fixed-window artifacts.
+
+### Difference From Current Noxim `-volume`
+
+Current Noxim `-volume` stops when a delivered-flit counter reaches a configured threshold or when the maximum simulation cycles are reached. It is not a source-cutoff or eventual-delivery mechanism.
+
+The drain policy differs from `-volume` because:
+
+- `-volume` does not stop source packet generation before waiting for drain.
+- `-volume` is based on delivered flits, not on a known accepted packet denominator.
+- `-volume` may stop while source queues, router buffers, or in-flight packets still exist.
+- `-volume` does not prove all accepted measured packets were delivered.
+- `-volume` does not define warm-up-safe measured traffic ownership.
+- `-volume` does not export drain-completion versus timeout stop reasons.
+
+The current `-volume` behavior should remain unchanged unless a later task explicitly scopes compatibility updates.
+
+### Future Implementation Surfaces
+
+T0044 was expected to touch these surfaces if the design was accepted:
+
+- `external/noxim/src/GlobalParams.h` and `external/noxim/src/GlobalParams.cpp` for drain-mode configuration fields.
+- `external/noxim/src/ConfigurationManager.cpp` for YAML/CLI parsing and validation.
+- `external/noxim/src/Main.cpp` for phased execution, timeout accounting, stop reason, and final status export.
+- `external/noxim/src/ProcessingElement.h` and `external/noxim/src/ProcessingElement.cpp` for source gating, accepted-packet ownership, and source queue-empty queries.
+- `external/noxim/src/Router.h` and `external/noxim/src/Router.cpp` for router buffer-empty and reservation-empty queries.
+- `external/noxim/src/Buffer.*`, `external/noxim/src/NoC.*`, and any active hub/VL carrier surface needed for global in-flight checks.
+- `external/noxim/src/Stats.*` and `external/noxim/src/GlobalStats.*` for drain-mode counters, denominators, stop reason fields, and JSON/CSV export.
+- `external/noxim/other/deft_experiment_runner.py` for an opt-in drain-mode launch surface.
+- `external/noxim/other/deft_analysis_artifacts.py` or a new versioned analysis helper for drain-mode fields.
+
+T0044 must preserve existing fixed-window defaults and must not change standard `XY`, `DEFT`, VN transition restrictions, VL fault injection semantics, LUT schema/use path, topology behavior, traffic semantics outside the opt-in source gate, or existing runner/analysis behavior outside opt-in drain mode.
+
+### Expected Future Smoke Cases
+
+T0044 defined exact commands after the implementation and configs existed. The expected smoke cases were:
+
+- No-traffic drain smoke: no measured packets accepted; drain completes immediately; reachability and latency are blank/null, not zero.
+- Single same-chiplet hardcoded packet before cutoff: one packet accepted, delivered, and drained with `stop_reason = drain_completed`.
+- Single inter-chiplet `DEFT` hardcoded packet before cutoff with a no-fault LUT: one packet accepted, delivered, and drained.
+- Source-cutoff suppression smoke: a hardcoded packet scheduled before cutoff is accepted, while a hardcoded packet scheduled at or after cutoff is not admitted.
+- Timeout smoke: a deliberately topology-incompatible or otherwise blocked packet stops with `stop_reason = drain_timeout`, nonzero undelivered counts, and no crash.
+- Warm-up gating smoke: with nonzero warm-up, no measured traffic is accepted before `measurement_start_cycle`, and denominators count only packets whose heads enter during the measured injection interval.
+- Compatibility smoke: with drain mode disabled, existing fixed-window `-sim` behavior and current `-volume` behavior remain available.
+
+### Artifact Preservation
+
+T0026/T0027/T0028 remain the historical fixed-window final-report artifact chain. T0042 remains a limited exploratory fixed-window IA-XY-vs-DEFT artifact set. T0043 does not regenerate, revise, or reinterpret those outputs.
+
+Blocked: Stronger eventual-delivery report claims require a later explicit experiment task that creates new versioned drain-mode artifacts after T0044 implementation validation.
+
+## T0044 Source-Cutoff and Post-Injection Drain Implementation
+
+T0044 implements the accepted T0043 policy as an opt-in simulator mode. It does not change default fixed-window behavior, standard `XY`, `DEFT`, VN transition restrictions, VL fault injection semantics, LUT schema/use path, topology behavior, existing runner/analysis defaults, T0026/T0027/T0028 artifacts, T0042 artifacts, final-report artifacts, package artifacts, or Extended Proposal files.
+
+Configuration surface:
+
+- YAML keys: `drain_mode_enabled`, `drain_source_cutoff_cycles`, and `drain_timeout_cycles`.
+- CLI options: `-drain_mode`, `-drain`, `-drain_source_cutoff`, and `-drain_timeout`.
+- Drain mode requires positive source-cutoff and timeout values.
+- Drain mode is mutually exclusive with current Noxim `-volume` because both are stop policies.
+
+Runtime behavior:
+
+- Drain mode starts measured traffic at `reset_time + stats_warm_up_time`.
+- Source generation and hardcoded-traffic admission are gated off during drain-mode warm-up.
+- Measured packet heads are admitted only during `[measurement_start_cycle, source_cutoff_cycle)`.
+- Already accepted packets may continue emitting body and tail flits after cutoff.
+- Drain timeout starts at `drain_start_cycle`, which is the source-cutoff boundary.
+- The run stops with `drain_completed` when the in-flight empty condition is true, or with `drain_timeout` when the configured timeout expires.
+
+Implemented in-flight checks:
+
+- Source PE packet queues.
+- Router input buffers.
+- Router reservation tables.
+- Pending hub/VL handshake carrier state.
+- Measured injected/received packet and flit balances.
+
+Drain-mode exports add explicit denominator and stop fields only when drain mode is enabled. These fields include stop reason, measurement start, source cutoff, drain start, sources-quiesced cycle, completion or stop cycle, measured injected/received packets and flits, undelivered counts, drain elapsed cycles, total measured elapsed cycles, drain throughput, and remaining source/router/reservation/handshake counts at stop. When drain mode is disabled, existing fixed-window and current `-volume` export shape remains available.
+
+T0044 added only minimal deterministic smoke traffic files under `external/noxim/config_examples/`. Targeted smoke outputs were written under ignored `external/noxim/other/generated/t0044_drain_smokes/` and are implementation validation, not final experiment artifacts.
+
+Assumption: Source-gated warm-up remains the first supported drain-mode warm-up policy. A preloaded warm-up plus flush policy would require a separate task.
+
+Blocked: Stronger eventual-delivery report claims still require a later explicit experiment task that chooses timeout budgets, creates new versioned drain-mode artifacts, and performs claim-safe analysis.
+
+## T0045 Directional Endpoint Fault Modeling Feasibility
+
+T0045 evaluates whether the simulator should add directional endpoint faults in addition to the current physical bidirectional VL fault model. It is documentation-only and does not change simulator source, fault injection behavior, routing behavior, LUT schema/use path, topology behavior, generated artifacts, final-report artifacts, package artifacts, or Extended Proposal files.
+
+### Source Alignment
+
+`Extended_Proposal.pdf` is internally mixed: it describes four bidirectional VLs per chiplet, but also states a fault-rate range from 3.125% with one faulty VL up to 25% with eight faulty VLs. The original DeFT paper resolves the denominator more clearly for evaluation by describing four bidirectional VLs per chiplet while reporting reachability for a four-chiplet system with `total VLs=32`.
+
+Assumption: The most consistent interpretation is that the physical system has 16 bidirectional VL objects, while the paper's 32-count fault-rate denominator is directional endpoint or channel accounting over those same physical VLs.
+
+### Current Implementation Model
+
+The current implementation deliberately uses 16 physical bidirectional VL IDs:
+
+- `DeftTopology::VerticalLinkCount` is `ChipletCount * VerticalLinksPerChiplet`, or 16.
+- Each `VerticalLinkInfo` has one `is_functional` flag.
+- `DeftFaultInjection` validates explicit/generated masks over physical VL IDs `0..15` and marks a physical VL faulty through `setVerticalLinkFunctional(vl_id, false)`.
+- `deft_vl_lut.v1` uses `fault_mask_id` as a fixed-width hexadecimal bitset over the same 16 physical VL IDs.
+- The LUT generator filters both source exits and destination entries through the same physical functional set.
+- Runtime lookup derives the active mask from nonfunctional physical VLs and checks `link->is_functional` for both source-exit and destination-entry traversal.
+- IA-XY also selects only from `functionalVerticalLinksForChiplet()`, so it inherits the same physical bidirectional fault semantics.
+
+Assumption: Existing T0026/T0027/T0028 and T0042 artifacts remain physical-model artifacts and must not be reinterpreted as directional endpoint experiments.
+
+### Directional Endpoint Model
+
+A future directional model should keep physical VL identity and add a derived directional state rather than replacing `VerticalLinkInfo::vl_id`. One compact mapping would be:
+
+```text
+directional_endpoint_id = vl_id * 2 + direction
+direction = 0: chiplet_to_interposer
+direction = 1: interposer_to_chiplet
+```
+
+Under that mapping, a source-side exit consumes the `chiplet_to_interposer` direction of the selected source VL, while a destination-side entry consumes the `interposer_to_chiplet` direction of the selected destination VL. A single directional fault would block only the matching traversal direction. The opposite direction of the same physical VL could remain usable.
+
+### Impact Summary
+
+| Surface | Current physical model | Directional endpoint impact |
+| --- | --- | --- |
+| Fault masks | 16-bit physical masks; bit `vl_id` disables both directions. | Add a 32-bit directional mask or a new fault-model field. Physical masks must remain supported for old artifacts and configs. |
+| Fault injection | One mutable `is_functional` flag per physical VL. | Add per-direction functional state and new CLI/YAML selectors. A physical-fault convenience mode may set both endpoint bits. |
+| Mask validation | Rejects masks that leave a chiplet with zero functional physical VLs. | Validate at least one usable source-exit direction and one usable destination-entry direction per chiplet for unrestricted inter-chiplet traffic. |
+| LUT generation | `functional_vl_ids(mask)` filters physical VLs for both source and destination optimization. | Filter source exits by chiplet-to-interposer state and destination entries by interposer-to-chiplet state. Existing schema v1 cannot express this safely. |
+| Runtime lookup | Active `fault_mask_id` comes from nonfunctional physical VLs and keys schema-v1 entries. | Requires schema v2 or an explicit fault-model discriminator so runtime and LUT generator agree on directional state. |
+| Routing checks | `DEFT` and IA-XY both check one physical `is_functional` flag before hub traversal. | Routing must check the direction being traversed: source exit versus destination entry. |
+| Topology state | Physical link wiring remains bidirectional regardless of fault state; routing avoids nonfunctional VLs. | Wiring can remain physical, but topology/fault query APIs need directional availability without changing graph construction. |
+| Validation | Existing source smokes and final artifacts validate the physical model only. | Needs new unit-style mask checks, LUT generation checks, runtime route checks, and small directional smoke cases before any sweep. |
+| Result interpretation | Physical rates are reported over 16 VLs and as directional-equivalent rates over 32 channels when both directions fail together. | Directional runs must report directional rates over 32 endpoints and must not be aggregated with physical-model runs without labels. |
+
+### Recommendation
+
+Recommendation: Defer directional endpoint support for the current project state.
+
+Rationale:
+
+- The current physical bidirectional model is internally consistent, already validated, and aligned with the implementation's stable 16 physical VL inventory.
+- Directional endpoint support is useful for paper-aligned single-direction cases, especially the original paper's 3.125% one-direction case.
+- Implementing it safely would touch high-risk surfaces: fault masks, LUT schema/generation, runtime lookup, topology state queries, route traversal checks, runner manifests, analysis labels, and validation policy.
+- Adding it without a new schema/config boundary would risk silently mixing physical and directional fault semantics.
+
+Durable policy:
+
+- Preserve the current 16-physical-VL model as the default and as the only interpretation of existing artifacts.
+- Do not retrofit directional semantics into `deft_vl_lut.v1`, existing physical masks, or historical result directories.
+- If directional endpoint support is later required, implement it through an explicit future design/implementation task that introduces a versioned directional fault model, likely `deft_vl_lut.v2`, new config/CLI fields, new artifact directories, and claim-safe analysis labels.
+
+Blocked: Paper-aligned single-direction fault experiments remain blocked until a future task implements and validates directional endpoint state, directional LUT generation, runtime directional lookup, and directional result labeling.
+
+## Post-Submission Future Backlog
+
+T0039 records the remaining technical gaps as future backlog items only. These tasks do not block the current final submission package, which remains `final_report/main.pdf`, the current `final_report/` source tree, and `final_report.zip`.
+
+Future development must preserve these guardrails:
+
+- Do not reinterpret T0026/T0027/T0028 as stronger performance evidence.
+- Do not reinterpret T0042 as stronger performance evidence.
+- Do not overwrite generated T0026/T0027/T0028 or T0042 artifacts.
+- Use new versioned artifact directories for any future experiment.
+- Keep standard `XY` separate from any new interposer-aware baseline.
+- Preserve existing `DEFT` behavior unless a future task explicitly scopes a DeFT change.
+- Preserve claim-safety rules until new validated artifacts support stronger wording.
+
+Ordered future backlog:
+
+| Task | Type | Technical gap |
+| --- | --- | --- |
+| T0040 | Design | Completed IA-XY design: a new `INTERPOSER_AWARE_XY` baseline that is explicitly not standard `XY`. |
+| T0041 | Implementation | Completed selectable `INTERPOSER_AWARE_XY` baseline without modifying existing `XY` or `DEFT`. |
+| T0042 | Experiment | Completed limited IA-XY-vs-DEFT comparison in a new artifact directory with blank-aware claim limits. |
+| T0043 | Design | Completed source-cutoff plus post-injection drain/timeout policy for eventual-delivery analysis. |
+| T0044 | Implementation | Completed opt-in source-cutoff plus post-injection drain/timeout support with targeted smokes. |
+| T0045 | Feasibility | Completed directional endpoint fault modeling evaluation; support is deferred behind a future versioned fault-model design. |
+| T0046 | Feasibility | Assess PARSEC/GEM5 trace support requirements and validation burden. |
+| T0047 | Implementation | Implement trace ingestion only after a trace format and validation plan are accepted. |
+| T0048 | Report | Regenerate report material only after new validated artifacts exist. |
+
+Assumption: Future backlog work starts with design or feasibility tasks before implementation, except when a prior design task has already accepted the required semantics and validation plan.
+
+Blocked: Stronger unrestricted XY-vs-DEFT claims remain blocked until an interposer-aware baseline is implemented, validated, and evaluated in new artifact directories.
+
+Blocked: Eventual-delivery claims remain blocked until the T0044 drain mode is used by a later explicit experiment task to create new versioned artifacts and claim-safe analysis.
+
+Blocked: Paper-aligned single-direction fault cases remain blocked until directional endpoint fault support is implemented through a future versioned fault-model and LUT-schema task.
+
+Blocked: PARSEC/GEM5 workload claims remain blocked until a trace pipeline is validated.
 
 ## Noxim Extension Point Map
 
