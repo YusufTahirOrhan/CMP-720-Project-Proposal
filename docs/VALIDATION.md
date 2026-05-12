@@ -1857,14 +1857,55 @@ T0043 result on 2026-05-12:
 - The final-report and proposal artifact guard returned no changed files for `final_report/main.pdf`, `final_report.zip`, `Extended_Proposal.pdf`, or `Extended_Proposal.zip`.
 - Final parent status showed only modified tracking docs: `docs/ARCHITECTURE.md`, `docs/DECISIONS.md`, `docs/PROGRESS.md`, `docs/PROMPTS.md`, `docs/TASKS.md`, and `docs/VALIDATION.md`.
 
-Expected future T0044 checks:
+## Source-Cutoff and Post-Injection Drain Policy Implementation Validation
 
-- Build from `external/noxim` with the known command `./build.sh` after source changes.
-- Validate no-traffic immediate drain, single same-chiplet hardcoded delivery, single inter-chiplet `DEFT` delivery with a no-fault LUT, cutoff suppression, timeout, warm-up gating, and disabled-mode compatibility.
-- Confirm fixed-window `-sim` behavior remains available with drain mode disabled.
-- Confirm current `-volume` behavior remains available unless T0044 explicitly scopes a compatibility update.
-- Confirm exported drain-mode fields include stop reason, source cutoff, drain start, source quiescence when available, completion or timeout cycle, measured injected/received counts, denominator fields, and remaining in-flight counts.
-- Preserve T0026/T0027/T0028 and T0042 generated artifacts; write any future experiment artifacts to a new versioned directory.
+Purpose:
+
+- Validate the T0044 opt-in source-cutoff plus drain/timeout implementation.
+- Preserve existing fixed-window `-sim` behavior and current `-volume` behavior when drain mode is disabled.
+- Confirm the implementation does not modify standard `XY`, `DEFT`, VN transition restrictions, VL fault injection semantics, LUT schema/use path, topology behavior, generated final-sweep artifacts, final-report artifacts, package artifacts, or Extended Proposal files.
+
+Known validation for T0044:
+
+- Parent repository status before edits: `git status --short --branch`
+- Noxim source-tree status before and after edits: `git -c safe.directory=C:/Projects/CMP-720-Project-Proposal/external/noxim -C external/noxim status --short --branch`
+- Known Noxim build command from `external/noxim`: `./build.sh`
+- Targeted smoke commands from `external/noxim/bin` with `LD_LIBRARY_PATH=libs/systemc-2.3.1/lib-linux64`
+- Documentation/source whitespace checks: `git diff --check` and `git -c safe.directory=C:/Projects/CMP-720-Project-Proposal/external/noxim -C external/noxim diff --check`
+- Generated-artifact guard for T0026/T0027/T0028 and T0042 generated directories.
+- Final-report and proposal artifact guard for `final_report/main.pdf`, `final_report.zip`, `Extended_Proposal.pdf`, and `Extended_Proposal.zip`.
+- Do not run full sweeps, regenerate `final_report/main.pdf`, modify `final_report.zip`, modify Extended Proposal files, or use `./regression.sh --update`.
+
+T0044 result on 2026-05-12:
+
+- Required startup reading was completed before task work: `AGENTS.md`, `docs/PROGRESS.md`, `docs/TASKS.md`, `docs/ROADMAP.md`, `docs/ARCHITECTURE.md`, `docs/VALIDATION.md`, `docs/DECISIONS.md`, `docs/PROMPTS.md`, `docs/FINAL_REPORT_DRAFT.md`, and `final_report/main.tex`.
+- The T0043 drain policy in `docs/ARCHITECTURE.md` and ADR-0046 in `docs/DECISIONS.md` were read before source edits.
+- Source-document roles were preserved: `Extended_Proposal.pdf` is the primary project requirements source, the original DeFT paper is the primary algorithmic reference, `Proposal.pdf` is initial context only, and the peer evaluation document was ignored completely.
+- Parent repository status before edits was clean on `feat/map-noxim-extension-points...origin/feat/map-noxim-extension-points`; `external/noxim` status before edits was clean on `feat/baseline-noxim...origin/feat/baseline-noxim`.
+- Before editing, a short implementation plan was produced. Assumption: implement the accepted T0043 policy directly in simulator phase control with source-gated warm-up. Blocked: none at task start; eventual-delivery report claims remain blocked until a later experiment task creates new versioned drain-mode artifacts.
+- The known build command `./build.sh` was run from `external/noxim`. The first WSL invocation timed out while compilation continued; after confirming no build process remained, the incremental rerun completed with exit code `0`.
+- A no-fault DEFT LUT was generated only for smokes: `python3 ../other/deft_vl_lut_generator.py --fault-mask 0x0000 --output ../other/generated/t0044_drain_smokes/deft_vl_lut_0x0000.yaml`.
+- No-traffic immediate drain smoke: `./noxim -config ../config_examples/deft_2_5d_topology.yaml -seed 0 -sim 20 -warmup 0 -drain_mode -drain_source_cutoff 1 -drain_timeout 20 -stats_format json -stats_file ../other/generated/t0044_drain_smokes/no_traffic.json`.
+- Same-chiplet hardcoded delivery smoke: `./noxim -config ../config_examples/deft_2_5d_topology.yaml -seed 0 -sim 80 -warmup 0 -traffic hardcoded ../config_examples/deft_2_5d_drain_smoke_same_chiplet.txt -drain_mode -drain_source_cutoff 1 -drain_timeout 80 -stats_format json -stats_file ../other/generated/t0044_drain_smokes/same_chiplet.json`.
+- Inter-chiplet `DEFT` no-fault LUT smoke: `./noxim -config ../config_examples/deft_2_5d_topology.yaml -seed 0 -sim 200 -warmup 0 -routing DEFT -deft_vl_lut ../other/generated/t0044_drain_smokes/deft_vl_lut_0x0000.yaml -traffic hardcoded ../config_examples/deft_2_5d_drain_smoke_inter_chiplet.txt -drain_mode -drain_source_cutoff 1 -drain_timeout 200 -stats_format json -stats_file ../other/generated/t0044_drain_smokes/inter_deft.json`.
+- Cutoff suppression smoke: `./noxim -config ../config_examples/deft_2_5d_topology.yaml -seed 0 -sim 80 -warmup 0 -traffic hardcoded ../config_examples/deft_2_5d_drain_smoke_cutoff.txt -drain_mode -drain_source_cutoff 1 -drain_timeout 80 -stats_format json -stats_file ../other/generated/t0044_drain_smokes/cutoff.json`.
+- Timeout smoke: `./noxim -config ../config_examples/deft_2_5d_topology.yaml -seed 0 -sim 40 -warmup 0 -traffic hardcoded ../config_examples/deft_2_5d_drain_smoke_inter_chiplet.txt -drain_mode -drain_source_cutoff 1 -drain_timeout 40 -stats_format json -stats_file ../other/generated/t0044_drain_smokes/timeout.json`.
+- Warm-up gating smoke: `./noxim -config ../config_examples/deft_2_5d_topology.yaml -seed 0 -sim 80 -warmup 5 -traffic hardcoded ../config_examples/deft_2_5d_drain_smoke_same_chiplet.txt -drain_mode -drain_source_cutoff 1 -drain_timeout 80 -stats_format json -stats_file ../other/generated/t0044_drain_smokes/warmup.json`.
+- Disabled fixed-window compatibility smoke: `./noxim -config ../config_examples/deft_2_5d_topology.yaml -seed 0 -sim 80 -warmup 0 -traffic hardcoded ../config_examples/deft_2_5d_drain_smoke_same_chiplet.txt -stats_format json -stats_file ../other/generated/t0044_drain_smokes/disabled_fixed_window.json`.
+- Disabled `-volume` compatibility smoke: `./noxim -config ../config_examples/deft_2_5d_topology.yaml -seed 0 -sim 80 -warmup 0 -traffic hardcoded ../config_examples/deft_2_5d_drain_smoke_same_chiplet.txt -volume 8 -stats_format json -stats_file ../other/generated/t0044_drain_smokes/disabled_volume.json`.
+- Smoke results: `no_traffic`, `same_chiplet`, `inter_deft`, `cutoff`, and `warmup` stopped with `drain_completed`; `timeout` stopped with `drain_timeout`; disabled fixed-window and disabled `-volume` smokes exported no drain-mode fields.
+- Packet counts: no-traffic injected/received `0/0`; same-chiplet `1/1`; inter-chiplet `1/1`; cutoff `1/1`; timeout `1/0`; warm-up `1/1`; disabled fixed-window `1/1`; disabled `-volume` `1/1`.
+- Timeout smoke exported one undelivered packet, eight undelivered flits, seven router-buffer flits, two router reservations, and one pending handshake at stop.
+- Warm-up gating smoke exported `drain_measurement_start_cycle = 1005` and `drain_source_cutoff_cycle = 1006`.
+- The first inline Bash/Python JSON verifier had a here-document delimiter issue after simulator commands completed. A PowerShell JSON verifier was rerun and passed with exit code `0`.
+- T0044 added ADR-0047 to record that drain mode and current `-volume` are mutually exclusive; disabled-mode smokes validate that `-volume` remains available when drain mode is disabled.
+- T0026/T0027/T0028 final fixed-window artifacts and the T0042 exploratory fixed-window artifact set remain historical artifacts. T0044 does not reinterpret them as eventual-delivery evidence.
+- `git diff --check` completed with exit code `0`; Git reported line-ending conversion warnings for edited Markdown files only.
+- `git -c safe.directory=C:/Projects/CMP-720-Project-Proposal/external/noxim -C external/noxim diff --check` completed with exit code `0`.
+- Final `external/noxim` status shows only the T0044 source/config-example changes listed in `docs/TASKS.md` on `feat/baseline-noxim...origin/feat/baseline-noxim`.
+- The generated-artifact guard returned no changed files for `external/noxim/other/generated/t0026_final_sweep_v1`, `t0026_final_analysis_v1`, `t0027_report_support_v1`, `t0028_final_report_results_v1`, or `t0042_iaxy_deft_limited_v1`.
+- The final-report and proposal artifact guard returned no changed files for `final_report/main.pdf`, `final_report.zip`, `Extended_Proposal.pdf`, or `Extended_Proposal.zip`.
+- Final parent status shows modified tracking docs plus the modified nested `external/noxim` source tree; no protected final-report, package, or Extended Proposal artifacts are modified.
 
 ## Metrics Validation
 

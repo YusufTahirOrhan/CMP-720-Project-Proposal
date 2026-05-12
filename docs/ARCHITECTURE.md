@@ -1467,11 +1467,11 @@ Source alignment:
 
 Current fixed-window experiments measure delivery only inside a continuous-injection time window. That is useful as historical final-report support, but it does not answer an eventual-delivery question: after sources stop adding new work, does the already accepted measured traffic eventually leave the network, and within what bounded drain time?
 
-The T0043 policy defines the semantics that a later T0044 implementation should add before any eventual-delivery experiment or report claim.
+The T0043 policy defines the semantics that the later T0044 implementation follows before any eventual-delivery experiment or report claim.
 
 Assumption: The policy is an additional mode. Existing fixed-window behavior remains the default and remains the interpretation for T0026/T0027/T0028 and T0042 artifacts.
 
-Blocked: Eventual-delivery claims remain blocked until the policy is implemented, smoke-tested, and used to create new versioned artifacts.
+Blocked: Eventual-delivery claims remain blocked after T0044 smoke validation until a later experiment task uses drain mode to create new versioned artifacts.
 
 ### Source Cutoff
 
@@ -1488,7 +1488,7 @@ The measured injection interval is:
 measurement_start_cycle <= head_flit_injection_cycle < source_cutoff_cycle
 ```
 
-The first implementation should expose the interval explicitly, for example as a drain mode with `source_cutoff_cycles` measured from `measurement_start_cycle`. The exact option names are left to T0044, but the semantics are fixed by this design.
+The first implementation exposes the interval explicitly as an opt-in drain mode with a source-cutoff duration measured from `measurement_start_cycle`. T0044 records the exact option names in the implementation note below.
 
 Assumption: Packet admission is the source-cutoff concept; the future implementation may still need to emit remaining flits of packets whose heads were accepted before cutoff.
 
@@ -1594,7 +1594,7 @@ The current `-volume` behavior should remain unchanged unless a later task expli
 
 ### Future Implementation Surfaces
 
-T0044 is likely to touch these surfaces if the design is accepted:
+T0044 was expected to touch these surfaces if the design was accepted:
 
 - `external/noxim/src/GlobalParams.h` and `external/noxim/src/GlobalParams.cpp` for drain-mode configuration fields.
 - `external/noxim/src/ConfigurationManager.cpp` for YAML/CLI parsing and validation.
@@ -1610,7 +1610,7 @@ T0044 must preserve existing fixed-window defaults and must not change standard 
 
 ### Expected Future Smoke Cases
 
-T0044 should define exact commands only after the implementation and configs exist. The expected smoke cases are:
+T0044 defined exact commands after the implementation and configs existed. The expected smoke cases were:
 
 - No-traffic drain smoke: no measured packets accepted; drain completes immediately; reachability and latency are blank/null, not zero.
 - Single same-chiplet hardcoded packet before cutoff: one packet accepted, delivered, and drained with `stop_reason = drain_completed`.
@@ -1624,7 +1624,43 @@ T0044 should define exact commands only after the implementation and configs exi
 
 T0026/T0027/T0028 remain the historical fixed-window final-report artifact chain. T0042 remains a limited exploratory fixed-window IA-XY-vs-DEFT artifact set. T0043 does not regenerate, revise, or reinterpret those outputs.
 
-Blocked: Stronger eventual-delivery report claims require new versioned artifacts created after T0044 implementation and validation.
+Blocked: Stronger eventual-delivery report claims require a later explicit experiment task that creates new versioned drain-mode artifacts after T0044 implementation validation.
+
+## T0044 Source-Cutoff and Post-Injection Drain Implementation
+
+T0044 implements the accepted T0043 policy as an opt-in simulator mode. It does not change default fixed-window behavior, standard `XY`, `DEFT`, VN transition restrictions, VL fault injection semantics, LUT schema/use path, topology behavior, existing runner/analysis defaults, T0026/T0027/T0028 artifacts, T0042 artifacts, final-report artifacts, package artifacts, or Extended Proposal files.
+
+Configuration surface:
+
+- YAML keys: `drain_mode_enabled`, `drain_source_cutoff_cycles`, and `drain_timeout_cycles`.
+- CLI options: `-drain_mode`, `-drain`, `-drain_source_cutoff`, and `-drain_timeout`.
+- Drain mode requires positive source-cutoff and timeout values.
+- Drain mode is mutually exclusive with current Noxim `-volume` because both are stop policies.
+
+Runtime behavior:
+
+- Drain mode starts measured traffic at `reset_time + stats_warm_up_time`.
+- Source generation and hardcoded-traffic admission are gated off during drain-mode warm-up.
+- Measured packet heads are admitted only during `[measurement_start_cycle, source_cutoff_cycle)`.
+- Already accepted packets may continue emitting body and tail flits after cutoff.
+- Drain timeout starts at `drain_start_cycle`, which is the source-cutoff boundary.
+- The run stops with `drain_completed` when the in-flight empty condition is true, or with `drain_timeout` when the configured timeout expires.
+
+Implemented in-flight checks:
+
+- Source PE packet queues.
+- Router input buffers.
+- Router reservation tables.
+- Pending hub/VL handshake carrier state.
+- Measured injected/received packet and flit balances.
+
+Drain-mode exports add explicit denominator and stop fields only when drain mode is enabled. These fields include stop reason, measurement start, source cutoff, drain start, sources-quiesced cycle, completion or stop cycle, measured injected/received packets and flits, undelivered counts, drain elapsed cycles, total measured elapsed cycles, drain throughput, and remaining source/router/reservation/handshake counts at stop. When drain mode is disabled, existing fixed-window and current `-volume` export shape remains available.
+
+T0044 added only minimal deterministic smoke traffic files under `external/noxim/config_examples/`. Targeted smoke outputs were written under ignored `external/noxim/other/generated/t0044_drain_smokes/` and are implementation validation, not final experiment artifacts.
+
+Assumption: Source-gated warm-up remains the first supported drain-mode warm-up policy. A preloaded warm-up plus flush policy would require a separate task.
+
+Blocked: Stronger eventual-delivery report claims still require a later explicit experiment task that chooses timeout budgets, creates new versioned drain-mode artifacts, and performs claim-safe analysis.
 
 ## Post-Submission Future Backlog
 
@@ -1648,7 +1684,7 @@ Ordered future backlog:
 | T0041 | Implementation | Completed selectable `INTERPOSER_AWARE_XY` baseline without modifying existing `XY` or `DEFT`. |
 | T0042 | Experiment | Completed limited IA-XY-vs-DEFT comparison in a new artifact directory with blank-aware claim limits. |
 | T0043 | Design | Completed source-cutoff plus post-injection drain/timeout policy for eventual-delivery analysis. |
-| T0044 | Implementation | Implement and validate the accepted drain policy before any full sweep. |
+| T0044 | Implementation | Completed opt-in source-cutoff plus post-injection drain/timeout support with targeted smokes. |
 | T0045 | Feasibility | Evaluate directional endpoint fault modeling against the current physical bidirectional VL model. |
 | T0046 | Feasibility | Assess PARSEC/GEM5 trace support requirements and validation burden. |
 | T0047 | Implementation | Implement trace ingestion only after a trace format and validation plan are accepted. |
@@ -1658,7 +1694,7 @@ Assumption: Future backlog work starts with design or feasibility tasks before i
 
 Blocked: Stronger unrestricted XY-vs-DEFT claims remain blocked until an interposer-aware baseline is implemented, validated, and evaluated in new artifact directories.
 
-Blocked: Eventual-delivery claims remain blocked until source-cutoff plus drain/timeout semantics are implemented, validated, and used to create new versioned artifacts.
+Blocked: Eventual-delivery claims remain blocked until the T0044 drain mode is used by a later explicit experiment task to create new versioned artifacts and claim-safe analysis.
 
 Blocked: Paper-aligned single-direction fault cases remain blocked until directional endpoint fault modeling is evaluated and, if accepted, implemented.
 
