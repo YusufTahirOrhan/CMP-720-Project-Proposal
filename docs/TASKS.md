@@ -520,7 +520,7 @@ Statuses: `TODO`, `IN_PROGRESS`, `DONE`, `BLOCKED`.
 
 ## T0046: PARSEC/GEM5 Trace Support Feasibility
 
-- **Status:** TODO
+- **Status:** DONE
 - **Type:** feasibility
 - **Objective:** Assess required external dependencies, trace format, workload mapping, and validation burden for PARSEC/GEM5 trace evaluation.
 - **Why it exists:** PARSEC/GEM5 trace evaluation remains unvalidated and must not be claimed until a reproducible pipeline exists.
@@ -530,15 +530,17 @@ Statuses: `TODO`, `IN_PROGRESS`, `DONE`, `BLOCKED`.
 - **Files likely to change:** `docs/ARCHITECTURE.md`, `docs/TASKS.md`, `docs/PROGRESS.md`, `docs/VALIDATION.md`, `docs/PROMPTS.md`, and possibly `docs/DECISIONS.md`.
 - **Source code changes allowed:** No.
 - **Simulation reruns allowed:** No.
-- **Acceptance criteria:** Feasibility document records dependency list, trace format assumptions, workload-to-router mapping, validation burden, blockers, and a go/no-go recommendation.
-- **Validation method or limitation:** Documentation-only validation with `git diff --check`; no network install or external trace generation.
+- **Acceptance criteria:** Completed. Feasibility document records dependency list, trace format assumptions, workload-to-router mapping, validation burden, blockers, artifact policy, claim-safety limits, and a defer recommendation.
+- **Validation method or limitation:** Documentation-only validation with `git diff --check`, `external/noxim` status, and protected-artifact guards; no network install, external trace generation, simulation, or Noxim rebuild.
 - **Dependencies:** T0039.
 - **Risk level:** High, because it may require external tools and large validation effort.
 - **Recommended prompt:** `Start task T0046: PARSEC/GEM5 Trace Support Feasibility. Assess dependencies, trace format, workload mapping, and validation burden without installing tools or claiming support. Update tracking docs and run git diff --check.`
+- **Files changed:** `docs/ARCHITECTURE.md`, `docs/DECISIONS.md`, `docs/TASKS.md`, `docs/PROGRESS.md`, `docs/VALIDATION.md`, and `docs/PROMPTS.md`.
+- **Notes:** Completed on 2026-05-12 as a documentation-only feasibility task. The extended proposal and original DeFT paper justify PARSEC/GEM5 real-application evaluation as a future workload path, but the current workspace has no GEM5/PARSEC dependencies, full-system images/checkpoints, trace-generation scripts, trace inputs, or Noxim-ready trace schema. Existing Noxim `TRAFFIC_TABLE_BASED` and `TRAFFIC_HARDCODED` inputs can support aggregate or tiny event-style traffic, but they are not a complete claim-safe GEM5/PARSEC pipeline. T0046 recommends deferring trace ingestion until a versioned minimal trace schema, tiny fixture, core/router and agent/router mapping policy, dependency provenance, invalid-trace rejection, and small Noxim smoke validation are accepted. No source code, simulator behavior, traffic behavior, metrics, runner/analysis behavior, generated artifacts, final-report artifacts, package artifacts, or Extended Proposal files were changed.
 
 ## T0047: Implement PARSEC/GEM5 Trace Ingestion
 
-- **Status:** TODO
+- **Status:** BLOCKED
 - **Type:** implementation
 - **Objective:** Implement trace ingestion only after T0046 defines the trace format and validation plan.
 - **Why it exists:** Real-application traffic cannot be evaluated until the simulator or helper pipeline can ingest a validated trace format.
@@ -549,10 +551,11 @@ Statuses: `TODO`, `IN_PROGRESS`, `DONE`, `BLOCKED`.
 - **Source code changes allowed:** Yes, only after T0046 accepts a trace format and validation plan.
 - **Simulation reruns allowed:** Yes, small trace smoke tests only before any large workload.
 - **Acceptance criteria:** Parser/import path accepts the documented trace format; invalid traces fail clearly; a tiny trace smoke validates routing launch and stats export; no PARSEC-scale claim is made.
-- **Validation method or limitation:** Use T0046-defined small trace smokes plus build validation if C++ source changes are required. Do not run large workloads until a later experiment task is opened.
+- **Validation method or limitation:** Blocked by T0046's defer recommendation until a versioned trace schema, tiny fixture, dependency provenance plan, and workload mapping policy are supplied and accepted. After that, use T0046-defined small trace smokes plus build validation if C++ source changes are required. Do not run large workloads until a later experiment task is opened.
 - **Dependencies:** T0046.
 - **Risk level:** High, because it may affect traffic generation and depend on external trace quality.
 - **Recommended prompt:** `Start task T0047: Implement PARSEC/GEM5 Trace Ingestion. Use the accepted T0046 feasibility plan, implement only the trace ingestion path and tiny smoke validation, avoid large workloads or support claims, update tracking docs, and run git diff --check.`
+- **Notes:** Blocked after T0046. Trace ingestion should not start from full PARSEC-scale traces. It needs a small accepted `deft_trace.v1`-style schema or equivalent, a tiny fixture, mapping documentation, dependency provenance, and invalid-fixture validation first.
 
 ## T0048: Regenerate Report with New Validated Results
 

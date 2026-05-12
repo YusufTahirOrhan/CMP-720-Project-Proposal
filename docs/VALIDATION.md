@@ -1941,6 +1941,41 @@ T0045 result on 2026-05-12:
 - The final-report and proposal artifact guard returned no changed files for `final_report/main.pdf`, `final_report.zip`, `Extended_Proposal.pdf`, or `Extended_Proposal.zip`.
 - Final parent status showed only modified tracking docs: `docs/ARCHITECTURE.md`, `docs/DECISIONS.md`, `docs/PROGRESS.md`, `docs/PROMPTS.md`, `docs/TASKS.md`, and `docs/VALIDATION.md`.
 
+## PARSEC/GEM5 Trace Support Feasibility Validation
+
+Purpose:
+
+- Assess PARSEC/GEM5 dependency availability and trace-ingestion burden without installing dependencies or importing traces.
+- Record the minimum trace schema and workload-mapping considerations before any implementation.
+- Preserve existing simulator behavior, source code, traffic generation, metrics, runner/analysis behavior, generated artifacts, final-report artifacts, package artifacts, and Extended Proposal files.
+
+Known validation for T0046:
+
+- Parent repository status before edits: `git status --short --branch`
+- Noxim source-tree status before and after edits: `git status --short --branch` from `external/noxim`
+- Documentation whitespace check: `git diff --check`
+- Generated-artifact guard for T0026/T0027/T0028 and T0042 generated directories.
+- Final-report and proposal artifact guard for `final_report/main.pdf`, `final_report.zip`, `Extended_Proposal.pdf`, `Extended_Proposal.zip`, and Extended Proposal source files.
+- Do not rebuild Noxim, run simulations, install dependencies, import or generate traces, regenerate final sweeps, regenerate `final_report/main.pdf`, modify `final_report.zip`, modify Extended Proposal files, or use `./regression.sh --update`.
+
+T0046 result on 2026-05-12:
+
+- Required startup reading was completed before task work: `AGENTS.md`, `docs/PROGRESS.md`, `docs/TASKS.md`, `docs/ROADMAP.md`, `docs/ARCHITECTURE.md`, `docs/VALIDATION.md`, `docs/DECISIONS.md`, `docs/PROMPTS.md`, `docs/FINAL_REPORT_DRAFT.md`, and `final_report/main.tex`.
+- Source-document roles were preserved: `Extended_Proposal.pdf` is the primary project requirements source, the original DeFT paper is the primary algorithmic reference, `Proposal.pdf` is initial context only, and the peer evaluation document was ignored completely.
+- Parent repository status before edits was clean on `feat/map-noxim-extension-points...origin/feat/map-noxim-extension-points`.
+- `external/noxim` status before edits was clean on `feat/baseline-noxim...origin/feat/baseline-noxim`.
+- Before editing, a short feasibility plan was produced. Assumption: T0046 is documentation-only and should make no simulator, dependency, trace, traffic, metrics, runner, analysis, report-artifact, package-artifact, or Extended Proposal changes. Blocked: PARSEC/GEM5 workload claims remain blocked until a reproducible external trace-generation or trace-import pipeline and Noxim ingestion/validation path exist.
+- Source-document inspection confirmed that the extended proposal describes real-application PARSEC traces generated via GEM5, and the original DeFT paper reports PARSEC/GEM5 evaluation with a 64-core x86 full-system setup and eight PARSEC workloads.
+- Dependency inspection found no GEM5/PARSEC source tree, full-system image/checkpoint, trace-generation script, trace input, or Noxim-ready application trace schema in the repository. Windows PATH did not expose `gem5`; WSL Ubuntu exposed `/usr/bin/python3` but not `gem5.opt`, `gem5`, or `scons`, and checked `/parsec`, `/opt/parsec`, and `/opt/gem5` directories were absent.
+- Read-only Noxim inspection confirmed that current VCD tracing is debug output rather than workload input, `TRAFFIC_TABLE_BASED` supports aggregate `src dst [pir [por [t_on t_off t_period]]]` rows, and `TRAFFIC_HARDCODED` supports cycle-delimited `src dst` packet entries only.
+- T0046 records a deferral decision in ADR-0049: do not claim PARSEC/GEM5 workload support until a versioned trace schema, tiny fixture, mapping policy, dependency provenance, invalid-trace rejection, and small Noxim smoke validation exist.
+- No source code, simulator behavior, standard `XY`, `DEFT`, VN transition restrictions, VL fault injection semantics, LUT schema/use path, topology behavior, traffic behavior, metrics, runner/analysis behavior, generated artifacts, simulations, Noxim rebuild, final-report PDF, package artifact, Extended Proposal file, dependency installation, trace import/generation, or `./regression.sh --update` was changed.
+- `git diff --check` completed with exit code `0`; Git reported line-ending conversion warnings for edited Markdown files only.
+- Final `external/noxim` status remained clean on `feat/baseline-noxim...origin/feat/baseline-noxim`.
+- The generated-artifact guard returned no changed files for `external/noxim/other/generated/t0026_final_sweep_v1`, `t0026_final_analysis_v1`, `t0027_report_support_v1`, `t0028_final_report_results_v1`, or `t0042_iaxy_deft_limited_v1`.
+- The final-report and proposal artifact guard returned no changed files for `final_report/main.pdf`, `final_report.zip`, `Extended_Proposal.pdf`, `Extended_Proposal.zip`, or `Extended_Proposal/`.
+- Final parent status showed only modified tracking docs: `docs/ARCHITECTURE.md`, `docs/DECISIONS.md`, `docs/PROGRESS.md`, `docs/PROMPTS.md`, `docs/TASKS.md`, and `docs/VALIDATION.md`.
+
 ## Metrics Validation
 
 Purpose:

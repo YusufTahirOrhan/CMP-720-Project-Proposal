@@ -2,7 +2,7 @@
 
 ## Current Phase
 
-Phase 9 - Final Analysis and Report Support (final package ready; opt-in drain mode smoke-validated; directional fault support deferred)
+Phase 9 - Final Analysis and Report Support (final package ready; opt-in drain mode smoke-validated; directional fault and PARSEC/GEM5 trace support deferred)
 
 ## Completed Tasks
 
@@ -51,8 +51,9 @@ Phase 9 - Final Analysis and Report Support (final package ready; opt-in drain m
 - `T0043` - Design Source-Cutoff and Post-Injection Drain Policy.
 - `T0044` - Implement and Validate Drain Policy.
 - `T0045` - Evaluate Directional Fault Modeling.
+- `T0046` - PARSEC/GEM5 Trace Support Feasibility.
 
-DeFT VN assignment behavior, the first VN movement-transition restriction enforcement layer, the offline VL LUT schema/generator, the runtime schema-v1 LUT loading/use path, explicit XY fault-free/fault-injected baseline configuration modes, proposal-required synthetic traffic configuration profiles, machine-readable metrics export, tiny experiment-runner launch support, final-analysis scaffolding, the final sweep policy, the validated T0026 150-run final sweep output set, T0027 blank-aware report-support tables, T0028 claim-safe final report results draft, the T0029 tracked claim-safe Markdown report draft, the T0030 submission-readiness polish, the T0031 IEEE-style LaTeX final report source artifact, the T0032 generated final report PDF, the T0033 blocker diagnosis, the T0034 report-revision direction decision, the T0035 final-report diagnosis revision, the T0036 post-final experimental design gate, the T0037 final submission handoff check, the T0038 final submission archive refresh, the T0039 future backlog documentation, the T0040 IA-XY baseline design, the T0041 IA-XY baseline implementation, the T0042 limited IA-XY-vs-DEFT artifact set, the T0043 source-cutoff/drain policy design, the T0044 opt-in drain-mode implementation with targeted smoke validation, and the T0045 directional fault-model feasibility decision now exist for `DEFT_2_5D`. Performance claims remain limited to descriptive, blank-aware report support only. No future backlog item blocks the current final submission.
+DeFT VN assignment behavior, the first VN movement-transition restriction enforcement layer, the offline VL LUT schema/generator, the runtime schema-v1 LUT loading/use path, explicit XY fault-free/fault-injected baseline configuration modes, proposal-required synthetic traffic configuration profiles, machine-readable metrics export, tiny experiment-runner launch support, final-analysis scaffolding, the final sweep policy, the validated T0026 150-run final sweep output set, T0027 blank-aware report-support tables, T0028 claim-safe final report results draft, the T0029 tracked claim-safe Markdown report draft, the T0030 submission-readiness polish, the T0031 IEEE-style LaTeX final report source artifact, the T0032 generated final report PDF, the T0033 blocker diagnosis, the T0034 report-revision direction decision, the T0035 final-report diagnosis revision, the T0036 post-final experimental design gate, the T0037 final submission handoff check, the T0038 final submission archive refresh, the T0039 future backlog documentation, the T0040 IA-XY baseline design, the T0041 IA-XY baseline implementation, the T0042 limited IA-XY-vs-DEFT artifact set, the T0043 source-cutoff/drain policy design, the T0044 opt-in drain-mode implementation with targeted smoke validation, the T0045 directional fault-model feasibility decision, and the T0046 PARSEC/GEM5 trace-support feasibility decision now exist for `DEFT_2_5D`. Performance claims remain limited to descriptive, blank-aware report support only. No future backlog item blocks the current final submission.
 
 ## In-Progress Tasks
 
@@ -60,9 +61,26 @@ DeFT VN assignment behavior, the first VN movement-transition restriction enforc
 
 ## Blocked Tasks
 
-- None.
+- `T0047` - PARSEC/GEM5 Trace Ingestion is blocked until a versioned trace schema, tiny fixture, dependency/provenance plan, workload mapping policy, and small smoke-validation path are supplied and accepted.
 
 ## Last Validation Result
+
+- T0046 PARSEC/GEM5 Trace Support Feasibility completed as a documentation-only feasibility task on 2026-05-12.
+- Required startup reading was completed before task work: `AGENTS.md`, `docs/PROGRESS.md`, `docs/TASKS.md`, `docs/ROADMAP.md`, `docs/ARCHITECTURE.md`, `docs/VALIDATION.md`, `docs/DECISIONS.md`, `docs/PROMPTS.md`, `docs/FINAL_REPORT_DRAFT.md`, and `final_report/main.tex`.
+- Source-document roles were preserved: `Extended_Proposal.pdf` is the primary project requirements source, the original DeFT paper at `docs/references/DeFT_A_Deadlock-Free_and_Fault-Tolerant_Routing_Algorithm_for_2.5D_Chiplet_Networks.pdf` is the primary algorithmic reference, `Proposal.pdf` is initial context only, and the peer evaluation document was ignored completely.
+- Parent repository status before edits was clean on `feat/map-noxim-extension-points...origin/feat/map-noxim-extension-points`; `external/noxim` status before edits was clean on `feat/baseline-noxim...origin/feat/baseline-noxim`.
+- Before editing, a short feasibility plan was produced. Assumption: T0046 is documentation-only and should make no simulator, dependency, trace, traffic, metrics, runner, analysis, report-artifact, package-artifact, or Extended Proposal changes. Blocked: PARSEC/GEM5 workload claims remain blocked until a reproducible external trace-generation or trace-import pipeline and Noxim ingestion/validation path exist.
+- Source-document inspection confirmed that the extended proposal includes PARSEC traces generated via GEM5 and that the original DeFT paper reports PARSEC/GEM5 evaluation using a 64-core x86 full-system setup and eight PARSEC workloads.
+- Dependency checks found no GEM5/PARSEC source tree, full-system image/checkpoint, trace-generation script, trace input, or Noxim-ready application trace schema in the repository. Windows PATH did not expose `gem5`; WSL Ubuntu exposed `/usr/bin/python3` but not `gem5.opt`, `gem5`, or `scons`; checked `/parsec`, `/opt/parsec`, and `/opt/gem5` paths were absent.
+- Read-only Noxim inspection confirmed that VCD tracing is simulator debug output, not workload input; `TRAFFIC_TABLE_BASED` supports aggregate `src dst [pir [por [t_on t_off t_period]]]` rows; and `TRAFFIC_HARDCODED` supports cycle-delimited `src dst` packet entries without packet size, application ID, core/thread ID, operation type, memory address, flow ID, or response metadata.
+- T0046 recommends deferring trace ingestion. ADR-0049 records the durable policy: do not claim PARSEC/GEM5 workload support until a versioned trace schema, tiny fixture, core/router and agent/router mapping policy, dependency provenance, invalid-trace rejection, and small Noxim smoke validation exist.
+- `docs/TASKS.md`, `docs/PROGRESS.md`, `docs/VALIDATION.md`, `docs/PROMPTS.md`, `docs/ARCHITECTURE.md`, and `docs/DECISIONS.md` were updated for T0046 traceability and the PARSEC/GEM5 trace-ingestion deferral decision.
+- No source code, simulator behavior, standard `XY`, `DEFT`, VN transition restrictions, VL fault injection semantics, LUT schema/use path, topology behavior, traffic behavior, metrics, runner/analysis behavior, generated artifacts, simulations, Noxim rebuild, final-report PDF, `final_report.zip`, Extended Proposal files, dependency installation, trace import/generation, or `./regression.sh --update` was changed.
+- `git diff --check` completed with exit code `0`; Git reported line-ending conversion warnings for edited Markdown files only.
+- Final `external/noxim` status remained clean on `feat/baseline-noxim...origin/feat/baseline-noxim`.
+- The generated-artifact guard returned no changed files for T0026/T0027/T0028 or T0042 generated directories.
+- The final-report and Extended Proposal artifact guard returned no changed files for `final_report/main.pdf`, `final_report.zip`, `Extended_Proposal.pdf`, `Extended_Proposal.zip`, or `Extended_Proposal/`.
+- Final parent status shows only modified tracking docs: `docs/ARCHITECTURE.md`, `docs/DECISIONS.md`, `docs/PROGRESS.md`, `docs/PROMPTS.md`, `docs/TASKS.md`, and `docs/VALIDATION.md`.
 
 - T0045 Evaluate Directional Fault Modeling completed as a documentation-only feasibility task on 2026-05-12.
 - Required startup reading was completed before task work: `AGENTS.md`, `docs/PROGRESS.md`, `docs/TASKS.md`, `docs/ROADMAP.md`, `docs/ARCHITECTURE.md`, `docs/VALIDATION.md`, `docs/DECISIONS.md`, `docs/PROMPTS.md`, `docs/FINAL_REPORT_DRAFT.md`, and `final_report/main.tex`.
@@ -961,17 +979,20 @@ External source tree registered during `T0023`:
 - Assumption: T0045 interprets the original paper's four-chiplet `total VLs=32` wording as directional endpoint or channel accounting over the same 16 physical bidirectional VL objects.
 - Assumption: Existing T0026/T0027/T0028, T0042, and T0044 artifacts remain physical-model artifacts and must not be reinterpreted as directional endpoint experiments.
 - Assumption: Future directional endpoint support should preserve physical VL identity while adding per-direction state and a versioned LUT/config boundary.
+- Assumption: T0046 treats PARSEC/GEM5 trace support as future real-application evaluation infrastructure, not as part of the current synthetic final artifact chain.
+- Assumption: The first safe trace-ingestion target should be a tiny versioned `deft_trace.v1`-style fixture or equivalent, not a full PARSEC-scale dump.
 - Blocked: Strong inter-chiplet IA-XY-vs-DEFT comparison needs new versioned experiment artifacts and blank-aware analysis, or a narrower traffic policy that explicitly limits comparison to route-compatible traffic.
 - Blocked: Stronger final-report claims remain blocked after T0035; the selected immediate path improved explanation, not measured performance coverage.
 - Blocked: No current PDF-generation blocker remains after T0032; stronger final-report claims remain blocked without a separate approved validation or rerun policy.
 - Blocked: Strong IA-XY performance claims remain blocked after T0042 because the new artifact set is limited, two-seed exploratory data and still contains blank IA-XY hotspot cells.
 - Blocked: Eventual-delivery claims remain blocked after T0044 until a later explicit experiment task defines timeout policy, creates new versioned drain-mode artifacts, and performs claim-safe analysis.
 - Blocked: Paper-aligned single-direction fault experiments remain blocked after T0045 until a future versioned directional fault model, directional LUT path, runtime lookup, and validation policy exist.
+- Blocked: PARSEC/GEM5 workload claims remain blocked after T0046 until GEM5/PARSEC dependencies or trace inputs, a versioned trace schema, workload mapping, ingestion validation, and new artifact directories exist.
 - Blocked: Reopening source-cutoff/drain semantics, route-compatible intra-chiplet comparison, PARSEC/GEM5 traces, directional endpoint faults, or stronger performance claims requires a new explicit task with its own design and validation policy.
 
 ## Open Questions
 
-- Are GEM5/PARSEC traces required for final delivery, or are synthetic traffic experiments sufficient?
+- If PARSEC/GEM5 trace work resumes, will the user provide an existing trace bundle, or should a future task first design an external trace-generation environment?
 - Should WSL be configured persistently with `ldconfig` for the local SystemC library, or should future Noxim runs keep using a per-process `LD_LIBRARY_PATH`?
 - Should final DeFT routing keep using `DIRECTION_HUB` as the physical Vertical Link carrier, or introduce explicit semantic Up/Down ports after the LUT design is complete?
 - Should a future `deft_vl_lut.v2` add `destination_router_id` for destination-router-granular entry VL optimization?
@@ -985,12 +1006,12 @@ External source tree registered during `T0023`:
 
 ## Next Recommended Task
 
-T0046: PARSEC/GEM5 Trace Support Feasibility, only if more development is required after the current final submission.
+No immediate implementation task is recommended. `T0047` remains blocked unless the user supplies or approves a tiny trace schema/fixture and dependency-provenance plan. If new validated artifacts are produced later, `T0048` can update report material claim-safely.
 
 ## Next Ready-to-Send Prompt
 
 ```text
-Start task T0046: PARSEC/GEM5 Trace Support Feasibility.
+Start task T0047: Implement PARSEC/GEM5 Trace Ingestion, only after prerequisites are available.
 
 Before starting, read:
 - AGENTS.md
@@ -1010,37 +1031,36 @@ Use Extended_Proposal.pdf as the primary project requirements source and the ori
 
 Use the registered Noxim source tree at external/noxim.
 
-Goal: assess the dependency, trace-format, workload-mapping, and validation burden for PARSEC/GEM5 trace support without implementing it.
+Prerequisite before implementation: provide or define a tiny versioned trace fixture, an accepted `deft_trace.v1`-style schema or equivalent, a core/router and agent/router mapping policy, and dependency/provenance notes for any GEM5/PARSEC source traces.
 
-Before editing:
+Goal: implement only the accepted tiny trace ingestion path and validation fixture. Do not import PARSEC-scale traces or claim PARSEC/GEM5 support.
+
+Before coding:
 - Check parent repository status.
 - Check external/noxim status.
-- Produce a short feasibility plan.
+- Produce a short implementation plan.
 - Clearly mark assumptions as `Assumption`.
 - Clearly mark blockers as `Blocked`.
 
 Scope:
-- Identify likely GEM5/PARSEC dependencies and whether they are already available.
-- Identify expected trace format requirements and minimal fields needed by Noxim.
-- Propose workload-to-router and timing mapping options.
-- Identify validation burden, blockers, artifact policy, and claim-safety limits.
-- Recommend implement, defer, or reject trace ingestion.
-- Update tracking docs and docs/DECISIONS.md only if a durable policy decision is made.
+- Add a small parser or converter only for the accepted trace schema.
+- Validate router ID ranges, cycle ordering, packet size, and malformed fixtures.
+- Run only tiny trace smokes after build validation if source code changes are required.
+- Write any generated smoke artifacts to a new ignored artifact directory.
+- Preserve all existing synthetic, IA-XY, drain, final-report, package, and Extended Proposal artifacts.
 
 Do not:
-- Edit source code.
 - Install dependencies.
-- Import or generate large traces.
-- Run simulations.
-- Rebuild Noxim.
+- Import or generate PARSEC-scale traces.
+- Run full workload sweeps.
 - Modify standard XY route behavior.
 - Modify DEFT routing behavior.
 - Modify VN transition restrictions.
 - Modify VL fault injection semantics.
 - Modify LUT schema or runtime LUT use path.
 - Modify topology behavior.
-- Modify traffic generation behavior.
-- Modify metrics, runner, or analysis behavior.
+- Modify existing synthetic traffic behavior outside the accepted trace-ingestion path.
+- Modify metrics, runner, or analysis behavior outside the accepted trace-ingestion path.
 - Regenerate final sweep artifacts.
 - Regenerate final_report/main.pdf.
 - Modify final_report/main.pdf.
@@ -1051,11 +1071,13 @@ Do not:
 
 Validation:
 - Run git diff --check.
+- If source code changes are made, run the known external/noxim build command from external/noxim: ./build.sh.
+- Run only the accepted tiny trace smokes.
 - Check external/noxim status after validation.
 - Confirm T0026/T0027/T0028 and T0042 generated artifacts were not changed.
 - Confirm final_report/main.pdf, final_report.zip, and Extended Proposal files were not changed.
 
-Update docs/TASKS.md, docs/PROGRESS.md, docs/VALIDATION.md, docs/PROMPTS.md, docs/ARCHITECTURE.md, and docs/DECISIONS.md only if a new durable policy decision is made.
+Update tracking docs with validation results and keep PARSEC/GEM5 claims blocked unless a later workload experiment task produces validated artifacts.
 ```
 
 ## Suggested Branch Name for Next Task
@@ -1067,5 +1089,5 @@ None; continue on the existing branch.
 ## Suggested Commit Message
 
 ```text
-docs: evaluate directional fault modeling
+docs: assess parsec gem5 trace feasibility
 ```

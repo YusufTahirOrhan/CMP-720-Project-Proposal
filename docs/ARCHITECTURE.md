@@ -1731,6 +1731,118 @@ Durable policy:
 
 Blocked: Paper-aligned single-direction fault experiments remain blocked until a future task implements and validates directional endpoint state, directional LUT generation, runtime directional lookup, and directional result labeling.
 
+## T0046 PARSEC/GEM5 Trace Support Feasibility
+
+T0046 evaluates whether PARSEC/GEM5 trace ingestion should be added to the project. It is documentation-only and does not install dependencies, import or generate traces, run simulations, rebuild Noxim, edit simulator source, change traffic behavior, change metrics, regenerate artifacts, or change report claims.
+
+### Source Alignment
+
+`Extended_Proposal.pdf` describes synthetic traffic and real-application traffic. It names PARSEC benchmark traces, including blackscholes, fluidanimate, and swaptions, generated through the GEM5 full-system simulator. The original DeFT paper also reports real-application evaluation by generating PARSEC traffic with GEM5, using a 64-core x86 full-system setup with coherence directories and shared L2 banks, and it names eight PARSEC workloads: blackscholes, bodytrack, canneal, dedup, facesim, fluidanimate, streamcluster, and swaptions.
+
+Assumption: PARSEC/GEM5 trace support is useful for paper-aligned real-application evaluation, but it is not part of the current validated T0026/T0027/T0028 final artifact chain.
+
+### Dependency Availability
+
+Read-only environment and repository checks found no ready PARSEC/GEM5 trace pipeline:
+
+- The repository contains no GEM5 source tree, PARSEC source tree, PARSEC input set, GEM5 checkpoint, GEM5 output trace, or Noxim-ready application trace file.
+- `rg --files | rg -i "gem5|parsec|trace"` found only Noxim VCD trace-viewer assets and report references, not application input traces.
+- Windows PATH does not expose `gem5`.
+- WSL Ubuntu is available and running, and `/usr/bin/python3` exists there.
+- WSL Ubuntu does not expose `gem5.opt`, `gem5`, or `scons` through PATH checks.
+- Common checked directories `/parsec`, `/opt/parsec`, and `/opt/gem5` do not exist in WSL Ubuntu.
+
+Blocked: GEM5/PARSEC trace generation is not currently reproducible in this workspace because the simulator, benchmark suite, full-system images/checkpoints, and trace-generation commands are absent.
+
+### Current Noxim Traffic Surfaces
+
+Noxim currently has traffic-input mechanisms, but none are a complete GEM5/PARSEC trace ingestion path:
+
+- VCD tracing through `trace_mode`, `trace_filename`, and `trace_scope` is a simulator debug output path, not an application workload input.
+- `TRAFFIC_TABLE_BASED` loads rows shaped as `src dst [pir [por [t_on t_off t_period]]]`. This can approximate binned or aggregate traffic rates, but it does not preserve individual memory-event timing, packet size, core/thread identity, or request/response pairing.
+- `TRAFFIC_HARDCODED` loads cycle-by-cycle packet requests as `src dst` rows with `-1` as the cycle delimiter. This is the closest existing input surface for a tiny event trace, but it currently lacks explicit packet size, application ID, core/thread ID, operation type, memory address, flow ID, dependency ID, or response metadata.
+- `ProcessingElement` currently creates packets with source, destination, VC, timestamp, size, and remaining flit count. Packet size is chosen by the simulator configuration unless future trace ingestion explicitly supplies it.
+- DeFT-enabled runs assign source VN state through the existing VN helper, so a trace format should not try to preassign DeFT VC/VN unless a future task designs that behavior.
+
+Assumption: A faithful application trace path should not reuse Noxim VCD traces as workload input. It needs a separate input schema or a converter into an accepted Noxim traffic surface.
+
+### Minimal Trace Fields
+
+A minimal Noxim-oriented event trace should include enough data to build a packet deterministically:
+
+| Field | Requirement |
+| --- | --- |
+| `cycle` | Nonnegative Noxim injection cycle or a GEM5 tick converted through a documented clock ratio. |
+| `src_router_id` | Chiplet PE/router ID, currently `0..63`; interposer routers must not be source endpoints. |
+| `dst_router_id` | Chiplet PE/router ID, currently `0..63`; interposer routers must not be final destinations. |
+| `packet_size_flits` | Positive integer packet size; default may be 8 flits only if the schema records the default explicitly. |
+| `workload` | PARSEC workload label or workload-pair label for provenance. |
+| `source_core_id` | Original GEM5 core ID before mapping to a router. |
+| `dest_agent_id` | Original destination agent such as core, directory, or cache bank before mapping to a router. |
+
+Useful optional fields include `thread_id`, `process_id`, `operation_type`, `address`, `request_response_id`, `flow_id`, and `weight`. These optional fields should be converter provenance and validation aids unless a later implementation task proves the simulator needs them at runtime.
+
+Assumption: The first supported schema should be a small versioned text or CSV schema, for example `deft_trace.v1`, with explicit units and a manifest. It should not be an ad hoc dump of GEM5 debug output.
+
+### Workload-To-Router Mapping Options
+
+Three mapping options are feasible, with different fidelity and validation cost:
+
+| Option | Description | Benefit | Cost or risk |
+| --- | --- | --- | --- |
+| One core per chiplet router | Map GEM5 core IDs `0..63` directly to chiplet router IDs `0..63`; map directory/L2-bank agents through a documented four-bank placement policy. | Aligns naturally with the current 64 chiplet PEs and the paper's 64-core setup. | Requires a defensible directory/L2-bank-to-router policy and request/response modeling. |
+| Binned aggregate traffic | Convert GEM5 memory/coherence events into per-window `src dst pir/por t_on t_off t_period` rows. | Can reuse `TRAFFIC_TABLE_BASED` with less simulator change. | Loses event ordering and packet-level behavior; weaker claim value. |
+| Cycle-by-cycle packet trace | Convert events into `cycle, src, dst, size` packet records, then feed a new parser or generate hardcoded traffic. | Best preserves temporal workload structure for Noxim. | Large data volume, parser changes, packet-size policy, and strict validation required. |
+
+Assumption: The safest implementation path, if opened later, is to start with a tiny cycle-by-cycle `deft_trace.v1` fixture and a converter into a small Noxim smoke, not with full PARSEC traces.
+
+### Timing Mapping Options
+
+Trace timing needs an explicit unit conversion:
+
+- Direct cycle mapping: the trace already stores Noxim cycles after conversion. This is the simplest runtime format.
+- GEM5 tick mapping: the trace stores GEM5 ticks and a manifest records `gem5_ticks_per_noxim_cycle`.
+- Binned mapping: GEM5 events are grouped into fixed Noxim-cycle windows and converted to probabilistic table rows.
+
+Assumption: Direct Noxim-cycle event traces are the best first ingestion target because they keep runtime parsing simple and make tiny fixture validation inspectable.
+
+### Validation Burden
+
+A credible PARSEC/GEM5 trace workflow would need validation beyond normal simulator smokes:
+
+- Dependency provenance: exact GEM5 version, PARSEC version or source, full-system image/checkpoint provenance, benchmark inputs, CPU/memory/cache configuration, and trace-generation command lines.
+- Converter validation: schema validation, monotonic or explicitly ordered cycles, router ID range checks, source/destination endpoint checks, packet-size checks, deterministic output for the same input, and invalid-trace rejection cases.
+- Mapping validation: a documented core/router map, directory/cache-bank map, and policy for request/response traffic.
+- Noxim smoke validation: a tiny fixture with one same-chiplet packet, one inter-chiplet packet, one invalid endpoint case, one timing-gap case, and one packet-size case before any PARSEC-scale run.
+- Artifact validation: manifests with hashes, input schema version, converter version, mapping file, Noxim config, routing mode, fault mask, seed, and stats output.
+
+Blocked: Full PARSEC-scale workload claims are not safe until the tiny fixture path and converter validation pass, then a separate experiment task defines a workload matrix and artifact directory.
+
+### Artifact Policy
+
+Large PARSEC/GEM5 traces should not be committed. Future tasks should store only small fixtures, schema files, mapping files, manifests, and summaries in tracked docs or small test paths. Large raw traces, converted traces, stdout/stderr logs, and generated stats should live in ignored generated directories or external storage with hashes recorded in a manifest.
+
+Existing T0026/T0027/T0028, T0042, and T0044 artifacts must not be overwritten or reinterpreted as PARSEC/GEM5 evidence.
+
+### Recommendation
+
+Recommendation: Defer trace ingestion.
+
+Rationale:
+
+- The source documents justify PARSEC/GEM5 as a desirable real-application evaluation path.
+- The current workspace does not contain GEM5, PARSEC, full-system checkpoints/images, trace-generation scripts, or trace inputs.
+- Existing Noxim traffic-table and hardcoded traffic inputs are useful starting points, but they are not sufficient for a claim-safe GEM5/PARSEC trace pipeline without a versioned schema and converter validation.
+- Implementing ingestion now would touch traffic generation, configuration, runner manifests, artifact policy, and validation claims while providing no immediate validated workload data.
+
+Durable policy:
+
+- Do not claim PARSEC/GEM5 workload support until a reproducible trace-generation or trace-import pipeline exists.
+- Future implementation must start with a versioned minimal trace schema, a tiny fixture, a documented core/router and agent/router mapping, and validation that rejects malformed traces.
+- Do not import PARSEC-scale traces or run workload sweeps until the tiny fixture path passes and a later experiment task defines artifact directories and claim limits.
+
+Blocked: T0047 trace ingestion implementation is blocked until a trace schema, tiny fixture, mapping policy, and dependency/provenance plan are accepted.
+
 ## Post-Submission Future Backlog
 
 T0039 records the remaining technical gaps as future backlog items only. These tasks do not block the current final submission package, which remains `final_report/main.pdf`, the current `final_report/` source tree, and `final_report.zip`.
@@ -1755,8 +1867,8 @@ Ordered future backlog:
 | T0043 | Design | Completed source-cutoff plus post-injection drain/timeout policy for eventual-delivery analysis. |
 | T0044 | Implementation | Completed opt-in source-cutoff plus post-injection drain/timeout support with targeted smokes. |
 | T0045 | Feasibility | Completed directional endpoint fault modeling evaluation; support is deferred behind a future versioned fault-model design. |
-| T0046 | Feasibility | Assess PARSEC/GEM5 trace support requirements and validation burden. |
-| T0047 | Implementation | Implement trace ingestion only after a trace format and validation plan are accepted. |
+| T0046 | Feasibility | Completed PARSEC/GEM5 trace support feasibility; ingestion is deferred until a versioned schema, tiny fixture, mapping policy, and dependency provenance exist. |
+| T0047 | Implementation | Blocked trace ingestion implementation until T0046 prerequisites are supplied and accepted. |
 | T0048 | Report | Regenerate report material only after new validated artifacts exist. |
 
 Assumption: Future backlog work starts with design or feasibility tasks before implementation, except when a prior design task has already accepted the required semantics and validation plan.
@@ -1767,7 +1879,7 @@ Blocked: Eventual-delivery claims remain blocked until the T0044 drain mode is u
 
 Blocked: Paper-aligned single-direction fault cases remain blocked until directional endpoint fault support is implemented through a future versioned fault-model and LUT-schema task.
 
-Blocked: PARSEC/GEM5 workload claims remain blocked until a trace pipeline is validated.
+Blocked: PARSEC/GEM5 workload claims remain blocked until a versioned trace schema, tiny fixture, dependency provenance, mapping policy, ingestion path, and workload experiment artifacts are validated.
 
 ## Noxim Extension Point Map
 
