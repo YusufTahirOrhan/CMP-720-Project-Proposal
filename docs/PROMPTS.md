@@ -2300,3 +2300,14 @@ Ok retry, I installed pdflatex on wsl ubuntu
 - **Next ready-to-send prompt:** See `docs/PROGRESS.md`.
 - **Suggested branch name for next task:** None; continue on the existing branch.
 - **Suggested commit message:** `docs: assess parsec gem5 trace feasibility`
+
+## 2026-05-27: Start T0049 Define Reachability Closure Plan
+
+- **Date:** 2026-05-27
+- **Prompt summary:** Update the project tracking documents in English to reopen project completion around DeFT reachability closure, then provide the next task prompt.
+- **Full prompt summary:** The user asked what to do next with ample time available and wanted to finish the project properly by achieving a correct DeFT implementation with 100% reachability if supported, investigating where current issues come from, fixing simulator or implementation problems if present, and comparing DeFT against a proper algorithm rather than standard cardinal-only `XY`. The user then asked to update the necessary English documentation such as roadmap and tasks, and to provide the next task prompt. The work was documentation-only and preserved the existing source-document hierarchy: `Extended_Proposal.pdf` as primary requirements, the original DeFT paper as primary algorithmic reference, `Proposal.pdf` as initial context only, and the peer evaluation document ignored.
+- **Result summary:** T0049 completed as a planning/documentation task. Added Phase 10 reachability closure and final report refresh, added ADR-0050, marked T0049 done, and added follow-up tasks T0050 through T0053. The new policy treats 100% DeFT reachability as a future drain-based eventual-delivery validation claim, not a reinterpretation of fixed-window T0026/T0027/T0028 results. The next task is T0050, which diagnoses the DeFT drain-based reachability gap before any source fix. T0051 is blocked until T0050 identifies a concrete fixable root cause; T0052 is the future drain-based DeFT reachability validation matrix; T0053 is the future drain-based `INTERPOSER_AWARE_XY`-vs-`DEFT` comparison; and T0048 remains the report update task after validated artifacts exist. No source code, simulator behavior, generated artifacts, final-report PDF, package artifact, Extended Proposal file, rebuild, simulation run, regression command, or performance claim was changed.
+- **Follow-up tasks:** Start T0050 to diagnose the DeFT drain-based reachability gap with small deterministic diagnostics and clear claim limits.
+- **Next ready-to-send prompt:** See `docs/PROGRESS.md`.
+- **Suggested branch name for next task:** None; continue on the existing branch.
+- **Suggested commit message:** `docs: plan deft reachability closure`

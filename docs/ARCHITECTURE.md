@@ -1870,6 +1870,11 @@ Ordered future backlog:
 | T0046 | Feasibility | Completed PARSEC/GEM5 trace support feasibility; ingestion is deferred until a versioned schema, tiny fixture, mapping policy, and dependency provenance exist. |
 | T0047 | Implementation | Blocked trace ingestion implementation until T0046 prerequisites are supplied and accepted. |
 | T0048 | Report | Regenerate report material only after new validated artifacts exist. |
+| T0049 | Planning | Completed reachability-closure plan that reopens project completion around drain-based DeFT validation. |
+| T0050 | Diagnosis | Diagnose DeFT drain-based reachability gaps before any source fix or report claim. |
+| T0051 | Implementation | Blocked targeted DeFT reachability fixes until T0050 isolates a concrete root cause. |
+| T0052 | Experiment | Run a new drain-based DeFT reachability validation matrix after diagnosis and any required fixes. |
+| T0053 | Experiment | Run a drain-based `INTERPOSER_AWARE_XY`-vs-`DEFT` comparison after DeFT reachability behavior is validated. |
 
 Assumption: Future backlog work starts with design or feasibility tasks before implementation, except when a prior design task has already accepted the required semantics and validation plan.
 
@@ -1880,6 +1885,56 @@ Blocked: Eventual-delivery claims remain blocked until the T0044 drain mode is u
 Blocked: Paper-aligned single-direction fault cases remain blocked until directional endpoint fault support is implemented through a future versioned fault-model and LUT-schema task.
 
 Blocked: PARSEC/GEM5 workload claims remain blocked until a versioned trace schema, tiny fixture, dependency provenance, mapping policy, ingestion path, and workload experiment artifacts are validated.
+
+## T0049 Reachability Closure Plan
+
+T0049 reopens project completion work after presentation preparation. It does not reinterpret the existing fixed-window final sweep. Instead, it defines the next safe path for trying to support a stronger DeFT reachability result.
+
+### Reachability Claim Boundary
+
+A future 100% DeFT reachability claim must mean eventual delivery under an accepted source-cutoff plus drain/timeout policy:
+
+```text
+For every injected packet in the validated matrix, after sources stop and the network drains, the packet is received unless the accepted fault mask physically prevents a valid path.
+```
+
+This is intentionally different from the historical T0026/T0027/T0028 fixed-window continuous-injection metric, where packets may still be in flight when the measurement window ends. Fixed-window reachability below one is not, by itself, proof that the DeFT implementation is wrong.
+
+Assumption: The first closure target should use T0044 drain mode because it already exports stop reason, measured injected/received denominators, undelivered counts, timing fields, and remaining in-flight counts.
+
+Blocked: Any statement that DeFT reaches 100% under 25% faults remains blocked until a new drain-based validation artifact set supports that exact matrix and fault model.
+
+### Diagnostic Order
+
+The next work should proceed in this order:
+
+1. T0050 diagnoses the reachability gap with source inspection and small deterministic drain-mode diagnostics.
+2. T0051 fixes only a diagnosed DeFT or simulator issue, if T0050 finds one.
+3. T0052 runs a new drain-based DeFT reachability validation matrix after diagnosis and any required fixes.
+4. T0053 compares DeFT against `INTERPOSER_AWARE_XY` or another explicitly validated 2.5D-aware baseline after DeFT reachability behavior is validated.
+5. T0048 updates the report only after new validated artifacts exist.
+
+Likely diagnostic surfaces:
+
+- `DeftTopology` router, boundary-router, and physical VL endpoint mapping.
+- `DeftFaultInjectionManager` physical mask application and functional-VL state.
+- `DeftVerticalLinkLut` runtime schema-v1 lookup and fail-closed behavior.
+- `Routing_DEFT` source-exit, interposer traversal, destination-entry, and destination-local phases.
+- `DeftVirtualNetwork` and `Router` VN.0/VN.1 assignment, output-VC reservation, and movement-transition filtering.
+- T0044 drain-mode empty detection and measured injected/received denominator accounting.
+- Hardcoded or synthetic traffic fixtures used for deterministic validation.
+
+Assumption: T0050 should prefer tiny hardcoded packet cases before any broader all-pairs matrix. If a broad matrix is needed, it should be a later accepted T0052 artifact set.
+
+Blocked: T0051 source fixes are blocked until T0050 isolates a concrete root cause.
+
+### Baseline Comparison Boundary
+
+Standard `XY` remains cardinal-only and is not a proper unrestricted inter-chiplet baseline for `DEFT_2_5D`. Future comparison should use `INTERPOSER_AWARE_XY`, already introduced as a separate baseline, or another explicitly designed and validated 2.5D-aware algorithm.
+
+Assumption: The comparison should happen only after DeFT reachability behavior is validated; otherwise comparison results may mix DeFT correctness questions with baseline differences.
+
+Blocked: Strong baseline ranking, latency deltas, throughput deltas, or improvement percentages remain blocked until T0053 or equivalent new artifacts pass denominator-safe analysis.
 
 ## Noxim Extension Point Map
 

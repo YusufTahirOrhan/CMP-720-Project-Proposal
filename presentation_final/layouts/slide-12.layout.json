@@ -1,0 +1,824 @@
+{
+  "schema": "openai.presentation.layout/v4",
+  "unit": "px",
+  "slide": {
+    "aid": "sl/aw9790",
+    "id": "aw9790",
+    "slide": 12,
+    "layoutId": "27b5e55e-5b72-4a95-a599-fc2f38081060",
+    "layoutName": "Title Slide",
+    "layoutType": "title",
+    "masterLayoutId": "331225ef-de2f-4845-9a13-2aec9e2a7a8b",
+    "masterLayoutName": "Master",
+    "frame": {
+      "left": 0,
+      "top": 0,
+      "width": 1280,
+      "height": 720
+    }
+  },
+  "theme": {
+    "colorSchemeName": "ChatGPT",
+    "colors": {
+      "accent1": "#156082",
+      "accent2": "#E97132",
+      "accent3": "#196B24",
+      "accent4": "#0F9ED5",
+      "accent5": "#A02B93",
+      "accent6": "#4EA72E",
+      "bg1": "#FFFFFF",
+      "bg2": "#000000",
+      "tx1": "#1F1F1F",
+      "tx2": "#FFFFFF",
+      "dk1": "#000000",
+      "lt1": "#FFFFFF",
+      "dk2": "#0E2841",
+      "lt2": "#E8E8E8",
+      "hlink": "#467886",
+      "folHlink": "#96607D"
+    },
+    "typefaces": [
+      "Aptos",
+      "Aptos Display"
+    ]
+  },
+  "inheritedLayers": [
+    {
+      "scope": "layout",
+      "id": "27b5e55e-5b72-4a95-a599-fc2f38081060",
+      "name": "Title Slide",
+      "type": "title",
+      "parentLayoutId": "331225ef-de2f-4845-9a13-2aec9e2a7a8b",
+      "elements": []
+    },
+    {
+      "scope": "master",
+      "id": "331225ef-de2f-4845-9a13-2aec9e2a7a8b",
+      "name": "Master",
+      "type": "master",
+      "elements": []
+    }
+  ],
+  "elements": [
+    {
+      "order": 1,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/hwfyxobm",
+      "id": "1",
+      "bbox": [
+        0,
+        0,
+        1280,
+        720
+      ],
+      "geometry": "rect",
+      "fillColor": "#F7F9F7",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 2,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/65wjudg7",
+      "id": "2",
+      "bbox": [
+        0,
+        0,
+        24,
+        720
+      ],
+      "geometry": "rect",
+      "fillColor": "#0E7C7B",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 3,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/zqtcj6to",
+      "id": "3",
+      "bbox": [
+        64,
+        42,
+        600,
+        18
+      ],
+      "geometry": "rect",
+      "text": "CONCLUSION AND FUTURE WORK",
+      "textPreview": "CONCLUSION AND FUTURE WORK",
+      "resolvedFontSize": 9,
+      "resolvedTextStyle": {
+        "fontSize": 9,
+        "typeface": "Aptos",
+        "bold": true,
+        "alignment": "left"
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "CONCLUSION AND FUTURE WORK"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "CONCLUSION AND FUTURE WORK",
+          "runs": [
+            {
+              "index": 1,
+              "text": "CONCLUSION AND FUTURE WORK",
+              "fontSize": 9,
+              "typeface": "Aptos",
+              "color": "#0E7C7B",
+              "bold": true
+            }
+          ]
+        }
+      ],
+      "fillColor": "rgba(0, 0, 0, 0)",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 4,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/oza1gvy9",
+      "id": "4",
+      "bbox": [
+        64,
+        70,
+        1000,
+        72
+      ],
+      "geometry": "rect",
+      "text": "The final message: implemented, validated, and honest about limits",
+      "textPreview": "The final message: implemented, validated, and honest about limits",
+      "resolvedFontSize": 31,
+      "resolvedTextStyle": {
+        "fontSize": 31,
+        "typeface": "Aptos Display",
+        "bold": true,
+        "alignment": "left"
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "The final message: implemented, validated, and honest about limits"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "The final message: implemented, validated, and honest about limits",
+          "runs": [
+            {
+              "index": 1,
+              "text": "The final message: implemented, validated, and honest about limits",
+              "fontSize": 31,
+              "typeface": "Aptos Display",
+              "color": "#19231F",
+              "bold": true
+            }
+          ]
+        }
+      ],
+      "fillColor": "rgba(0, 0, 0, 0)",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 5,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/hk3q5o7q",
+      "id": "5",
+      "bbox": [
+        1162,
+        42,
+        54,
+        24
+      ],
+      "geometry": "rect",
+      "text": "12",
+      "textPreview": "12",
+      "resolvedFontSize": 14,
+      "resolvedTextStyle": {
+        "fontSize": 14,
+        "typeface": "Aptos",
+        "bold": true,
+        "alignment": "right"
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "12"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "12",
+          "runs": [
+            {
+              "index": 1,
+              "text": "12",
+              "fontSize": 14,
+              "typeface": "Aptos",
+              "color": "#66716B",
+              "bold": true
+            }
+          ]
+        }
+      ],
+      "fillColor": "rgba(0, 0, 0, 0)",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 6,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/6xkf6dcb",
+      "id": "6",
+      "bbox": [
+        64,
+        148,
+        1152,
+        1
+      ],
+      "geometry": "rect",
+      "fillColor": "#E1E7E1",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 7,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/zed8v6ps",
+      "id": "7",
+      "bbox": [
+        88,
+        190,
+        330,
+        270
+      ],
+      "geometry": "rect",
+      "fillColor": "#FFFFFF",
+      "lineColor": "#E1E7E1",
+      "lineWidth": 1
+    },
+    {
+      "order": 8,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/orytsvu9",
+      "id": "8",
+      "bbox": [
+        88,
+        190,
+        5,
+        270
+      ],
+      "geometry": "rect",
+      "fillColor": "#0E7C7B",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 9,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/hcrmhk3q",
+      "id": "9",
+      "bbox": [
+        106,
+        206,
+        294,
+        28
+      ],
+      "geometry": "rect",
+      "text": "Current status",
+      "textPreview": "Current status",
+      "resolvedFontSize": 15,
+      "resolvedTextStyle": {
+        "fontSize": 15,
+        "typeface": "Aptos",
+        "bold": true,
+        "alignment": "left"
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "Current status"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "Current status",
+          "runs": [
+            {
+              "index": 1,
+              "text": "Current status",
+              "fontSize": 15,
+              "typeface": "Aptos",
+              "color": "#19231F",
+              "bold": true
+            }
+          ]
+        }
+      ],
+      "fillColor": "rgba(0, 0, 0, 0)",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 10,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/d4vmtwra",
+      "id": "10",
+      "bbox": [
+        106,
+        242,
+        294,
+        202
+      ],
+      "geometry": "rect",
+      "text": "A working DeFT-oriented Noxim extension exists with topology, routing, fault, VN, LUT, traffic, metric, runner, and analysis support. The final synthetic sweep completed and the final report package is ready.",
+      "textPreview": "A working DeFT-oriented Noxim extension exists with topology, routing, fault, VN, LUT, traffic, metric, runner, and analysis support. The...",
+      "resolvedFontSize": 12.51,
+      "resolvedTextStyle": {
+        "fontSize": 12.51,
+        "typeface": "Aptos",
+        "alignment": "left"
+      },
+      "textLayout": {
+        "lineCount": 4,
+        "lines": [
+          {
+            "index": 1,
+            "text": "A working DeFT-oriented Noxim extension exists with"
+          },
+          {
+            "index": 2,
+            "text": "topology, routing, fault, VN, LUT, traffic, metric, runner,"
+          },
+          {
+            "index": 3,
+            "text": "and analysis support. The final synthetic sweep"
+          },
+          {
+            "index": 4,
+            "text": "completed and the final report package is ready."
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "A working DeFT-oriented Noxim extension exists with topology, routing, fault, VN, LUT, traffic, metric, runner, and analysis support. The final synthetic sweep completed and the final report package is ready.",
+          "runs": [
+            {
+              "index": 1,
+              "text": "A working DeFT-oriented Noxim extension exists with topology, routing, fault, VN, LUT, traffic, metric, runner, and analysis support. The final synthetic sweep completed and the final report package is ready.",
+              "fontSize": 12.51,
+              "typeface": "Aptos",
+              "color": "#66716B"
+            }
+          ]
+        }
+      ],
+      "fillColor": "rgba(0, 0, 0, 0)",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 11,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/oj2t83it",
+      "id": "11",
+      "bbox": [
+        474,
+        190,
+        330,
+        270
+      ],
+      "geometry": "rect",
+      "fillColor": "#FFFFFF",
+      "lineColor": "#E1E7E1",
+      "lineWidth": 1
+    },
+    {
+      "order": 12,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/vy90je9c",
+      "id": "12",
+      "bbox": [
+        474,
+        190,
+        5,
+        270
+      ],
+      "geometry": "rect",
+      "fillColor": "#F2B84B",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 13,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/6dcbulwv",
+      "id": "13",
+      "bbox": [
+        492,
+        206,
+        294,
+        28
+      ],
+      "geometry": "rect",
+      "text": "Before final report submission",
+      "textPreview": "Before final report submission",
+      "resolvedFontSize": 15,
+      "resolvedTextStyle": {
+        "fontSize": 15,
+        "typeface": "Aptos",
+        "bold": true,
+        "alignment": "left"
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "Before final report submission"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "Before final report submission",
+          "runs": [
+            {
+              "index": 1,
+              "text": "Before final report submission",
+              "fontSize": 15,
+              "typeface": "Aptos",
+              "color": "#19231F",
+              "bold": true
+            }
+          ]
+        }
+      ],
+      "fillColor": "rgba(0, 0, 0, 0)",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 14,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/dsji5sne",
+      "id": "14",
+      "bbox": [
+        492,
+        242,
+        294,
+        202
+      ],
+      "geometry": "rect",
+      "text": "Do not rewrite the report tonight. After the presentation, update only if feedback or new validated artifacts justify it. Keep all unsupported claims out.",
+      "textPreview": "Do not rewrite the report tonight. After the presentation, update only if feedback or new validated artifacts justify it. Keep all unsupp...",
+      "resolvedFontSize": 12.51,
+      "resolvedTextStyle": {
+        "fontSize": 12.51,
+        "typeface": "Aptos",
+        "alignment": "left"
+      },
+      "textLayout": {
+        "lineCount": 3,
+        "lines": [
+          {
+            "index": 1,
+            "text": "Do not rewrite the report tonight. After the presentation,"
+          },
+          {
+            "index": 2,
+            "text": "update only if feedback or new validated artifacts justify"
+          },
+          {
+            "index": 3,
+            "text": "it. Keep all unsupported claims out."
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "Do not rewrite the report tonight. After the presentation, update only if feedback or new validated artifacts justify it. Keep all unsupported claims out.",
+          "runs": [
+            {
+              "index": 1,
+              "text": "Do not rewrite the report tonight. After the presentation, update only if feedback or new validated artifacts justify it. Keep all unsupported claims out.",
+              "fontSize": 12.51,
+              "typeface": "Aptos",
+              "color": "#66716B"
+            }
+          ]
+        }
+      ],
+      "fillColor": "rgba(0, 0, 0, 0)",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 15,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/o7qpg3ex",
+      "id": "15",
+      "bbox": [
+        860,
+        190,
+        330,
+        270
+      ],
+      "geometry": "rect",
+      "fillColor": "#FFFFFF",
+      "lineColor": "#E1E7E1",
+      "lineWidth": 1
+    },
+    {
+      "order": 16,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/vmtwra5g",
+      "id": "16",
+      "bbox": [
+        860,
+        190,
+        5,
+        270
+      ],
+      "geometry": "rect",
+      "fillColor": "#D95D39",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 17,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/61032lsz",
+      "id": "17",
+      "bbox": [
+        878,
+        206,
+        294,
+        28
+      ],
+      "geometry": "rect",
+      "text": "Future work",
+      "textPreview": "Future work",
+      "resolvedFontSize": 15,
+      "resolvedTextStyle": {
+        "fontSize": 15,
+        "typeface": "Aptos",
+        "bold": true,
+        "alignment": "left"
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "Future work"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "Future work",
+          "runs": [
+            {
+              "index": 1,
+              "text": "Future work",
+              "fontSize": 15,
+              "typeface": "Aptos",
+              "color": "#19231F",
+              "bold": true
+            }
+          ]
+        }
+      ],
+      "fillColor": "rgba(0, 0, 0, 0)",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 18,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/dg7adsji",
+      "id": "18",
+      "bbox": [
+        878,
+        242,
+        294,
+        202
+      ],
+      "geometry": "rect",
+      "text": "Versioned PARSEC/GEM5 trace schema, tiny trace fixtures, directional fault model, drain-based eventual-delivery experiments, stronger IA-XY baseline comparison, and RL-based VL selection.",
+      "textPreview": "Versioned PARSEC/GEM5 trace schema, tiny trace fixtures, directional fault model, drain-based eventual-delivery experiments, stronger IA-...",
+      "resolvedFontSize": 12.51,
+      "resolvedTextStyle": {
+        "fontSize": 12.51,
+        "typeface": "Aptos",
+        "alignment": "left"
+      },
+      "textLayout": {
+        "lineCount": 4,
+        "lines": [
+          {
+            "index": 1,
+            "text": "Versioned PARSEC/GEM5 trace schema, tiny trace"
+          },
+          {
+            "index": 2,
+            "text": "fixtures, directional fault model, drain-based"
+          },
+          {
+            "index": 3,
+            "text": "eventual-delivery experiments, stronger IA-XY baseline"
+          },
+          {
+            "index": 4,
+            "text": "comparison, and RL-based VL selection."
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "Versioned PARSEC/GEM5 trace schema, tiny trace fixtures, directional fault model, drain-based eventual-delivery experiments, stronger IA-XY baseline comparison, and RL-based VL selection.",
+          "runs": [
+            {
+              "index": 1,
+              "text": "Versioned PARSEC/GEM5 trace schema, tiny trace fixtures, directional fault model, drain-based eventual-delivery experiments, stronger IA-XY baseline comparison, and RL-based VL selection.",
+              "fontSize": 12.51,
+              "typeface": "Aptos",
+              "color": "#66716B"
+            }
+          ]
+        }
+      ],
+      "fillColor": "rgba(0, 0, 0, 0)",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 19,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/ovahoza1",
+      "id": "19",
+      "bbox": [
+        138,
+        548,
+        1000,
+        54
+      ],
+      "geometry": "rect",
+      "text": "Recommended answer if asked about final report: I would update it after feedback, but I would not strengthen results unless the new validation artifacts support the stronger wording.",
+      "textPreview": "Recommended answer if asked about final report: I would update it after feedback, but I would not strengthen results unless the new valid...",
+      "resolvedFontSize": 18,
+      "resolvedTextStyle": {
+        "fontSize": 18,
+        "typeface": "Aptos",
+        "bold": true,
+        "alignment": "center"
+      },
+      "textLayout": {
+        "lineCount": 2,
+        "lines": [
+          {
+            "index": 1,
+            "text": "Recommended answer if asked about final report: I would update it after feedback, but I would not strengthen results unless the new"
+          },
+          {
+            "index": 2,
+            "text": "validation artifacts support the stronger wording."
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "Recommended answer if asked about final report: I would update it after feedback, but I would not strengthen results unless the new validation artifacts support the stronger wording.",
+          "runs": [
+            {
+              "index": 1,
+              "text": "Recommended answer if asked about final report: I would update it after feedback, but I would not strengthen results unless the new validation artifacts support the stronger wording.",
+              "fontSize": 18,
+              "typeface": "Aptos",
+              "color": "#19231F",
+              "bold": true
+            }
+          ]
+        }
+      ],
+      "fillColor": "rgba(0, 0, 0, 0)",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 20,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/k3q5o7qp",
+      "id": "20",
+      "bbox": [
+        64,
+        678,
+        1152,
+        1
+      ],
+      "geometry": "rect",
+      "fillColor": "#E1E7E1",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 21,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/donyd0z6",
+      "id": "21",
+      "bbox": [
+        64,
+        688,
+        860,
+        16
+      ],
+      "geometry": "rect",
+      "text": "End",
+      "textPreview": "End",
+      "resolvedFontSize": 8.51,
+      "resolvedTextStyle": {
+        "fontSize": 8.51,
+        "typeface": "Aptos",
+        "alignment": "left"
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "End"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "End",
+          "runs": [
+            {
+              "index": 1,
+              "text": "End",
+              "fontSize": 8.51,
+              "typeface": "Aptos",
+              "color": "#66716B"
+            }
+          ]
+        }
+      ],
+      "fillColor": "rgba(0, 0, 0, 0)",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    }
+  ],
+  "composeRuns": []
+}

@@ -1,0 +1,841 @@
+{
+  "schema": "openai.presentation.layout/v4",
+  "unit": "px",
+  "slide": {
+    "aid": "sl/puqqq8",
+    "id": "puqqq8",
+    "slide": 2,
+    "layoutId": "27b5e55e-5b72-4a95-a599-fc2f38081060",
+    "layoutName": "Title Slide",
+    "layoutType": "title",
+    "masterLayoutId": "331225ef-de2f-4845-9a13-2aec9e2a7a8b",
+    "masterLayoutName": "Master",
+    "frame": {
+      "left": 0,
+      "top": 0,
+      "width": 1280,
+      "height": 720
+    }
+  },
+  "theme": {
+    "colorSchemeName": "ChatGPT",
+    "colors": {
+      "accent1": "#156082",
+      "accent2": "#E97132",
+      "accent3": "#196B24",
+      "accent4": "#0F9ED5",
+      "accent5": "#A02B93",
+      "accent6": "#4EA72E",
+      "bg1": "#FFFFFF",
+      "bg2": "#000000",
+      "tx1": "#1F1F1F",
+      "tx2": "#FFFFFF",
+      "dk1": "#000000",
+      "lt1": "#FFFFFF",
+      "dk2": "#0E2841",
+      "lt2": "#E8E8E8",
+      "hlink": "#467886",
+      "folHlink": "#96607D"
+    },
+    "typefaces": [
+      "Aptos",
+      "Aptos Display"
+    ]
+  },
+  "inheritedLayers": [
+    {
+      "scope": "layout",
+      "id": "27b5e55e-5b72-4a95-a599-fc2f38081060",
+      "name": "Title Slide",
+      "type": "title",
+      "parentLayoutId": "331225ef-de2f-4845-9a13-2aec9e2a7a8b",
+      "elements": []
+    },
+    {
+      "scope": "master",
+      "id": "331225ef-de2f-4845-9a13-2aec9e2a7a8b",
+      "name": "Master",
+      "type": "master",
+      "elements": []
+    }
+  ],
+  "elements": [
+    {
+      "order": 1,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/mlkjm1cf",
+      "id": "1",
+      "bbox": [
+        0,
+        0,
+        1280,
+        720
+      ],
+      "geometry": "rect",
+      "fillColor": "#F7F9F7",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 2,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/xc3ylc7u",
+      "id": "2",
+      "bbox": [
+        0,
+        0,
+        24,
+        720
+      ],
+      "geometry": "rect",
+      "fillColor": "#0E7C7B",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 3,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/4r65wjud",
+      "id": "3",
+      "bbox": [
+        64,
+        42,
+        600,
+        18
+      ],
+      "geometry": "rect",
+      "text": "PROPOSAL TO CURRENT STATUS",
+      "textPreview": "PROPOSAL TO CURRENT STATUS",
+      "resolvedFontSize": 9,
+      "resolvedTextStyle": {
+        "fontSize": 9,
+        "typeface": "Aptos",
+        "bold": true,
+        "alignment": "left"
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "PROPOSAL TO CURRENT STATUS"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "PROPOSAL TO CURRENT STATUS",
+          "runs": [
+            {
+              "index": 1,
+              "text": "PROPOSAL TO CURRENT STATUS",
+              "fontSize": 9,
+              "typeface": "Aptos",
+              "color": "#0E7C7B",
+              "bold": true
+            }
+          ]
+        }
+      ],
+      "fillColor": "rgba(0, 0, 0, 0)",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 4,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/fepkzupw",
+      "id": "4",
+      "bbox": [
+        64,
+        70,
+        1000,
+        72
+      ],
+      "geometry": "rect",
+      "text": "What changed after the proposal stage",
+      "textPreview": "What changed after the proposal stage",
+      "resolvedFontSize": 31,
+      "resolvedTextStyle": {
+        "fontSize": 31,
+        "typeface": "Aptos Display",
+        "bold": true,
+        "alignment": "left"
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "What changed after the proposal stage"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "What changed after the proposal stage",
+          "runs": [
+            {
+              "index": 1,
+              "text": "What changed after the proposal stage",
+              "fontSize": 31,
+              "typeface": "Aptos Display",
+              "color": "#19231F",
+              "bold": true
+            }
+          ]
+        }
+      ],
+      "fillColor": "rgba(0, 0, 0, 0)",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 5,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/mtwra5gb",
+      "id": "5",
+      "bbox": [
+        1162,
+        42,
+        54,
+        24
+      ],
+      "geometry": "rect",
+      "text": "02",
+      "textPreview": "02",
+      "resolvedFontSize": 14,
+      "resolvedTextStyle": {
+        "fontSize": 14,
+        "typeface": "Aptos",
+        "bold": true,
+        "alignment": "right"
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "02"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "02",
+          "runs": [
+            {
+              "index": 1,
+              "text": "02",
+              "fontSize": 14,
+              "typeface": "Aptos",
+              "color": "#66716B",
+              "bold": true
+            }
+          ]
+        }
+      ],
+      "fillColor": "rgba(0, 0, 0, 0)",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 6,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/xkf6dcbu",
+      "id": "6",
+      "bbox": [
+        64,
+        148,
+        1152,
+        1
+      ],
+      "geometry": "rect",
+      "fillColor": "#E1E7E1",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 7,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/4zidonyd",
+      "id": "7",
+      "bbox": [
+        64,
+        190,
+        350,
+        345
+      ],
+      "geometry": "rect",
+      "fillColor": "#FFFFFF",
+      "lineColor": "#E1E7E1",
+      "lineWidth": 1
+    },
+    {
+      "order": 8,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/fil0rqd4",
+      "id": "8",
+      "bbox": [
+        64,
+        190,
+        5,
+        345
+      ],
+      "geometry": "rect",
+      "fillColor": "#3C6FA6",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 9,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/qxs72x4n",
+      "id": "9",
+      "bbox": [
+        82,
+        206,
+        314,
+        28
+      ],
+      "geometry": "rect",
+      "text": "Proposed",
+      "textPreview": "Proposed",
+      "resolvedFontSize": 15,
+      "resolvedTextStyle": {
+        "fontSize": 15,
+        "typeface": "Aptos",
+        "bold": true,
+        "alignment": "left"
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "Proposed"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "Proposed",
+          "runs": [
+            {
+              "index": 1,
+              "text": "Proposed",
+              "fontSize": 15,
+              "typeface": "Aptos",
+              "color": "#19231F",
+              "bold": true
+            }
+          ]
+        }
+      ],
+      "fillColor": "rgba(0, 0, 0, 0)",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 10,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/0bi9s36h",
+      "id": "10",
+      "bbox": [
+        82,
+        242,
+        314,
+        277
+      ],
+      "geometry": "rect",
+      "text": "Implement DeFT in a cycle-accurate Noxim extension. Evaluate synthetic traffic and PARSEC/GEM5 traces. Compare against XY routing under VL fault scenarios. Report reachability, latency, and throughput.",
+      "textPreview": "Implement DeFT in a cycle-accurate Noxim extension. Evaluate synthetic traffic and PARSEC/GEM5 traces. Compare against XY routing under V...",
+      "resolvedFontSize": 12.51,
+      "resolvedTextStyle": {
+        "fontSize": 12.51,
+        "typeface": "Aptos",
+        "alignment": "left"
+      },
+      "textLayout": {
+        "lineCount": 4,
+        "lines": [
+          {
+            "index": 1,
+            "text": "Implement DeFT in a cycle-accurate Noxim extension."
+          },
+          {
+            "index": 2,
+            "text": "Evaluate synthetic traffic and PARSEC/GEM5 traces. Compare"
+          },
+          {
+            "index": 3,
+            "text": "against XY routing under VL fault scenarios. Report"
+          },
+          {
+            "index": 4,
+            "text": "reachability, latency, and throughput."
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "Implement DeFT in a cycle-accurate Noxim extension. Evaluate synthetic traffic and PARSEC/GEM5 traces. Compare against XY routing under VL fault scenarios. Report reachability, latency, and throughput.",
+          "runs": [
+            {
+              "index": 1,
+              "text": "Implement DeFT in a cycle-accurate Noxim extension. Evaluate synthetic traffic and PARSEC/GEM5 traces. Compare against XY routing under VL fault scenarios. Report reachability, latency, and throughput.",
+              "fontSize": 12.51,
+              "typeface": "Aptos",
+              "color": "#66716B"
+            }
+          ]
+        }
+      ],
+      "fillColor": "rgba(0, 0, 0, 0)",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 11,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/pwb2hwfy",
+      "id": "11",
+      "bbox": [
+        458,
+        190,
+        350,
+        345
+      ],
+      "geometry": "rect",
+      "fillColor": "#FFFFFF",
+      "lineColor": "#E1E7E1",
+      "lineWidth": 1
+    },
+    {
+      "order": 12,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/i5sneloj",
+      "id": "12",
+      "bbox": [
+        458,
+        190,
+        5,
+        345
+      ],
+      "geometry": "rect",
+      "fillColor": "#0E7C7B",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 13,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/7qpg3ex0",
+      "id": "13",
+      "bbox": [
+        476,
+        206,
+        314,
+        28
+      ],
+      "geometry": "rect",
+      "text": "Applied",
+      "textPreview": "Applied",
+      "resolvedFontSize": 15,
+      "resolvedTextStyle": {
+        "fontSize": 15,
+        "typeface": "Aptos",
+        "bold": true,
+        "alignment": "left"
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "Applied"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "Applied",
+          "runs": [
+            {
+              "index": 1,
+              "text": "Applied",
+              "fontSize": 15,
+              "typeface": "Aptos",
+              "color": "#19231F",
+              "bold": true
+            }
+          ]
+        }
+      ],
+      "fillColor": "rgba(0, 0, 0, 0)",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 14,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/wjudg7ad",
+      "id": "14",
+      "bbox": [
+        476,
+        242,
+        314,
+        277
+      ],
+      "geometry": "rect",
+      "text": "Built DEFT_2_5D topology, physical VL fault model, two-VN transition enforcement, schema-v1 VL LUTs, DEFT route selection, synthetic traffic profiles, metrics export, runner, analysis, and final sweep.",
+      "textPreview": "Built DEFT_2_5D topology, physical VL fault model, two-VN transition enforcement, schema-v1 VL LUTs, DEFT route selection, synthetic traf...",
+      "resolvedFontSize": 12.51,
+      "resolvedTextStyle": {
+        "fontSize": 12.51,
+        "typeface": "Aptos",
+        "alignment": "left"
+      },
+      "textLayout": {
+        "lineCount": 4,
+        "lines": [
+          {
+            "index": 1,
+            "text": "Built DEFT_2_5D topology, physical VL fault model, two-VN"
+          },
+          {
+            "index": 2,
+            "text": "transition enforcement, schema-v1 VL LUTs, DEFT route"
+          },
+          {
+            "index": 3,
+            "text": "selection, synthetic traffic profiles, metrics export, runner,"
+          },
+          {
+            "index": 4,
+            "text": "analysis, and final sweep."
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "Built DEFT_2_5D topology, physical VL fault model, two-VN transition enforcement, schema-v1 VL LUTs, DEFT route selection, synthetic traffic profiles, metrics export, runner, analysis, and final sweep.",
+          "runs": [
+            {
+              "index": 1,
+              "text": "Built DEFT_2_5D topology, physical VL fault model, two-VN transition enforcement, schema-v1 VL LUTs, DEFT route selection, synthetic traffic profiles, metrics export, runner, analysis, and final sweep.",
+              "fontSize": 12.51,
+              "typeface": "Aptos",
+              "color": "#66716B"
+            }
+          ]
+        }
+      ],
+      "fillColor": "rgba(0, 0, 0, 0)",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 15,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/p4r65wju",
+      "id": "15",
+      "bbox": [
+        852,
+        190,
+        350,
+        345
+      ],
+      "geometry": "rect",
+      "fillColor": "#FFFFFF",
+      "lineColor": "#E1E7E1",
+      "lineWidth": 1
+    },
+    {
+      "order": 16,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/ed8v6psf",
+      "id": "16",
+      "bbox": [
+        852,
+        190,
+        5,
+        345
+      ],
+      "geometry": "rect",
+      "fillColor": "#D95D39",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 17,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/7y1kre1w",
+      "id": "17",
+      "bbox": [
+        870,
+        206,
+        314,
+        28
+      ],
+      "geometry": "rect",
+      "text": "Changed",
+      "textPreview": "Changed",
+      "resolvedFontSize": 15,
+      "resolvedTextStyle": {
+        "fontSize": 15,
+        "typeface": "Aptos",
+        "bold": true,
+        "alignment": "left"
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "Changed"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "Changed",
+          "runs": [
+            {
+              "index": 1,
+              "text": "Changed",
+              "fontSize": 15,
+              "typeface": "Aptos",
+              "color": "#19231F",
+              "bold": true
+            }
+          ]
+        }
+      ],
+      "fillColor": "rgba(0, 0, 0, 0)",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 18,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/0nuxc3yl",
+      "id": "18",
+      "bbox": [
+        870,
+        242,
+        314,
+        277
+      ],
+      "geometry": "rect",
+      "text": "PARSEC/GEM5 was deferred because the dependency and trace pipeline are absent. Standard XY is treated as a limited control baseline. Results are descriptive and blank-aware, not improvement claims.",
+      "textPreview": "PARSEC/GEM5 was deferred because the dependency and trace pipeline are absent. Standard XY is treated as a limited control baseline. Resu...",
+      "resolvedFontSize": 12.51,
+      "resolvedTextStyle": {
+        "fontSize": 12.51,
+        "typeface": "Aptos",
+        "alignment": "left"
+      },
+      "textLayout": {
+        "lineCount": 4,
+        "lines": [
+          {
+            "index": 1,
+            "text": "PARSEC/GEM5 was deferred because the dependency and"
+          },
+          {
+            "index": 2,
+            "text": "trace pipeline are absent. Standard XY is treated as a limited"
+          },
+          {
+            "index": 3,
+            "text": "control baseline. Results are descriptive and blank-aware, not"
+          },
+          {
+            "index": 4,
+            "text": "improvement claims."
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "PARSEC/GEM5 was deferred because the dependency and trace pipeline are absent. Standard XY is treated as a limited control baseline. Results are descriptive and blank-aware, not improvement claims.",
+          "runs": [
+            {
+              "index": 1,
+              "text": "PARSEC/GEM5 was deferred because the dependency and trace pipeline are absent. Standard XY is treated as a limited control baseline. Results are descriptive and blank-aware, not improvement claims.",
+              "fontSize": 12.51,
+              "typeface": "Aptos",
+              "color": "#66716B"
+            }
+          ]
+        }
+      ],
+      "fillColor": "rgba(0, 0, 0, 0)",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 19,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/p8nqxs72",
+      "id": "19",
+      "bbox": [
+        238,
+        574,
+        802,
+        28
+      ],
+      "geometry": "rect",
+      "fillColor": "#16221F",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 20,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/dcbulwva",
+      "id": "20",
+      "bbox": [
+        248,
+        581,
+        782,
+        12
+      ],
+      "geometry": "rect",
+      "text": "Current recommendation: use the report as-is for tomorrow; revise later only after feedback or new validated artifacts.",
+      "textPreview": "Current recommendation: use the report as-is for tomorrow; revise later only after feedback or new validated artifacts.",
+      "resolvedFontSize": 9,
+      "resolvedTextStyle": {
+        "fontSize": 9,
+        "typeface": "Aptos",
+        "bold": true,
+        "alignment": "center"
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "Current recommendation: use the report as-is for tomorrow; revise later only after feedback or new validated artifacts."
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "Current recommendation: use the report as-is for tomorrow; revise later only after feedback or new validated artifacts.",
+          "runs": [
+            {
+              "index": 1,
+              "text": "Current recommendation: use the report as-is for tomorrow; revise later only after feedback or new validated artifacts.",
+              "fontSize": 9,
+              "typeface": "Aptos",
+              "color": "#FFFFFF",
+              "bold": true
+            }
+          ]
+        }
+      ],
+      "fillColor": "rgba(0, 0, 0, 0)",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 21,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/kre1w7mp",
+      "id": "21",
+      "bbox": [
+        64,
+        678,
+        1152,
+        1
+      ],
+      "geometry": "rect",
+      "fillColor": "#E1E7E1",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 22,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/val87ed8",
+      "id": "22",
+      "bbox": [
+        64,
+        688,
+        860,
+        16
+      ],
+      "geometry": "rect",
+      "text": "CMP720 Final Project Presentation | DeFT 2.5D Noxim Extension",
+      "textPreview": "CMP720 Final Project Presentation | DeFT 2.5D Noxim Extension",
+      "resolvedFontSize": 8.51,
+      "resolvedTextStyle": {
+        "fontSize": 8.51,
+        "typeface": "Aptos",
+        "alignment": "left"
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "CMP720 Final Project Presentation | DeFT 2.5D Noxim Extension"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "CMP720 Final Project Presentation | DeFT 2.5D Noxim Extension",
+          "runs": [
+            {
+              "index": 1,
+              "text": "CMP720 Final Project Presentation | DeFT 2.5D Noxim Extension",
+              "fontSize": 8.51,
+              "typeface": "Aptos",
+              "color": "#66716B"
+            }
+          ]
+        }
+      ],
+      "fillColor": "rgba(0, 0, 0, 0)",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    }
+  ],
+  "composeRuns": []
+}

@@ -1976,6 +1976,44 @@ T0046 result on 2026-05-12:
 - The final-report and proposal artifact guard returned no changed files for `final_report/main.pdf`, `final_report.zip`, `Extended_Proposal.pdf`, `Extended_Proposal.zip`, or `Extended_Proposal/`.
 - Final parent status showed only modified tracking docs: `docs/ARCHITECTURE.md`, `docs/DECISIONS.md`, `docs/PROGRESS.md`, `docs/PROMPTS.md`, `docs/TASKS.md`, and `docs/VALIDATION.md`.
 
+## Reachability Closure Planning Validation
+
+Purpose:
+
+- Record the validation limits for T0049, which reopens project completion around drain-based DeFT reachability closure.
+- Define the validation expectations for the next diagnostic task without changing source behavior or historical artifacts.
+
+Known validation for T0049:
+
+- Parent repository status before edits: `git status --short --branch`
+- Noxim source-tree status before edits: `git -c safe.directory=C:/Projects/CMP-720-Project-Proposal/external/noxim -C external/noxim status --short --branch`
+- Documentation whitespace check: `git diff --check`
+- Noxim source-tree status after validation.
+- Generated-artifact guard for T0026/T0027/T0028 and T0042 generated directories.
+- Final-report and proposal artifact guard for `final_report/main.pdf`, `final_report.zip`, `Extended_Proposal.pdf`, `Extended_Proposal.zip`, and Extended Proposal source files.
+- Do not rebuild Noxim, run simulations, edit source code, regenerate final sweeps, regenerate `final_report/main.pdf`, modify `final_report.zip`, modify Extended Proposal files, or use `./regression.sh --update`.
+
+T0049 result on 2026-05-27:
+
+- Required startup reading was completed before task work: `AGENTS.md`, `docs/PROGRESS.md`, `docs/TASKS.md`, `docs/ROADMAP.md`, and `docs/ARCHITECTURE.md`. Additional tracking files `docs/VALIDATION.md`, `docs/DECISIONS.md`, and `docs/PROMPTS.md` were inspected because the task updates them.
+- Source-document roles were preserved: `Extended_Proposal.pdf` is the primary project requirements source, the original DeFT paper is the primary algorithmic reference, `Proposal.pdf` is initial context only, and the peer evaluation document was ignored completely.
+- Parent status before edits showed only untracked presentation-support files. `external/noxim` status before edits was clean.
+- Before editing, a short documentation plan was produced. Assumption: T0049 is planning-only and should not make simulator, source, artifact, or report-claim changes. Blocked: A future 100% DeFT reachability claim remains blocked until a new drain-mode validation artifact set supports it.
+- T0049 added the Phase 10 reachability-closure direction, ADR-0050, and follow-up tasks T0050 through T0053.
+- T0049 did not run simulations, rebuild Noxim, edit source code, regenerate generated artifacts, modify `final_report/main.pdf`, modify `final_report.zip`, modify Extended Proposal files, or use `./regression.sh --update`.
+- `git diff --check` completed with exit code `0`; Git reported line-ending conversion warnings for edited Markdown files only.
+- Final `external/noxim` status remained clean on `feat/baseline-noxim...origin/feat/baseline-noxim`.
+- The generated-artifact guard returned no changed files for `external/noxim/other/generated/t0026_final_sweep_v1`, `t0026_final_analysis_v1`, `t0027_report_support_v1`, `t0028_final_report_results_v1`, or `t0042_iaxy_deft_limited_v1`.
+- The final-report and proposal artifact guard returned no changed files for `final_report/main.pdf`, `final_report.zip`, `Extended_Proposal.pdf`, `Extended_Proposal.zip`, or `Extended_Proposal/`.
+
+Expected future validation for T0050:
+
+- Define any diagnostic matrix before execution.
+- Write generated outputs only to a new ignored `external/noxim/other/generated/t0050_*` directory.
+- Prefer deterministic drain-mode hardcoded-packet diagnostics before any broader matrix.
+- Record routing mode, fault mask, source, destination, stop reason, injected/received counts, undelivered counts, and suspected route phase for every failing case.
+- Preserve historical T0026/T0027/T0028, T0042, final-report, package, and Extended Proposal artifacts.
+
 ## Metrics Validation
 
 Purpose:

@@ -1,0 +1,1375 @@
+{
+  "schema": "openai.presentation.layout/v4",
+  "unit": "px",
+  "slide": {
+    "aid": "sl/ag2a47",
+    "id": "ag2a47",
+    "slide": 6,
+    "layoutId": "27b5e55e-5b72-4a95-a599-fc2f38081060",
+    "layoutName": "Title Slide",
+    "layoutType": "title",
+    "masterLayoutId": "331225ef-de2f-4845-9a13-2aec9e2a7a8b",
+    "masterLayoutName": "Master",
+    "frame": {
+      "left": 0,
+      "top": 0,
+      "width": 1280,
+      "height": 720
+    }
+  },
+  "theme": {
+    "colorSchemeName": "ChatGPT",
+    "colors": {
+      "accent1": "#156082",
+      "accent2": "#E97132",
+      "accent3": "#196B24",
+      "accent4": "#0F9ED5",
+      "accent5": "#A02B93",
+      "accent6": "#4EA72E",
+      "bg1": "#FFFFFF",
+      "bg2": "#000000",
+      "tx1": "#1F1F1F",
+      "tx2": "#FFFFFF",
+      "dk1": "#000000",
+      "lt1": "#FFFFFF",
+      "dk2": "#0E2841",
+      "lt2": "#E8E8E8",
+      "hlink": "#467886",
+      "folHlink": "#96607D"
+    },
+    "typefaces": [
+      "Aptos",
+      "Aptos Display"
+    ]
+  },
+  "inheritedLayers": [
+    {
+      "scope": "layout",
+      "id": "27b5e55e-5b72-4a95-a599-fc2f38081060",
+      "name": "Title Slide",
+      "type": "title",
+      "parentLayoutId": "331225ef-de2f-4845-9a13-2aec9e2a7a8b",
+      "elements": []
+    },
+    {
+      "scope": "master",
+      "id": "331225ef-de2f-4845-9a13-2aec9e2a7a8b",
+      "name": "Master",
+      "type": "master",
+      "elements": []
+    }
+  ],
+  "elements": [
+    {
+      "order": 1,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/61032lsz",
+      "id": "1",
+      "bbox": [
+        0,
+        0,
+        1280,
+        720
+      ],
+      "geometry": "rect",
+      "fillColor": "#F7F9F7",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 2,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/dsji5sne",
+      "id": "2",
+      "bbox": [
+        0,
+        0,
+        24,
+        720
+      ],
+      "geometry": "rect",
+      "fillColor": "#0E7C7B",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 3,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/o7qpg3ex",
+      "id": "3",
+      "bbox": [
+        64,
+        42,
+        600,
+        18
+      ],
+      "geometry": "rect",
+      "text": "VIRTUAL NETWORKS",
+      "textPreview": "VIRTUAL NETWORKS",
+      "resolvedFontSize": 9,
+      "resolvedTextStyle": {
+        "fontSize": 9,
+        "typeface": "Aptos",
+        "bold": true,
+        "alignment": "left"
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "VIRTUAL NETWORKS"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "VIRTUAL NETWORKS",
+          "runs": [
+            {
+              "index": 1,
+              "text": "VIRTUAL NETWORKS",
+              "fontSize": 9,
+              "typeface": "Aptos",
+              "color": "#0E7C7B",
+              "bold": true
+            }
+          ]
+        }
+      ],
+      "fillColor": "rgba(0, 0, 0, 0)",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 4,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/vy90je9c",
+      "id": "4",
+      "bbox": [
+        64,
+        70,
+        1000,
+        72
+      ],
+      "geometry": "rect",
+      "text": "What the VNs do in the implementation",
+      "textPreview": "What the VNs do in the implementation",
+      "resolvedFontSize": 31,
+      "resolvedTextStyle": {
+        "fontSize": 31,
+        "typeface": "Aptos Display",
+        "bold": true,
+        "alignment": "left"
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "What the VNs do in the implementation"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "What the VNs do in the implementation",
+          "runs": [
+            {
+              "index": 1,
+              "text": "What the VNs do in the implementation",
+              "fontSize": 31,
+              "typeface": "Aptos Display",
+              "color": "#19231F",
+              "bold": true
+            }
+          ]
+        }
+      ],
+      "fillColor": "rgba(0, 0, 0, 0)",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 5,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/6dcbulwv",
+      "id": "5",
+      "bbox": [
+        1162,
+        42,
+        54,
+        24
+      ],
+      "geometry": "rect",
+      "text": "06",
+      "textPreview": "06",
+      "resolvedFontSize": 14,
+      "resolvedTextStyle": {
+        "fontSize": 14,
+        "typeface": "Aptos",
+        "bold": true,
+        "alignment": "right"
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "06"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "06",
+          "runs": [
+            {
+              "index": 1,
+              "text": "06",
+              "fontSize": 14,
+              "typeface": "Aptos",
+              "color": "#66716B",
+              "bold": true
+            }
+          ]
+        }
+      ],
+      "fillColor": "rgba(0, 0, 0, 0)",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 6,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/d4vmtwra",
+      "id": "6",
+      "bbox": [
+        64,
+        148,
+        1152,
+        1
+      ],
+      "geometry": "rect",
+      "fillColor": "#E1E7E1",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 7,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/oj2t83it",
+      "id": "7",
+      "bbox": [
+        72,
+        218,
+        224,
+        82
+      ],
+      "geometry": "rect",
+      "fillColor": "#FFFFFF",
+      "lineColor": "#E1E7E1",
+      "lineWidth": 1
+    },
+    {
+      "order": 8,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/z25kb6xk",
+      "id": "8",
+      "bbox": [
+        72,
+        218,
+        224,
+        5
+      ],
+      "geometry": "rect",
+      "fillColor": "#0E7C7B",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 9,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/6hcrmhk3",
+      "id": "9",
+      "bbox": [
+        84,
+        234,
+        200,
+        18
+      ],
+      "geometry": "rect",
+      "text": "1. Assign VN",
+      "textPreview": "1. Assign VN",
+      "resolvedFontSize": 12,
+      "resolvedTextStyle": {
+        "fontSize": 12,
+        "typeface": "Aptos",
+        "bold": true,
+        "alignment": "left"
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "1. Assign VN"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "1. Assign VN",
+          "runs": [
+            {
+              "index": 1,
+              "text": "1. Assign VN",
+              "fontSize": 12,
+              "typeface": "Aptos",
+              "color": "#19231F",
+              "bold": true
+            }
+          ]
+        }
+      ],
+      "fillColor": "rgba(0, 0, 0, 0)",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 10,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/gr2p8nqx",
+      "id": "10",
+      "bbox": [
+        84,
+        257,
+        200,
+        32
+      ],
+      "geometry": "rect",
+      "text": "VN.0 maps to VC 0. VN.1 maps to VC 1. DeFT runs require exactly two VCs.",
+      "textPreview": "VN.0 maps to VC 0. VN.1 maps to VC 1. DeFT runs require exactly two VCs.",
+      "resolvedFontSize": 9.51,
+      "resolvedTextStyle": {
+        "fontSize": 9.51,
+        "typeface": "Aptos",
+        "alignment": "left"
+      },
+      "textLayout": {
+        "lineCount": 2,
+        "lines": [
+          {
+            "index": 1,
+            "text": "VN.0 maps to VC 0. VN.1 maps to VC 1. DeFT runs"
+          },
+          {
+            "index": 2,
+            "text": "require exactly two VCs."
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "VN.0 maps to VC 0. VN.1 maps to VC 1. DeFT runs require exactly two VCs.",
+          "runs": [
+            {
+              "index": 1,
+              "text": "VN.0 maps to VC 0. VN.1 maps to VC 1. DeFT runs require exactly two VCs.",
+              "fontSize": 9.51,
+              "typeface": "Aptos",
+              "color": "#66716B"
+            }
+          ]
+        }
+      ],
+      "fillColor": "rgba(0, 0, 0, 0)",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 11,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/9cvixcze",
+      "id": "11",
+      "bbox": [
+        306,
+        258,
+        60,
+        2
+      ],
+      "geometry": "rect",
+      "fillColor": "#66716B",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 12,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/ylc7u54z",
+      "id": "12",
+      "bbox": [
+        356,
+        250,
+        14,
+        14
+      ],
+      "geometry": "rect",
+      "text": ">",
+      "textPreview": ">",
+      "resolvedFontSize": 12,
+      "resolvedTextStyle": {
+        "fontSize": 12,
+        "typeface": "Aptos",
+        "bold": true,
+        "alignment": "left"
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": ">"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": ">",
+          "runs": [
+            {
+              "index": 1,
+              "text": ">",
+              "fontSize": 12,
+              "typeface": "Aptos",
+              "color": "#66716B",
+              "bold": true
+            }
+          ]
+        }
+      ],
+      "fillColor": "rgba(0, 0, 0, 0)",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 13,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/r65wjudg",
+      "id": "13",
+      "bbox": [
+        378,
+        218,
+        224,
+        82
+      ],
+      "geometry": "rect",
+      "fillColor": "#FFFFFF",
+      "lineColor": "#E1E7E1",
+      "lineWidth": 1
+    },
+    {
+      "order": 14,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/g3ex0nux",
+      "id": "14",
+      "bbox": [
+        378,
+        218,
+        224,
+        5
+      ],
+      "geometry": "rect",
+      "fillColor": "#3C6FA6",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 15,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/5o7qpg3e",
+      "id": "15",
+      "bbox": [
+        390,
+        234,
+        200,
+        18
+      ],
+      "geometry": "rect",
+      "text": "2. Route candidates",
+      "textPreview": "2. Route candidates",
+      "resolvedFontSize": 12,
+      "resolvedTextStyle": {
+        "fontSize": 12,
+        "typeface": "Aptos",
+        "bold": true,
+        "alignment": "left"
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "2. Route candidates"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "2. Route candidates",
+          "runs": [
+            {
+              "index": 1,
+              "text": "2. Route candidates",
+              "fontSize": 12,
+              "typeface": "Aptos",
+              "color": "#19231F",
+              "bold": true
+            }
+          ]
+        }
+      ],
+      "fillColor": "rgba(0, 0, 0, 0)",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 16,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/yxobm58z",
+      "id": "16",
+      "bbox": [
+        390,
+        257,
+        200,
+        32
+      ],
+      "geometry": "rect",
+      "text": "DEFT or topology-aware helpers propose legal physical directions.",
+      "textPreview": "DEFT or topology-aware helpers propose legal physical directions.",
+      "resolvedFontSize": 9.51,
+      "resolvedTextStyle": {
+        "fontSize": 9.51,
+        "typeface": "Aptos",
+        "alignment": "left"
+      },
+      "textLayout": {
+        "lineCount": 2,
+        "lines": [
+          {
+            "index": 1,
+            "text": "DEFT or topology-aware helpers propose legal"
+          },
+          {
+            "index": 2,
+            "text": "physical directions."
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "DEFT or topology-aware helpers propose legal physical directions.",
+          "runs": [
+            {
+              "index": 1,
+              "text": "DEFT or topology-aware helpers propose legal physical directions.",
+              "fontSize": 9.51,
+              "typeface": "Aptos",
+              "color": "#66716B"
+            }
+          ]
+        }
+      ],
+      "fillColor": "rgba(0, 0, 0, 0)",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 17,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/nih4byhg",
+      "id": "17",
+      "bbox": [
+        612,
+        258,
+        60,
+        2
+      ],
+      "geometry": "rect",
+      "fillColor": "#66716B",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 18,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/g7adsji5",
+      "id": "18",
+      "bbox": [
+        662,
+        250,
+        14,
+        14
+      ],
+      "geometry": "rect",
+      "text": ">",
+      "textPreview": ">",
+      "resolvedFontSize": 12,
+      "resolvedTextStyle": {
+        "fontSize": 12,
+        "typeface": "Aptos",
+        "bold": true,
+        "alignment": "left"
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": ">"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": ">",
+          "runs": [
+            {
+              "index": 1,
+              "text": ">",
+              "fontSize": 12,
+              "typeface": "Aptos",
+              "color": "#66716B",
+              "bold": true
+            }
+          ]
+        }
+      ],
+      "fillColor": "rgba(0, 0, 0, 0)",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 19,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/9s36hcrm",
+      "id": "19",
+      "bbox": [
+        684,
+        218,
+        224,
+        82
+      ],
+      "geometry": "rect",
+      "fillColor": "#FFFFFF",
+      "lineColor": "#E1E7E1",
+      "lineWidth": 1
+    },
+    {
+      "order": 20,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/twra5gbq",
+      "id": "20",
+      "bbox": [
+        684,
+        218,
+        224,
+        5
+      ],
+      "geometry": "rect",
+      "fillColor": "#D95D39",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 21,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/4byhgn29",
+      "id": "21",
+      "bbox": [
+        696,
+        234,
+        200,
+        18
+      ],
+      "geometry": "rect",
+      "text": "3. Filter moves",
+      "textPreview": "3. Filter moves",
+      "resolvedFontSize": 12,
+      "resolvedTextStyle": {
+        "fontSize": 12,
+        "typeface": "Aptos",
+        "bold": true,
+        "alignment": "left"
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "3. Filter moves"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "3. Filter moves",
+          "runs": [
+            {
+              "index": 1,
+              "text": "3. Filter moves",
+              "fontSize": 12,
+              "typeface": "Aptos",
+              "color": "#19231F",
+              "bold": true
+            }
+          ]
+        }
+      ],
+      "fillColor": "rgba(0, 0, 0, 0)",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 22,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/bq1oryts",
+      "id": "22",
+      "bbox": [
+        696,
+        257,
+        200,
+        32
+      ],
+      "geometry": "rect",
+      "text": "VN.1 -> VN.0, Up-Horizontal in VN.0, and Horizontal-Down in VN.1 are rejected.",
+      "textPreview": "VN.1 -> VN.0, Up-Horizontal in VN.0, and Horizontal-Down in VN.1 are rejected.",
+      "resolvedFontSize": 9.51,
+      "resolvedTextStyle": {
+        "fontSize": 9.51,
+        "typeface": "Aptos",
+        "alignment": "left"
+      },
+      "textLayout": {
+        "lineCount": 2,
+        "lines": [
+          {
+            "index": 1,
+            "text": "VN.1 -> VN.0, Up-Horizontal in VN.0, and"
+          },
+          {
+            "index": 2,
+            "text": "Horizontal-Down in VN.1 are rejected."
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "VN.1 -> VN.0, Up-Horizontal in VN.0, and Horizontal-Down in VN.1 are rejected.",
+          "runs": [
+            {
+              "index": 1,
+              "text": "VN.1 -> VN.0, Up-Horizontal in VN.0, and Horizontal-Down in VN.1 are rejected.",
+              "fontSize": 9.51,
+              "typeface": "Aptos",
+              "color": "#66716B"
+            }
+          ]
+        }
+      ],
+      "fillColor": "rgba(0, 0, 0, 0)",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 23,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/m58z25kb",
+      "id": "23",
+      "bbox": [
+        918,
+        258,
+        60,
+        2
+      ],
+      "geometry": "rect",
+      "fillColor": "#66716B",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 24,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/t83itgfm",
+      "id": "24",
+      "bbox": [
+        968,
+        250,
+        14,
+        14
+      ],
+      "geometry": "rect",
+      "text": ">",
+      "textPreview": ">",
+      "resolvedFontSize": 12,
+      "resolvedTextStyle": {
+        "fontSize": 12,
+        "typeface": "Aptos",
+        "bold": true,
+        "alignment": "left"
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": ">"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": ">",
+          "runs": [
+            {
+              "index": 1,
+              "text": ">",
+              "fontSize": 12,
+              "typeface": "Aptos",
+              "color": "#66716B",
+              "bold": true
+            }
+          ]
+        }
+      ],
+      "fillColor": "rgba(0, 0, 0, 0)",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 25,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/4nap4r65",
+      "id": "25",
+      "bbox": [
+        990,
+        218,
+        224,
+        82
+      ],
+      "geometry": "rect",
+      "fillColor": "#FFFFFF",
+      "lineColor": "#E1E7E1",
+      "lineWidth": 1
+    },
+    {
+      "order": 26,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/b2hwfyxo",
+      "id": "26",
+      "bbox": [
+        990,
+        218,
+        224,
+        5
+      ],
+      "geometry": "rect",
+      "fillColor": "#F2B84B",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 27,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/mhk3q5o7",
+      "id": "27",
+      "bbox": [
+        1002,
+        234,
+        200,
+        18
+      ],
+      "geometry": "rect",
+      "text": "4. Reserve VC",
+      "textPreview": "4. Reserve VC",
+      "resolvedFontSize": 12,
+      "resolvedTextStyle": {
+        "fontSize": 12,
+        "typeface": "Aptos",
+        "bold": true,
+        "alignment": "left"
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "4. Reserve VC"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "4. Reserve VC",
+          "runs": [
+            {
+              "index": 1,
+              "text": "4. Reserve VC",
+              "fontSize": 12,
+              "typeface": "Aptos",
+              "color": "#19231F",
+              "bold": true
+            }
+          ]
+        }
+      ],
+      "fillColor": "rgba(0, 0, 0, 0)",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 28,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/tgfmlkjm",
+      "id": "28",
+      "bbox": [
+        1002,
+        257,
+        200,
+        32
+      ],
+      "geometry": "rect",
+      "text": "The router reserves the selected output VC and forwards the flit with that VC state.",
+      "textPreview": "The router reserves the selected output VC and forwards the flit with that VC state.",
+      "resolvedFontSize": 9.51,
+      "resolvedTextStyle": {
+        "fontSize": 9.51,
+        "typeface": "Aptos",
+        "alignment": "left"
+      },
+      "textLayout": {
+        "lineCount": 2,
+        "lines": [
+          {
+            "index": 1,
+            "text": "The router reserves the selected output VC and"
+          },
+          {
+            "index": 2,
+            "text": "forwards the flit with that VC state."
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "The router reserves the selected output VC and forwards the flit with that VC state.",
+          "runs": [
+            {
+              "index": 1,
+              "text": "The router reserves the selected output VC and forwards the flit with that VC state.",
+              "fontSize": 9.51,
+              "typeface": "Aptos",
+              "color": "#66716B"
+            }
+          ]
+        }
+      ],
+      "fillColor": "rgba(0, 0, 0, 0)",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 29,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/4vmtwra5",
+      "id": "29",
+      "bbox": [
+        94,
+        412,
+        500,
+        116
+      ],
+      "geometry": "rect",
+      "fillColor": "#FFFFFF",
+      "lineColor": "#E1E7E1",
+      "lineWidth": 1
+    },
+    {
+      "order": 30,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/epkzupwb",
+      "id": "30",
+      "bbox": [
+        94,
+        412,
+        5,
+        116
+      ],
+      "geometry": "rect",
+      "fillColor": "#D95D39",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 31,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/7adsji5s",
+      "id": "31",
+      "bbox": [
+        112,
+        428,
+        464,
+        28
+      ],
+      "geometry": "rect",
+      "text": "Why the area overhead exists",
+      "textPreview": "Why the area overhead exists",
+      "resolvedFontSize": 15,
+      "resolvedTextStyle": {
+        "fontSize": 15,
+        "typeface": "Aptos",
+        "bold": true,
+        "alignment": "left"
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "Why the area overhead exists"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "Why the area overhead exists",
+          "runs": [
+            {
+              "index": 1,
+              "text": "Why the area overhead exists",
+              "fontSize": 15,
+              "typeface": "Aptos",
+              "color": "#19231F",
+              "bold": true
+            }
+          ]
+        }
+      ],
+      "fillColor": "rgba(0, 0, 0, 0)",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 32,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/wval87ed",
+      "id": "32",
+      "bbox": [
+        112,
+        464,
+        464,
+        48
+      ],
+      "geometry": "rect",
+      "text": "Hardware needs per-VC buffer/control resources, output-VC reservation logic, VN assignment/filter logic, and boundary-router LUT storage. The original DeFT paper reports less than 2% area overhead; this project discusses that as literature evidence, not synthesized silicon.",
+      "textPreview": "Hardware needs per-VC buffer/control resources, output-VC reservation logic, VN assignment/filter logic, and boundary-router LUT storage....",
+      "resolvedFontSize": 12.51,
+      "resolvedTextStyle": {
+        "fontSize": 12.51,
+        "typeface": "Aptos",
+        "alignment": "left"
+      },
+      "textLayout": {
+        "lineCount": 4,
+        "lines": [
+          {
+            "index": 1,
+            "text": "Hardware needs per-VC buffer/control resources, output-VC reservation logic, VN"
+          },
+          {
+            "index": 2,
+            "text": "assignment/filter logic, and boundary-router LUT storage. The original DeFT paper reports"
+          },
+          {
+            "index": 3,
+            "text": "less than 2% area overhead; this project discusses that as literature evidence, not"
+          },
+          {
+            "index": 4,
+            "text": "synthesized silicon."
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "Hardware needs per-VC buffer/control resources, output-VC reservation logic, VN assignment/filter logic, and boundary-router LUT storage. The original DeFT paper reports less than 2% area overhead; this project discusses that as literature evidence, not synthesized silicon.",
+          "runs": [
+            {
+              "index": 1,
+              "text": "Hardware needs per-VC buffer/control resources, output-VC reservation logic, VN assignment/filter logic, and boundary-router LUT storage. The original DeFT paper reports less than 2% area overhead; this project discusses that as literature evidence, not synthesized silicon.",
+              "fontSize": 12.51,
+              "typeface": "Aptos",
+              "color": "#66716B"
+            }
+          ]
+        }
+      ],
+      "fillColor": "rgba(0, 0, 0, 0)",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 33,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/pg3ex0nu",
+      "id": "33",
+      "bbox": [
+        664,
+        412,
+        500,
+        116
+      ],
+      "geometry": "rect",
+      "fillColor": "#FFFFFF",
+      "lineColor": "#E1E7E1",
+      "lineWidth": 1
+    },
+    {
+      "order": 34,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/e1w7mp0b",
+      "id": "34",
+      "bbox": [
+        664,
+        412,
+        5,
+        116
+      ],
+      "geometry": "rect",
+      "fillColor": "#0E7C7B",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 35,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/7mp0bi9s",
+      "id": "35",
+      "bbox": [
+        682,
+        428,
+        464,
+        28
+      ],
+      "geometry": "rect",
+      "text": "Why the overhead is limited",
+      "textPreview": "Why the overhead is limited",
+      "resolvedFontSize": 15,
+      "resolvedTextStyle": {
+        "fontSize": 15,
+        "typeface": "Aptos",
+        "bold": true,
+        "alignment": "left"
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "Why the overhead is limited"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "Why the overhead is limited",
+          "runs": [
+            {
+              "index": 1,
+              "text": "Why the overhead is limited",
+              "fontSize": 15,
+              "typeface": "Aptos",
+              "color": "#19231F",
+              "bold": true
+            }
+          ]
+        }
+      ],
+      "fillColor": "rgba(0, 0, 0, 0)",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 36,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/w7mp0bi9",
+      "id": "36",
+      "bbox": [
+        682,
+        464,
+        464,
+        48
+      ],
+      "geometry": "rect",
+      "text": "Only two VNs are used. The extra logic is concentrated around DeFT routing, transition checks, and boundary VL selection rather than replacing the whole router datapath.",
+      "textPreview": "Only two VNs are used. The extra logic is concentrated around DeFT routing, transition checks, and boundary VL selection rather than repl...",
+      "resolvedFontSize": 12.51,
+      "resolvedTextStyle": {
+        "fontSize": 12.51,
+        "typeface": "Aptos",
+        "alignment": "left"
+      },
+      "textLayout": {
+        "lineCount": 2,
+        "lines": [
+          {
+            "index": 1,
+            "text": "Only two VNs are used. The extra logic is concentrated around DeFT routing, transition"
+          },
+          {
+            "index": 2,
+            "text": "checks, and boundary VL selection rather than replacing the whole router datapath."
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "Only two VNs are used. The extra logic is concentrated around DeFT routing, transition checks, and boundary VL selection rather than replacing the whole router datapath.",
+          "runs": [
+            {
+              "index": 1,
+              "text": "Only two VNs are used. The extra logic is concentrated around DeFT routing, transition checks, and boundary VL selection rather than replacing the whole router datapath.",
+              "fontSize": 12.51,
+              "typeface": "Aptos",
+              "color": "#66716B"
+            }
+          ]
+        }
+      ],
+      "fillColor": "rgba(0, 0, 0, 0)",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 37,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/psfil0rq",
+      "id": "37",
+      "bbox": [
+        64,
+        678,
+        1152,
+        1
+      ],
+      "geometry": "rect",
+      "fillColor": "#E1E7E1",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    },
+    {
+      "order": 38,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/ed8bat47",
+      "id": "38",
+      "bbox": [
+        64,
+        688,
+        860,
+        16
+      ],
+      "geometry": "rect",
+      "text": "Paper reference: DeFT hardware analysis reports <2% area overhead; no project synthesis was performed",
+      "textPreview": "Paper reference: DeFT hardware analysis reports <2% area overhead; no project synthesis was performed",
+      "resolvedFontSize": 8.51,
+      "resolvedTextStyle": {
+        "fontSize": 8.51,
+        "typeface": "Aptos",
+        "alignment": "left"
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "Paper reference: DeFT hardware analysis reports <2% area overhead; no project synthesis was performed"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "Paper reference: DeFT hardware analysis reports <2% area overhead; no project synthesis was performed",
+          "runs": [
+            {
+              "index": 1,
+              "text": "Paper reference: DeFT hardware analysis reports <2% area overhead; no project synthesis was performed",
+              "fontSize": 8.51,
+              "typeface": "Aptos",
+              "color": "#66716B"
+            }
+          ]
+        }
+      ],
+      "fillColor": "rgba(0, 0, 0, 0)",
+      "lineColor": "rgba(0, 0, 0, 0)",
+      "lineWidth": 0
+    }
+  ],
+  "composeRuns": []
+}

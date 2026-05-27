@@ -2,7 +2,7 @@
 
 ## Current Phase
 
-Phase 9 - Final Analysis and Report Support (final package ready; opt-in drain mode smoke-validated; directional fault and PARSEC/GEM5 trace support deferred)
+Phase 10 - Reachability Closure and Final Report Refresh (T0049 closure plan complete; T0050 DeFT drain-based reachability diagnosis is next)
 
 ## Completed Tasks
 
@@ -52,8 +52,9 @@ Phase 9 - Final Analysis and Report Support (final package ready; opt-in drain m
 - `T0044` - Implement and Validate Drain Policy.
 - `T0045` - Evaluate Directional Fault Modeling.
 - `T0046` - PARSEC/GEM5 Trace Support Feasibility.
+- `T0049` - Define Reachability Closure Plan.
 
-DeFT VN assignment behavior, the first VN movement-transition restriction enforcement layer, the offline VL LUT schema/generator, the runtime schema-v1 LUT loading/use path, explicit XY fault-free/fault-injected baseline configuration modes, proposal-required synthetic traffic configuration profiles, machine-readable metrics export, tiny experiment-runner launch support, final-analysis scaffolding, the final sweep policy, the validated T0026 150-run final sweep output set, T0027 blank-aware report-support tables, T0028 claim-safe final report results draft, the T0029 tracked claim-safe Markdown report draft, the T0030 submission-readiness polish, the T0031 IEEE-style LaTeX final report source artifact, the T0032 generated final report PDF, the T0033 blocker diagnosis, the T0034 report-revision direction decision, the T0035 final-report diagnosis revision, the T0036 post-final experimental design gate, the T0037 final submission handoff check, the T0038 final submission archive refresh, the T0039 future backlog documentation, the T0040 IA-XY baseline design, the T0041 IA-XY baseline implementation, the T0042 limited IA-XY-vs-DEFT artifact set, the T0043 source-cutoff/drain policy design, the T0044 opt-in drain-mode implementation with targeted smoke validation, the T0045 directional fault-model feasibility decision, and the T0046 PARSEC/GEM5 trace-support feasibility decision now exist for `DEFT_2_5D`. Performance claims remain limited to descriptive, blank-aware report support only. No future backlog item blocks the current final submission.
+DeFT VN assignment behavior, the first VN movement-transition restriction enforcement layer, the offline VL LUT schema/generator, the runtime schema-v1 LUT loading/use path, explicit XY fault-free/fault-injected baseline configuration modes, proposal-required synthetic traffic configuration profiles, machine-readable metrics export, tiny experiment-runner launch support, final-analysis scaffolding, the final sweep policy, the validated T0026 150-run final sweep output set, T0027 blank-aware report-support tables, T0028 claim-safe final report results draft, the T0029 tracked claim-safe Markdown report draft, the T0030 submission-readiness polish, the T0031 IEEE-style LaTeX final report source artifact, the T0032 generated final report PDF, the T0033 blocker diagnosis, the T0034 report-revision direction decision, the T0035 final-report diagnosis revision, the T0036 post-final experimental design gate, the T0037 final submission handoff check, the T0038 final submission archive refresh, the T0039 future backlog documentation, the T0040 IA-XY baseline design, the T0041 IA-XY baseline implementation, the T0042 limited IA-XY-vs-DEFT artifact set, the T0043 source-cutoff/drain policy design, the T0044 opt-in drain-mode implementation with targeted smoke validation, the T0045 directional fault-model feasibility decision, the T0046 PARSEC/GEM5 trace-support feasibility decision, and the T0049 reachability-closure plan now exist for `DEFT_2_5D`. Historical performance claims remain limited to descriptive, blank-aware report support only. New 100% reachability or baseline-comparison claims require fresh drain-mode validation artifacts.
 
 ## In-Progress Tasks
 
@@ -62,8 +63,21 @@ DeFT VN assignment behavior, the first VN movement-transition restriction enforc
 ## Blocked Tasks
 
 - `T0047` - PARSEC/GEM5 Trace Ingestion is blocked until a versioned trace schema, tiny fixture, dependency/provenance plan, workload mapping policy, and small smoke-validation path are supplied and accepted.
+- `T0051` - DeFT Reachability Fixes are blocked until T0050 isolates a concrete fixable root cause.
 
 ## Last Validation Result
+
+- T0049 Define Reachability Closure Plan completed as a documentation-only planning task on 2026-05-27.
+- Required startup reading was completed before task work: `AGENTS.md`, `docs/PROGRESS.md`, `docs/TASKS.md`, `docs/ROADMAP.md`, and `docs/ARCHITECTURE.md`; `docs/VALIDATION.md`, `docs/DECISIONS.md`, and `docs/PROMPTS.md` were also inspected because this task updates tracking documents.
+- Parent repository status before edits showed only untracked presentation-support files: `DeFT A Deadlock-Free and Fault-Tolerant Routing Algorithm for 2.5D Chiplet Networks.pptx`, `Speech Proposal.docx`, and `presentation_final/`. `external/noxim` status before edits was clean on `feat/baseline-noxim...origin/feat/baseline-noxim`.
+- Before editing, a short documentation plan was produced. Assumption: This task is planning-only and should not edit source code, run simulations, rebuild Noxim, regenerate final artifacts, or strengthen report claims. Blocked: A 100% DeFT reachability claim remains blocked until a later drain-mode validation task produces supporting artifacts.
+- The project direction was reopened for completion work after presentation preparation. ADR-0050 records the durable policy: treat 100% reachability as an eventual-delivery/drain-mode validation target, diagnose DeFT reachability before fixing code, fix only documented root causes, compare against a proper interposer-aware baseline only after DeFT reachability behavior is validated, and update the final report only after new validated artifacts exist.
+- Added T0049 as the completed planning task and added ordered follow-up tasks: T0050 diagnose DeFT drain-based reachability gap, T0051 fix DeFT reachability issues only after a concrete root cause exists, T0052 run a drain-based DeFT reachability validation matrix, and T0053 run a drain-based IA-XY-vs-DEFT comparison.
+- `docs/ROADMAP.md`, `docs/TASKS.md`, `docs/ARCHITECTURE.md`, `docs/DECISIONS.md`, `docs/PROGRESS.md`, `docs/PROMPTS.md`, and `docs/VALIDATION.md` were updated. No simulator source, helper source, generated artifacts, final-report PDF, package artifact, Extended Proposal file, Noxim rebuild, simulation run, regression command, or performance claim was changed.
+- `git diff --check` completed with exit code `0`; Git reported line-ending conversion warnings for edited Markdown files only.
+- Final `external/noxim` status remained clean on `feat/baseline-noxim...origin/feat/baseline-noxim`.
+- The generated-artifact guard returned no changed files for `external/noxim/other/generated/t0026_final_sweep_v1`, `t0026_final_analysis_v1`, `t0027_report_support_v1`, `t0028_final_report_results_v1`, or `t0042_iaxy_deft_limited_v1`.
+- The final-report and proposal artifact guard returned no changed files for `final_report/main.pdf`, `final_report.zip`, `Extended_Proposal.pdf`, `Extended_Proposal.zip`, or `Extended_Proposal/`.
 
 - T0046 PARSEC/GEM5 Trace Support Feasibility completed as a documentation-only feasibility task on 2026-05-12.
 - Required startup reading was completed before task work: `AGENTS.md`, `docs/PROGRESS.md`, `docs/TASKS.md`, `docs/ROADMAP.md`, `docs/ARCHITECTURE.md`, `docs/VALIDATION.md`, `docs/DECISIONS.md`, `docs/PROMPTS.md`, `docs/FINAL_REPORT_DRAFT.md`, and `final_report/main.tex`.
@@ -1006,12 +1020,12 @@ External source tree registered during `T0023`:
 
 ## Next Recommended Task
 
-No immediate implementation task is recommended. `T0047` remains blocked unless the user supplies or approves a tiny trace schema/fixture and dependency-provenance plan. If new validated artifacts are produced later, `T0048` can update report material claim-safely.
+Start `T0050` next: diagnose the DeFT drain-based reachability gap before making any source-code fix or report claim. `T0047` remains blocked unless a trace schema/fixture and dependency-provenance plan are supplied. `T0048` should update report material only after new validated artifacts exist.
 
 ## Next Ready-to-Send Prompt
 
 ```text
-Start task T0047: Implement PARSEC/GEM5 Trace Ingestion, only after prerequisites are available.
+Start task T0050: Diagnose DeFT Drain-Based Reachability Gap.
 
 Before starting, read:
 - AGENTS.md
@@ -1031,53 +1045,53 @@ Use Extended_Proposal.pdf as the primary project requirements source and the ori
 
 Use the registered Noxim source tree at external/noxim.
 
-Prerequisite before implementation: provide or define a tiny versioned trace fixture, an accepted `deft_trace.v1`-style schema or equivalent, a core/router and agent/router mapping policy, and dependency/provenance notes for any GEM5/PARSEC source traces.
+Goal: diagnose whether the gap between DeFT's expected reachability behavior and the current fixed-window results comes from measurement semantics, implementation behavior, simulator/drain behavior, LUT/VN interactions, or fixture setup. Do not implement fixes in this task unless a blocker makes diagnosis impossible; if a concrete bug is found, document it and prepare T0051.
 
-Goal: implement only the accepted tiny trace ingestion path and validation fixture. Do not import PARSEC-scale traces or claim PARSEC/GEM5 support.
-
-Before coding:
+Before diagnostics:
 - Check parent repository status.
 - Check external/noxim status.
-- Produce a short implementation plan.
+- Produce a short diagnostic plan.
 - Clearly mark assumptions as `Assumption`.
 - Clearly mark blockers as `Blocked`.
 
 Scope:
-- Add a small parser or converter only for the accepted trace schema.
-- Validate router ID ranges, cycle ordering, packet size, and malformed fixtures.
-- Run only tiny trace smokes after build validation if source code changes are required.
-- Write any generated smoke artifacts to a new ignored artifact directory.
-- Preserve all existing synthetic, IA-XY, drain, final-report, package, and Extended Proposal artifacts.
+- Inspect DeFT routing, `DeftTopology`, `DeftVirtualNetwork`, runtime LUT use, fault-mask handling, drain-mode accounting, and existing hardcoded traffic surfaces.
+- Define a small deterministic drain-mode diagnostic matrix before running anything.
+- Prefer tiny same-chiplet and inter-chiplet hardcoded packet cases, then a small source/destination sample before any larger all-pairs work.
+- If diagnostics are run, write all generated outputs to a new ignored directory such as `external/noxim/other/generated/t0050_deft_reachability_diagnosis_v1/`.
+- Record every failing case with routing mode, fault mask, source, destination, stop reason, injected/received counts, undelivered counts, and suspected route phase.
+- Preserve all historical fixed-window, IA-XY, drain-smoke, final-report, package, and Extended Proposal artifacts.
 
 Do not:
+- Edit source code unless diagnosis is impossible without a tiny diagnostic helper; if so, stop and explain the blocker before implementing.
+- Run broad sweeps.
+- Regenerate final sweep artifacts.
+- Regenerate final_report/main.pdf.
+- Modify final_report/main.pdf.
+- Modify final_report.zip.
+- Modify Extended Proposal files.
 - Install dependencies.
-- Import or generate PARSEC-scale traces.
-- Run full workload sweeps.
+- Import or generate PARSEC/GEM5 traces.
 - Modify standard XY route behavior.
 - Modify DEFT routing behavior.
 - Modify VN transition restrictions.
 - Modify VL fault injection semantics.
 - Modify LUT schema or runtime LUT use path.
 - Modify topology behavior.
-- Modify existing synthetic traffic behavior outside the accepted trace-ingestion path.
-- Modify metrics, runner, or analysis behavior outside the accepted trace-ingestion path.
-- Regenerate final sweep artifacts.
-- Regenerate final_report/main.pdf.
-- Modify final_report/main.pdf.
-- Modify final_report.zip.
-- Modify Extended Proposal files.
+- Modify traffic generation behavior.
+- Modify metrics, runner, or analysis behavior.
 - Use ./regression.sh --update.
-- Invent results or strengthen unsupported claims.
+- Invent results or claim 100% reachability without validated drain-mode artifacts.
 
 Validation:
 - Run git diff --check.
-- If source code changes are made, run the known external/noxim build command from external/noxim: ./build.sh.
-- Run only the accepted tiny trace smokes.
+- If source code changes unexpectedly become necessary, stop and open T0051 instead of folding the fix into this task.
+- If simulations are run, use only the documented small diagnostic matrix and record commands, configs, generated LUTs, stats files, stdout/stderr logs, and summaries.
 - Check external/noxim status after validation.
 - Confirm T0026/T0027/T0028 and T0042 generated artifacts were not changed.
 - Confirm final_report/main.pdf, final_report.zip, and Extended Proposal files were not changed.
 
-Update tracking docs with validation results and keep PARSEC/GEM5 claims blocked unless a later workload experiment task produces validated artifacts.
+Update tracking docs with diagnosis results, blockers, and the next recommended task. Keep final-report claims unchanged until a later report task uses new validated artifacts.
 ```
 
 ## Suggested Branch Name for Next Task
@@ -1089,5 +1103,5 @@ None; continue on the existing branch.
 ## Suggested Commit Message
 
 ```text
-docs: assess parsec gem5 trace feasibility
+docs: plan deft reachability closure
 ```
