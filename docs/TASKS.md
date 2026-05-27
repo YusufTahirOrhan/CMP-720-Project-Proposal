@@ -596,21 +596,22 @@ Statuses: `TODO`, `IN_PROGRESS`, `DONE`, `BLOCKED`.
 
 ## T0050: Diagnose DeFT Drain-Based Reachability Gap
 
-- **Status:** TODO
+- **Status:** DONE
 - **Type:** diagnosis/validation
 - **Objective:** Determine whether the gap between DeFT's expected reachability behavior and current results is caused by fixed-window measurement, DeFT implementation bugs, simulator/drain behavior, LUT selection, VN transition filtering, or traffic/fixture setup.
 - **Why it exists:** Current T0026/T0027/T0028 results are fixed-window and blank-aware. They do not prove eventual delivery, and they also do not isolate whether any DeFT implementation issue exists.
 - **Relevant roadmap phase:** Phase 10 reachability closure and final report refresh.
 - **Scope:** Inspect relevant DeFT routing, topology, VN, LUT, fault, drain, and hardcoded traffic surfaces; define and run only small deterministic drain-mode diagnostics in a new artifact directory if validation is in scope; isolate failing source/destination/fault-mask cases with enough provenance for a later fix task.
 - **Out of scope:** Broad sweeps, final-report updates, performance claims, standard `XY` changes, PARSEC/GEM5 work, directional endpoint faults, `./regression.sh --update`, and overwriting historical generated artifacts.
-- **Files likely to change:** Tracking docs only unless a small diagnostic helper or fixture is explicitly justified; generated diagnostic artifacts must be ignored and placed under a new `external/noxim/other/generated/t0050_*` directory.
+- **Files changed:** `docs/ARCHITECTURE.md`, `docs/DECISIONS.md`, `docs/PROGRESS.md`, `docs/PROMPTS.md`, `docs/TASKS.md`, and `docs/VALIDATION.md`. Ignored diagnostic artifacts were generated under `external/noxim/other/generated/t0050_deft_reachability_diagnosis_v1/`.
 - **Source code changes allowed:** No by default. If a source bug is found, stop after documenting it and open T0051 for the fix.
 - **Simulation reruns allowed:** Yes, only small deterministic drain-mode diagnostics after the exact matrix and artifact directory are documented.
-- **Acceptance criteria:** A diagnosis identifies whether fixed-window measurement fully explains the gap or whether a specific DeFT/simulator issue remains; any failing cases are listed by routing mode, fault mask, source, destination, stop reason, injected/received counts, and suspected route phase.
-- **Validation method or limitation:** Parent and `external/noxim` status checks, documented small diagnostic commands if run, `git diff --check`, `external/noxim` status after validation, and protected-artifact guards.
+- **Acceptance criteria:** Completed for the documented tiny matrix. Read-only source inspection and 12 deterministic drain-mode cases did not isolate a concrete DeFT, LUT, VN, fault-mask, hardcoded-traffic, or drain-accounting bug. All diagnostic cases stopped with `drain_completed`, injected packets equaled received packets, and no undelivered packets, buffered flits, reservations, or pending handshakes remained at stop.
+- **Validation method or limitation:** Parent and `external/noxim` status checks, documented small diagnostic commands, `git diff --check`, `external/noxim` status after validation, and protected-artifact guards. This is diagnostic evidence only, not an all-pairs or final reachability claim.
 - **Dependencies:** T0044 drain mode and T0049 closure plan.
 - **Risk level:** Medium, because even small diagnostics can be misread as performance evidence if claim limits are not preserved.
-- **Recommended prompt:** `Start task T0050: Diagnose DeFT Drain-Based Reachability Gap. Use opt-in drain mode and small deterministic diagnostics to isolate whether DeFT reachability gaps come from fixed-window measurement, implementation behavior, simulator/drain behavior, LUT/VN interactions, or fixture setup. Do not edit source code unless a blocker requires opening a separate fix task. Update tracking docs and run git diff --check.`
+- **Recommended prompt:** Completed by this diagnosis.
+- **Notes:** The sampled fixed-window gap is most consistent with measurement/load semantics rather than a deterministic reachability failure in the inspected DeFT path, but T0050 does not prove universal DeFT reachability. T0051 remains blocked because no concrete source bug was isolated. T0052 should define and run the next accepted drain-based validation matrix.
 
 ## T0051: Fix DeFT Reachability Issues
 
@@ -626,7 +627,7 @@ Statuses: `TODO`, `IN_PROGRESS`, `DONE`, `BLOCKED`.
 - **Simulation reruns allowed:** Yes, targeted failing cases and minimal smokes after build validation.
 - **Acceptance criteria:** The diagnosed failing cases pass under drain mode or are reclassified with a documented physical/topological blocker; build and targeted validation pass; historical artifacts remain unchanged.
 - **Validation method or limitation:** Known Noxim build command `./build.sh`, targeted failing-case reruns, `git diff --check`, `external/noxim` diff/status checks, and protected-artifact guards.
-- **Dependencies:** Blocked until T0050 identifies a concrete fixable DeFT or simulator issue.
+- **Dependencies:** Still blocked after T0050 because the documented diagnosis did not identify a concrete fixable DeFT or simulator issue. Reopen only if T0052 or another later diagnostic isolates a specific failing case and root cause.
 - **Risk level:** High, because it can alter DeFT correctness.
 - **Recommended prompt:** `Start task T0051: Fix DeFT Reachability Issues, only after T0050 identifies a concrete root cause. Implement the smallest safe fix, preserve unrelated behavior, rebuild Noxim, rerun the failing drain-mode cases and targeted smokes, update tracking docs, and run git diff --check.`
 
@@ -644,7 +645,7 @@ Statuses: `TODO`, `IN_PROGRESS`, `DONE`, `BLOCKED`.
 - **Simulation reruns allowed:** Yes, only the accepted T0052 matrix.
 - **Acceptance criteria:** The artifact set records all commands, configs, LUT provenance, raw stats, summaries, stop reasons, injected/received denominators, and any non-100% cases; any reachability claim is limited to the validated matrix.
 - **Validation method or limitation:** Manifest/stat cross-checks, protected-artifact guards, `git diff --check`, and `external/noxim` status.
-- **Dependencies:** T0050 and, if needed, T0051.
+- **Dependencies:** T0050 is complete. T0051 is not required unless a later validation matrix exposes a concrete fixable root cause.
 - **Risk level:** Medium, because the matrix size and timeout policy determine claim strength.
 - **Recommended prompt:** `Start task T0052: Run Drain-Based DeFT Reachability Validation Matrix. Use only the accepted T0050/T0051 state, define the exact drain-mode matrix before running, write artifacts to a new ignored directory, preserve claim limits, update tracking docs, and run git diff --check.`
 

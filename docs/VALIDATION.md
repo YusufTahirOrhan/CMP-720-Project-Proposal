@@ -2014,6 +2014,32 @@ Expected future validation for T0050:
 - Record routing mode, fault mask, source, destination, stop reason, injected/received counts, undelivered counts, and suspected route phase for every failing case.
 - Preserve historical T0026/T0027/T0028, T0042, final-report, package, and Extended Proposal artifacts.
 
+T0050 result on 2026-05-28:
+
+- Required startup reading was completed before task work: `AGENTS.md`, `docs/PROGRESS.md`, `docs/TASKS.md`, `docs/ROADMAP.md`, `docs/ARCHITECTURE.md`, `docs/VALIDATION.md`, `docs/DECISIONS.md`, `docs/PROMPTS.md`, `docs/FINAL_REPORT_DRAFT.md`, and `final_report/main.tex`.
+- Source-document roles were preserved: `Extended_Proposal.pdf` is the primary project requirements source, the original DeFT paper is the primary algorithmic reference, `Proposal.pdf` is initial context only, and the peer evaluation document was ignored completely.
+- Parent status before diagnostics was clean on `feat/map-noxim-extension-points...origin/feat/map-noxim-extension-points` with the branch ahead by one commit. Direct `external/noxim` status hit Git's safe-directory ownership guard, and the per-command safe-directory override reported a clean `feat/baseline-noxim...origin/feat/baseline-noxim` tree.
+- Read-only inspection covered DeFT routing phases, `DeftTopology` router/VL/boundary mapping, `DeftVirtualNetwork` assignment and transition filtering, output-VC-aware reservations, schema-v1 LUT lookup and active fault-mask derivation, fault-mask application, drain empty detection/accounting, and hardcoded traffic parsing.
+- The exact diagnostic matrix was defined before simulator execution and written to `external/noxim/other/generated/t0050_deft_reachability_diagnosis_v1/matrix.tsv`.
+- Generated diagnostic artifacts were written only under ignored `external/noxim/other/generated/t0050_deft_reachability_diagnosis_v1/`, including `commands.sh`, `matrix.tsv`, generated traffic files, generated LUT `luts/deft_vl_lut_t0050.yaml`, 12 JSON stats files, stdout/stderr logs, `summary.csv`, `failing_cases.csv`, and `manifest.json`.
+- The matrix ran 12 deterministic `DEFT` drain-mode cases: one same-chiplet control, five no-fault inter-chiplet source/destination samples, four single/four-physical-fault cases, and two tiny multi-packet cases.
+- All 12 cases completed with return code `0`, stop reason `drain_completed`, measured injected packets equal to measured received packets, zero undelivered packets/flits, zero router-buffer flits, zero reservations, and zero pending handshakes at stop. `failing_cases.csv` contains no failing rows.
+- No concrete DeFT routing, topology, VN transition, LUT lookup, fault-mask, hardcoded-traffic, or drain-accounting bug was isolated. The sampled gap is most consistent with fixed-window continuous-injection measurement/load semantics, but this is not a universal reachability claim.
+- No source code, simulator behavior, standard `XY`, `DEFT`, VN transition restrictions, VL fault injection semantics, LUT schema/use path, topology behavior, traffic-generation behavior, metrics/runner/analysis behavior, generated final sweep artifacts, final-report claims, final-report PDF/package artifacts, Extended Proposal files, or `./regression.sh --update` was changed.
+- `git diff --check` completed with exit code `0`; Git reported line-ending conversion warnings for edited Markdown files only.
+- Final `external/noxim` status remained clean on `feat/baseline-noxim...origin/feat/baseline-noxim`.
+- The generated-artifact guard returned no changed files for `external/noxim/other/generated/t0026_final_sweep_v1`, `t0026_final_analysis_v1`, `t0027_report_support_v1`, `t0028_final_report_results_v1`, or `t0042_iaxy_deft_limited_v1`.
+- The final-report and proposal artifact guard returned no changed files for `final_report/main.pdf`, `final_report.zip`, `Extended_Proposal.pdf`, `Extended_Proposal.zip`, or `Extended_Proposal/`.
+- Final parent status showed only modified tracking docs: `docs/ARCHITECTURE.md`, `docs/DECISIONS.md`, `docs/PROGRESS.md`, `docs/PROMPTS.md`, `docs/TASKS.md`, and `docs/VALIDATION.md`.
+
+Expected future validation for T0052:
+
+- Define the exact DeFT drain-mode validation matrix, timeout policy, artifact directory, and summary fields before execution.
+- Write generated outputs only to a new ignored `external/noxim/other/generated/t0052_*` directory.
+- Preserve T0026/T0027/T0028, T0042, T0044, T0050, final-report, package, and Extended Proposal artifacts.
+- Record every non-100% or timeout case with routing mode, fault mask, source, destination, stop reason, injected/received counts, undelivered counts, and suspected route phase.
+- Do not claim 100% reachability beyond the validated matrix.
+
 ## Metrics Validation
 
 Purpose:

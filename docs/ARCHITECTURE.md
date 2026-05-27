@@ -1928,6 +1928,47 @@ Assumption: T0050 should prefer tiny hardcoded packet cases before any broader a
 
 Blocked: T0051 source fixes are blocked until T0050 isolates a concrete root cause.
 
+## T0050 DeFT Drain-Based Reachability Diagnosis
+
+T0050 executed the first diagnosis step in the Phase 10 closure path. It did not edit simulator source or reinterpret historical fixed-window artifacts.
+
+Source-document alignment:
+
+- `Extended_Proposal.pdf` remains the primary project requirements source for the DeFT implementation and evaluation target.
+- The original DeFT paper remains the primary algorithmic source for VN assignment, VN movement restrictions, and fault-aware VL selection.
+- `Proposal.pdf` remains initial context only, and the peer evaluation document remains ignored.
+
+Read-only source inspection covered the relevant reachability surfaces:
+
+- `Routing_DEFT` same-chiplet local XY fallback and inter-chiplet phases: source-local to selected source exit, source VL traversal, interposer XY traversal, destination VL traversal, and destination-local XY.
+- `DeftTopology` router decoding, boundary-router inventory, physical VL endpoint mapping, and current physical bidirectional functional-state model.
+- `DeftVirtualNetwork`, `Router`, and `ReservationTable` VN.0/VN.1 assignment, movement-transition filtering, output-VC-aware reservation, downstream full-status checks, and forwarded `vc_id` updates.
+- `DeftVerticalLinkLut` schema-v1 runtime lookup keyed by active physical fault mask, source chiplet, source router, and destination chiplet.
+- `DeftFaultInjectionManager` explicit physical fault-mask application and connected-chiplet validation.
+- T0044 drain mode: source cutoff, in-flight empty detection, measured injected/received denominator accounting, and stop-reason export.
+- `TRAFFIC_HARDCODED` parsing for deterministic cycle-delimited `src dst` fixtures.
+
+The exact drain-mode diagnostic matrix was defined before execution and written to `external/noxim/other/generated/t0050_deft_reachability_diagnosis_v1/matrix.tsv`. The generated artifact directory also contains `commands.sh`, generated traffic fixtures, generated LUT `luts/deft_vl_lut_t0050.yaml`, JSON stats, stdout/stderr logs, `summary.csv`, `failing_cases.csv`, and `manifest.json`.
+
+Diagnostic coverage:
+
+| Group | Cases | Purpose |
+| --- | ---: | --- |
+| Same-chiplet control | 1 | Validate DEFT local XY fallback under drain mode. |
+| No-fault inter-chiplet samples | 5 | Exercise non-boundary, source-boundary, destination-boundary, reverse, and diagonal chiplet-pair phases. |
+| Fault-mask samples | 4 | Exercise active-mask/LUT agreement, alternate VL selection, `0x1111`, and boundary-attached faulty VL cases. |
+| Tiny multi-packet fixtures | 2 | Exercise drain accounting and repeated VN/LUT behavior without a sweep. |
+
+All 12 T0050 cases stopped with `drain_completed`, measured injected packets equaled measured received packets, and no undelivered packets, buffered flits, reservations, or pending handshakes remained at stop. `failing_cases.csv` contains no failing rows.
+
+Assumption: The sampled T0050 cases are useful for isolating deterministic route-phase, LUT, fault-mask, VN, fixture, and drain-accounting defects, but they are not a substitute for a validation matrix.
+
+Assumption: For the sampled cases, the gap between expected DeFT reachability and the historical fixed-window results is most consistent with fixed-window continuous-injection measurement/load semantics rather than a concrete deterministic implementation bug.
+
+Blocked: A universal or 25%-fault 100% DeFT reachability claim remains blocked until T0052 or an equivalent drain-based validation matrix supports that exact claim.
+
+Blocked: T0051 remains blocked because T0050 did not isolate a concrete source fix. If T0052 exposes a specific failing source/destination/fault-mask case, T0051 should be reopened with that root cause.
+
 ### Baseline Comparison Boundary
 
 Standard `XY` remains cardinal-only and is not a proper unrestricted inter-chiplet baseline for `DEFT_2_5D`. Future comparison should use `INTERPOSER_AWARE_XY`, already introduced as a separate baseline, or another explicitly designed and validated 2.5D-aware algorithm.
