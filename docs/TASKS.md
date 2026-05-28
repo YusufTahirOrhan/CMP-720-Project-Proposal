@@ -615,21 +615,21 @@ Statuses: `TODO`, `IN_PROGRESS`, `DONE`, `BLOCKED`.
 
 ## T0051: Fix DeFT Reachability Issues
 
-- **Status:** BLOCKED
+- **Status:** TODO
 - **Type:** implementation
-- **Objective:** Fix a specific DeFT reachability bug only after T0050 isolates and documents the root cause.
+- **Objective:** Fix the DeFT destination-convergence drain blocker isolated by T0055.
 - **Why it exists:** DeFT routing, VN transition restrictions, LUT use, and VL fault handling are high-risk surfaces. Fixes should be targeted to diagnosed failures rather than speculative rewrites.
 - **Relevant roadmap phase:** Phase 10 reachability closure and final report refresh.
-- **Scope:** Modify only the diagnosed implementation surface, add or update minimal fixtures if needed, rebuild Noxim, and rerun the failing T0050 cases plus targeted regression smokes.
+- **Scope:** Inspect and modify only the diagnosed destination-convergence flow-control, reservation, VN, or route-phase implementation surface; add or update minimal deterministic fixtures if needed; rebuild Noxim; rerun the failing T0055 cases plus targeted smokes.
 - **Out of scope:** Broad sweeps before targeted fixes pass, unrelated refactors, standard `XY` changes, traffic model changes, LUT schema changes unless T0050 identifies schema insufficiency and a separate design is accepted, report claim changes, and `./regression.sh --update`.
 - **Files likely to change:** Specific `external/noxim/src/*` DeFT routing/VN/LUT/topology integration files, small config or hardcoded traffic fixtures if needed, and tracking docs.
 - **Source code changes allowed:** Yes, but only for the diagnosed root cause.
 - **Simulation reruns allowed:** Yes, targeted failing cases and minimal smokes after build validation.
-- **Acceptance criteria:** The diagnosed failing cases pass under drain mode or are reclassified with a documented physical/topological blocker; build and targeted validation pass; historical artifacts remain unchanged.
+- **Acceptance criteria:** The diagnosed T0055 dense destination-stress failing cases pass under drain mode or are reclassified with a documented physical/topological blocker; build and targeted validation pass; historical artifacts remain unchanged.
 - **Validation method or limitation:** Known Noxim build command `./build.sh`, targeted failing-case reruns, `git diff --check`, `external/noxim` diff/status checks, and protected-artifact guards.
-- **Dependencies:** Still blocked after T0054 because T0054 isolated destination-convergence drain failures, but not a concrete fixable source root cause. Reopen only if T0055 or another later diagnostic identifies the specific implementation surface and root cause.
+- **Dependencies:** Reopened after T0055. T0055 isolated a repeatable DeFT/Noxim flow-control/reservation deadlock-style blocker under dense destination-convergence traffic: small and well-spaced cases drain, but dense no-fault destination-0 and destination-63 cases retain router-buffer flits and reservations indefinitely after source queues are empty.
 - **Risk level:** High, because it can alter DeFT correctness.
-- **Recommended prompt:** `Start task T0051: Fix DeFT Reachability Issues, only after T0050 identifies a concrete root cause. Implement the smallest safe fix, preserve unrelated behavior, rebuild Noxim, rerun the failing drain-mode cases and targeted smokes, update tracking docs, and run git diff --check.`
+- **Recommended prompt:** `Start task T0051: Fix DeFT Destination-Stress Flow-Control Blocker. Use T0055 artifacts as the failing evidence, inspect router reservation, output VC/full-status, VN transition filtering, and DEFT route phases, implement only the smallest source fix for the diagnosed blocker, rebuild Noxim, rerun the failing T0055 drain cases and targeted smokes, preserve historical artifacts, update tracking docs, and run git diff --check.`
 
 ## T0052: Run Drain-Based DeFT Reachability Validation Matrix
 
@@ -648,7 +648,7 @@ Statuses: `TODO`, `IN_PROGRESS`, `DONE`, `BLOCKED`.
 - **Dependencies:** T0050 is complete. T0051 is not required unless a later validation matrix exposes a concrete fixable root cause.
 - **Risk level:** Medium, because the matrix size and timeout policy determine claim strength.
 - **Recommended prompt:** Completed by this validation.
-- **Notes:** T0052 used `DEFT` only, seed `0`, opt-in drain mode, a generated schema-v1 LUT for masks `0x0000`, `0x0001`, `0x0011`, `0x0111`, and `0x1111`, and one hardcoded all-valid-pairs fixture covering 4032 ordered source/destination pairs over chiplet routers `0..63` for each mask. The traffic schedule rotated sources so each source appeared once every 64 cycles, with source cutoff `4032` and drain timeout `20000`. All five simulator runs returned `0` but timed out. Measured injected packets were only 243-312 of the 4032 planned pairs, measured received packets were 83-153, and thousands of packets remained queued at sources at timeout. This is a validation blocker and possible load/deadlock diagnosis input, not a concrete DeFT source-root-cause diagnosis. T0051 remains blocked, T0053 is blocked, and T0054 should diagnose the T0052 timeout behavior before any fix or comparison.
+- **Notes:** T0052 used `DEFT` only, seed `0`, opt-in drain mode, a generated schema-v1 LUT for masks `0x0000`, `0x0001`, `0x0011`, `0x0111`, and `0x1111`, and one hardcoded all-valid-pairs fixture covering 4032 ordered source/destination pairs over chiplet routers `0..63` for each mask. The traffic schedule rotated sources so each source appeared once every 64 cycles, with source cutoff `4032` and drain timeout `20000`. All five simulator runs returned `0` but timed out. Measured injected packets were only 243-312 of the 4032 planned pairs, measured received packets were 83-153, and thousands of packets remained queued at sources at timeout. This is a validation blocker and possible load/deadlock diagnosis input, not a concrete DeFT source-root-cause diagnosis. At T0052 completion, T0051 remained blocked, T0053 was blocked, and T0054 was selected to diagnose the T0052 timeout behavior before any fix or comparison.
 
 ## T0053: Run Drain-Based IA-XY vs DeFT Comparison
 
@@ -664,7 +664,7 @@ Statuses: `TODO`, `IN_PROGRESS`, `DONE`, `BLOCKED`.
 - **Simulation reruns allowed:** Yes, only the accepted comparison matrix.
 - **Acceptance criteria:** Comparison artifacts are complete, blank-aware, denominator-safe, and clearly separate standard `XY` from the proper interposer-aware baseline; any report-ready interpretation is claim-safe.
 - **Validation method or limitation:** Manifest/stat cross-checks, protected-artifact guards, `git diff --check`, and `external/noxim` status.
-- **Dependencies:** Blocked after T0054 because DeFT drain-based reachability behavior was not validated under destination-stress and bounded-prefix fixtures. Requires T0055 or equivalent follow-up diagnosis and, if needed, a targeted T0051 fix before comparison.
+- **Dependencies:** Blocked after T0055 because DeFT drain-based reachability behavior is still not validated under dense destination-convergence traffic. Requires a targeted T0051 fix or equivalent reclassification, then a passing DeFT drain-mode validation artifact before comparison.
 - **Risk level:** Medium, because comparison claims can easily overstate limited artifacts.
 - **Recommended prompt:** `Start task T0053: Run Drain-Based IA-XY vs DeFT Comparison. Compare DEFT against INTERPOSER_AWARE_XY only after DeFT drain-based reachability validation is complete, use a new artifact directory, keep blank-aware denominator rules, update tracking docs, and run git diff --check.`
 
@@ -689,21 +689,22 @@ Statuses: `TODO`, `IN_PROGRESS`, `DONE`, `BLOCKED`.
 
 ## T0055: Diagnose DeFT Destination-Stress Flow-Control Blocker
 
-- **Status:** TODO
+- **Status:** DONE
 - **Type:** diagnosis/validation
 - **Objective:** Isolate why DeFT destination-convergence fixtures from T0054 leave router buffers, reservations, and sometimes source queues nonempty after the drain timeout.
 - **Why it exists:** T0054 ruled out sampled pair-isolated, source-isolated, LUT-mask, and simple drain-accounting causes, but destination-stress fixtures still timed out after all or most packet heads were admitted. A source fix should not begin until the specific flow-control, reservation, VN, route-phase, or fixture-policy root cause is known.
 - **Relevant roadmap phase:** Phase 10 reachability closure and final report refresh.
 - **Scope:** Use T0054 artifacts as diagnosis input; inspect existing router reservation, VC/full-status, VN transition filtering, detailed logs/stats, and any existing non-source tracing surfaces; define a small exact DeFT-only follow-up matrix focused on destination-0 and destination-63 stress cases; preserve historical artifacts; classify whether the blocker is traffic-fixture policy, expected bounded-buffer stress, drain timeout policy, simulator accounting, or a concrete implementation bug.
 - **Out of scope:** Source-code fixes, IA-XY comparison, standard `XY` changes, DeFT behavior changes before a root cause is documented, PARSEC/GEM5 traces, directional endpoint faults, final-report changes, final-sweep regeneration, and `./regression.sh --update`.
-- **Files likely to change:** Generated ignored artifacts under a new T0055 directory and tracking docs.
+- **Files changed:** Generated ignored artifacts under `external/noxim/other/generated/t0055_deft_destination_stress_diagnosis_v1/` and tracking docs.
 - **Source code changes allowed:** No. If a concrete source bug is isolated, stop and open T0051 instead of fixing it inside T0055.
 - **Simulation reruns allowed:** Yes, only the documented T0055 diagnostic matrix.
-- **Acceptance criteria:** The destination-stress drain blocker is classified with evidence, or a concrete implementation root cause is isolated for T0051. No 100% reachability or comparison claim is made.
+- **Acceptance criteria:** Completed as a diagnosis task. T0055 classified the blocker as a dense destination-convergence DeFT/Noxim flow-control/reservation deadlock-style condition rather than a pair-route, LUT/fault-mask, simulator-accounting, or 20,000-cycle timeout-budget issue. No 100% reachability or comparison claim is made.
 - **Validation method or limitation:** Manifest/stat/log cross-checks, protected-artifact guards, `git diff --check`, and `external/noxim` status.
 - **Dependencies:** T0054.
 - **Risk level:** Medium-high, because the failing state touches router buffers, reservations, VN behavior, and DeFT route phases.
-- **Recommended prompt:** `Start task T0055: Diagnose DeFT Destination-Stress Flow-Control Blocker. Use T0054 artifacts as input, define a small exact DeFT-only follow-up matrix before running, inspect existing reservation/VN/flow-control surfaces without source edits, preserve historical artifacts, open T0051 only if a concrete source root cause is isolated, update tracking docs, and run git diff --check.`
+- **Recommended prompt:** Completed by this diagnosis.
+- **Notes:** T0055 ran 32 `DEFT` drain-mode cases over destination-0 and destination-63 strict convergence fixtures, using seed `0`, no-fault mask `0x0000`, and accepted 25% physical-fault mask `0x1111`. Six cases completed and 26 timed out. All n4 gap-1 cases passed, and the no-fault n63 gap-64 cases passed for both destinations. Dense no-fault n8 gap-1 cases already timed out with source queues and pending handshakes at zero, while router-buffer flits and router reservations remained nonzero. Extending dense n63 gap-1 cases from 20,000 to 100,000 drain cycles did not change the stuck counts. This supports opening T0051 for a targeted source fix while keeping T0053 and final-report claims blocked.
 
 ## T0023: Add or Register Noxim Source Tree
 

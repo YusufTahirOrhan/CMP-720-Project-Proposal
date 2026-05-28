@@ -1872,11 +1872,11 @@ Ordered future backlog:
 | T0048 | Report | Regenerate report material only after new validated artifacts exist. |
 | T0049 | Planning | Completed reachability-closure plan that reopens project completion around drain-based DeFT validation. |
 | T0050 | Diagnosis | Diagnose DeFT drain-based reachability gaps before any source fix or report claim. |
-| T0051 | Implementation | Blocked targeted DeFT reachability fixes until T0050 isolates a concrete root cause. |
+| T0051 | Implementation | Reopened targeted DeFT destination-convergence flow-control/reservation fix after T0055. |
 | T0052 | Experiment | Completed a new drain-based DeFT all-pairs aggregate validation artifact set; it timed out and did not validate reachability. |
 | T0053 | Experiment | Blocked drain-based `INTERPOSER_AWARE_XY`-vs-`DEFT` comparison until DeFT reachability behavior is validated. |
 | T0054 | Diagnosis | Completed destination-stress timeout diagnosis; pair/source-isolated cases passed, while destination-stress and bounded-prefix fixtures timed out. |
-| T0055 | Diagnosis | Diagnose the destination-stress flow-control/reservation/VN blocker before any source fix. |
+| T0055 | Diagnosis | Completed destination-stress flow-control diagnosis; dense cases expose a repeatable in-network DeFT blocker. |
 
 Assumption: Future backlog work starts with design or feasibility tasks before implementation, except when a prior design task has already accepted the required semantics and validation plan.
 
@@ -1969,7 +1969,7 @@ Assumption: For the sampled cases, the gap between expected DeFT reachability an
 
 Blocked: A universal or 25%-fault 100% DeFT reachability claim remains blocked until T0055 or an equivalent follow-up diagnoses or fixes the destination-stress blocker and a later drain-based validation matrix supports that exact claim.
 
-Blocked: T0051 remains blocked because T0050, T0052, and T0054 did not isolate a concrete source fix. If T0055 exposes a specific flow-control, reservation, VN, or route-phase root cause, T0051 should be reopened with that root cause.
+Blocked: T0051 remained blocked through T0054, but T0055 later reopened it for a targeted dense destination-convergence flow-control/reservation fix.
 
 ## T0052 DeFT Drain-Based Reachability Validation Matrix
 
@@ -2004,7 +2004,7 @@ Assumption: The immediate follow-up should diagnose the timeout with smaller pai
 
 Blocked: T0052 does not support a 100% DeFT reachability claim.
 
-Blocked: T0051 remains blocked because T0052 did not isolate a concrete source root cause; T0054 later narrowed the blocker to destination-stress in-network drain behavior without identifying a concrete source fix.
+Blocked: T0051 remained blocked after T0052 and T0054, but T0055 later reopened it for the dense destination-convergence flow-control/reservation blocker.
 
 Blocked: T0053 remains blocked because DeFT drain-based reachability behavior is not yet validated.
 
@@ -2039,9 +2039,54 @@ Diagnosis: the T0052 fixture is not a neutral pair-isolated all-pairs reachabili
 
 Assumption: T0054 classifies the current blocker as destination-convergence fixture/load-triggered in-network drain blocking, with source queues in T0052 mostly a symptom after in-network state stops draining.
 
-Blocked: T0051 remains blocked because T0054 did not isolate a concrete fixable source-code root cause.
+Blocked: T0051 remained blocked at T0054 completion because T0054 did not isolate a concrete fixable source-code root cause; T0055 later reopened it after a tighter flow-control diagnosis.
 
 Blocked: T0053 remains blocked until the destination-stress drain blocker is diagnosed and, if necessary, fixed and revalidated.
+
+Blocked: Stronger final-report reachability claims remain blocked until later validated artifacts support them.
+
+## T0055 DeFT Destination-Stress Flow-Control Diagnosis
+
+T0055 narrowed the T0054 destination-stress timeout into a repeatable, load-spacing-sensitive DeFT/Noxim in-network blocker without editing simulator source or changing final-report claims.
+
+The exact matrix was defined before execution:
+
+- Routing mode: `DEFT` only.
+- Seed: `0`.
+- Drain mode: opt-in `-drain_mode`, `-warmup 0`.
+- Fault masks: `0x0000` and accepted 25% physical-fault mask `0x1111`, used as a justified subset bracketing fault-free and the accepted physical-fault case because T0054 already covered the full ladder.
+- Destinations: strict convergence to destination `0` and destination `63`, excluding self-pairs.
+- Fixtures: n4, n8, n16, n32, and n63 source-count thresholds at gap 1; n63 gap-8 and gap-64 spacing probes; n63 gap-1 timeout probes at 100,000 drain cycles.
+- Artifact directory: `external/noxim/other/generated/t0055_deft_destination_stress_diagnosis_v1/`.
+
+The artifact directory contains the generated runner, copied config fixture, generated traffic fixtures, generated schema-v1 LUT, commands, stdout/stderr logs, 32 JSON stats files, return-code table, summary CSV, received-pair CSV, failing-case CSV, fixture-coverage CSV, and manifest.
+
+All 32 simulator invocations returned code `0`. Six cases stopped with `drain_completed`, and 26 stopped with `drain_timeout`:
+
+| Condition | Result |
+| --- | --- |
+| n4 gap-1, both destinations, both masks | all `drain_completed` |
+| n8 gap-1, both destinations, both masks | all `drain_timeout` |
+| n63 gap-1, no-fault and `0x1111` | all `drain_timeout` |
+| n63 gap-1 at 100,000 drain cycles | same stuck counts as 20,000-cycle rows |
+| n63 gap-64, no-fault | both destinations `drain_completed` |
+| n63 gap-64, `0x1111` | near-complete but still `drain_timeout` |
+
+Key no-fault evidence:
+
+- Destination 0 n8 gap-1 timed out after injecting 8 packet heads and receiving 6 heads/43 flits, with source queues and pending handshakes at zero but 21 router-buffer flits and 4 reservations still present.
+- Destination 63 n8 gap-1 timed out after injecting 8 packet heads and receiving 7 heads/50 flits, with source queues and pending handshakes at zero but 14 router-buffer flits and 3 reservations still present.
+- Destination 0 n63 gap-1 timed out at both 20,000 and 100,000 drain cycles with identical counts: 63 injected heads, 29 received heads, 220 received flits, 284 router-buffer flits, and 58 reservations.
+- Destination 63 n63 gap-1 timed out at both 20,000 and 100,000 drain cycles with identical counts: 63 injected heads, 35 received heads, 264 received flits, 240 router-buffer flits, and 51 reservations.
+- No-fault n63 gap-64 passed for both destinations, which separates dense many-to-one offered timing from pair reachability and LUT/fault-mask availability.
+
+Diagnosis: T0055 rules out a short 20,000-cycle drain timeout as the primary cause for dense gap-1 cases, because 100,000-cycle reruns retained identical counts. It also rules out source-queue backpressure as the primary no-fault failure mode for dense gap-1 fixtures, because the smaller no-fault failing rows have empty source queues and no pending handshakes while router buffers and reservations remain nonzero. The blocker is therefore best classified as a concrete dense destination-convergence DeFT/Noxim flow-control/reservation deadlock-style issue, with faulted-mask source queues and pending handshakes appearing as downstream symptoms under heavier pressure.
+
+Assumption: T0055 uses fixed packet size 8 from the copied configuration and deterministic hardcoded fixtures; seed `0` is sufficient for this diagnosis because packet timing is fixture-defined.
+
+Assumption: T0055 per-pair receipt parsing is restricted to the detailed statistics block; T0054 `received_pairs.csv` remains diagnosis context only because its parser can confuse later routed-flit matrices with detailed receipt rows.
+
+Blocked: T0053 remains blocked until T0051 or an equivalent follow-up fixes or reclassifies the dense destination-convergence blocker and a DeFT drain-mode validation artifact supports comparison.
 
 Blocked: Stronger final-report reachability claims remain blocked until later validated artifacts support them.
 
