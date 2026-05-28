@@ -2050,13 +2050,33 @@ T0052 result on 2026-05-28:
 - The final-report and proposal artifact guard returned no changed files for `final_report/main.pdf`, `final_report.zip`, `Extended_Proposal.pdf`, `Extended_Proposal.zip`, or `Extended_Proposal/`.
 - `git diff --check` completed with exit code `0`; Git reported line-ending conversion warnings for edited Markdown files only.
 
-Expected future validation for T0054:
+T0054 result on 2026-05-28:
 
-- Define the exact DeFT-only timeout-diagnosis matrix, timeout policy, artifact directory, and summary fields before execution.
-- Use T0052 as diagnosis input, not as a 100% reachability artifact.
-- Write generated outputs only to a new ignored `external/noxim/other/generated/t0054_*` directory.
-- Preserve T0026/T0027/T0028, T0042, T0044, T0050, T0052, final-report, package, and Extended Proposal artifacts.
-- Record every non-100% or timeout case with routing mode, fault mask, source, destination, stop reason, injected/received counts, undelivered counts, and suspected route phase.
+- Required startup reading was completed before task work: `AGENTS.md`, `docs/PROGRESS.md`, `docs/TASKS.md`, `docs/ROADMAP.md`, `docs/ARCHITECTURE.md`, `docs/VALIDATION.md`, `docs/DECISIONS.md`, `docs/PROMPTS.md`, `docs/FINAL_REPORT_DRAFT.md`, and `final_report/main.tex`.
+- Source-document roles were preserved: `Extended_Proposal.pdf` is the primary project requirements source, the original DeFT paper is the primary algorithmic reference, `Proposal.pdf` is initial context only, and the peer evaluation document was ignored completely.
+- Parent status before diagnosis was clean on `feat/map-noxim-extension-points...origin/feat/map-noxim-extension-points`. `external/noxim` status before diagnosis was clean on `feat/baseline-noxim...origin/feat/baseline-noxim`.
+- The exact T0054 matrix, timeout policy, artifact directory, and summary fields were defined before simulator execution. Assumption: T0054 may generate ignored artifacts only under `external/noxim/other/generated/t0054_deft_drain_timeout_diagnosis_v1/`. Assumption: the accepted physical fault-mask ladder remains `0x0000`, `0x0001`, `0x0011`, `0x0111`, and `0x1111`. Blocked: T0051, T0053, and final-report claim updates remain blocked.
+- Generated outputs were written only under ignored `external/noxim/other/generated/t0054_deft_drain_timeout_diagnosis_v1/`.
+- The matrix used `DEFT` only, seed `0`, opt-in drain mode, generated schema-v1 LUT `luts/deft_vl_lut_t0054.yaml`, 10 deterministic hardcoded fixtures, 50 simulator cases, source cutoffs of `1`, `63`, `64`, `256`, and `2048` cycles depending on fixture, and drain timeouts of `2000` or `20000` cycles.
+- The artifact set contains the runner, `README.txt`, copied config fixture, generated traffic fixtures, generated LUT, `commands.sh`, 50 JSON stats files, stdout/stderr logs including LUT-generation logs, `return_codes.tsv`, `summary.csv`, `received_pairs.csv`, `fixture_coverage.csv`, `failing_cases.csv`, and `manifest.json`.
+- Artifact sanity checks found 50 summary rows, 50 stats files, 51 stdout logs, 51 stderr logs, and a manifest with `claims_allowed: false`, `case_count: 50`, `passing_case_count: 30`, and `failure_row_count: 1987`.
+- All 50 simulator invocations returned code `0`. All 20 pair-isolated cases and all 10 source-isolated cases stopped with `drain_completed`, measured injected packets equaled measured received packets, and no in-flight state remained at stop.
+- All 10 destination-stress cases and all 10 bounded-prefix cases stopped with `drain_timeout`. Destination-stress cases admitted all 64 packet heads but retained nonzero router-buffer flits and router reservations after 20,000 drain cycles. Bounded first-256 fixtures retained nonzero source queues, router-buffer flits, router reservations, and pending handshakes. The gap-8 prefix did not remove the timeout.
+- Diagnosis: T0052's all-pairs fixture groups traffic by destination rounds, so it creates repeated many-to-one destination stress. The T0052 source-queue backlog is best treated as a downstream symptom of destination-convergence in-network drain blocking under this fixture policy, not as an isolated pair route failure, LUT/fault-mask mismatch, or drain-accounting mismatch.
+- No source code, simulator behavior, standard `XY`, `DEFT` routing behavior, VN transition restrictions, VL fault injection semantics, LUT schema/use path, topology behavior, traffic-generation behavior, metrics/runner/analysis behavior, generated final-sweep artifacts, final-report claims, final-report PDF/package artifacts, Extended Proposal files, or `./regression.sh --update` was changed.
+- `git diff --check` completed with exit code `0`; Git reported line-ending conversion warnings for edited Markdown files only.
+- Final `external/noxim` status remained clean on `feat/baseline-noxim...origin/feat/baseline-noxim`.
+- The generated-artifact guard returned no changed files for `external/noxim/other/generated/t0026_final_sweep_v1`, `t0026_final_analysis_v1`, `t0027_report_support_v1`, `t0028_final_report_results_v1`, `t0042_iaxy_deft_limited_v1`, `t0044_drain_smokes`, `t0050_deft_reachability_diagnosis_v1`, or `t0052_deft_drain_reachability_v1`.
+- The final-report and proposal artifact guard returned no changed files for `final_report/main.pdf`, `final_report.zip`, `Extended_Proposal.pdf`, `Extended_Proposal.zip`, or `Extended_Proposal/`.
+- Final parent status showed only modified tracking docs: `docs/ARCHITECTURE.md`, `docs/DECISIONS.md`, `docs/PROGRESS.md`, `docs/PROMPTS.md`, `docs/ROADMAP.md`, `docs/TASKS.md`, and `docs/VALIDATION.md`.
+
+Expected future validation for T0055:
+
+- Define the exact DeFT-only destination-stress diagnosis matrix, timeout policy, artifact directory, and summary fields before execution.
+- Use T0054 as diagnosis input, not as a 100% reachability artifact.
+- Write generated outputs only to a new ignored `external/noxim/other/generated/t0055_*` directory.
+- Preserve T0026/T0027/T0028, T0042, T0044, T0050, T0052, T0054, final-report, package, and Extended Proposal artifacts.
+- Record every non-100% or timeout case with routing mode, fault mask, source, destination, stop reason, injected/received counts, undelivered counts, remaining in-flight state, and suspected route or flow-control phase.
 - Do not claim 100% reachability or run IA-XY comparison unless DeFT reachability behavior is validated first.
 
 ## Metrics Validation

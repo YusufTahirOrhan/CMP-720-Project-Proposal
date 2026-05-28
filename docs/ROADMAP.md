@@ -284,6 +284,7 @@ This roadmap is based on `Extended_Proposal.pdf`, `Proposal.pdf`, and the origin
 - Targeted fixes only if the diagnosis isolates a concrete DeFT or simulator issue.
 - A new versioned DeFT reachability validation artifact set using source-cutoff plus drain/timeout semantics.
 - Follow-up timeout diagnosis when a validation matrix times out before supporting a reachability claim.
+- Follow-up destination-stress flow-control diagnosis when timeout artifacts show many-to-one in-network drain blocking.
 - A claim-safe comparison against a proper interposer-aware baseline, not standard cardinal-only `XY`.
 - Final report updates only after new validated artifacts support the revised claims.
 
@@ -308,4 +309,4 @@ This roadmap is based on `Extended_Proposal.pdf`, `Proposal.pdf`, and the origin
 - Assumption: The current fixed-window results are insufficient for an eventual-delivery reachability claim.
 - Assumption: Drain mode is the correct first validation surface for DeFT reachability closure.
 - Blocked: 100% DeFT reachability claims remain blocked until new drain-based validation artifacts support them.
-- Blocked: Final report strengthening remains blocked until T0050/T0052/T0053 or equivalent validated artifacts exist.
+- Blocked: Final report strengthening remains blocked until T0050/T0052/T0054/T0055/T0053 or equivalent validated artifacts support it.
