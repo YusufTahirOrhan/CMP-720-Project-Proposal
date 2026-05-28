@@ -283,6 +283,7 @@ This roadmap is based on `Extended_Proposal.pdf`, `Proposal.pdf`, and the origin
 - Drain-based DeFT reachability diagnosis.
 - Targeted fixes only if the diagnosis isolates a concrete DeFT or simulator issue.
 - A new versioned DeFT reachability validation artifact set using source-cutoff plus drain/timeout semantics.
+- Follow-up timeout diagnosis when a validation matrix times out before supporting a reachability claim.
 - A claim-safe comparison against a proper interposer-aware baseline, not standard cardinal-only `XY`.
 - Final report updates only after new validated artifacts support the revised claims.
 
@@ -290,6 +291,7 @@ This roadmap is based on `Extended_Proposal.pdf`, `Proposal.pdf`, and the origin
 
 - 100% reachability, if claimed, is defined as eventual delivery after source cutoff and drain completion for the validated matrix, not as a fixed-window continuous-injection result.
 - Any non-100% cases are recorded with source, destination, fault mask, stop reason, and suspected route phase.
+- Drain-timeout validation blockers are diagnosed before source fixes or baseline comparisons.
 - Standard `XY` remains a limited control baseline; comparison claims use `INTERPOSER_AWARE_XY` or another explicitly validated 2.5D-aware algorithm.
 - Historical T0026/T0027/T0028 and T0042 artifacts remain unchanged and are not reinterpreted.
 

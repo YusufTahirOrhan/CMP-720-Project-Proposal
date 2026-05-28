@@ -1873,8 +1873,9 @@ Ordered future backlog:
 | T0049 | Planning | Completed reachability-closure plan that reopens project completion around drain-based DeFT validation. |
 | T0050 | Diagnosis | Diagnose DeFT drain-based reachability gaps before any source fix or report claim. |
 | T0051 | Implementation | Blocked targeted DeFT reachability fixes until T0050 isolates a concrete root cause. |
-| T0052 | Experiment | Run a new drain-based DeFT reachability validation matrix after diagnosis and any required fixes. |
-| T0053 | Experiment | Run a drain-based `INTERPOSER_AWARE_XY`-vs-`DEFT` comparison after DeFT reachability behavior is validated. |
+| T0052 | Experiment | Completed a new drain-based DeFT all-pairs aggregate validation artifact set; it timed out and did not validate reachability. |
+| T0053 | Experiment | Blocked drain-based `INTERPOSER_AWARE_XY`-vs-`DEFT` comparison until DeFT reachability behavior is validated. |
+| T0054 | Diagnosis | Diagnose the T0052 drain timeouts with smaller DeFT-only deterministic fixtures before any source fix. |
 
 Assumption: Future backlog work starts with design or feasibility tasks before implementation, except when a prior design task has already accepted the required semantics and validation plan.
 
@@ -1965,9 +1966,46 @@ Assumption: The sampled T0050 cases are useful for isolating deterministic route
 
 Assumption: For the sampled cases, the gap between expected DeFT reachability and the historical fixed-window results is most consistent with fixed-window continuous-injection measurement/load semantics rather than a concrete deterministic implementation bug.
 
-Blocked: A universal or 25%-fault 100% DeFT reachability claim remains blocked until T0052 or an equivalent drain-based validation matrix supports that exact claim.
+Blocked: A universal or 25%-fault 100% DeFT reachability claim remains blocked until T0054 or an equivalent drain-based validation matrix supports that exact claim.
 
-Blocked: T0051 remains blocked because T0050 did not isolate a concrete source fix. If T0052 exposes a specific failing source/destination/fault-mask case, T0051 should be reopened with that root cause.
+Blocked: T0051 remains blocked because T0050 and T0052 did not isolate a concrete source fix. If T0054 exposes a specific failing source/destination/fault-mask case with a root cause, T0051 should be reopened with that root cause.
+
+## T0052 DeFT Drain-Based Reachability Validation Matrix
+
+T0052 produced the first broader DeFT-only drain-mode validation artifact set after the T0050 small diagnostic matrix. It did not edit simulator source or reinterpret historical fixed-window artifacts.
+
+The exact matrix was defined before execution:
+
+- Routing mode: `DEFT` only.
+- Seed: `0`.
+- Drain mode: opt-in `-drain_mode`, `-warmup 0`, source cutoff `4032`, drain timeout `20000`.
+- Fault masks: the accepted physical ladder `0x0000`, `0x0001`, `0x0011`, `0x0111`, and `0x1111`.
+- Source/destination coverage: all 4032 ordered valid source/destination pairs with `src != dst` over chiplet routers `0..63`.
+- Traffic fixture: one deterministic hardcoded all-pairs schedule, rotating sources so each source appears once every 64 cycles.
+- LUT: one generated schema-v1 `deft_vl_lut.v1` table containing the five masks.
+- Artifact directory: `external/noxim/other/generated/t0052_deft_drain_reachability_v1/`.
+
+The artifact directory contains the matrix, copied config fixture, pair coverage CSV, hardcoded traffic fixture, generated LUT, commands, stdout/stderr logs, JSON stats, return-code table, summary CSV, failing-case CSV, manifest, and the generated runner used for traceability.
+
+All five simulator invocations returned code `0`, but all five stopped with `drain_timeout` rather than `drain_completed`. The measured injected-packet denominators were far below the 4032 planned pairs because backpressure left most planned packets queued at sources by timeout:
+
+| Fault mask | Measured injected | Measured received | Stop reason |
+| --- | ---: | ---: | --- |
+| `0x0000` | 258 | 89 | `drain_timeout` |
+| `0x0001` | 247 | 85 | `drain_timeout` |
+| `0x0011` | 250 | 86 | `drain_timeout` |
+| `0x0111` | 243 | 83 | `drain_timeout` |
+| `0x1111` | 312 | 153 | `drain_timeout` |
+
+Assumption: T0052's all-pairs aggregate fixture is useful as a stress-style drain validation and timeout diagnosis input, but it is not a pair-isolated reachability proof because most planned packets were never admitted as measured injected packets before the timeout.
+
+Assumption: The immediate follow-up should diagnose the timeout with smaller pair-isolated or lower-load deterministic fixtures before any source change.
+
+Blocked: T0052 does not support a 100% DeFT reachability claim.
+
+Blocked: T0051 remains blocked because T0052 did not isolate a concrete source root cause.
+
+Blocked: T0053 remains blocked because DeFT drain-based reachability behavior is not yet validated.
 
 ### Baseline Comparison Boundary
 
