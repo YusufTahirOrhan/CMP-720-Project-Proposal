@@ -310,5 +310,5 @@ This roadmap is based on `Extended_Proposal.pdf`, `Proposal.pdf`, and the origin
 
 - Assumption: The current fixed-window results are insufficient for an eventual-delivery reachability claim.
 - Assumption: Drain mode is the correct first validation surface for DeFT reachability closure.
-- Blocked: 100% DeFT reachability claims remain blocked until new drain-based validation artifacts support them.
-- Blocked: Final report strengthening remains blocked until T0056/T0053 or equivalent post-fix validated artifacts support it.
+- Assumption: T0056 supports DeFT drain reachability only for its documented 95-case matrix and is not universal reachability evidence.
+- Blocked: Final report strengthening remains blocked until T0053 or an equivalent comparison/report task uses new validated artifacts safely.

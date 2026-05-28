@@ -653,7 +653,7 @@ Statuses: `TODO`, `IN_PROGRESS`, `DONE`, `BLOCKED`.
 
 ## T0053: Run Drain-Based IA-XY vs DeFT Comparison
 
-- **Status:** BLOCKED
+- **Status:** TODO
 - **Type:** experiment/validation
 - **Objective:** Compare DeFT against a proper interposer-aware baseline using drain-mode artifacts after DeFT reachability behavior has been validated.
 - **Why it exists:** Standard `XY` is not a fair unrestricted inter-chiplet baseline on `DEFT_2_5D`; comparison should use the separately implemented interposer-aware baseline or another explicitly validated 2.5D-aware algorithm.
@@ -665,7 +665,7 @@ Statuses: `TODO`, `IN_PROGRESS`, `DONE`, `BLOCKED`.
 - **Simulation reruns allowed:** Yes, only the accepted comparison matrix.
 - **Acceptance criteria:** Comparison artifacts are complete, blank-aware, denominator-safe, and clearly separate standard `XY` from the proper interposer-aware baseline; any report-ready interpretation is claim-safe.
 - **Validation method or limitation:** Manifest/stat cross-checks, protected-artifact guards, `git diff --check`, and `external/noxim` status.
-- **Dependencies:** Blocked after T0051 because the targeted destination-stress fix passed its own matrix, but DeFT drain-based reachability still needs a broader post-fix validation artifact before comparison.
+- **Dependencies:** Unblocked by T0056, which provides matrix-scoped post-fix DeFT drain-mode reachability evidence. T0053 must still create its own versioned comparison artifacts and keep claims denominator-safe.
 - **Risk level:** Medium, because comparison claims can easily overstate limited artifacts.
 - **Recommended prompt:** `Start task T0053: Run Drain-Based IA-XY vs DeFT Comparison. Compare DEFT against INTERPOSER_AWARE_XY only after DeFT drain-based reachability validation is complete, use a new artifact directory, keep blank-aware denominator rules, update tracking docs, and run git diff --check.`
 
@@ -709,21 +709,22 @@ Statuses: `TODO`, `IN_PROGRESS`, `DONE`, `BLOCKED`.
 
 ## T0056: Run Post-Fix DeFT Drain Reachability Validation Matrix
 
-- **Status:** TODO
+- **Status:** DONE
 - **Type:** experiment/validation
 - **Objective:** Validate DeFT drain-mode reachability behavior after the T0051 destination-stress flow-control fix with a broader versioned artifact set before any IA-XY comparison or report-claim update.
 - **Why it exists:** T0051 shows the diagnosed destination-stress blocker is fixed in a targeted matrix, but it is not a universal reachability sweep and should not be used alone to reopen comparison or final-report claims.
 - **Relevant roadmap phase:** Phase 10 reachability closure and final report refresh.
 - **Scope:** Define an exact DeFT-only post-fix drain validation matrix, timeout policy, artifact directory, expected summary fields, and claim limits before execution; use T0051 as fix evidence and T0052/T0054/T0055 as diagnosis context; write outputs under a new ignored `external/noxim/other/generated/t0056_*` directory.
 - **Out of scope:** IA-XY comparison, standard `XY` changes, additional source fixes unless a new concrete blocker is found and a separate task is opened, PARSEC/GEM5 traces, directional endpoint faults, final-report PDF/package regeneration, final-report claim strengthening, and `./regression.sh --update`.
-- **Files likely to change:** Generated ignored artifacts under a new T0056 directory and tracking docs; source files only if validation exposes a new separately scoped blocker.
+- **Files changed:** Generated ignored artifacts under `external/noxim/other/generated/t0056_deft_post_fix_reachability_v1/` and tracking docs.
 - **Source code changes allowed:** No by default.
 - **Simulation reruns allowed:** Yes, only the accepted T0056 DeFT drain-mode matrix.
-- **Acceptance criteria:** The artifact set records commands, configs, LUTs, fixtures, stdout/stderr logs, JSON stats, manifest, summary, and every non-100% or timeout case with routing mode, fault mask, source, destination, stop reason, injected/received counts, undelivered counts, remaining in-flight state, and suspected route or flow-control phase. Any claim is limited to the validated matrix.
+- **Acceptance criteria:** Completed. The artifact set records commands, copied config, generated schema-v1 LUT, hardcoded traffic fixtures, stdout/stderr logs, JSON stats, manifest, summary, received-pair table, and an empty failing-case table. All claims are limited to the validated matrix.
 - **Validation method or limitation:** `git diff --check`, manifest/stat cross-checks, protected-artifact guards, and `external/noxim` status. Use the documented Noxim build command only if source changes are explicitly made.
 - **Dependencies:** T0051.
 - **Risk level:** Medium-high, because the selected matrix and timeout policy determine whether post-fix reachability evidence is claim-safe.
-- **Recommended prompt:** `Start task T0056: Run Post-Fix DeFT Drain Reachability Validation Matrix. Use T0051 artifacts as targeted fix evidence, use T0052/T0054/T0055 as diagnosis context, define the exact DeFT-only drain-mode matrix, timeout policy, artifact directory, and expected summary fields before running, write outputs to a new ignored T0056 directory, do not run IA-XY comparison, preserve historical artifacts and final-report files, update tracking docs, and run git diff --check.`
+- **Recommended prompt:** Completed by this validation.
+- **Notes:** T0056 used `DEFT` only, seed `0`, opt-in drain mode, `-warmup 0`, the full accepted physical fault-mask ladder (`0x0000`, `0x0001`, `0x0011`, `0x0111`, `0x1111`), 19 deterministic hardcoded fixtures, and 95 simulator cases. Fixture groups covered eight route-family pair-isolated probes, four source-isolated all-destination sweeps, four strict destination-convergence sweeps, two T0052 first-256 prefix probes, and one T0052-style 4032-pair all-valid-pairs aggregate rerun with a 100,000-cycle drain timeout. All 95 simulator invocations returned `0`, stopped with `drain_completed`, and passed with exact injected/received packet and flit counts and zero remaining in-flight state. T0056 supports only matrix-scoped DeFT drain reachability statements and unblocks T0053 for a new claim-safe comparison artifact task; it does not update final-report claims by itself.
 
 ## T0023: Add or Register Noxim Source Tree
 

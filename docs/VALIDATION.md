@@ -2124,6 +2124,27 @@ Expected future validation for T0056:
 - Preserve T0026/T0027/T0028, T0042, T0044, T0050, T0051, T0052, T0054, T0055, final-report, package, and Extended Proposal artifacts.
 - Do not run IA-XY comparison or claim universal reachability unless the exact T0056 matrix supports that claim.
 
+T0056 result on 2026-05-28:
+
+- Required startup reading was completed before task work: `AGENTS.md`, `docs/PROGRESS.md`, `docs/TASKS.md`, `docs/ROADMAP.md`, `docs/ARCHITECTURE.md`, `docs/VALIDATION.md`, `docs/DECISIONS.md`, `docs/PROMPTS.md`, `docs/FINAL_REPORT_DRAFT.md`, and `final_report/main.tex`.
+- Source-document roles were preserved: `Extended_Proposal.pdf` is the primary project requirements source, the original DeFT paper is the primary algorithmic reference, `Proposal.pdf` is initial context only, and the peer evaluation document was ignored completely.
+- Parent status before validation was clean on the existing branch. `external/noxim` status before validation was clean on the existing branch.
+- Before simulator execution, the T0051 artifact set was inspected as targeted fix evidence. T0052, T0054, and T0055 were inspected only as diagnosis context.
+- The exact T0056 matrix, timeout policy, artifact directory, expected summary fields, and claim limits were defined before simulator execution. Assumption: T0056 may generate ignored artifacts only under `external/noxim/other/generated/t0056_deft_post_fix_reachability_v1/`. Assumption: seed `0` is sufficient because traffic fixtures are deterministic hardcoded schedules. Blocked: final-report claim strengthening remains blocked until a later report task uses new validated artifacts.
+- No simulator source was edited, so Noxim was not rebuilt.
+- `git diff --check` completed with exit code `0` before validation.
+- Generated outputs were written only under ignored `external/noxim/other/generated/t0056_deft_post_fix_reachability_v1/`.
+- The matrix used `DEFT` only, seed `0`, opt-in drain mode, `-warmup 0`, generated schema-v1 LUT `luts/deft_vl_lut_t0056.yaml`, the full accepted physical fault-mask ladder (`0x0000`, `0x0001`, `0x0011`, `0x0111`, `0x1111`), 19 deterministic hardcoded fixtures, and 95 simulator cases.
+- Fixture groups were eight route-family pair-isolated probes at cutoff `1` and timeout `2000`, four source-isolated all-destination sweeps at cutoff `63` and timeout `20000`, four strict destination-convergence sweeps at cutoff `63` and timeout `20000`, two T0052 first-256 prefix probes at cutoff `256` and `2048` with timeout `20000`, and one T0052-style 4032-pair all-valid-pairs aggregate rerun at cutoff `4032` and timeout `100000`.
+- The artifact set contains the runner, `README.txt`, copied config fixture, generated traffic fixtures, generated LUT, `commands.sh`, 95 JSON stats files, stdout/stderr logs including LUT-generation logs, `return_codes.tsv`, `summary.csv`, `received_pairs.csv`, `fixture_coverage.csv`, `failing_cases.csv`, and `manifest.json`.
+- Artifact sanity checks found manifest fields `case_count: 95`, `summary_row_count: 95`, `passing_case_count: 95`, `failure_row_count: 0`, `lut_generation_return_code: 0`, `claims_allowed: false`, and all-pairs fixture `pair_count: 4032`.
+- All 95 simulator invocations returned code `0`, stopped with `drain_completed`, and passed. `failing_cases.csv` has zero rows.
+- The five all-pairs aggregate cases injected and received all 4032 measured packets and 32256 measured flits. Drain elapsed cycles were 4088, 4858, 5617, 6239, and 5208 for masks `0x0000`, `0x0001`, `0x0011`, `0x0111`, and `0x1111`.
+- No source code, standard `XY`, IA-XY, `DEFT` source behavior, VN transition restrictions, VL fault injection semantics, LUT schema/use path, topology behavior, traffic-generation behavior, metrics/runner/analysis behavior, final-report claims, final-report PDF/package artifacts, Extended Proposal files, historical generated artifacts, or `./regression.sh --update` was changed.
+- The generated-artifact guard returned no changed files for T0026/T0027/T0028, T0042, T0044, T0050, T0051, T0052, T0054, and T0055 generated directories.
+- The final-report and proposal artifact guard returned no changed files for `final_report/main.pdf`, `final_report.zip`, `Extended_Proposal.pdf`, `Extended_Proposal.zip`, or `Extended_Proposal/`.
+- T0056 supports only matrix-scoped DeFT drain reachability statements. It unblocks T0053 for a new claim-safe IA-XY-vs-DEFT comparison artifact task, but it is not universal reachability evidence and does not update final-report claims by itself.
+
 ## Metrics Validation
 
 Purpose:

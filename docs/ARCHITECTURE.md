@@ -1871,13 +1871,13 @@ Ordered future backlog:
 | T0047 | Implementation | Blocked trace ingestion implementation until T0046 prerequisites are supplied and accepted. |
 | T0048 | Report | Regenerate report material only after new validated artifacts exist. |
 | T0049 | Planning | Completed reachability-closure plan that reopens project completion around drain-based DeFT validation. |
-| T0050 | Diagnosis | Diagnose DeFT drain-based reachability gaps before any source fix or report claim. |
+| T0050 | Diagnosis | Completed small deterministic DeFT drain-based reachability diagnosis. |
 | T0051 | Implementation | Completed targeted DeFT destination-convergence flow-control/reservation fix and T0051 validation matrix. |
 | T0052 | Experiment | Completed a new drain-based DeFT all-pairs aggregate validation artifact set; it timed out and did not validate reachability. |
-| T0053 | Experiment | Blocked drain-based `INTERPOSER_AWARE_XY`-vs-`DEFT` comparison until DeFT reachability behavior is validated. |
+| T0053 | Experiment | Next drain-based `INTERPOSER_AWARE_XY`-vs-`DEFT` comparison task, unblocked by T0056 for a new claim-safe artifact set. |
 | T0054 | Diagnosis | Completed destination-stress timeout diagnosis; pair/source-isolated cases passed, while destination-stress and bounded-prefix fixtures timed out. |
 | T0055 | Diagnosis | Completed destination-stress flow-control diagnosis; dense cases expose a repeatable in-network DeFT blocker. |
-| T0056 | Experiment | Next post-fix DeFT drain-mode validation matrix before IA-XY comparison or stronger report claims. |
+| T0056 | Experiment | Completed post-fix DeFT drain-mode validation matrix with 95/95 cases passing under matrix-scoped claim limits. |
 
 Assumption: Future backlog work starts with design or feasibility tasks before implementation, except when a prior design task has already accepted the required semantics and validation plan.
 
@@ -1931,7 +1931,7 @@ Likely diagnostic surfaces:
 
 Assumption: T0050 should prefer tiny hardcoded packet cases before any broader all-pairs matrix. If a broad matrix is needed, it should be a later accepted T0052 artifact set.
 
-Blocked: T0053 and final-report claim strengthening remain blocked until T0056 or equivalent post-fix DeFT drain-mode validation supports them.
+Assumption: T0056 later resolved the DeFT comparison gate for a matrix-scoped T0053 comparison artifact task. Final-report claim strengthening remains blocked until a later report task uses validated artifacts.
 
 ## T0050 DeFT Drain-Based Reachability Diagnosis
 
@@ -2116,9 +2116,28 @@ All 32 T0051 simulator cases returned code `0` and stopped with `drain_completed
 
 Assumption: T0051 is targeted fix validation for the diagnosed destination-stress blocker, not a replacement for a broader DeFT reachability sweep.
 
-Blocked: T0053 remains blocked until a post-fix DeFT drain-mode validation artifact, planned as T0056, supports comparison.
-
 Blocked: Stronger final-report reachability claims remain blocked until a later report task uses validated post-fix artifacts.
+
+## T0056 Post-Fix DeFT Drain Reachability Validation
+
+T0056 created a broader post-fix `DEFT`-only drain-mode validation artifact set after T0051. It used T0051 as targeted fix evidence and T0052/T0054/T0055 only as diagnosis context. It did not run IA-XY, change simulator source, rebuild Noxim, alter final-report claims, or modify historical artifacts.
+
+Validation artifacts were written under `external/noxim/other/generated/t0056_deft_post_fix_reachability_v1/`:
+
+- Routing mode: `DEFT` only.
+- Seed: `0`.
+- Drain mode: opt-in `-drain_mode`, `-warmup 0`.
+- Fault masks: full accepted physical ladder `0x0000`, `0x0001`, `0x0011`, `0x0111`, and `0x1111`.
+- Fixtures: eight route-family pair probes, four source-isolated all-destination sweeps, four strict destination-convergence sweeps, two T0052 first-256 prefix probes, and one T0052-style 4032-pair all-valid-pairs aggregate rerun.
+- Timeout policy: pair probes used `2000` drain cycles, medium source/destination/prefix probes used `20000` drain cycles, and the full all-pairs aggregate used `100000` drain cycles.
+
+All 95 T0056 simulator cases returned code `0`, stopped with `drain_completed`, and passed with exact measured packet/flit delivery and zero remaining in-flight state. The manifest records `case_count: 95`, `passing_case_count: 95`, `failure_row_count: 0`, `lut_generation_return_code: 0`, and `claims_allowed: false`.
+
+Assumption: T0056 supports only matrix-scoped DeFT drain reachability statements. It is not universal reachability proof and is not a final-report claim update by itself.
+
+Assumption: T0056 is sufficient to unblock a new claim-safe drain-mode `INTERPOSER_AWARE_XY` vs `DEFT` comparison artifact task.
+
+Blocked: Stronger final-report reachability claims remain blocked until a later report task uses validated post-fix and comparison artifacts.
 
 ### Baseline Comparison Boundary
 
