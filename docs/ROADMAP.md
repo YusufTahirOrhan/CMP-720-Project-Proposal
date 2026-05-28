@@ -312,4 +312,5 @@ This roadmap is based on `Extended_Proposal.pdf`, `Proposal.pdf`, and the origin
 - Assumption: Drain mode is the correct first validation surface for DeFT reachability closure.
 - Assumption: T0056 supports DeFT drain reachability only for its documented 95-case matrix and is not universal reachability evidence.
 - Assumption: T0053 supports IA-XY-vs-DEFT comparison only for its documented 190-case drain-mode matrix and does not support universal algorithm ranking.
-- Blocked: Final report strengthening remains blocked until T0048 or an equivalent report task uses T0056/T0053 artifacts safely.
+- Assumption: T0048 integrated T0056/T0053 only as artifact-scoped drain-mode report-source summaries and did not regenerate PDF/package artifacts.
+- Blocked: Stronger claims beyond T0048's denominator-safe drain-mode summaries remain blocked until a future task defines and validates additional evidence.

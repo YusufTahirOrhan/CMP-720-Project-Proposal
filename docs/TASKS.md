@@ -559,21 +559,22 @@ Statuses: `TODO`, `IN_PROGRESS`, `DONE`, `BLOCKED`.
 
 ## T0048: Regenerate Report with New Validated Results
 
-- **Status:** TODO
+- **Status:** DONE
 - **Type:** report
 - **Objective:** Review T0056 and T0053 and update the report only where new validated artifacts support denominator-safe wording.
 - **Why it exists:** Stronger claims or additional comparisons require report updates that preserve claim-safety and cite new validated artifact directories.
 - **Relevant roadmap phase:** Phase 10 reachability closure and final report refresh.
-- **Scope:** Review T0056 and T0053 artifacts, update `docs/FINAL_REPORT_DRAFT.md` and `final_report/main.tex` only if claims are supported, regenerate PDF only when explicitly scoped and a TeX toolchain is available, and package only if requested.
+- **Scope:** Completed. Reviewed T0056 and T0053 artifacts, updated `docs/FINAL_REPORT_DRAFT.md` and `final_report/main.tex` with artifact-scoped drain-mode summaries, and kept PDF/package regeneration out of scope.
 - **Out of scope:** Simulator/source changes, new experiments, overwriting old artifacts, unsupported performance claims, hidden metric reinterpretation, and `./regression.sh --update`.
-- **Files likely to change:** `docs/FINAL_REPORT_DRAFT.md`, `final_report/main.tex`, possibly `final_report/main.pdf`, `final_report.zip` if explicitly requested, `docs/TASKS.md`, `docs/PROGRESS.md`, `docs/VALIDATION.md`, and `docs/PROMPTS.md`.
+- **Files changed:** `docs/FINAL_REPORT_DRAFT.md`, `final_report/main.tex`, `docs/DECISIONS.md`, `docs/PROGRESS.md`, `docs/PROMPTS.md`, `docs/ROADMAP.md`, `docs/TASKS.md`, and `docs/VALIDATION.md`.
 - **Source code changes allowed:** No.
 - **Simulation reruns allowed:** No.
-- **Acceptance criteria:** Report updates cite only validated artifacts; blank-aware rules remain intact; any new claims are explicitly supported by denominators and validation records; PDF/package status is recorded; old final-report artifacts are not changed unless explicitly in scope.
-- **Validation method or limitation:** Documentation/report validation, LaTeX build only if available and in scope, `git diff --check`, and artifact provenance checks.
+- **Acceptance criteria:** Completed. Report updates cite only validated T0056/T0053 artifacts; blank-aware fixed-window rules remain intact; new drain-mode statements are denominator-safe and artifact-scoped; PDF/package status is recorded as out of scope; old final-report artifacts are unchanged.
+- **Validation method or limitation:** Documentation/report validation, `git diff --check`, `external/noxim` status, and protected-artifact checks. LaTeX/PDF build was not run because PDF regeneration was explicitly out of scope.
 - **Dependencies:** T0056 and T0053 are complete and provide the current new drain-mode artifact sets. T0048 must still preserve their claim limits.
 - **Risk level:** Medium, because it can alter final report wording and claims.
-- **Recommended prompt:** `Start task T0048: Regenerate Report with New Validated Results. Use T0056 and T0053 only where denominators support artifact-scoped wording, preserve claim-safety rules, update report source and PDF only if in scope, avoid unsupported claims, update tracking docs, and run git diff --check.`
+- **Recommended prompt:** Completed by this report-integration task.
+- **Notes:** T0048 integrated T0056 as a 95/95 `DEFT` drain-completed matrix-scoped result and T0053 as a denominator-safe `DEFT` versus `INTERPOSER_AWARE_XY` drain comparison with 68 matched complete-delivery rows and 27 timeout/non-100% descriptive-only rows. It preserved T0026/T0027/T0028 fixed-window tables as historical final-report support, preserved standard `XY` as cardinal-only, did not relabel IA-XY as standard `XY`, and made no source, simulation, PDF, package, Extended Proposal, or generated-artifact changes.
 
 ## T0049: Define Reachability Closure Plan
 
@@ -726,6 +727,43 @@ Statuses: `TODO`, `IN_PROGRESS`, `DONE`, `BLOCKED`.
 - **Risk level:** Medium-high, because the selected matrix and timeout policy determine whether post-fix reachability evidence is claim-safe.
 - **Recommended prompt:** Completed by this validation.
 - **Notes:** T0056 used `DEFT` only, seed `0`, opt-in drain mode, `-warmup 0`, the full accepted physical fault-mask ladder (`0x0000`, `0x0001`, `0x0011`, `0x0111`, `0x1111`), 19 deterministic hardcoded fixtures, and 95 simulator cases. Fixture groups covered eight route-family pair-isolated probes, four source-isolated all-destination sweeps, four strict destination-convergence sweeps, two T0052 first-256 prefix probes, and one T0052-style 4032-pair all-valid-pairs aggregate rerun with a 100,000-cycle drain timeout. All 95 simulator invocations returned `0`, stopped with `drain_completed`, and passed with exact injected/received packet and flit counts and zero remaining in-flight state. T0056 supports only matrix-scoped DeFT drain reachability statements and unblocks T0053 for a new claim-safe comparison artifact task; it does not update final-report claims by itself.
+
+## T0057: Refresh Updated Final Report PDF and Submission Package
+
+- **Status:** DONE
+- **Type:** report/packaging
+- **Objective:** Regenerate the final PDF and zip package from the T0048-updated report source when explicitly requested.
+- **Why it exists:** T0048 updated `docs/FINAL_REPORT_DRAFT.md` and `final_report/main.tex` only; the existing `final_report/main.pdf` and `final_report.zip` still reflect the earlier source.
+- **Relevant roadmap phase:** Phase 10 reachability closure and final report refresh.
+- **Scope:** Build `final_report/main.tex` in the validated TeX-enabled environment, refresh `final_report/main.pdf`, refresh `final_report.zip` if requested, and verify that the package includes only intended final report files.
+- **Out of scope:** Simulator/source changes, Noxim rebuilds, simulation reruns, generated experiment artifact changes, Extended Proposal changes, unsupported claim edits, and dependency installation unless the TeX toolchain is already available or explicitly approved by the user.
+- **Files changed:** `final_report/main.pdf`, `final_report.zip`, refreshed LaTeX build byproducts under `final_report/` (`main.aux`, `main.bbl`, `main.blg`, `main.log`, and `main.out`), and tracking docs. The T0048-updated `final_report/main.tex` source was consumed but not edited during T0057.
+- **Source code changes allowed:** No.
+- **Simulation reruns allowed:** No.
+- **Acceptance criteria:** Completed. The updated PDF reflects the T0048 LaTeX source, the zip package was refreshed with the intended final report files, report/package provenance was recorded, and no generated experiment or Extended Proposal artifact was changed.
+- **Validation method or limitation:** `latexmk -pdf main.tex` was attempted from `final_report/` but was blocked because MiKTeX could not find the required Perl script engine. The documented fallback sequence `pdflatex main.tex`, `bibtex main`, `pdflatex main.tex`, `pdflatex main.tex` completed successfully. `git diff --check` completed with exit code `0`; zip contents were inspected; `external/noxim` remained clean; protected generated-artifact and Extended Proposal checks returned no changes.
+- **Dependencies:** T0048.
+- **Risk level:** Low-medium, because packaging can accidentally include stale or unrelated files.
+- **Recommended prompt:** Completed by this packaging task.
+- **Notes:** Completed on 2026-05-29. Parent status before work already contained the T0048 report-source/tracking-doc changes; `external/noxim` status was clean. The previous `final_report/main.pdf` was 5 pages and 344758 bytes from 2026-05-11, and the previous `final_report.zip` still contained the older 27449-byte `main.tex`. T0057 regenerated `final_report/main.pdf` as a 6-page, 373494-byte PDF from the T0048-updated source. `final_report.zip` was refreshed to contain exactly `final_report/main.pdf`, `final_report/main.tex`, `final_report/references.bib`, `final_report/IEEEtran.cls`, `final_report/README.md`, and `final_report/figures/schematic.png`. The refreshed PDF SHA-256 is `D3B0DDF2D74ABA648FEF9B4D763781968AD7825D9E06F5F4D0CDC6444F0AC0C9`, and the refreshed zip SHA-256 is `A3026F5C997D1AC65F5AED5638F1FFF18986D9B4879F3EEEEB99BB88B34F6DE4`. Assumption: T0038's six-file archive scope remains the intended submission package shape. Blocked: `latexmk` remains blocked until Perl is available to MiKTeX, but the documented fallback toolchain completed the PDF build. Blocked: stronger claims, ranking, improvement percentages, PARSEC/GEM5 claims, directional endpoint fault claims, and universal reachability remain outside T0057.
+
+## T0058: Final Refreshed Submission Handoff Check
+
+- **Status:** TODO
+- **Type:** report/packaging
+- **Objective:** Perform a final read-only handoff check after T0057 to confirm the refreshed PDF and zip are ready for submission.
+- **Why it exists:** T0057 refreshed the generated deliverables. A final handoff check can summarize exact artifact paths, sizes, hashes, and remaining limitations without editing report claims or rerunning experiments.
+- **Relevant roadmap phase:** Phase 10 reachability closure and final report refresh.
+- **Scope:** Inspect `final_report/main.pdf`, `final_report.zip`, package contents, current Git status, and `external/noxim` status; summarize handoff artifacts and remaining blockers.
+- **Out of scope:** Report wording changes, source changes, Noxim rebuilds, simulations, regenerated experiment artifacts, Extended Proposal changes, dependency installation, and unsupported claim edits.
+- **Files likely to change:** Tracking docs only, if the handoff check is recorded.
+- **Source code changes allowed:** No.
+- **Simulation reruns allowed:** No.
+- **Acceptance criteria:** The refreshed submission artifacts are identified with paths, sizes, hashes, package contents, validation state, and remaining blockers.
+- **Validation method or limitation:** Read-only status, PDF metadata, zip-content inspection, `git diff --check`, protected-artifact checks, and `external/noxim` status.
+- **Dependencies:** T0057.
+- **Risk level:** Low, because the task is read-only unless tracking docs are updated.
+- **Recommended prompt:** `Start task T0058: Final Refreshed Submission Handoff Check. Before starting, read the required project docs and final report source. Continue on the existing branch. Do not create or switch branches. Inspect the refreshed final_report/main.pdf and final_report.zip, verify package contents, run git diff --check, check external/noxim status, confirm protected generated artifacts and Extended Proposal files are unchanged, and update tracking docs with the final handoff result. Do not edit report claims, rebuild Noxim, rerun simulations, regenerate experiment artifacts, install dependencies, or use ./regression.sh --update.`
 
 ## T0023: Add or Register Noxim Source Tree
 

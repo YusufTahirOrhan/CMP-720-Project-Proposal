@@ -1869,7 +1869,7 @@ Ordered future backlog:
 | T0045 | Feasibility | Completed directional endpoint fault modeling evaluation; support is deferred behind a future versioned fault-model design. |
 | T0046 | Feasibility | Completed PARSEC/GEM5 trace support feasibility; ingestion is deferred until a versioned schema, tiny fixture, mapping policy, and dependency provenance exist. |
 | T0047 | Implementation | Blocked trace ingestion implementation until T0046 prerequisites are supplied and accepted. |
-| T0048 | Report | Next claim-safe report integration task using T0056/T0053 only where denominators support revised wording. |
+| T0048 | Report | Completed source-only claim-safe report integration using T0056/T0053 only where denominators support artifact-scoped wording. |
 | T0049 | Planning | Completed reachability-closure plan that reopens project completion around drain-based DeFT validation. |
 | T0050 | Diagnosis | Completed small deterministic DeFT drain-based reachability diagnosis. |
 | T0051 | Implementation | Completed targeted DeFT destination-convergence flow-control/reservation fix and T0051 validation matrix. |
@@ -1881,7 +1881,7 @@ Ordered future backlog:
 
 Assumption: Future backlog work starts with design or feasibility tasks before implementation, except when a prior design task has already accepted the required semantics and validation plan.
 
-Blocked: Stronger unrestricted routing comparison claims remain blocked until a report task reviews T0056/T0053 and keeps the wording denominator-safe and artifact-scoped.
+Blocked: Stronger unrestricted routing comparison claims remain blocked beyond T0048's artifact-scoped drain-mode summaries.
 
 Blocked: Broad eventual-delivery claims remain blocked because T0056 and T0053 validate only their documented matrices.
 
@@ -1931,7 +1931,7 @@ Likely diagnostic surfaces:
 
 Assumption: T0050 should prefer tiny hardcoded packet cases before any broader all-pairs matrix. If a broad matrix is needed, it should be a later accepted T0052 artifact set.
 
-Assumption: T0056 later resolved the DeFT comparison gate for a matrix-scoped T0053 comparison artifact task. Final-report claim strengthening remains blocked until a later report task uses validated artifacts.
+Assumption: T0056 later resolved the DeFT comparison gate for a matrix-scoped T0053 comparison artifact task. T0048 later integrated T0056/T0053 into report source as artifact-scoped drain-mode summaries only.
 
 ## T0050 DeFT Drain-Based Reachability Diagnosis
 
@@ -2169,7 +2169,7 @@ IA-XY passed every route-family pair row and every source-isolated row. It timed
 
 Assumption: T0053 validates only its documented 190-case drain comparison matrix and does not prove universal IA-XY or DeFT behavior.
 
-Blocked: T0053 does not support ranking, improvement percentages, or statistical conclusions. Final-report claim strengthening remains blocked until a later report task reviews T0056 and T0053 with artifact-scoped, denominator-safe wording.
+Blocked: T0053 does not support ranking, improvement percentages, or statistical conclusions. T0048 integrated only artifact-scoped, denominator-safe wording; stronger claims remain blocked.
 
 ## Noxim Extension Point Map
 

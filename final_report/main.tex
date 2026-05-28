@@ -32,7 +32,7 @@ E-mail: \IEEEauthorrefmark{1}yusuftahirorhan@hacettepe.edu.tr}
 \maketitle
 
 \begin{abstract}
-This project implements and evaluates a Noxim-based \texttt{DEFT\_2\_5D} simulator extension for studying DeFT-style routing in a 2.5D chiplet network. The implementation models four chiplets on an active interposer, a deterministic physical Vertical Link (VL) inventory, startup permanent VL faults, DeFT virtual-network assignment rules, movement-transition filtering, schema-v1 offline VL lookup tables, explicit \texttt{XY} baseline modes, synthetic traffic profiles, machine-readable metrics export, and traceable experiment and analysis helpers. The final sweep completed 150 simulator runs across routing modes, traffic profiles, fault masks, and seeds. The generated results are valid for descriptive report support only. The measured data set contains empty and partial injection cells, including 54 completed runs with zero packets injected after the warm-up boundary. Therefore, this report presents finite-window measurements with coverage counts and limitations, while using the T0033 diagnosis only to explain the \texttt{XY} blank-cell provenance and avoiding unsupported performance conclusions.
+This project implements and evaluates a Noxim-based \texttt{DEFT\_2\_5D} simulator extension for studying DeFT-style routing in a 2.5D chiplet network. The implementation models four chiplets on an active interposer, a deterministic physical Vertical Link (VL) inventory, startup permanent VL faults, DeFT virtual-network assignment rules, movement-transition filtering, schema-v1 offline VL lookup tables, explicit \texttt{XY} baseline modes, synthetic traffic profiles, machine-readable metrics export, and traceable experiment and analysis helpers. The final fixed-window sweep completed 150 simulator runs across routing modes, traffic profiles, fault masks, and seeds. The generated fixed-window results are valid for descriptive report support only. The measured data set contains empty and partial injection cells, including 54 completed runs with zero packets injected after the warm-up boundary. Therefore, this report presents finite-window measurements with coverage counts and limitations, while using the T0033 diagnosis only to explain the \texttt{XY} blank-cell provenance and avoiding unsupported performance conclusions. A later opt-in drain-mode validation set completed all 95 documented \texttt{DEFT} cases, and a separate \texttt{INTERPOSER\_AWARE\_XY} versus \texttt{DEFT} drain comparison completed 68 matched rows in both modes while leaving 27 IA-XY timeout or non-100\% rows as descriptive-only evidence.
 \end{abstract}
 
 \begin{IEEEkeywords}
@@ -111,7 +111,11 @@ The final sweep policy was defined before running the final matrix and was execu
 
 T0033 diagnosed the current standard \texttt{XY} implementation as a limited control baseline on \texttt{DEFT\_2\_5D}, not as an interposer-aware unrestricted inter-chiplet baseline. The existing \texttt{XY} route path selects only cardinal directions from the global footprint. It does not select VL, hub, interposer, or chiplet-layer phases. On \texttt{DEFT\_2\_5D}, unrestricted inter-chiplet routes require VL/hub/interposer traversal, so standard \texttt{XY} can select chiplet-layer movement that has no physical cross-chiplet cardinal link.
 
+The later drain-mode comparison therefore uses \texttt{INTERPOSER\_AWARE\_XY}, a separate baseline that can traverse the modeled interposer path. This baseline is not standard \texttt{XY}, and this report keeps those labels separate.
+
 T0033 also showed that a post-injection drain/source-cutoff policy would be needed for eventual-delivery analysis. That policy would not by itself fix standard \texttt{XY} topology incompatibility on unrestricted inter-chiplet traffic, because standard \texttt{XY} still has no VL/hub/interposer route phase.
+
+T0056 and T0053 later used the opt-in source-cutoff plus drain mode for deterministic fixture matrices. T0056 used \texttt{DEFT} only. T0053 used \texttt{DEFT} and \texttt{INTERPOSER\_AWARE\_XY} only, with the same 19 fixture definitions as T0056. These artifacts are not fixed-window final sweeps and are not substitutes for the T0026/T0027/T0028 tables.
 
 \begin{table}[t]
 \centering
@@ -137,7 +141,7 @@ Stats format & JSON \\
 
 \textbf{Assumption:} T0033 warm-up-0 diagnostics are traceability evidence that the traffic sources were not empty. They are not a replacement final performance data set.
 
-\textbf{Blocked:} The current runner policy does not evaluate eventual delivery after a post-injection drain phase.
+\textbf{Blocked:} The historical T0026/T0027/T0028 fixed-window runner policy does not evaluate eventual delivery after a post-injection drain phase.
 
 \textbf{Blocked:} The current physical bidirectional fault model does not represent the original paper's single-direction 3.125\% fault case.
 
@@ -156,9 +160,11 @@ T0026 validation established that the executed manifest had \texttt{mode: execut
 
 T0033 is additional diagnosis provenance only. It explains the source of the \texttt{XY} blank cells by inspecting the runner warm-up policy, injected-packet accounting, standard \texttt{XY} routing, and \texttt{DEFT\_2\_5D} topology wiring. It does not add new final performance rows, does not replace T0026/T0027/T0028, and does not change simulator behavior.
 
+Additional post-fix drain-mode provenance is traceable through T0056 at \path{external/noxim/other/generated/t0056_deft_post_fix_reachability_v1/} and T0053 at \path{external/noxim/other/generated/t0053_drain_iaxy_deft_comparison_v1/}. T0056 validation established a 95-row \texttt{DEFT} drain-mode matrix over 19 deterministic fixtures and the accepted physical fault-mask ladder. All rows returned code 0, stopped with \texttt{drain\_completed}, and passed with exact measured packet/flit delivery. T0053 validation established a 190-row drain-mode comparison matrix over \texttt{DEFT} and \texttt{INTERPOSER\_AWARE\_XY}. All \texttt{DEFT} rows passed. IA-XY passed 68 rows and timed out in 27 rows. The denominator-safe comparison table marks 68 matched rows as \texttt{complete\_delivery\_both\_modes} and 27 rows as \texttt{descriptive\_only\_timeout\_or\_non100}.
+
 \section{Results and Evaluation}
 
-The results in this section are assembled from the reviewed Markdown draft and the T0028/T0027/T0026 report-support artifacts. They are finite-window descriptive measurements. Blank cells are intentional and indicate that the supporting denominator is absent. The T0026/T0027/T0028 artifact chain remains the only final report-support data set used in the tables below.
+The results in this section are assembled from the reviewed Markdown draft and the T0028/T0027/T0026 report-support artifacts. They are finite-window descriptive measurements. Blank cells are intentional and indicate that the supporting denominator is absent. The T0026/T0027/T0028 artifact chain remains the only final report-support data set used in the fixed-window tables below. T0056/T0053 drain-mode artifacts are summarized separately in Section~\ref{sec:drain_mode_results}.
 
 All 150 planned simulator runs completed with return code 0, and the generated T0027 report-support tables were cross-checked against the T0026 executed manifest, raw JSON stats, sweep summary, analysis run summary, and analysis comparison summary with zero mismatches. The upstream report-support manifest keeps \texttt{claims\_allowed: false}.
 
@@ -319,6 +325,55 @@ The full 54-run list is preserved in \path{external/noxim/other/generated/t0027_
 \end{tabular}
 \end{table}
 
+\subsection{Drain-Mode Post-Fix Validation and IA-XY Comparison}
+\label{sec:drain_mode_results}
+
+T0056 and T0053 use opt-in source-cutoff plus drain semantics rather than the T0026 fixed-window policy. These results are artifact-scoped and denominator-safe. They do not update the fixed-window condition metrics above and do not relabel IA-XY as standard \texttt{XY}.
+
+\begin{table}[t]
+\centering
+\caption{T0056 DeFT Drain-Mode Summary}
+\label{tab:t0056_drain_summary}
+\begin{tabular}{@{}lr@{}}
+\toprule
+\textbf{Item} & \textbf{Value} \\
+\midrule
+Fixtures & 19 \\
+Fault masks & 5 \\
+Simulator cases & 95 \\
+\texttt{DEFT} drain-completed pass cases & 95 \\
+\texttt{DEFT} timeout or non-100\% cases & 0 \\
+All-pairs aggregate rows & 5 \\
+All-pairs packets per row & 4032 / 4032 \\
+All-pairs flits per row & 32256 / 32256 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The five T0056 all-pairs aggregate rows drained after 4088, 4858, 5617, 6239, and 5208 drain cycles for fault masks \texttt{0x0000}, \texttt{0x0001}, \texttt{0x0011}, \texttt{0x0111}, and \texttt{0x1111}, respectively.
+
+\begin{table}[t]
+\centering
+\caption{T0053 IA-XY Drain-Mode Outcome Summary}
+\label{tab:t0053_iaxy_summary}
+\scriptsize
+\begin{tabular}{@{}lrrr@{}}
+\toprule
+\textbf{Fixture group} & \textbf{Rows} & \textbf{IA-XY pass} & \textbf{IA-XY timeout} \\
+\midrule
+\texttt{route\_family\_pair} & 40 & 40 & 0 \\
+\texttt{source\_isolated} & 20 & 20 & 0 \\
+\texttt{destination\_stress} & 20 & 6 & 14 \\
+\texttt{bounded\_aggregate} & 5 & 1 & 4 \\
+\texttt{bounded\_low\_load} & 5 & 1 & 4 \\
+\texttt{all\_pairs\_aggregate} & 5 & 0 & 5 \\
+\textbf{Total} & \textbf{95} & \textbf{68} & \textbf{27} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The denominator-safe T0053 comparison table classifies 68 matched fixture/fault rows as \texttt{complete\_delivery\_both\_modes} and 27 rows as \texttt{descriptive\_only\_timeout\_or\_non100}. The latter rows are reported only as timeout/non-100\% evidence; they are not used for ranking, improvement percentages, or statistical conclusions. For the IA-XY all-pairs aggregate rows, the five fault-mask cases stopped at \texttt{drain\_timeout} after receiving 557, 1211, 888, 995, and 795 measured packets. These rows also retained source queues and in-network state at the timeout, so they remain descriptive-only.
+
 \section{Limitations}
 
 \textbf{Assumption:} The final report text is descriptive support, not a new analysis layer.
@@ -335,9 +390,11 @@ The full 54-run list is preserved in \path{external/noxim/other/generated/t0027_
 
 \textbf{Blocked:} Standard \texttt{XY} is cardinal-only on \texttt{DEFT\_2\_5D} and does not traverse VL/hub/interposer paths required for unrestricted inter-chiplet traffic.
 
-\textbf{Blocked:} A post-injection drain/source-cutoff policy is needed for eventual-delivery analysis, but it would not by itself make standard \texttt{XY} topology-compatible with unrestricted inter-chiplet traffic.
+\textbf{Blocked:} The T0056/T0053 drain-mode artifacts are deterministic matrix evidence only; they do not prove universal reachability or universal IA-XY behavior.
 
-\textbf{Blocked:} Stronger result statements, non-empty \texttt{XY} hotspot measurements, latency comparisons, single-direction fault cases, and eventual-delivery checks require separate documented validation or rerun policy.
+\textbf{Blocked:} Standard \texttt{XY} remains cardinal-only. The drain-mode comparison uses \texttt{INTERPOSER\_AWARE\_XY}, which must not be relabeled as standard \texttt{XY}.
+
+\textbf{Blocked:} Stronger result statements, non-empty \texttt{XY} hotspot measurements, latency comparisons, single-direction fault cases, universal rankings, and improvement percentages require separate documented validation or rerun policy.
 
 \textbf{Blocked:} PARSEC/GEM5 trace evaluation remains outside the current final-sweep artifact set.
 
@@ -345,13 +402,13 @@ The full 54-run list is preserved in \path{external/noxim/other/generated/t0027_
 
 The final LaTeX artifact is generated from \path{docs/FINAL_REPORT_DRAFT.md}, using \path{Extended_Proposal.zip} as the IEEE conference-style template reference. The final report source is intentionally separated from the extended proposal source so the original archive and proposal files remain unchanged.
 
-The report-support data are traceable through task IDs T0025 through T0028. The T0033 diagnosis is provenance for interpreting blank \texttt{XY} cells, not a result source for the tables. The simulator final sweep was not rerun during final-report conversion or T0035 report revision.
+The report-support data are traceable through task IDs T0025 through T0028. The T0033 diagnosis is provenance for interpreting blank \texttt{XY} cells, not a result source for the fixed-window tables. T0056 and T0053 are additional post-fix drain-mode artifact sets summarized separately. The simulator final sweep was not rerun during final-report conversion, T0035 report revision, or T0048 report integration. T0048 updates this LaTeX source only; PDF and package regeneration remain out of scope for that task.
 
 \section{Conclusion and Future Work}
 
-The project produced a traceable Noxim extension for \texttt{DEFT\_2\_5D} and a reproducible final-sweep artifact set. The final report-support data confirms that the planned 150-run matrix executed successfully and that generated summary tables cross-check against raw artifacts. The reportable results should remain descriptive because the measured fixed-window data contains blank and partial cells, and the known \texttt{XY} blank-cell behavior is now explained by the T0033 diagnosis.
+The project produced a traceable Noxim extension for \texttt{DEFT\_2\_5D} and a reproducible final-sweep artifact set. The final report-support data confirms that the planned 150-run matrix executed successfully and that generated summary tables cross-check against raw artifacts. The reportable fixed-window results should remain descriptive because the measured data contains blank and partial cells, and the known \texttt{XY} blank-cell behavior is now explained by the T0033 diagnosis.
 
-The safest conclusion is that the implementation and report-support workflow are in place, while stronger experimental claims require an explicitly scoped follow-up validation policy. Future work should address non-empty hotspot measurements for the \texttt{XY} baseline, a post-injection drain policy for eventual-delivery checks, directional endpoint fault modeling, traffic-profile-specific LUT demand inputs, and validated PARSEC/GEM5 trace support before expanding the report claims.
+The post-fix T0056/T0053 drain-mode artifacts add useful matrix-scoped validation evidence: \texttt{DEFT} completed the documented 95-case drain matrix, and IA-XY completed 68 of the 95 matched comparison rows while timing out in 27 rows. The safest conclusion is that the implementation and report-support workflow are in place, while stronger experimental claims require an explicitly scoped follow-up validation policy. Future work should address non-empty hotspot measurements for the standard \texttt{XY} control baseline, IA-XY timeout diagnosis, directional endpoint fault modeling, traffic-profile-specific LUT demand inputs, and validated PARSEC/GEM5 trace support before expanding the report claims.
 
 \bibliographystyle{ieeetr}
 \bibliography{references}

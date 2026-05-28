@@ -2167,6 +2167,40 @@ T0053 result on 2026-05-28:
 - The final-report and proposal artifact guard returned no changed files for `final_report/main.pdf`, `final_report.zip`, `Extended_Proposal.pdf`, `Extended_Proposal.zip`, or `Extended_Proposal/`.
 - Final parent status before tracking-document edits was clean on the existing branch. Final `external/noxim` status remained clean on the existing branch.
 
+T0048 result on 2026-05-28:
+
+- Required startup reading was completed before report-integration work: `AGENTS.md`, `docs/PROGRESS.md`, `docs/TASKS.md`, `docs/ROADMAP.md`, `docs/ARCHITECTURE.md`, `docs/VALIDATION.md`, `docs/DECISIONS.md`, `docs/PROMPTS.md`, `docs/FINAL_REPORT_DRAFT.md`, and `final_report/main.tex`.
+- Parent repository status before work was clean on the existing branch. `external/noxim` status before work was clean on the existing branch.
+- The T0056 artifact set at `external/noxim/other/generated/t0056_deft_post_fix_reachability_v1/` and the T0053 artifact set at `external/noxim/other/generated/t0053_drain_iaxy_deft_comparison_v1/` were inspected before editing.
+- The report-update scope was defined before editing. Assumption: T0048 updates report source only because PDF/package regeneration was not scoped. Blocked: ranking, improvement percentages, universal reachability, PARSEC/GEM5 workload claims, and directional endpoint fault claims remain blocked.
+- `docs/FINAL_REPORT_DRAFT.md` and `final_report/main.tex` were updated with separate drain-mode summaries sourced only from T0056 and T0053.
+- T0026/T0027/T0028 fixed-window tables remain unchanged as historical final-report support. T0048 does not reinterpret blank cells, partial cells, or standard cardinal-only `XY`.
+- T0056 is reported only as matrix-scoped `DEFT` evidence: 95 cases, 95 `drain_completed` pass rows, zero timeout/non-100% rows, and five all-pairs rows with 4032 measured packets and 32256 measured flits injected and received.
+- T0053 is reported only as artifact-scoped comparison evidence: 190 simulator rows; 95 `DEFT` pass rows; IA-XY 68 pass rows and 27 timeout rows; 68 matched comparison rows as `complete_delivery_both_modes`; and 27 rows as `descriptive_only_timeout_or_non100`.
+- No simulator source, Noxim build, simulation rerun, generated experiment artifact, `final_report/main.pdf`, `final_report.zip`, Extended Proposal artifact, or regression update was changed.
+- `git diff --check` completed with exit code `0`; Git emitted line-ending conversion warnings for edited Markdown/LaTeX files only.
+- Final `external/noxim` status remained clean.
+- Protected-artifact checks confirmed no changed tracked files for `final_report/main.pdf`, `final_report.zip`, `Extended_Proposal.pdf`, `Extended_Proposal.zip`, or `Extended_Proposal/`.
+
+T0057 result on 2026-05-29:
+
+- Required startup reading was completed before task work: `AGENTS.md`, `docs/PROGRESS.md`, `docs/TASKS.md`, `docs/ROADMAP.md`, `docs/ARCHITECTURE.md`, `docs/VALIDATION.md`, `docs/DECISIONS.md`, `docs/PROMPTS.md`, `docs/FINAL_REPORT_DRAFT.md`, and `final_report/main.tex`.
+- Source-document roles were preserved: `Extended_Proposal.pdf` is the primary project requirements source, the original DeFT paper is the primary algorithmic reference, `Proposal.pdf` is initial context only, and the peer evaluation document was ignored completely.
+- Parent status before work showed the pre-existing T0048 report-source and tracking-document changes: `docs/ARCHITECTURE.md`, `docs/DECISIONS.md`, `docs/FINAL_REPORT_DRAFT.md`, `docs/PROGRESS.md`, `docs/PROMPTS.md`, `docs/ROADMAP.md`, `docs/TASKS.md`, `docs/VALIDATION.md`, and `final_report/main.tex`. `external/noxim` status before work was clean.
+- Before modifying generated report artifacts, `final_report/main.tex`, `final_report/references.bib`, the current `final_report/main.pdf`, and the current `final_report.zip` were inspected. The previous PDF was 5 pages and 344758 bytes from 2026-05-11. The previous zip contained the older 27449-byte `main.tex`, while the current T0048-updated source was 32292 bytes.
+- The exact build/package plan was defined before building. Assumption: the existing T0048-updated `final_report/main.tex` is the source of truth for this refresh, so no report wording or claims should be edited. Assumption: T0038's six-file archive content remains the intended submission package scope. Blocked: stronger claims, PARSEC/GEM5 claims, directional fault claims, ranking, improvement percentages, and universal reachability remain outside T0057.
+- Preferred command `latexmk -pdf main.tex` was attempted from `final_report/` and failed because MiKTeX could not find the required Perl script engine. No dependency was installed.
+- The documented fallback sequence from `final_report/` completed with exit code `0`: `pdflatex main.tex`, `bibtex main`, `pdflatex main.tex`, and `pdflatex main.tex`.
+- Generated PDF path: `final_report/main.pdf`; absolute path: `C:\Projects\CMP-720-Project-Proposal\final_report\main.pdf`; size: 373494 bytes; pages: 6; SHA-256: `D3B0DDF2D74ABA648FEF9B4D763781968AD7825D9E06F5F4D0CDC6444F0AC0C9`.
+- `final_report/main.log` contains no unresolved-reference warnings, citation warnings, fatal errors, LaTeX errors, or overfull boxes in the final pass. Remaining diagnostics are underfull hbox messages caused by long paths/code strings and the standard IEEEtran final-page column-balance reminder.
+- The refreshed `final_report.zip` contains exactly `final_report/main.pdf`, `final_report/main.tex`, `final_report/references.bib`, `final_report/IEEEtran.cls`, `final_report/README.md`, and `final_report/figures/schematic.png`. Archive size: 670414 bytes. SHA-256: `A3026F5C997D1AC65F5AED5638F1FFF18986D9B4879F3EEEEB99BB88B34F6DE4`.
+- `pdftotext` confirmed the regenerated PDF contains T0048 drain-mode text, including `INTERPOSER_AWARE_XY` and the documented 95-case/68-of-95 summary wording.
+- `git diff --check` completed with exit code `0`; Git emitted line-ending conversion warnings for edited Markdown/LaTeX files only.
+- Final `external/noxim` status remained clean.
+- Protected generated-artifact checks returned no changed tracked files for T0026/T0027/T0028, T0042, T0044, T0050, T0051, T0052, T0053, T0054, T0055, and T0056 generated directories.
+- Extended Proposal checks returned no changed files for `Extended_Proposal.pdf`, `Extended_Proposal.zip`, or `Extended_Proposal/`.
+- No simulator source, standard `XY`, IA-XY, `DEFT` behavior, VN transition restrictions, VL fault injection semantics, LUT schema/use path, topology behavior, traffic-generation behavior, metrics/runner/analysis behavior, simulations, final sweep artifacts, Extended Proposal artifacts, dependencies, or `./regression.sh --update` was changed.
+
 ## Metrics Validation
 
 Purpose:
