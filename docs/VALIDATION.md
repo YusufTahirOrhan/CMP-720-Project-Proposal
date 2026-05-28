@@ -2145,6 +2145,28 @@ T0056 result on 2026-05-28:
 - The final-report and proposal artifact guard returned no changed files for `final_report/main.pdf`, `final_report.zip`, `Extended_Proposal.pdf`, `Extended_Proposal.zip`, or `Extended_Proposal/`.
 - T0056 supports only matrix-scoped DeFT drain reachability statements. It unblocks T0053 for a new claim-safe IA-XY-vs-DEFT comparison artifact task, but it is not universal reachability evidence and does not update final-report claims by itself.
 
+T0053 result on 2026-05-28:
+
+- Required startup reading was completed before task work: `AGENTS.md`, `docs/PROGRESS.md`, `docs/TASKS.md`, `docs/ROADMAP.md`, `docs/ARCHITECTURE.md`, `docs/VALIDATION.md`, `docs/DECISIONS.md`, `docs/PROMPTS.md`, `docs/FINAL_REPORT_DRAFT.md`, and `final_report/main.tex`.
+- Source-document roles were preserved: `Extended_Proposal.pdf` is the primary project requirements source, the original DeFT paper is the primary algorithmic reference, `Proposal.pdf` is initial context only, and the peer evaluation document was ignored completely.
+- Parent status before validation was clean on the existing branch. `external/noxim` status before validation was clean on the existing branch.
+- T0056 artifacts were inspected as the matrix-scoped DeFT reachability gate. T0042 artifacts were inspected only as exploratory IA-XY context and were not reused as final comparison evidence.
+- The exact T0053 matrix, timeout policy, artifact directory, summary fields, denominator rules, and claim limits were defined before simulator execution. Assumption: T0053 may generate ignored artifacts only under `external/noxim/other/generated/t0053_drain_iaxy_deft_comparison_v1/`. Assumption: seed `0` is sufficient because hardcoded fixtures define packet timing. Assumption: the generated schema-v1 DeFT LUT uses the existing uniform-unit-interchiplet demand generator. Blocked: final-report claim strengthening remains blocked until a later report task uses T0056/T0053 safely.
+- No simulator source was edited, so Noxim was not rebuilt.
+- `git diff --check` completed with exit code `0` before validation.
+- Generated outputs were written only under ignored `external/noxim/other/generated/t0053_drain_iaxy_deft_comparison_v1/`.
+- The matrix used `DEFT` and `INTERPOSER_AWARE_XY` only, seed `0`, opt-in drain mode, `-warmup 0`, generated schema-v1 DeFT LUT `luts/deft_vl_lut_t0053.yaml`, the full accepted physical fault-mask ladder (`0x0000`, `0x0001`, `0x0011`, `0x0111`, `0x1111`), the same 19 deterministic fixture definitions as T0056, and 190 simulator cases.
+- The artifact set contains the runner, `README.txt`, matrix, copied config fixture, fixture coverage CSV, deterministic hardcoded traffic fixtures, generated DeFT LUT, `commands.sh`, 190 JSON stats files, stdout/stderr logs including LUT-generation logs, `return_codes.tsv`, `summary.csv`, `received_pairs.csv`, `failing_cases.csv`, `denominator_safe_comparison.csv`, and `manifest.json`.
+- Artifact sanity checks found manifest fields `case_count: 190`, `summary_row_count: 190`, `passing_case_count: 163`, `failure_row_count: 15820`, `comparison_row_count: 95`, `lut_generation_return_code: 0`, and `claims_allowed: false`. The artifact directory contains 190 stats files, 191 stdout logs, 191 stderr logs, 19 traffic fixtures, and one generated LUT.
+- All 190 simulator invocations returned code `0`. All 95 `DEFT` cases stopped with `drain_completed` and passed. `INTERPOSER_AWARE_XY` passed 68 cases and stopped with `drain_timeout` in 27 cases.
+- IA-XY passed all 40 route-family pair cases and all 20 source-isolated cases. IA-XY passed 6 of 20 destination-stress cases, 1 of 5 bounded aggregate prefix cases, 1 of 5 bounded low-load prefix cases, and 0 of 5 all-pairs aggregate cases.
+- Denominator-safe comparison rows classify 68 matched fixture/fault rows as `complete_delivery_both_modes` and 27 rows as `descriptive_only_timeout_or_non100`.
+- IA-XY destination-stress timeout rows admitted all 63 packet heads and retained router-buffer flits and reservations after 20,000 drain cycles. IA-XY bounded-prefix timeout rows retained missing pairs and sometimes source queues or pending handshakes. The five IA-XY all-pairs aggregate rows timed out after receiving 557, 1211, 888, 995, and 795 packets for masks `0x0000`, `0x0001`, `0x0011`, `0x0111`, and `0x1111`.
+- No source code, standard `XY`, IA-XY, `DEFT` behavior, VN transition restrictions, VL fault injection semantics, LUT schema/use path, topology behavior, traffic-generation behavior, metrics/runner/analysis behavior, final-report claims, final-report PDF/package artifacts, Extended Proposal files, historical generated artifacts, or `./regression.sh --update` was changed.
+- The generated-artifact guard returned no changed files newer than the T0053 start cutoff for T0026/T0027/T0028, T0042, T0044, T0050, T0051, T0052, T0054, T0055, and T0056 generated directories.
+- The final-report and proposal artifact guard returned no changed files for `final_report/main.pdf`, `final_report.zip`, `Extended_Proposal.pdf`, `Extended_Proposal.zip`, or `Extended_Proposal/`.
+- Final parent status before tracking-document edits was clean on the existing branch. Final `external/noxim` status remained clean on the existing branch.
+
 ## Metrics Validation
 
 Purpose:

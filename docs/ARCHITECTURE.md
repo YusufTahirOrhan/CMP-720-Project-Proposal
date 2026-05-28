@@ -1869,21 +1869,21 @@ Ordered future backlog:
 | T0045 | Feasibility | Completed directional endpoint fault modeling evaluation; support is deferred behind a future versioned fault-model design. |
 | T0046 | Feasibility | Completed PARSEC/GEM5 trace support feasibility; ingestion is deferred until a versioned schema, tiny fixture, mapping policy, and dependency provenance exist. |
 | T0047 | Implementation | Blocked trace ingestion implementation until T0046 prerequisites are supplied and accepted. |
-| T0048 | Report | Regenerate report material only after new validated artifacts exist. |
+| T0048 | Report | Next claim-safe report integration task using T0056/T0053 only where denominators support revised wording. |
 | T0049 | Planning | Completed reachability-closure plan that reopens project completion around drain-based DeFT validation. |
 | T0050 | Diagnosis | Completed small deterministic DeFT drain-based reachability diagnosis. |
 | T0051 | Implementation | Completed targeted DeFT destination-convergence flow-control/reservation fix and T0051 validation matrix. |
 | T0052 | Experiment | Completed a new drain-based DeFT all-pairs aggregate validation artifact set; it timed out and did not validate reachability. |
-| T0053 | Experiment | Next drain-based `INTERPOSER_AWARE_XY`-vs-`DEFT` comparison task, unblocked by T0056 for a new claim-safe artifact set. |
+| T0053 | Experiment | Completed drain-based `INTERPOSER_AWARE_XY`-vs-`DEFT` comparison; all DeFT rows passed, IA-XY had timeout/non-100% rows. |
 | T0054 | Diagnosis | Completed destination-stress timeout diagnosis; pair/source-isolated cases passed, while destination-stress and bounded-prefix fixtures timed out. |
 | T0055 | Diagnosis | Completed destination-stress flow-control diagnosis; dense cases expose a repeatable in-network DeFT blocker. |
 | T0056 | Experiment | Completed post-fix DeFT drain-mode validation matrix with 95/95 cases passing under matrix-scoped claim limits. |
 
 Assumption: Future backlog work starts with design or feasibility tasks before implementation, except when a prior design task has already accepted the required semantics and validation plan.
 
-Blocked: Stronger unrestricted XY-vs-DEFT claims remain blocked until an interposer-aware baseline is implemented, validated, and evaluated in new artifact directories.
+Blocked: Stronger unrestricted routing comparison claims remain blocked until a report task reviews T0056/T0053 and keeps the wording denominator-safe and artifact-scoped.
 
-Blocked: Eventual-delivery claims remain blocked until the T0044 drain mode is used by a later explicit experiment task to create new versioned artifacts and claim-safe analysis.
+Blocked: Broad eventual-delivery claims remain blocked because T0056 and T0053 validate only their documented matrices.
 
 Blocked: Paper-aligned single-direction fault cases remain blocked until directional endpoint fault support is implemented through a future versioned fault-model and LUT-schema task.
 
@@ -2141,11 +2141,35 @@ Blocked: Stronger final-report reachability claims remain blocked until a later 
 
 ### Baseline Comparison Boundary
 
-Standard `XY` remains cardinal-only and is not a proper unrestricted inter-chiplet baseline for `DEFT_2_5D`. Future comparison should use `INTERPOSER_AWARE_XY`, already introduced as a separate baseline, or another explicitly designed and validated 2.5D-aware algorithm.
+Standard `XY` remains cardinal-only and is not a proper unrestricted inter-chiplet baseline for `DEFT_2_5D`. T0053 therefore used `INTERPOSER_AWARE_XY`, already introduced as a separate baseline, rather than standard `XY`.
 
 Assumption: The comparison should happen only after DeFT reachability behavior is validated; otherwise comparison results may mix DeFT correctness questions with baseline differences.
 
-Blocked: Strong baseline ranking, latency deltas, throughput deltas, or improvement percentages remain blocked until T0053 or equivalent new artifacts pass denominator-safe analysis.
+Blocked: Strong baseline ranking, latency deltas, throughput deltas, or improvement percentages remain blocked after T0053 because the comparison artifact includes IA-XY timeout/non-100% rows and is intentionally denominator-safe.
+
+## T0053 Drain IA-XY vs DeFT Comparison
+
+T0053 created a new drain-mode comparison artifact set after the T0056 DeFT reachability gate. It did not modify simulator source, rebuild Noxim, rerun historical fixed-window sweeps, alter final-report claims, or modify historical artifacts.
+
+Validation artifacts were written under `external/noxim/other/generated/t0053_drain_iaxy_deft_comparison_v1/`:
+
+- Routing modes: `DEFT` and `INTERPOSER_AWARE_XY` only.
+- Seed: `0`.
+- Drain mode: opt-in `-drain_mode`, `-warmup 0`.
+- Fault masks: full accepted physical ladder `0x0000`, `0x0001`, `0x0011`, `0x0111`, and `0x1111`.
+- Fixtures: the same 19 deterministic fixture definitions as T0056.
+- Timeout policy: pair probes used `2000` drain cycles, medium source/destination/prefix probes used `20000` drain cycles, and the full all-pairs aggregate used `100000` drain cycles.
+- DeFT LUT policy: a generated schema-v1 LUT is used only by `DEFT`; IA-XY does not use the DeFT LUT.
+
+The artifact directory contains the runner, `README.txt`, copied config fixture, generated traffic fixtures, generated schema-v1 DeFT LUT, `commands.sh`, 190 JSON stats files, stdout/stderr logs including LUT-generation logs, `return_codes.tsv`, `summary.csv`, `received_pairs.csv`, `fixture_coverage.csv`, `failing_cases.csv`, `denominator_safe_comparison.csv`, and `manifest.json`.
+
+All 190 simulator invocations returned code `0`. All 95 `DEFT` rows stopped with `drain_completed` and passed. `INTERPOSER_AWARE_XY` passed 68 of 95 rows and stopped with `drain_timeout` in 27 rows.
+
+IA-XY passed every route-family pair row and every source-isolated row. It timed out in 14 of 20 destination-stress rows, 4 of 5 bounded aggregate prefix rows, 4 of 5 bounded low-load prefix rows, and all 5 all-pairs aggregate rows. The IA-XY all-pairs aggregate rows received 557, 1211, 888, 995, and 795 packets for masks `0x0000`, `0x0001`, `0x0011`, `0x0111`, and `0x1111`, respectively, before stopping at `drain_timeout`.
+
+Assumption: T0053 validates only its documented 190-case drain comparison matrix and does not prove universal IA-XY or DeFT behavior.
+
+Blocked: T0053 does not support ranking, improvement percentages, or statistical conclusions. Final-report claim strengthening remains blocked until a later report task reviews T0056 and T0053 with artifact-scoped, denominator-safe wording.
 
 ## Noxim Extension Point Map
 

@@ -561,19 +561,19 @@ Statuses: `TODO`, `IN_PROGRESS`, `DONE`, `BLOCKED`.
 
 - **Status:** TODO
 - **Type:** report
-- **Objective:** Update the report only after new validated artifacts exist.
+- **Objective:** Review T0056 and T0053 and update the report only where new validated artifacts support denominator-safe wording.
 - **Why it exists:** Stronger claims or additional comparisons require report updates that preserve claim-safety and cite new validated artifact directories.
-- **Relevant roadmap phase:** Phase 9 future backlog
-- **Scope:** Review new validated artifacts, update `docs/FINAL_REPORT_DRAFT.md` and `final_report/main.tex` only if claims are supported, regenerate PDF only when a TeX toolchain is available, and package only if requested.
+- **Relevant roadmap phase:** Phase 10 reachability closure and final report refresh.
+- **Scope:** Review T0056 and T0053 artifacts, update `docs/FINAL_REPORT_DRAFT.md` and `final_report/main.tex` only if claims are supported, regenerate PDF only when explicitly scoped and a TeX toolchain is available, and package only if requested.
 - **Out of scope:** Simulator/source changes, new experiments, overwriting old artifacts, unsupported performance claims, hidden metric reinterpretation, and `./regression.sh --update`.
 - **Files likely to change:** `docs/FINAL_REPORT_DRAFT.md`, `final_report/main.tex`, possibly `final_report/main.pdf`, `final_report.zip` if explicitly requested, `docs/TASKS.md`, `docs/PROGRESS.md`, `docs/VALIDATION.md`, and `docs/PROMPTS.md`.
 - **Source code changes allowed:** No.
 - **Simulation reruns allowed:** No.
 - **Acceptance criteria:** Report updates cite only validated artifacts; blank-aware rules remain intact; any new claims are explicitly supported by denominators and validation records; PDF/package status is recorded; old final-report artifacts are not changed unless explicitly in scope.
 - **Validation method or limitation:** Documentation/report validation, LaTeX build only if available and in scope, `git diff --check`, and artifact provenance checks.
-- **Dependencies:** At least one validated future artifact set from T0042, T0044 follow-up experiments, T0045 follow-up implementation/experiments, T0047 follow-up experiments, or the T0050-T0053 reachability-closure path.
+- **Dependencies:** T0056 and T0053 are complete and provide the current new drain-mode artifact sets. T0048 must still preserve their claim limits.
 - **Risk level:** Medium, because it can alter final report wording and claims.
-- **Recommended prompt:** `Start task T0048: Regenerate Report with New Validated Results. Use only new validated artifacts, preserve claim-safety rules, update report source and PDF only if in scope, avoid unsupported claims, update tracking docs, and run git diff --check.`
+- **Recommended prompt:** `Start task T0048: Regenerate Report with New Validated Results. Use T0056 and T0053 only where denominators support artifact-scoped wording, preserve claim-safety rules, update report source and PDF only if in scope, avoid unsupported claims, update tracking docs, and run git diff --check.`
 
 ## T0049: Define Reachability Closure Plan
 
@@ -653,21 +653,22 @@ Statuses: `TODO`, `IN_PROGRESS`, `DONE`, `BLOCKED`.
 
 ## T0053: Run Drain-Based IA-XY vs DeFT Comparison
 
-- **Status:** TODO
+- **Status:** DONE
 - **Type:** experiment/validation
 - **Objective:** Compare DeFT against a proper interposer-aware baseline using drain-mode artifacts after DeFT reachability behavior has been validated.
 - **Why it exists:** Standard `XY` is not a fair unrestricted inter-chiplet baseline on `DEFT_2_5D`; comparison should use the separately implemented interposer-aware baseline or another explicitly validated 2.5D-aware algorithm.
 - **Relevant roadmap phase:** Phase 10 reachability closure and final report refresh.
 - **Scope:** Define a claim-safe comparison matrix using `DEFT` and `INTERPOSER_AWARE_XY`, drain-mode denominators, selected traffic/fault settings, and a new artifact directory; compare reachability, latency, and throughput only where denominators support the comparison.
 - **Out of scope:** Changing standard `XY`, changing DeFT behavior, changing IA-XY behavior unless a separate fix task is opened, PARSEC/GEM5 traces, directional endpoint faults, final-report edits before analysis, and unsupported ranking or improvement claims.
-- **Files likely to change:** Generated ignored artifacts under a new `external/noxim/other/generated/t0053_*` directory and tracking docs; analysis helper changes only if explicitly scoped.
+- **Files changed:** Generated ignored artifacts under `external/noxim/other/generated/t0053_drain_iaxy_deft_comparison_v1/` and tracking docs.
 - **Source code changes allowed:** No by default.
 - **Simulation reruns allowed:** Yes, only the accepted comparison matrix.
-- **Acceptance criteria:** Comparison artifacts are complete, blank-aware, denominator-safe, and clearly separate standard `XY` from the proper interposer-aware baseline; any report-ready interpretation is claim-safe.
+- **Acceptance criteria:** Completed. Comparison artifacts are complete, denominator-safe, and clearly separate standard `XY` from the proper interposer-aware baseline. The artifact set records commands, copied config, generated schema-v1 DeFT LUT, deterministic traffic fixtures, stdout/stderr logs, JSON stats, manifest, summary, received-pair table, failing-case table, and denominator-safe comparison table. Any report-ready interpretation remains claim-limited.
 - **Validation method or limitation:** Manifest/stat cross-checks, protected-artifact guards, `git diff --check`, and `external/noxim` status.
 - **Dependencies:** Unblocked by T0056, which provides matrix-scoped post-fix DeFT drain-mode reachability evidence. T0053 must still create its own versioned comparison artifacts and keep claims denominator-safe.
 - **Risk level:** Medium, because comparison claims can easily overstate limited artifacts.
-- **Recommended prompt:** `Start task T0053: Run Drain-Based IA-XY vs DeFT Comparison. Compare DEFT against INTERPOSER_AWARE_XY only after DeFT drain-based reachability validation is complete, use a new artifact directory, keep blank-aware denominator rules, update tracking docs, and run git diff --check.`
+- **Recommended prompt:** Completed by this validation.
+- **Notes:** T0053 used `DEFT` and `INTERPOSER_AWARE_XY` only, seed `0`, opt-in drain mode, `-warmup 0`, the full accepted physical fault-mask ladder, the same 19 deterministic fixture definitions as T0056, and 190 simulator cases. All 95 `DEFT` cases passed with `drain_completed`. IA-XY passed 68 of 95 cases and timed out in 27 cases: all route-family and source-isolated rows passed, while some destination-stress and prefix rows timed out and all five all-pairs aggregate rows timed out. The denominator-safe comparison table classifies 68 matched rows as `complete_delivery_both_modes` and 27 rows as `descriptive_only_timeout_or_non100`. Assumption: T0053 validates only this documented drain-mode matrix. Blocked: ranking, improvement percentages, statistical conclusions, and final-report claim strengthening remain blocked until a later report task uses T0056/T0053 safely.
 
 ## T0054: Diagnose T0052 Drain Timeout Behavior
 

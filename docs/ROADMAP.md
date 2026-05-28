@@ -287,8 +287,8 @@ This roadmap is based on `Extended_Proposal.pdf`, `Proposal.pdf`, and the origin
 - Follow-up destination-stress flow-control diagnosis when timeout artifacts show many-to-one in-network drain blocking.
 - Targeted DeFT flow-control/reservation fixes after diagnosis isolates a concrete dense destination-convergence blocker.
 - Post-fix DeFT drain-mode reachability validation before any baseline comparison or stronger report claim.
-- A claim-safe comparison against a proper interposer-aware baseline, not standard cardinal-only `XY`.
-- Final report updates only after new validated artifacts support the revised claims.
+- A completed claim-safe comparison against a proper interposer-aware baseline, not standard cardinal-only `XY`.
+- Final report updates only after a later report task reviews the new validated artifacts and preserves denominator-safe claim limits.
 
 **Success criteria:**
 
@@ -311,4 +311,5 @@ This roadmap is based on `Extended_Proposal.pdf`, `Proposal.pdf`, and the origin
 - Assumption: The current fixed-window results are insufficient for an eventual-delivery reachability claim.
 - Assumption: Drain mode is the correct first validation surface for DeFT reachability closure.
 - Assumption: T0056 supports DeFT drain reachability only for its documented 95-case matrix and is not universal reachability evidence.
-- Blocked: Final report strengthening remains blocked until T0053 or an equivalent comparison/report task uses new validated artifacts safely.
+- Assumption: T0053 supports IA-XY-vs-DEFT comparison only for its documented 190-case drain-mode matrix and does not support universal algorithm ranking.
+- Blocked: Final report strengthening remains blocked until T0048 or an equivalent report task uses T0056/T0053 artifacts safely.
