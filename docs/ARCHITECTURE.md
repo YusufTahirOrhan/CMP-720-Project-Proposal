@@ -1731,6 +1731,118 @@ Durable policy:
 
 Blocked: Paper-aligned single-direction fault experiments remain blocked until a future task implements and validates directional endpoint state, directional LUT generation, runtime directional lookup, and directional result labeling.
 
+## T0046 PARSEC/GEM5 Trace Support Feasibility
+
+T0046 evaluates whether PARSEC/GEM5 trace ingestion should be added to the project. It is documentation-only and does not install dependencies, import or generate traces, run simulations, rebuild Noxim, edit simulator source, change traffic behavior, change metrics, regenerate artifacts, or change report claims.
+
+### Source Alignment
+
+`Extended_Proposal.pdf` describes synthetic traffic and real-application traffic. It names PARSEC benchmark traces, including blackscholes, fluidanimate, and swaptions, generated through the GEM5 full-system simulator. The original DeFT paper also reports real-application evaluation by generating PARSEC traffic with GEM5, using a 64-core x86 full-system setup with coherence directories and shared L2 banks, and it names eight PARSEC workloads: blackscholes, bodytrack, canneal, dedup, facesim, fluidanimate, streamcluster, and swaptions.
+
+Assumption: PARSEC/GEM5 trace support is useful for paper-aligned real-application evaluation, but it is not part of the current validated T0026/T0027/T0028 final artifact chain.
+
+### Dependency Availability
+
+Read-only environment and repository checks found no ready PARSEC/GEM5 trace pipeline:
+
+- The repository contains no GEM5 source tree, PARSEC source tree, PARSEC input set, GEM5 checkpoint, GEM5 output trace, or Noxim-ready application trace file.
+- `rg --files | rg -i "gem5|parsec|trace"` found only Noxim VCD trace-viewer assets and report references, not application input traces.
+- Windows PATH does not expose `gem5`.
+- WSL Ubuntu is available and running, and `/usr/bin/python3` exists there.
+- WSL Ubuntu does not expose `gem5.opt`, `gem5`, or `scons` through PATH checks.
+- Common checked directories `/parsec`, `/opt/parsec`, and `/opt/gem5` do not exist in WSL Ubuntu.
+
+Blocked: GEM5/PARSEC trace generation is not currently reproducible in this workspace because the simulator, benchmark suite, full-system images/checkpoints, and trace-generation commands are absent.
+
+### Current Noxim Traffic Surfaces
+
+Noxim currently has traffic-input mechanisms, but none are a complete GEM5/PARSEC trace ingestion path:
+
+- VCD tracing through `trace_mode`, `trace_filename`, and `trace_scope` is a simulator debug output path, not an application workload input.
+- `TRAFFIC_TABLE_BASED` loads rows shaped as `src dst [pir [por [t_on t_off t_period]]]`. This can approximate binned or aggregate traffic rates, but it does not preserve individual memory-event timing, packet size, core/thread identity, or request/response pairing.
+- `TRAFFIC_HARDCODED` loads cycle-by-cycle packet requests as `src dst` rows with `-1` as the cycle delimiter. This is the closest existing input surface for a tiny event trace, but it currently lacks explicit packet size, application ID, core/thread ID, operation type, memory address, flow ID, dependency ID, or response metadata.
+- `ProcessingElement` currently creates packets with source, destination, VC, timestamp, size, and remaining flit count. Packet size is chosen by the simulator configuration unless future trace ingestion explicitly supplies it.
+- DeFT-enabled runs assign source VN state through the existing VN helper, so a trace format should not try to preassign DeFT VC/VN unless a future task designs that behavior.
+
+Assumption: A faithful application trace path should not reuse Noxim VCD traces as workload input. It needs a separate input schema or a converter into an accepted Noxim traffic surface.
+
+### Minimal Trace Fields
+
+A minimal Noxim-oriented event trace should include enough data to build a packet deterministically:
+
+| Field | Requirement |
+| --- | --- |
+| `cycle` | Nonnegative Noxim injection cycle or a GEM5 tick converted through a documented clock ratio. |
+| `src_router_id` | Chiplet PE/router ID, currently `0..63`; interposer routers must not be source endpoints. |
+| `dst_router_id` | Chiplet PE/router ID, currently `0..63`; interposer routers must not be final destinations. |
+| `packet_size_flits` | Positive integer packet size; default may be 8 flits only if the schema records the default explicitly. |
+| `workload` | PARSEC workload label or workload-pair label for provenance. |
+| `source_core_id` | Original GEM5 core ID before mapping to a router. |
+| `dest_agent_id` | Original destination agent such as core, directory, or cache bank before mapping to a router. |
+
+Useful optional fields include `thread_id`, `process_id`, `operation_type`, `address`, `request_response_id`, `flow_id`, and `weight`. These optional fields should be converter provenance and validation aids unless a later implementation task proves the simulator needs them at runtime.
+
+Assumption: The first supported schema should be a small versioned text or CSV schema, for example `deft_trace.v1`, with explicit units and a manifest. It should not be an ad hoc dump of GEM5 debug output.
+
+### Workload-To-Router Mapping Options
+
+Three mapping options are feasible, with different fidelity and validation cost:
+
+| Option | Description | Benefit | Cost or risk |
+| --- | --- | --- | --- |
+| One core per chiplet router | Map GEM5 core IDs `0..63` directly to chiplet router IDs `0..63`; map directory/L2-bank agents through a documented four-bank placement policy. | Aligns naturally with the current 64 chiplet PEs and the paper's 64-core setup. | Requires a defensible directory/L2-bank-to-router policy and request/response modeling. |
+| Binned aggregate traffic | Convert GEM5 memory/coherence events into per-window `src dst pir/por t_on t_off t_period` rows. | Can reuse `TRAFFIC_TABLE_BASED` with less simulator change. | Loses event ordering and packet-level behavior; weaker claim value. |
+| Cycle-by-cycle packet trace | Convert events into `cycle, src, dst, size` packet records, then feed a new parser or generate hardcoded traffic. | Best preserves temporal workload structure for Noxim. | Large data volume, parser changes, packet-size policy, and strict validation required. |
+
+Assumption: The safest implementation path, if opened later, is to start with a tiny cycle-by-cycle `deft_trace.v1` fixture and a converter into a small Noxim smoke, not with full PARSEC traces.
+
+### Timing Mapping Options
+
+Trace timing needs an explicit unit conversion:
+
+- Direct cycle mapping: the trace already stores Noxim cycles after conversion. This is the simplest runtime format.
+- GEM5 tick mapping: the trace stores GEM5 ticks and a manifest records `gem5_ticks_per_noxim_cycle`.
+- Binned mapping: GEM5 events are grouped into fixed Noxim-cycle windows and converted to probabilistic table rows.
+
+Assumption: Direct Noxim-cycle event traces are the best first ingestion target because they keep runtime parsing simple and make tiny fixture validation inspectable.
+
+### Validation Burden
+
+A credible PARSEC/GEM5 trace workflow would need validation beyond normal simulator smokes:
+
+- Dependency provenance: exact GEM5 version, PARSEC version or source, full-system image/checkpoint provenance, benchmark inputs, CPU/memory/cache configuration, and trace-generation command lines.
+- Converter validation: schema validation, monotonic or explicitly ordered cycles, router ID range checks, source/destination endpoint checks, packet-size checks, deterministic output for the same input, and invalid-trace rejection cases.
+- Mapping validation: a documented core/router map, directory/cache-bank map, and policy for request/response traffic.
+- Noxim smoke validation: a tiny fixture with one same-chiplet packet, one inter-chiplet packet, one invalid endpoint case, one timing-gap case, and one packet-size case before any PARSEC-scale run.
+- Artifact validation: manifests with hashes, input schema version, converter version, mapping file, Noxim config, routing mode, fault mask, seed, and stats output.
+
+Blocked: Full PARSEC-scale workload claims are not safe until the tiny fixture path and converter validation pass, then a separate experiment task defines a workload matrix and artifact directory.
+
+### Artifact Policy
+
+Large PARSEC/GEM5 traces should not be committed. Future tasks should store only small fixtures, schema files, mapping files, manifests, and summaries in tracked docs or small test paths. Large raw traces, converted traces, stdout/stderr logs, and generated stats should live in ignored generated directories or external storage with hashes recorded in a manifest.
+
+Existing T0026/T0027/T0028, T0042, and T0044 artifacts must not be overwritten or reinterpreted as PARSEC/GEM5 evidence.
+
+### Recommendation
+
+Recommendation: Defer trace ingestion.
+
+Rationale:
+
+- The source documents justify PARSEC/GEM5 as a desirable real-application evaluation path.
+- The current workspace does not contain GEM5, PARSEC, full-system checkpoints/images, trace-generation scripts, or trace inputs.
+- Existing Noxim traffic-table and hardcoded traffic inputs are useful starting points, but they are not sufficient for a claim-safe GEM5/PARSEC trace pipeline without a versioned schema and converter validation.
+- Implementing ingestion now would touch traffic generation, configuration, runner manifests, artifact policy, and validation claims while providing no immediate validated workload data.
+
+Durable policy:
+
+- Do not claim PARSEC/GEM5 workload support until a reproducible trace-generation or trace-import pipeline exists.
+- Future implementation must start with a versioned minimal trace schema, a tiny fixture, a documented core/router and agent/router mapping, and validation that rejects malformed traces.
+- Do not import PARSEC-scale traces or run workload sweeps until the tiny fixture path passes and a later experiment task defines artifact directories and claim limits.
+
+Blocked: T0047 trace ingestion implementation is blocked until a trace schema, tiny fixture, mapping policy, and dependency/provenance plan are accepted.
+
 ## Post-Submission Future Backlog
 
 T0039 records the remaining technical gaps as future backlog items only. These tasks do not block the current final submission package, which remains `final_report/main.pdf`, the current `final_report/` source tree, and `final_report.zip`.
@@ -1755,9 +1867,15 @@ Ordered future backlog:
 | T0043 | Design | Completed source-cutoff plus post-injection drain/timeout policy for eventual-delivery analysis. |
 | T0044 | Implementation | Completed opt-in source-cutoff plus post-injection drain/timeout support with targeted smokes. |
 | T0045 | Feasibility | Completed directional endpoint fault modeling evaluation; support is deferred behind a future versioned fault-model design. |
-| T0046 | Feasibility | Assess PARSEC/GEM5 trace support requirements and validation burden. |
-| T0047 | Implementation | Implement trace ingestion only after a trace format and validation plan are accepted. |
+| T0046 | Feasibility | Completed PARSEC/GEM5 trace support feasibility; ingestion is deferred until a versioned schema, tiny fixture, mapping policy, and dependency provenance exist. |
+| T0047 | Implementation | Blocked trace ingestion implementation until T0046 prerequisites are supplied and accepted. |
 | T0048 | Report | Regenerate report material only after new validated artifacts exist. |
+| T0049 | Planning | Completed reachability-closure plan that reopens project completion around drain-based DeFT validation. |
+| T0050 | Diagnosis | Diagnose DeFT drain-based reachability gaps before any source fix or report claim. |
+| T0051 | Implementation | Blocked targeted DeFT reachability fixes until T0050 isolates a concrete root cause. |
+| T0052 | Experiment | Completed a new drain-based DeFT all-pairs aggregate validation artifact set; it timed out and did not validate reachability. |
+| T0053 | Experiment | Blocked drain-based `INTERPOSER_AWARE_XY`-vs-`DEFT` comparison until DeFT reachability behavior is validated. |
+| T0054 | Diagnosis | Diagnose the T0052 drain timeouts with smaller DeFT-only deterministic fixtures before any source fix. |
 
 Assumption: Future backlog work starts with design or feasibility tasks before implementation, except when a prior design task has already accepted the required semantics and validation plan.
 
@@ -1767,7 +1885,135 @@ Blocked: Eventual-delivery claims remain blocked until the T0044 drain mode is u
 
 Blocked: Paper-aligned single-direction fault cases remain blocked until directional endpoint fault support is implemented through a future versioned fault-model and LUT-schema task.
 
-Blocked: PARSEC/GEM5 workload claims remain blocked until a trace pipeline is validated.
+Blocked: PARSEC/GEM5 workload claims remain blocked until a versioned trace schema, tiny fixture, dependency provenance, mapping policy, ingestion path, and workload experiment artifacts are validated.
+
+## T0049 Reachability Closure Plan
+
+T0049 reopens project completion work after presentation preparation. It does not reinterpret the existing fixed-window final sweep. Instead, it defines the next safe path for trying to support a stronger DeFT reachability result.
+
+### Reachability Claim Boundary
+
+A future 100% DeFT reachability claim must mean eventual delivery under an accepted source-cutoff plus drain/timeout policy:
+
+```text
+For every injected packet in the validated matrix, after sources stop and the network drains, the packet is received unless the accepted fault mask physically prevents a valid path.
+```
+
+This is intentionally different from the historical T0026/T0027/T0028 fixed-window continuous-injection metric, where packets may still be in flight when the measurement window ends. Fixed-window reachability below one is not, by itself, proof that the DeFT implementation is wrong.
+
+Assumption: The first closure target should use T0044 drain mode because it already exports stop reason, measured injected/received denominators, undelivered counts, timing fields, and remaining in-flight counts.
+
+Blocked: Any statement that DeFT reaches 100% under 25% faults remains blocked until a new drain-based validation artifact set supports that exact matrix and fault model.
+
+### Diagnostic Order
+
+The next work should proceed in this order:
+
+1. T0050 diagnoses the reachability gap with source inspection and small deterministic drain-mode diagnostics.
+2. T0051 fixes only a diagnosed DeFT or simulator issue, if T0050 finds one.
+3. T0052 runs a new drain-based DeFT reachability validation matrix after diagnosis and any required fixes.
+4. T0053 compares DeFT against `INTERPOSER_AWARE_XY` or another explicitly validated 2.5D-aware baseline after DeFT reachability behavior is validated.
+5. T0048 updates the report only after new validated artifacts exist.
+
+Likely diagnostic surfaces:
+
+- `DeftTopology` router, boundary-router, and physical VL endpoint mapping.
+- `DeftFaultInjectionManager` physical mask application and functional-VL state.
+- `DeftVerticalLinkLut` runtime schema-v1 lookup and fail-closed behavior.
+- `Routing_DEFT` source-exit, interposer traversal, destination-entry, and destination-local phases.
+- `DeftVirtualNetwork` and `Router` VN.0/VN.1 assignment, output-VC reservation, and movement-transition filtering.
+- T0044 drain-mode empty detection and measured injected/received denominator accounting.
+- Hardcoded or synthetic traffic fixtures used for deterministic validation.
+
+Assumption: T0050 should prefer tiny hardcoded packet cases before any broader all-pairs matrix. If a broad matrix is needed, it should be a later accepted T0052 artifact set.
+
+Blocked: T0051 source fixes are blocked until T0050 isolates a concrete root cause.
+
+## T0050 DeFT Drain-Based Reachability Diagnosis
+
+T0050 executed the first diagnosis step in the Phase 10 closure path. It did not edit simulator source or reinterpret historical fixed-window artifacts.
+
+Source-document alignment:
+
+- `Extended_Proposal.pdf` remains the primary project requirements source for the DeFT implementation and evaluation target.
+- The original DeFT paper remains the primary algorithmic source for VN assignment, VN movement restrictions, and fault-aware VL selection.
+- `Proposal.pdf` remains initial context only, and the peer evaluation document remains ignored.
+
+Read-only source inspection covered the relevant reachability surfaces:
+
+- `Routing_DEFT` same-chiplet local XY fallback and inter-chiplet phases: source-local to selected source exit, source VL traversal, interposer XY traversal, destination VL traversal, and destination-local XY.
+- `DeftTopology` router decoding, boundary-router inventory, physical VL endpoint mapping, and current physical bidirectional functional-state model.
+- `DeftVirtualNetwork`, `Router`, and `ReservationTable` VN.0/VN.1 assignment, movement-transition filtering, output-VC-aware reservation, downstream full-status checks, and forwarded `vc_id` updates.
+- `DeftVerticalLinkLut` schema-v1 runtime lookup keyed by active physical fault mask, source chiplet, source router, and destination chiplet.
+- `DeftFaultInjectionManager` explicit physical fault-mask application and connected-chiplet validation.
+- T0044 drain mode: source cutoff, in-flight empty detection, measured injected/received denominator accounting, and stop-reason export.
+- `TRAFFIC_HARDCODED` parsing for deterministic cycle-delimited `src dst` fixtures.
+
+The exact drain-mode diagnostic matrix was defined before execution and written to `external/noxim/other/generated/t0050_deft_reachability_diagnosis_v1/matrix.tsv`. The generated artifact directory also contains `commands.sh`, generated traffic fixtures, generated LUT `luts/deft_vl_lut_t0050.yaml`, JSON stats, stdout/stderr logs, `summary.csv`, `failing_cases.csv`, and `manifest.json`.
+
+Diagnostic coverage:
+
+| Group | Cases | Purpose |
+| --- | ---: | --- |
+| Same-chiplet control | 1 | Validate DEFT local XY fallback under drain mode. |
+| No-fault inter-chiplet samples | 5 | Exercise non-boundary, source-boundary, destination-boundary, reverse, and diagonal chiplet-pair phases. |
+| Fault-mask samples | 4 | Exercise active-mask/LUT agreement, alternate VL selection, `0x1111`, and boundary-attached faulty VL cases. |
+| Tiny multi-packet fixtures | 2 | Exercise drain accounting and repeated VN/LUT behavior without a sweep. |
+
+All 12 T0050 cases stopped with `drain_completed`, measured injected packets equaled measured received packets, and no undelivered packets, buffered flits, reservations, or pending handshakes remained at stop. `failing_cases.csv` contains no failing rows.
+
+Assumption: The sampled T0050 cases are useful for isolating deterministic route-phase, LUT, fault-mask, VN, fixture, and drain-accounting defects, but they are not a substitute for a validation matrix.
+
+Assumption: For the sampled cases, the gap between expected DeFT reachability and the historical fixed-window results is most consistent with fixed-window continuous-injection measurement/load semantics rather than a concrete deterministic implementation bug.
+
+Blocked: A universal or 25%-fault 100% DeFT reachability claim remains blocked until T0054 or an equivalent drain-based validation matrix supports that exact claim.
+
+Blocked: T0051 remains blocked because T0050 and T0052 did not isolate a concrete source fix. If T0054 exposes a specific failing source/destination/fault-mask case with a root cause, T0051 should be reopened with that root cause.
+
+## T0052 DeFT Drain-Based Reachability Validation Matrix
+
+T0052 produced the first broader DeFT-only drain-mode validation artifact set after the T0050 small diagnostic matrix. It did not edit simulator source or reinterpret historical fixed-window artifacts.
+
+The exact matrix was defined before execution:
+
+- Routing mode: `DEFT` only.
+- Seed: `0`.
+- Drain mode: opt-in `-drain_mode`, `-warmup 0`, source cutoff `4032`, drain timeout `20000`.
+- Fault masks: the accepted physical ladder `0x0000`, `0x0001`, `0x0011`, `0x0111`, and `0x1111`.
+- Source/destination coverage: all 4032 ordered valid source/destination pairs with `src != dst` over chiplet routers `0..63`.
+- Traffic fixture: one deterministic hardcoded all-pairs schedule, rotating sources so each source appears once every 64 cycles.
+- LUT: one generated schema-v1 `deft_vl_lut.v1` table containing the five masks.
+- Artifact directory: `external/noxim/other/generated/t0052_deft_drain_reachability_v1/`.
+
+The artifact directory contains the matrix, copied config fixture, pair coverage CSV, hardcoded traffic fixture, generated LUT, commands, stdout/stderr logs, JSON stats, return-code table, summary CSV, failing-case CSV, manifest, and the generated runner used for traceability.
+
+All five simulator invocations returned code `0`, but all five stopped with `drain_timeout` rather than `drain_completed`. The measured injected-packet denominators were far below the 4032 planned pairs because backpressure left most planned packets queued at sources by timeout:
+
+| Fault mask | Measured injected | Measured received | Stop reason |
+| --- | ---: | ---: | --- |
+| `0x0000` | 258 | 89 | `drain_timeout` |
+| `0x0001` | 247 | 85 | `drain_timeout` |
+| `0x0011` | 250 | 86 | `drain_timeout` |
+| `0x0111` | 243 | 83 | `drain_timeout` |
+| `0x1111` | 312 | 153 | `drain_timeout` |
+
+Assumption: T0052's all-pairs aggregate fixture is useful as a stress-style drain validation and timeout diagnosis input, but it is not a pair-isolated reachability proof because most planned packets were never admitted as measured injected packets before the timeout.
+
+Assumption: The immediate follow-up should diagnose the timeout with smaller pair-isolated or lower-load deterministic fixtures before any source change.
+
+Blocked: T0052 does not support a 100% DeFT reachability claim.
+
+Blocked: T0051 remains blocked because T0052 did not isolate a concrete source root cause.
+
+Blocked: T0053 remains blocked because DeFT drain-based reachability behavior is not yet validated.
+
+### Baseline Comparison Boundary
+
+Standard `XY` remains cardinal-only and is not a proper unrestricted inter-chiplet baseline for `DEFT_2_5D`. Future comparison should use `INTERPOSER_AWARE_XY`, already introduced as a separate baseline, or another explicitly designed and validated 2.5D-aware algorithm.
+
+Assumption: The comparison should happen only after DeFT reachability behavior is validated; otherwise comparison results may mix DeFT correctness questions with baseline differences.
+
+Blocked: Strong baseline ranking, latency deltas, throughput deltas, or improvement percentages remain blocked until T0053 or equivalent new artifacts pass denominator-safe analysis.
 
 ## Noxim Extension Point Map
 

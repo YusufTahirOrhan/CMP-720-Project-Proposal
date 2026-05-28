@@ -273,3 +273,39 @@ This roadmap is based on `Extended_Proposal.pdf`, `Proposal.pdf`, and the origin
 **Risks or assumptions:**
 
 - Risk: Simulation runtime may limit the number of seeds or traffic rates that can be evaluated.
+
+## Phase 10: Reachability Closure and Final Report Refresh
+
+**Goal:** Close the gap between DeFT's expected reachability behavior and the current fixed-window simulation evidence before making stronger final-report claims.
+
+**Main deliverables:**
+
+- Drain-based DeFT reachability diagnosis.
+- Targeted fixes only if the diagnosis isolates a concrete DeFT or simulator issue.
+- A new versioned DeFT reachability validation artifact set using source-cutoff plus drain/timeout semantics.
+- Follow-up timeout diagnosis when a validation matrix times out before supporting a reachability claim.
+- A claim-safe comparison against a proper interposer-aware baseline, not standard cardinal-only `XY`.
+- Final report updates only after new validated artifacts support the revised claims.
+
+**Success criteria:**
+
+- 100% reachability, if claimed, is defined as eventual delivery after source cutoff and drain completion for the validated matrix, not as a fixed-window continuous-injection result.
+- Any non-100% cases are recorded with source, destination, fault mask, stop reason, and suspected route phase.
+- Drain-timeout validation blockers are diagnosed before source fixes or baseline comparisons.
+- Standard `XY` remains a limited control baseline; comparison claims use `INTERPOSER_AWARE_XY` or another explicitly validated 2.5D-aware algorithm.
+- Historical T0026/T0027/T0028 and T0042 artifacts remain unchanged and are not reinterpreted.
+
+**Validation method:**
+
+- Parent and `external/noxim` status checks.
+- Known Noxim build command only when source changes are explicitly scoped.
+- Small deterministic drain-mode diagnostics before any broader matrix.
+- Manifest/stat cross-checks for new generated artifact directories.
+- Protected-artifact guards for historical generated outputs, final-report package artifacts, and Extended Proposal files.
+
+**Risks or assumptions:**
+
+- Assumption: The current fixed-window results are insufficient for an eventual-delivery reachability claim.
+- Assumption: Drain mode is the correct first validation surface for DeFT reachability closure.
+- Blocked: 100% DeFT reachability claims remain blocked until new drain-based validation artifacts support them.
+- Blocked: Final report strengthening remains blocked until T0050/T0052/T0053 or equivalent validated artifacts exist.
