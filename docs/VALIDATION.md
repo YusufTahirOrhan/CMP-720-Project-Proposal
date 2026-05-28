@@ -2095,14 +2095,34 @@ T0055 result on 2026-05-28:
 - The final-report and proposal artifact guard returned no changed files for `final_report/main.pdf`, `final_report.zip`, `Extended_Proposal.pdf`, `Extended_Proposal.zip`, or `Extended_Proposal/`.
 - Final parent status showed only modified tracking docs: `docs/ARCHITECTURE.md`, `docs/DECISIONS.md`, `docs/PROGRESS.md`, `docs/PROMPTS.md`, `docs/ROADMAP.md`, `docs/TASKS.md`, and `docs/VALIDATION.md`.
 
-Expected future validation for T0051:
+T0051 result on 2026-05-28:
 
-- Use T0055 artifacts as the failing evidence and do not regenerate final sweep or report artifacts.
-- Modify source only after localizing the smallest reservation, VC/full-status, VN filtering, or DeFT route-phase cause.
-- Run the documented Noxim build command `./build.sh` after any source change.
-- Rerun the failing T0055 dense destination-stress cases and the T0050/T0044 targeted smokes needed to confirm the fix does not break pair/source drain behavior or opt-in drain accounting.
-- Preserve T0026/T0027/T0028, T0042, T0044, T0050, T0052, T0054, T0055, final-report, package, and Extended Proposal artifacts.
-- Do not claim 100% reachability or run IA-XY comparison until a later DeFT drain-mode validation matrix passes.
+- Required startup reading was completed before task work: `AGENTS.md`, `docs/PROGRESS.md`, `docs/TASKS.md`, `docs/ROADMAP.md`, `docs/ARCHITECTURE.md`, `docs/VALIDATION.md`, `docs/DECISIONS.md`, `docs/PROMPTS.md`, `docs/FINAL_REPORT_DRAFT.md`, and `final_report/main.tex`.
+- Source-document roles were preserved: `Extended_Proposal.pdf` is the primary project requirements source, the original DeFT paper is the primary algorithmic reference, `Proposal.pdf` is initial context only, and the peer evaluation document was ignored completely.
+- Parent and `external/noxim` status were checked before source edits. Both were clean except for the parent branch being ahead of origin.
+- T0055 artifacts were inspected as failing evidence. T0054 artifacts were inspected only as supporting diagnosis context.
+- Source inspection covered router reservation ownership/release, output-VC forwarding, downstream VC/full-status handling, VN transition filtering, drain accounting, and DeFT route-phase surfaces.
+- Before editing, the exact targeted fix plan, rerun matrix, timeout policy, artifact directory, and expected summary fields were defined. Assumption: T0051 writes generated validation outputs only under `external/noxim/other/generated/t0051_deft_destination_stress_fix_v1/`. Assumption: the T0051 artifact set is targeted fix evidence, not final universal reachability evidence. Blocked: T0053 and final-report claim strengthening remain blocked until broader post-fix DeFT drain-mode validation supports them.
+- Source edits were limited to `external/noxim/src/ReservationTable.cpp` and `external/noxim/src/DeftVirtualNetwork.cpp`.
+- `ReservationTable::checkReservation()` now makes each output VC exclusive per output port regardless of input port, preventing same-output-VC interleaving after DeFT output-VC translation. `ReservationTable::release()` now computes the removed reservation index before erasing the vector iterator.
+- `DeftVirtualNetwork::sourceCanUseEitherVirtualNetwork()` now lets boundary inter-chiplet sources use either VN only when their attached physical VL is functional; fault-detoured boundary sources start in VN0 so the horizontal-to-down movement at an alternate boundary remains legal.
+- `git diff --check` completed with exit code `0`.
+- Noxim rebuild used the documented command `./build.sh`; the build completed successfully.
+- The T0051 validation matrix reran the T0055 destination-stress fixtures with `DEFT` only, seed `0`, opt-in drain mode, generated schema-v1 LUT `luts/deft_vl_lut_t0051.yaml`, fault masks `0x0000` and `0x1111`, destinations `0` and `63`, n4/n8/n16/n32/n63 gap-1 threshold probes, n63 gap-8 and gap-64 spacing probes, and n63 gap-1 timeout probes at 100,000 drain cycles.
+- Generated outputs were written only under ignored `external/noxim/other/generated/t0051_deft_destination_stress_fix_v1/`.
+- The T0051 artifact set contains the runner, `README.txt`, matrix, copied config fixture, fixture coverage CSV, deterministic hardcoded traffic fixtures, generated LUT, `commands.sh`, 32 JSON stats files, stdout/stderr logs, return-code table, summary CSV, received-pair CSV, failing-case CSV, and manifest.
+- Manifest and summary checks found `case_count: 32`, `summary_row_count: 32`, `passing_case_count: 32`, `failure_row_count: 0`, `lut_generation_return_code: 0`, and `claims_allowed: false`.
+- All 32 simulator invocations returned code `0` and stopped with `drain_completed`. All targeted dense n8 gap-1 and n63 gap-1 100,000-cycle cases for both destinations and both masks drained with measured injected packets equal to measured received packets.
+- No standard `XY`, IA-XY, unrelated `DEFT` behavior, VN transition restrictions, VL fault injection semantics, LUT schema/use path, topology behavior, traffic-generation behavior, metrics/runner/analysis behavior, final-report claims, `final_report/main.pdf`, `final_report.zip`, Extended Proposal files, historical generated artifacts, or `./regression.sh --update` was changed.
+- Protected-artifact guard checks returned no changed files for T0026/T0027/T0028, T0042, T0044, T0050, T0052, T0054, and T0055 generated directories, and no changed files for `final_report/main.pdf`, `final_report.zip`, `Extended_Proposal.pdf`, `Extended_Proposal.zip`, or `Extended_Proposal/`.
+- Final `external/noxim` status showed only the intended source edits: `src/DeftVirtualNetwork.cpp` and `src/ReservationTable.cpp`.
+
+Expected future validation for T0056:
+
+- Use T0051 artifacts as targeted fix evidence and T0052/T0054/T0055 artifacts as diagnosis context.
+- Define a broader DeFT-only post-fix drain-mode validation matrix, timeout policy, artifact directory, expected summary fields, and claim limits before running simulations.
+- Preserve T0026/T0027/T0028, T0042, T0044, T0050, T0051, T0052, T0054, T0055, final-report, package, and Extended Proposal artifacts.
+- Do not run IA-XY comparison or claim universal reachability unless the exact T0056 matrix supports that claim.
 
 ## Metrics Validation
 

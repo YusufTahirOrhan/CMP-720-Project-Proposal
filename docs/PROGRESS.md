@@ -2,7 +2,7 @@
 
 ## Current Phase
 
-Phase 10 - Reachability Closure and Final Report Refresh (T0055 destination-stress flow-control diagnosis complete; T0051 targeted fix is next)
+Phase 10 - Reachability Closure and Final Report Refresh (T0051 targeted destination-stress fix complete; T0056 post-fix DeFT drain validation is next)
 
 ## Completed Tasks
 
@@ -57,8 +57,9 @@ Phase 10 - Reachability Closure and Final Report Refresh (T0055 destination-stre
 - `T0052` - Run Drain-Based DeFT Reachability Validation Matrix.
 - `T0054` - Diagnose T0052 Drain Timeout Behavior.
 - `T0055` - Diagnose DeFT Destination-Stress Flow-Control Blocker.
+- `T0051` - Fix DeFT Destination-Stress Flow-Control Blocker.
 
-DeFT VN assignment behavior, the first VN movement-transition restriction enforcement layer, the offline VL LUT schema/generator, the runtime schema-v1 LUT loading/use path, explicit XY fault-free/fault-injected baseline configuration modes, proposal-required synthetic traffic configuration profiles, machine-readable metrics export, tiny experiment-runner launch support, final-analysis scaffolding, the final sweep policy, the validated T0026 150-run final sweep output set, T0027 blank-aware report-support tables, T0028 claim-safe final report results draft, the T0029 tracked claim-safe Markdown report draft, the T0030 submission-readiness polish, the T0031 IEEE-style LaTeX final report source artifact, the T0032 generated final report PDF, the T0033 blocker diagnosis, the T0034 report-revision direction decision, the T0035 final-report diagnosis revision, the T0036 post-final experimental design gate, the T0037 final submission handoff check, the T0038 final submission archive refresh, the T0039 future backlog documentation, the T0040 IA-XY baseline design, the T0041 IA-XY baseline implementation, the T0042 limited IA-XY-vs-DEFT artifact set, the T0043 source-cutoff/drain policy design, the T0044 opt-in drain-mode implementation with targeted smoke validation, the T0045 directional fault-model feasibility decision, the T0046 PARSEC/GEM5 trace-support feasibility decision, the T0049 reachability-closure plan, the T0050 small drain-mode DeFT reachability diagnosis, the T0052 all-pairs drain-timeout artifact set, the T0054 destination-stress timeout diagnosis, and the T0055 destination-stress flow-control diagnosis now exist for `DEFT_2_5D`. Historical performance claims remain limited to descriptive, blank-aware report support only. New 100% reachability or baseline-comparison claims remain blocked until a targeted fix and follow-up drain-mode validation support them.
+DeFT VN assignment behavior, the first VN movement-transition restriction enforcement layer, the offline VL LUT schema/generator, the runtime schema-v1 LUT loading/use path, explicit XY fault-free/fault-injected baseline configuration modes, proposal-required synthetic traffic configuration profiles, machine-readable metrics export, tiny experiment-runner launch support, final-analysis scaffolding, the final sweep policy, the validated T0026 150-run final sweep output set, T0027 blank-aware report-support tables, T0028 claim-safe final report results draft, the T0029 tracked claim-safe Markdown report draft, the T0030 submission-readiness polish, the T0031 IEEE-style LaTeX final report source artifact, the T0032 generated final report PDF, the T0033 blocker diagnosis, the T0034 report-revision direction decision, the T0035 final-report diagnosis revision, the T0036 post-final experimental design gate, the T0037 final submission handoff check, the T0038 final submission archive refresh, the T0039 future backlog documentation, the T0040 IA-XY baseline design, the T0041 IA-XY baseline implementation, the T0042 limited IA-XY-vs-DEFT artifact set, the T0043 source-cutoff/drain policy design, the T0044 opt-in drain-mode implementation with targeted smoke validation, the T0045 directional fault-model feasibility decision, the T0046 PARSEC/GEM5 trace-support feasibility decision, the T0049 reachability-closure plan, the T0050 small drain-mode DeFT reachability diagnosis, the T0052 all-pairs drain-timeout artifact set, the T0054 destination-stress timeout diagnosis, the T0055 destination-stress flow-control diagnosis, and the T0051 targeted DeFT destination-stress fix now exist for `DEFT_2_5D`. Historical performance claims remain limited to descriptive, blank-aware report support only. New 100% reachability or baseline-comparison claims remain blocked until a broader post-fix drain-mode validation supports them.
 
 ## In-Progress Tasks
 
@@ -67,9 +68,31 @@ DeFT VN assignment behavior, the first VN movement-transition restriction enforc
 ## Blocked Tasks
 
 - `T0047` - PARSEC/GEM5 Trace Ingestion is blocked until a versioned trace schema, tiny fixture, dependency/provenance plan, workload mapping policy, and small smoke-validation path are supplied and accepted.
-- `T0053` - Drain-based IA-XY vs DeFT comparison is blocked until the T0055 dense destination-convergence blocker is fixed or reclassified and DeFT drain-based reachability behavior is validated.
+- `T0053` - Drain-based IA-XY vs DeFT comparison is blocked until a broader post-T0051 DeFT drain-mode validation artifact supports comparison.
 
 ## Last Validation Result
+
+- T0051 Fix DeFT Destination-Stress Flow-Control Blocker completed as an implementation/validation task on 2026-05-28.
+- Required startup reading was completed before task work: `AGENTS.md`, `docs/PROGRESS.md`, `docs/TASKS.md`, `docs/ROADMAP.md`, `docs/ARCHITECTURE.md`, `docs/VALIDATION.md`, `docs/DECISIONS.md`, `docs/PROMPTS.md`, `docs/FINAL_REPORT_DRAFT.md`, and `final_report/main.tex`.
+- Source-document roles were preserved: `Extended_Proposal.pdf` is the primary project requirements source, the original DeFT paper at `docs/references/DeFT_A_Deadlock-Free_and_Fault-Tolerant_Routing_Algorithm_for_2.5D_Chiplet_Networks.pdf` is the primary algorithmic reference, `Proposal.pdf` is initial context only, and the peer evaluation document was ignored completely.
+- Parent repository status before the fix was clean on `feat/map-noxim-extension-points...origin/feat/map-noxim-extension-points` with the branch ahead by one commit. `external/noxim` status before the fix was clean on `feat/baseline-noxim...origin/feat/baseline-noxim`.
+- Before editing source, the T0055 artifact set at `external/noxim/other/generated/t0055_deft_destination_stress_diagnosis_v1/` and supporting T0054 artifact set at `external/noxim/other/generated/t0054_deft_drain_timeout_diagnosis_v1/` were inspected. Router reservation ownership/release, output-VC forwarding, downstream VC full-status handling, VN transition filtering, drain accounting, and DeFT route phases were inspected.
+- Before editing source, the exact targeted fix plan, rerun matrix, timeout policy, artifact directory, and expected summary fields were defined. Assumption: T0051 may generate ignored artifacts only under `external/noxim/other/generated/t0051_deft_destination_stress_fix_v1/`. Assumption: T0051 starts from T0055 failing evidence and is targeted fix evidence, not a final universal reachability sweep. Blocked: T0053 and final-report claim strengthening remain blocked until a broader post-fix DeFT drain-mode validation artifact supports them.
+- Source changes were limited to `external/noxim/src/ReservationTable.cpp` and `external/noxim/src/DeftVirtualNetwork.cpp`.
+- `ReservationTable::checkReservation()` now treats an output VC as exclusive for a given output port regardless of input port. This prevents two packets from the same physical input but different input VCs from reserving the same downstream output VC after DeFT output-VC translation and interleaving body/tail flits under dense destination convergence.
+- `ReservationTable::release()` now computes the removed reservation index before erasing the vector iterator.
+- `DeftVirtualNetwork::sourceCanUseEitherVirtualNetwork()` now allows a boundary inter-chiplet source to use either VN only when its attached physical VL is functional. If the attached VL is faulted, the source starts in VN0 because it must horizontally detour to an alternate source-exit boundary before taking a down movement.
+- `git diff --check` completed with exit code `0` after source edits.
+- Noxim was rebuilt with the documented command `./build.sh`; the build completed successfully.
+- The documented T0051 matrix reran the T0055 destination-stress matrix using `DEFT` only, seed `0`, opt-in drain mode, generated schema-v1 LUT `luts/deft_vl_lut_t0051.yaml`, fault masks `0x0000` and `0x1111`, destination `0` and destination `63`, source-count thresholds n4/n8/n16/n32/n63 at gap 1, n63 gap-8 and gap-64 spacing probes, and n63 gap-1 timeout probes at 100,000 drain cycles.
+- Generated outputs were written only under ignored `external/noxim/other/generated/t0051_deft_destination_stress_fix_v1/`. The directory contains the runner, `README.txt`, `matrix.tsv`, copied config fixture, fixture coverage CSV, generated hardcoded traffic fixtures, generated LUT, `commands.sh`, 32 JSON stats files, stdout/stderr logs including LUT-generation logs, `return_codes.tsv`, `summary.csv`, `received_pairs.csv`, `failing_cases.csv`, and `manifest.json`.
+- Artifact sanity checks found 32 summary rows and manifest fields `case_count: 32`, `passing_case_count: 32`, `failure_row_count: 0`, `lut_generation_return_code: 0`, and `claims_allowed: false`.
+- All 32 T0051 simulator invocations returned code `0`, stopped with `drain_completed`, and reported `pass`. The targeted no-fault and `0x1111` n8 gap-1 and n63 gap-1 100,000-cycle cases for both destinations all drained with measured injected packets equal to measured received packets.
+- No standard `XY`, IA-XY, unrelated `DEFT` behavior, VN transition restrictions, VL fault injection semantics, LUT schema/use path, topology behavior, traffic-generation behavior, metrics/runner/analysis behavior, final-report claims, `final_report/main.pdf`, `final_report.zip`, Extended Proposal files, T0026/T0027/T0028 artifacts, T0042 artifacts, T0044 artifacts, T0050 artifacts, T0052 artifacts, T0054 artifacts, T0055 artifacts, or `./regression.sh --update` was changed.
+- Final protected-artifact guard checks returned no changed files for T0026/T0027/T0028, T0042, T0044, T0050, T0052, T0054, and T0055 generated directories, and no changed files for `final_report/main.pdf`, `final_report.zip`, `Extended_Proposal.pdf`, `Extended_Proposal.zip`, or `Extended_Proposal/`.
+- Final parent status showed the seven updated tracking docs and the modified `external/noxim` submodule.
+- Final `external/noxim` status showed only the intended source edits: `src/DeftVirtualNetwork.cpp` and `src/ReservationTable.cpp`.
+- T0056 is selected as the next recommended task: run a broader post-fix DeFT drain-mode validation matrix before T0053 or any final-report claim strengthening.
 
 - T0055 Diagnose DeFT Destination-Stress Flow-Control Blocker completed as a diagnosis/validation task on 2026-05-28.
 - Required startup reading was completed before task work: `AGENTS.md`, `docs/PROGRESS.md`, `docs/TASKS.md`, `docs/ROADMAP.md`, `docs/ARCHITECTURE.md`, `docs/VALIDATION.md`, `docs/DECISIONS.md`, `docs/PROMPTS.md`, `docs/FINAL_REPORT_DRAFT.md`, and `final_report/main.tex`.
@@ -1083,6 +1106,7 @@ External source tree registered during `T0023`:
 - Assumption: The first safe trace-ingestion target should be a tiny versioned `deft_trace.v1`-style fixture or equivalent, not a full PARSEC-scale dump.
 - Assumption: T0052's all-pairs hardcoded fixture is useful as aggregate drain-timeout evidence, but it is not a pair-isolated reachability proof because most planned packets were still queued at sources when the timeout occurred.
 - Assumption: T0052's timeout result should be diagnosed with lower-load or pair-isolated fixtures before changing source code.
+- Assumption: T0051 targeted destination-stress fix validation is not a substitute for a broader post-fix DeFT reachability validation matrix.
 - Blocked: Strong inter-chiplet IA-XY-vs-DEFT comparison needs new versioned experiment artifacts and blank-aware analysis, or a narrower traffic policy that explicitly limits comparison to route-compatible traffic.
 - Blocked: Stronger final-report claims remain blocked after T0035; the selected immediate path improved explanation, not measured performance coverage.
 - Blocked: No current PDF-generation blocker remains after T0032; stronger final-report claims remain blocked without a separate approved validation or rerun policy.
@@ -1092,7 +1116,7 @@ External source tree registered during `T0023`:
 - Blocked: PARSEC/GEM5 workload claims remain blocked after T0046 until GEM5/PARSEC dependencies or trace inputs, a versioned trace schema, workload mapping, ingestion validation, and new artifact directories exist.
 - Blocked: Reopening source-cutoff/drain semantics, route-compatible intra-chiplet comparison, PARSEC/GEM5 traces, directional endpoint faults, or stronger performance claims requires a new explicit task with its own design and validation policy.
 - Blocked: T0052 does not support a 100% DeFT reachability claim because every aggregate all-pairs mask case stopped with `drain_timeout`.
-- Blocked: T0053 is blocked until the T0055 dense destination-convergence blocker is fixed or reclassified and DeFT drain-based reachability behavior is validated.
+- Blocked: T0053 is blocked until T0056 or equivalent post-fix DeFT drain-mode validation supports comparison.
 - Blocked: Stronger final-report claims remain blocked until a later report task uses new validated artifacts.
 
 ## Open Questions
@@ -1111,12 +1135,12 @@ External source tree registered during `T0023`:
 
 ## Next Recommended Task
 
-Start `T0051` next: fix the DeFT destination-stress flow-control/reservation blocker isolated by T0055. `T0053` remains blocked until the fix is validated by a DeFT drain-mode matrix.
+Start `T0056` next: run a broader post-fix DeFT drain-mode reachability validation matrix using T0051 as targeted fix evidence and T0052/T0054/T0055 as diagnosis context. `T0053` remains blocked until that validation supports comparison.
 
 ## Next Ready-to-Send Prompt
 
 ```text
-Start task T0051: Fix DeFT Destination-Stress Flow-Control Blocker.
+Start task T0056: Run Post-Fix DeFT Drain Reachability Validation Matrix.
 
 Before starting, read:
 - AGENTS.md
@@ -1136,44 +1160,44 @@ Use Extended_Proposal.pdf as the primary project requirements source and the ori
 
 Use the registered Noxim source tree at external/noxim.
 
-Goal: fix the dense destination-convergence DeFT/Noxim flow-control/reservation blocker isolated by T0055. The failing evidence is dense destination-0 and destination-63 drain fixtures that retain router-buffer flits and router reservations indefinitely, including no-fault n8 gap-1 cases with empty source queues and no pending handshakes, and no-fault n63 gap-1 cases whose stuck counts are identical at 20,000 and 100,000 drain cycles.
+Goal: validate post-fix DeFT drain-mode reachability behavior after T0051. Use the T0051 artifact set as targeted fix evidence for the destination-stress flow-control blocker, and use T0052, T0054, and T0055 only as diagnosis context. Do not treat T0051 alone as final universal reachability evidence.
 
 Before running anything:
 - Check parent repository status.
 - Check external/noxim status.
-- Inspect the T0055 artifact set at `external/noxim/other/generated/t0055_deft_destination_stress_diagnosis_v1/`.
-- Inspect the T0054 artifact set at `external/noxim/other/generated/t0054_deft_drain_timeout_diagnosis_v1/` only as supporting diagnosis context.
-- Inspect router reservation ownership/release, output VC forwarding, downstream VC/full-status handling, VN transition filtering, drain accounting, and DeFT route-phase surfaces.
-- Define the exact targeted fix plan, rerun matrix, timeout policy, artifact directory, and expected summary fields before editing source.
+- Inspect the T0051 artifact set at `external/noxim/other/generated/t0051_deft_destination_stress_fix_v1/`.
+- Inspect the T0052, T0054, and T0055 artifact sets only as supporting diagnosis context.
+- Define the exact DeFT-only validation matrix, timeout policy, artifact directory, expected summary fields, and claim limits before running anything.
 - Clearly mark assumptions as `Assumption`.
 - Clearly mark blockers as `Blocked`.
 
 Scope:
-- Use opt-in drain mode only for reachability reruns.
-- Start from T0055 artifacts as failing evidence, not as final reachability evidence.
-- Implement only the smallest source change needed for the diagnosed reservation, VC/full-status, VN filtering, or DeFT route-phase blocker.
-- Preserve standard `XY`, IA-XY, unrelated `DEFT` behavior, VL fault injection semantics, LUT schema/use path, topology behavior, traffic generation behavior, metrics, runner, and analysis behavior unless the exact diagnosed source surface requires a tightly scoped change.
-- Write any new generated validation outputs to a new ignored directory such as `external/noxim/other/generated/t0051_deft_destination_stress_fix_v1/`.
+- Use opt-in drain mode only.
+- Run `DEFT` only; do not run IA-XY comparison in T0056.
+- Start from T0051 artifacts as targeted fix evidence, not as final reachability evidence.
+- Preserve standard `XY`, IA-XY, `DEFT` source behavior, VN transition restrictions, VL fault injection semantics, LUT schema/use path, topology behavior, traffic generation behavior, metrics, runner, and analysis behavior.
+- Write any new generated validation outputs to a new ignored directory such as `external/noxim/other/generated/t0056_deft_post_fix_reachability_v1/`.
 - Record commands, generated LUTs, traffic/config fixtures, stdout/stderr logs, JSON stats, manifest, summary, and every non-100% or timeout case with routing mode, fault mask, source, destination, stop reason, injected/received counts, undelivered counts, remaining in-flight state, and suspected route or flow-control phase.
-- Preserve all historical fixed-window, IA-XY, T0044 drain-smoke, T0050 diagnosis, T0052 validation, T0054 diagnosis, T0055 diagnosis, final-report, package, and Extended Proposal artifacts.
+- Preserve all historical fixed-window, IA-XY, T0044 drain-smoke, T0050 diagnosis, T0051 fix, T0052 validation, T0054 diagnosis, T0055 diagnosis, final-report, package, and Extended Proposal artifacts.
 
 Do not:
 - Make broad or speculative source rewrites.
+- Edit source unless the validation exposes a new concrete blocker and the task is explicitly reopened or split for a scoped fix.
 - Regenerate final sweep artifacts.
 - Regenerate or modify final_report/main.pdf, final_report.zip, or Extended Proposal files.
 - Install dependencies.
 - Import or generate PARSEC/GEM5 traces.
-- Modify standard XY, IA-XY, unrelated DEFT behavior, VN transition restrictions, VL fault injection semantics, LUT schema/use path, topology behavior, traffic generation behavior, metrics, runner, or analysis behavior outside the diagnosed minimal fix.
+- Modify standard XY, IA-XY, DEFT behavior, VN transition restrictions, VL fault injection semantics, LUT schema/use path, topology behavior, traffic generation behavior, metrics, runner, or analysis behavior.
 - Run IA-XY comparison; T0053 remains blocked until DeFT reachability behavior is validated after the fix.
 - Use ./regression.sh --update.
 - Invent results or claim 100% reachability beyond the validated matrix.
 
 Validation:
 - Run git diff --check.
-- Rebuild Noxim with the documented command `./build.sh` after source changes.
-- Run only the documented T0051 targeted rerun matrix and record commands, configs, generated LUTs, stats files, stdout/stderr logs, manifests, and summaries.
+- Rebuild Noxim with the documented command `./build.sh` only if source changes are explicitly made.
+- Run only the documented T0056 validation matrix and record commands, configs, generated LUTs, stats files, stdout/stderr logs, manifests, and summaries.
 - Check external/noxim status after validation.
-- Confirm T0026/T0027/T0028, T0042, T0044, T0050, T0052, T0054, and T0055 generated artifacts were not changed except for the new T0051 directory.
+- Confirm T0026/T0027/T0028, T0042, T0044, T0050, T0051, T0052, T0054, and T0055 generated artifacts were not changed except for the new T0056 directory.
 - Confirm final_report/main.pdf, final_report.zip, and Extended Proposal files were not changed.
 
 Update tracking docs with validation results, blockers, and the next recommended task. Keep final-report claims unchanged until a later report task uses new validated artifacts.
@@ -1182,11 +1206,11 @@ Update tracking docs with validation results, blockers, and the next recommended
 ## Suggested Branch Name for Next Task
 
 ```text
-None; continue on the existing branch.
+codex/t0056-post-fix-deft-reachability-validation
 ```
 
 ## Suggested Commit Message
 
 ```text
-docs: record deft destination stress diagnosis
+Fix DeFT destination-stress flow-control blocker
 ```

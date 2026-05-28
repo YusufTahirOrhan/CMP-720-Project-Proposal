@@ -1872,11 +1872,12 @@ Ordered future backlog:
 | T0048 | Report | Regenerate report material only after new validated artifacts exist. |
 | T0049 | Planning | Completed reachability-closure plan that reopens project completion around drain-based DeFT validation. |
 | T0050 | Diagnosis | Diagnose DeFT drain-based reachability gaps before any source fix or report claim. |
-| T0051 | Implementation | Reopened targeted DeFT destination-convergence flow-control/reservation fix after T0055. |
+| T0051 | Implementation | Completed targeted DeFT destination-convergence flow-control/reservation fix and T0051 validation matrix. |
 | T0052 | Experiment | Completed a new drain-based DeFT all-pairs aggregate validation artifact set; it timed out and did not validate reachability. |
 | T0053 | Experiment | Blocked drain-based `INTERPOSER_AWARE_XY`-vs-`DEFT` comparison until DeFT reachability behavior is validated. |
 | T0054 | Diagnosis | Completed destination-stress timeout diagnosis; pair/source-isolated cases passed, while destination-stress and bounded-prefix fixtures timed out. |
 | T0055 | Diagnosis | Completed destination-stress flow-control diagnosis; dense cases expose a repeatable in-network DeFT blocker. |
+| T0056 | Experiment | Next post-fix DeFT drain-mode validation matrix before IA-XY comparison or stronger report claims. |
 
 Assumption: Future backlog work starts with design or feasibility tasks before implementation, except when a prior design task has already accepted the required semantics and validation plan.
 
@@ -1911,10 +1912,12 @@ Blocked: Any statement that DeFT reaches 100% under 25% faults remains blocked u
 The next work should proceed in this order:
 
 1. T0050 diagnoses the reachability gap with source inspection and small deterministic drain-mode diagnostics.
-2. T0051 fixes only a diagnosed DeFT or simulator issue, if T0050 finds one.
-3. T0052 runs a new drain-based DeFT reachability validation matrix after diagnosis and any required fixes.
-4. T0053 compares DeFT against `INTERPOSER_AWARE_XY` or another explicitly validated 2.5D-aware baseline after DeFT reachability behavior is validated.
-5. T0048 updates the report only after new validated artifacts exist.
+2. T0052 runs a new drain-based DeFT reachability validation matrix after the small diagnosis.
+3. T0054 and T0055 isolate timeout behavior down to a concrete destination-convergence flow-control/reservation blocker.
+4. T0051 fixes only the diagnosed DeFT/Noxim flow-control and VN assignment issues.
+5. T0056 validates post-fix DeFT drain-mode behavior before comparison.
+6. T0053 compares DeFT against `INTERPOSER_AWARE_XY` or another explicitly validated 2.5D-aware baseline after DeFT reachability behavior is validated.
+7. T0048 updates the report only after new validated artifacts exist.
 
 Likely diagnostic surfaces:
 
@@ -1928,7 +1931,7 @@ Likely diagnostic surfaces:
 
 Assumption: T0050 should prefer tiny hardcoded packet cases before any broader all-pairs matrix. If a broad matrix is needed, it should be a later accepted T0052 artifact set.
 
-Blocked: T0051 source fixes are blocked until T0050 isolates a concrete root cause.
+Blocked: T0053 and final-report claim strengthening remain blocked until T0056 or equivalent post-fix DeFT drain-mode validation supports them.
 
 ## T0050 DeFT Drain-Based Reachability Diagnosis
 
@@ -2089,6 +2092,33 @@ Assumption: T0055 per-pair receipt parsing is restricted to the detailed statist
 Blocked: T0053 remains blocked until T0051 or an equivalent follow-up fixes or reclassifies the dense destination-convergence blocker and a DeFT drain-mode validation artifact supports comparison.
 
 Blocked: Stronger final-report reachability claims remain blocked until later validated artifacts support them.
+
+## T0051 DeFT Destination-Stress Flow-Control Fix
+
+T0051 implemented the smallest source change needed for the concrete dense destination-convergence blocker isolated by T0055. It did not change standard `XY`, IA-XY, LUT schema generation/loading, physical VL fault injection semantics, topology construction, traffic generation, metrics, runner behavior, analysis behavior, final-report claims, or historical artifacts.
+
+The fix has two source surfaces:
+
+- `ReservationTable::checkReservation()` now treats an output VC as exclusive for each output port regardless of input port. The prior check allowed another reservation for the same output VC when the existing reservation came from the same physical input but a different input VC. Under DeFT output-VC translation, that could interleave multiple packets onto one downstream VC and leave body/tail flits behind a reservation that no longer matched the remaining packet.
+- `ReservationTable::release()` computes the removed reservation index before erasing the vector iterator, preserving the round-robin reservation index bookkeeping.
+- `DeftVirtualNetwork::sourceCanUseEitherVirtualNetwork()` now allows boundary inter-chiplet sources to use either VN only when their attached physical VL is functional. If a boundary source's own VL is faulted, it must first move horizontally to another source-exit boundary, so it starts in VN0 to keep the later horizontal-to-down movement legal.
+
+Validation reran the T0055 destination-stress matrix as T0051 under `external/noxim/other/generated/t0051_deft_destination_stress_fix_v1/`:
+
+- Routing mode: `DEFT` only.
+- Seed: `0`.
+- Drain mode: opt-in `-drain_mode`, `-warmup 0`.
+- Fault masks: `0x0000` and accepted 25% physical-fault mask `0x1111`.
+- Destinations: strict convergence to destination `0` and destination `63`, excluding self-pairs.
+- Fixtures: n4, n8, n16, n32, and n63 source-count thresholds at gap 1; n63 gap-8 and gap-64 spacing probes; n63 gap-1 timeout probes at 100,000 drain cycles.
+
+All 32 T0051 simulator cases returned code `0` and stopped with `drain_completed`. The manifest records `case_count: 32`, `passing_case_count: 32`, `failure_row_count: 0`, and `claims_allowed: false`.
+
+Assumption: T0051 is targeted fix validation for the diagnosed destination-stress blocker, not a replacement for a broader DeFT reachability sweep.
+
+Blocked: T0053 remains blocked until a post-fix DeFT drain-mode validation artifact, planned as T0056, supports comparison.
+
+Blocked: Stronger final-report reachability claims remain blocked until a later report task uses validated post-fix artifacts.
 
 ### Baseline Comparison Boundary
 
