@@ -157,11 +157,15 @@ T0056 validation established a 95-row `DEFT` drain-mode matrix over 19 determini
 
 T0053 validation established a 190-row drain-mode comparison matrix over `DEFT` and `INTERPOSER_AWARE_XY`. All `DEFT` rows passed. IA-XY passed 68 rows and timed out in 27 rows. The denominator-safe comparison table marks 68 matched rows as `complete_delivery_both_modes` and 27 rows as `descriptive_only_timeout_or_non100`.
 
-## 6. Results
+## 6. Results and Evaluation
 
 The results in this section are copied or assembled from the T0028 claim-safe results draft. They are finite-window descriptive measurements. Blank cells are intentional and should remain blank.
 
 The T0026/T0027/T0028 artifact chain remains the only final report-support data set used in the fixed-window tables below. T0056/T0053 drain-mode artifacts are summarized separately in Section 6.6.
+
+Following the final-report instructions, this section separates measured outputs, comparison readiness, technical discussion, and reproducibility.
+
+### 6.1 Performance Results
 
 All 150 planned simulator runs completed with return code `0`, and the generated T0027 report-support tables were cross-checked against the T0026 executed manifest, raw JSON stats, sweep summary, analysis run summary, and analysis comparison summary with zero mismatches. The upstream report-support manifest keeps `claims_allowed: false`.
 
@@ -171,7 +175,7 @@ Under this fixed-window measurement policy, the `XY` hotspot cells cannot be com
 
 The `XY` uniform and localized cells injected packets in some seeds, but received zero packets in the measured window. T0033 diagnosed these `XY|uniform` and `XY|localized_40` zero-received cells as standard `XY` topology incompatibility on `DEFT_2_5D`: cardinal-only `XY` cannot route unrestricted inter-chiplet traffic through the VL/hub/interposer path required by this topology. Therefore, side-by-side latency comparisons against `DEFT` are not supported.
 
-### 6.1 Artifact And Readiness Summary
+#### 6.1.1 Artifact And Readiness Summary
 
 | Item | Value |
 | --- | --- |
@@ -191,7 +195,7 @@ The `XY` uniform and localized cells injected packets in some seeds, but receive
 | Cross-check mismatches | 0 |
 | Claim state | `claims_allowed: false` |
 
-### 6.2 Coverage By Routing And Traffic
+#### 6.1.2 Coverage By Routing And Traffic
 
 | Routing | Traffic | Runs | Nonempty injection runs | Zero-injection runs | Received runs | Injected packets | Received packets |
 | --- | --- | ---: | ---: | ---: | ---: | ---: | ---: |
@@ -202,7 +206,7 @@ The `XY` uniform and localized cells injected packets in some seeds, but receive
 | XY | localized_40 | 25 | 20 | 5 | 0 | 35 | 0 |
 | XY | uniform | 25 | 5 | 20 | 0 | 5 | 0 |
 
-### 6.3 Condition-Level Descriptive Metrics
+#### 6.1.3 Condition-Level Descriptive Metrics
 
 Reachability is `total_received_packets / total_injected_packets` within the condition. Latency is received-packet-weighted across runs with received packets. Mean network throughput is the exported finite-window mean across all five runs. The status labels are defined before the table to keep the wide table readable while preserving the original T0027/T0028 terminology.
 
@@ -245,7 +249,7 @@ Reachability is `total_received_packets / total_injected_packets` within the con
 | XY | uniform | 0x0111 | 18.75 | 1 | 4 | 1 | 0 | 0 |  | 0 | partial_injection_cell |
 | XY | uniform | 0x1111 | 25 | 1 | 4 | 1 | 0 | 0 |  | 0 | partial_injection_cell |
 
-### 6.4 XY/DEFT Pairwise Readiness
+#### 6.1.4 XY/DEFT Pairwise Readiness
 
 No delta columns are included. These rows describe whether values can be displayed side by side, not whether either routing mode should be preferred.
 
@@ -267,7 +271,7 @@ No delta columns are included. These rows describe whether values can be display
 | uniform | 0x0111 | partial_injection_cell | complete_injection_cell | descriptive_reachability_only_latency_blank | Both modes have injection, but one mode has zero received packets; latency comparison is blank. |
 | uniform | 0x1111 | partial_injection_cell | partial_injection_cell | descriptive_reachability_only_latency_blank | Both modes have injection, but one mode has zero received packets; latency comparison is blank. |
 
-### 6.5 Zero-Injection Run Summary
+#### 6.1.5 Zero-Injection Run Summary
 
 The full 54-run list is preserved in `external/noxim/other/generated/t0027_report_support_v1/zero_injection_runs.csv`.
 
@@ -279,7 +283,7 @@ The full 54-run list is preserved in `external/noxim/other/generated/t0027_repor
 | XY | localized_40 | 5 |
 | XY | uniform | 20 |
 
-### 6.6 Drain-Mode Post-Fix Validation And IA-XY Comparison
+#### 6.1.6 Drain-Mode Post-Fix Validation And IA-XY Comparison
 
 T0056 and T0053 use opt-in source-cutoff plus drain semantics rather than the T0026 fixed-window policy. These results are artifact-scoped and denominator-safe. They do not update the fixed-window condition metrics above and do not relabel IA-XY as standard `XY`.
 
@@ -314,7 +318,15 @@ The denominator-safe T0053 comparison table classifies 68 matched fixture/fault 
 
 For the IA-XY all-pairs aggregate rows, the five fault-mask cases stopped at `drain_timeout` after receiving 557, 1211, 888, 995, and 795 measured packets. These rows also retained source queues and in-network state at the timeout, so they remain descriptive-only.
 
-## 7. Limitations
+### 6.2 Comparative Analysis
+
+The fixed-window comparison with standard `XY` is not comparison-ready for latency or performance ranking. The pairwise readiness table records why: hotspot rows have no measured-window `XY` injection, and the uniform/localized rows that do inject on the `XY` side have zero received packets. These rows are useful for documenting the limitation of cardinal-only `XY` on `DEFT_2_5D`, but not for computing deltas.
+
+The later drain-mode comparison uses `INTERPOSER_AWARE_XY`, not standard `XY`, because IA-XY can traverse the modeled interposer path. The T0053 drain summary shows that `DEFT` passed all 95 matched rows while IA-XY passed 68 rows and timed out in 27 rows. This supports only the artifact-scoped statement that `DEFT` completed the documented matrix and that IA-XY had descriptive timeout rows in that same matrix. It does not support universal algorithm ranking, improvement percentages, or statistical conclusions.
+
+### 6.3 Discussion
+
+The implementation successfully produced a complete Noxim extension surface, a validated fixed-window final sweep, and post-fix drain-mode evidence for the documented matrices. The main technical trade-off is that stronger claims are limited by the validated denominator: the report preserves fixed-window descriptive tables separately from drain-mode evidence, and it keeps standard `XY` separate from IA-XY.
 
 Assumption: T0028 text is report-ready descriptive support, not a new analysis layer.
 
@@ -338,7 +350,15 @@ Blocked: Stronger result statements, non-empty XY hotspot measurements, latency 
 
 Blocked: PARSEC/GEM5 trace evaluation remains outside the current final-sweep artifact set.
 
-## 8. Conclusion
+### 6.4 Reproducibility
+
+The final LaTeX artifact is generated from `final_report/main.tex`, which was derived from `docs/FINAL_REPORT_DRAFT.md` and uses the same IEEE conference-style report template family as the extended proposal. The final report source is intentionally separated from the extended proposal source so the original archive and proposal files remain unchanged.
+
+The code and experiment configuration are in the project repository, with the registered Noxim source tree at `external/noxim`. The validated Noxim build command is `./build.sh` from `external/noxim` in the documented WSL/Linux environment. The final fixed-window experiment commands, generated LUTs, JSON statistics, manifests, and summaries are preserved under `external/noxim/other/generated/t0026_final_sweep_v1/`, `external/noxim/other/generated/t0026_final_analysis_v1/`, `external/noxim/other/generated/t0027_report_support_v1/`, and `external/noxim/other/generated/t0028_final_report_results_v1/`. The post-fix drain-mode artifacts are preserved under `external/noxim/other/generated/t0056_deft_post_fix_reachability_v1/` and `external/noxim/other/generated/t0053_drain_iaxy_deft_comparison_v1/`; each artifact set includes the relevant commands, fixtures, generated LUTs, logs, summaries, and manifests.
+
+The final PDF was generated from `final_report/` using the documented TeX fallback sequence `pdflatex main.tex`, `bibtex main`, `pdflatex main.tex`, and `pdflatex main.tex`. The simulator final sweep was not rerun during final-report conversion, report revision, report integration, or packaging refresh.
+
+## 7. Conclusion and Future Work
 
 The project produced a traceable Noxim extension for `DEFT_2_5D` and a reproducible final-sweep artifact set. The final report-support data confirms that the planned 150-run matrix executed successfully and that generated summary tables cross-check against raw artifacts. The reportable fixed-window results should remain descriptive because the measured data contains blank and partial cells.
 

@@ -2,7 +2,7 @@
 
 ## Current Phase
 
-Phase 10 - Reachability Closure and Final Report Refresh (T0057 refreshed the T0048-updated PDF and submission package; final handoff check is optional)
+Phase 10 - Reachability Closure and Final Report Refresh (T0060 completed an all-pair DeFT drain-mode accepted-fault-ladder reachability audit)
 
 ## Completed Tasks
 
@@ -62,8 +62,11 @@ Phase 10 - Reachability Closure and Final Report Refresh (T0057 refreshed the T0
 - `T0056` - Run Post-Fix DeFT Drain Reachability Validation Matrix.
 - `T0053` - Run Drain-Based IA-XY vs DeFT Comparison.
 - `T0057` - Refresh Updated Final Report PDF and Submission Package.
+- `T0058` - Final Refreshed Submission Handoff Check.
+- `T0059` - Align Final Report With Instructor Final-Report Instructions.
+- `T0060` - Exhaustive DeFT Reachability Claim Audit.
 
-DeFT VN assignment behavior, the first VN movement-transition restriction enforcement layer, the offline VL LUT schema/generator, the runtime schema-v1 LUT loading/use path, explicit XY fault-free/fault-injected baseline configuration modes, proposal-required synthetic traffic configuration profiles, machine-readable metrics export, tiny experiment-runner launch support, final-analysis scaffolding, the final sweep policy, the validated T0026 150-run final sweep output set, T0027 blank-aware report-support tables, T0028 claim-safe final report results draft, the T0029 tracked claim-safe Markdown report draft, the T0030 submission-readiness polish, the T0031 IEEE-style LaTeX final report source artifact, the T0032 generated final report PDF, the T0033 blocker diagnosis, the T0034 report-revision direction decision, the T0035 final-report diagnosis revision, the T0036 post-final experimental design gate, the T0037 final submission handoff check, the T0038 final submission archive refresh, the T0039 future backlog documentation, the T0040 IA-XY baseline design, the T0041 IA-XY baseline implementation, the T0042 limited IA-XY-vs-DEFT artifact set, the T0043 source-cutoff/drain policy design, the T0044 opt-in drain-mode implementation with targeted smoke validation, the T0045 directional fault-model feasibility decision, the T0046 PARSEC/GEM5 trace-support feasibility decision, the T0048 claim-safe report source integration, the T0049 reachability-closure plan, the T0050 small drain-mode DeFT reachability diagnosis, the T0052 all-pairs drain-timeout artifact set, the T0054 destination-stress timeout diagnosis, the T0055 destination-stress flow-control diagnosis, the T0051 targeted DeFT destination-stress fix, the T0056 post-fix DeFT drain-mode validation artifact set, the T0053 drain-mode IA-XY-vs-DeFT comparison artifact set, and the T0057 refreshed final-report PDF/package now exist for `DEFT_2_5D`. Historical fixed-window performance claims remain limited to descriptive, blank-aware report support. T0048 integrates T0056/T0053 only as artifact-scoped drain-mode summaries: T0056 supports the documented 95-case `DEFT` drain matrix, and T0053 supports denominator-safe `INTERPOSER_AWARE_XY` versus `DEFT` statements for the documented 190-case matrix. T0057 regenerated `final_report/main.pdf` and refreshed `final_report.zip` from that source without changing report claims. Universal ranking, improvement percentages, and statistical conclusions remain blocked.
+DeFT VN assignment behavior, the first VN movement-transition restriction enforcement layer, the offline VL LUT schema/generator, the runtime schema-v1 LUT loading/use path, explicit XY fault-free/fault-injected baseline configuration modes, proposal-required synthetic traffic configuration profiles, machine-readable metrics export, tiny experiment-runner launch support, final-analysis scaffolding, the final sweep policy, the validated T0026 150-run final sweep output set, T0027 blank-aware report-support tables, T0028 claim-safe final report results draft, the T0029 tracked claim-safe Markdown report draft, the T0030 submission-readiness polish, the T0031 IEEE-style LaTeX final report source artifact, the T0032 generated final report PDF, the T0033 blocker diagnosis, the T0034 report-revision direction decision, the T0035 final-report diagnosis revision, the T0036 post-final experimental extension gate, the T0037 final submission handoff check, the T0038 final submission archive refresh, the T0039 future backlog documentation, the T0040 IA-XY baseline design, the T0041 IA-XY baseline implementation, the T0042 limited IA-XY-vs-DEFT artifact set, the T0043 source-cutoff/drain policy design, the T0044 opt-in drain-mode implementation with targeted smoke validation, the T0045 directional fault-model feasibility decision, the T0046 PARSEC/GEM5 trace-support feasibility decision, the T0048 claim-safe report source integration, the T0049 reachability-closure plan, the T0050 small drain-mode DeFT reachability diagnosis, the T0052 all-pairs drain-timeout artifact set, the T0054 destination-stress timeout diagnosis, the T0055 destination-stress flow-control diagnosis, the T0051 targeted DeFT destination-stress fix, the T0056 post-fix DeFT drain-mode validation artifact set, the T0053 drain-mode IA-XY-vs-DeFT comparison artifact set, the T0057 refreshed final-report PDF/package, the T0058 final read-only handoff check, the T0059 instructor-instruction compliance refresh, and the T0060 all-pair DeFT drain-mode reachability audit now exist for `DEFT_2_5D`. Historical fixed-window performance claims remain limited to descriptive, blank-aware report support. T0060 strengthens the DeFT drain-mode claim boundary beyond T0056: within deterministic hardcoded fixtures, opt-in drain mode, the current 16-physical-bidirectional-VL fault model, and accepted masks `0x0000`, `0x0001`, `0x0011`, `0x0111`, and `0x1111`, all 4032 valid ordered chiplet-router pairs delivered for every mask. T0053 still supports only denominator-safe `INTERPOSER_AWARE_XY` versus `DEFT` statements for its documented 190-case matrix. T0059 remains the latest generated final-report PDF/package refresh. Universal timing, ranking, improvement percentages, PARSEC/GEM5 workload claims, directional endpoint fault claims, stochastic workload claims, and statistical conclusions remain blocked.
 
 ## In-Progress Tasks
 
@@ -74,6 +77,66 @@ DeFT VN assignment behavior, the first VN movement-transition restriction enforc
 - `T0047` - PARSEC/GEM5 Trace Ingestion is blocked until a versioned trace schema, tiny fixture, dependency/provenance plan, workload mapping policy, and small smoke-validation path are supplied and accepted.
 
 ## Last Validation Result
+
+- T0060 Exhaustive DeFT Reachability Claim Audit completed as an experiment/validation task on 2026-05-31.
+- Required startup reading was completed before task work: `AGENTS.md`, `docs/PROGRESS.md`, `docs/TASKS.md`, `docs/ROADMAP.md`, `docs/ARCHITECTURE.md`, `docs/VALIDATION.md`, `docs/DECISIONS.md`, `docs/PROMPTS.md`, `docs/FINAL_REPORT_DRAFT.md`, and `final_report/main.tex`.
+- Source-document roles were preserved: `Extended_Proposal.pdf` remains the primary project requirements source, the original DeFT paper remains the primary algorithmic reference, `Proposal.pdf` remains initial context only, and the peer evaluation document was ignored completely.
+- Parent status before T0060 work already contained pre-existing modified tracking docs and final-report artifacts from prior work. `external/noxim` status was clean on `feat/baseline-noxim...origin/feat/baseline-noxim`. No task branch was created or switched.
+- T0056 artifacts were inspected as the prior DeFT drain-mode evidence: 95/95 cases passed, all five all-pairs aggregate rows delivered 4032 packets and 32256 flits, and T0056 remained matrix-scoped. T0053 artifacts were inspected only as comparison context: all 95 `DEFT` rows passed, while IA-XY had 27 timeout/non-100% descriptive-only rows.
+- The exact T0060 audit plan was defined before simulator execution. Assumption: seed `0` is sufficient because all T0060 traffic fixtures are deterministic hardcoded schedules. Assumption: the gap-128 sequential all-pairs fixture is a task-local near-isolated delivery audit, not per-pair independent timing evidence. Blocked: fully independent one-simulator-run-per-pair timing evidence was not attempted because it would require 20,160 pair/mask launches and is outside the task-local audit scope.
+- Generated outputs were written only under ignored `external/noxim/other/generated/t0060_deft_reachability_audit_v1/`.
+- The T0060 matrix used `DEFT` only, seed `0`, opt-in drain mode, `-warmup 0`, a generated schema-v1 LUT, the full accepted physical fault-mask ladder (`0x0000`, `0x0001`, `0x0011`, `0x0111`, `0x1111`), 130 deterministic hardcoded fixtures, and 650 simulator cases.
+- Fixture groups covered one gap-128 near-isolated sequential all-pairs fixture, 64 source-isolated all-destination fixtures, 64 destination-stress fixtures, and one all-pairs aggregate fixture, each repeated for all five masks.
+- All 650 simulator cases returned `0`, stopped with `drain_completed`, and passed. The manifest records `case_count: 650`, `passing_case_count: 650`, `failure_row_count: 0`, and `all_cases_passed: true`.
+- T0060 delivered all 4032 valid ordered chiplet-router source/destination pairs for every accepted physical fault mask. Group totals were 20160 injected and received packets per fixture group across the five masks, with 161280 received flits per group and zero failures. `failing_cases.csv` contains only its header.
+- The all-pairs aggregate drain-cycle values matched the T0056 all-pairs rows: 4088, 4858, 5617, 6239, and 5208 cycles for masks `0x0000`, `0x0001`, `0x0011`, `0x0111`, and `0x1111`.
+- The T0060 LUT path did not show a suspicious mismatch: LUT generation returned `0`, every summary row's actual fault mask matched the requested mask, and all schema-v1 LUT-backed rows delivered completely.
+- Fixed-window workload artifacts remain descriptive. T0026/T0027/T0028/T0033 use fixed simulation windows without a post-injection drain phase, so blank/partial or less-than-100% fixed-window values do not contradict the T0060 drain-mode delivery result.
+- T0060 supports a stronger DeFT drain-mode all-valid-ordered-pair accepted-physical-fault-ladder delivery claim within deterministic hardcoded fixtures and the current physical fault model. It does not support fixed-window workload reachability, performance ranking, improvement percentages, universal timing, stochastic workload, PARSEC/GEM5, directional endpoint fault, IA-XY, or statistical claims.
+- No simulator source, standard `XY`, IA-XY, `DEFT` behavior, VN transition restriction, VL fault injection semantic, LUT schema/use path, topology behavior, traffic-generation behavior, metrics/runner/analysis behavior, final-report source, final-report PDF/package artifact, Extended Proposal artifact, dependency, PARSEC/GEM5 trace, or `./regression.sh --update` was changed.
+- `git diff --check` completed with exit code `0`; Git emitted line-ending conversion warnings for edited/pre-existing text files only and no whitespace errors.
+- Final `external/noxim` status remained clean on `feat/baseline-noxim...origin/feat/baseline-noxim`.
+- Protected generated-artifact status checks returned no changed tracked files for T0026/T0027/T0028, T0042, T0044, T0050, T0051, T0052, T0053, T0054, T0055, and T0056 generated directories.
+- Extended Proposal checks returned no changed files for `Extended_Proposal.pdf`, `Extended_Proposal.zip`, or `Extended_Proposal/`.
+- Final-report artifact hashes still match the T0059 handoff values: `final_report/main.pdf` SHA-256 `A04BC3FAA6A57116022D06320434AB5B107851FFCDA09F07E580892254BA7689`; `final_report.zip` SHA-256 `A7FA7F98D54394B8390EA379261BC686B6BD7262BCA5C7B970C93DE55C5BB5AE`. These files were already modified before T0060 and were not regenerated or edited during T0060.
+- Blocked: Strong IA-XY ranking, performance improvement percentages, statistical conclusions, fixed-window workload reachability, PARSEC/GEM5 workload claims, directional endpoint fault claims, stochastic workload claims, and universal timing claims remain blocked after T0060.
+
+- T0059 Align Final Report With Instructor Final-Report Instructions completed as a report/packaging compliance task on 2026-05-29.
+- Required startup reading was completed before task work: `AGENTS.md`, `docs/PROGRESS.md`, `docs/TASKS.md`, `docs/ROADMAP.md`, `docs/ARCHITECTURE.md`, `docs/VALIDATION.md`, `docs/DECISIONS.md`, `docs/PROMPTS.md`, `docs/FINAL_REPORT_DRAFT.md`, and `final_report/main.tex`.
+- Source-document roles were preserved: `Extended_Proposal.pdf` remains the primary project requirements source, the original DeFT paper remains the primary algorithmic reference, `Proposal.pdf` remains initial context only, and the peer evaluation document was ignored completely.
+- The late instruction file inspected was `C:\Users\ysfth\Downloads\CMP720_Final_Report_Instructions.pdf`, 4 pages, 112364 bytes, last written 2026-05-29 15:07:54 Turkey time. It instructs groups to continue in the same IEEE double-column LaTeX document, update existing sections to reflect completed work, and add `Results and Evaluation` plus `Conclusion and Future Work` before the bibliography. `Results and Evaluation` must include `Performance Results`, `Comparative Analysis`, `Discussion`, and `Reproducibility`.
+- Assumption: `CMP720_Final_Report_Instructions.pdf` is a late report-structure/submission instruction source; it does not replace `Extended_Proposal.pdf` as the project requirements source and does not replace the original DeFT paper as the algorithmic reference.
+- Before the T0059 edits, parent status already contained the T0058 tracking-document updates plus the report/packaging files touched during this continuation; `external/noxim` status was clean on `feat/baseline-noxim...origin/feat/baseline-noxim`. No task branch was created or switched.
+- The exact task scope was defined before edits: align report structure with the instructor instructions, preserve existing report claims and validated artifact limits, do not rerun simulations, do not rebuild Noxim, do not alter generated experiment artifacts, do not alter Extended Proposal artifacts, and do not introduce stronger unsupported conclusions.
+- `docs/FINAL_REPORT_DRAFT.md` and `final_report/main.tex` now structure Section 6 as `Results and Evaluation` with the required subsections: `Performance Results`, `Comparative Analysis`, `Discussion`, and `Reproducibility`. The conclusion section is now `Conclusion and Future Work`. The fixed-window T0026/T0027/T0028 material and drain-mode T0056/T0053 material were reorganized without changing their claim limits.
+- The documented fallback TeX workflow from `final_report/` completed with exit code `0`: `pdflatex main.tex`, `bibtex main`, `pdflatex main.tex`, and `pdflatex main.tex`. `latexmk` was not retried and no dependency was installed.
+- The refreshed PDF is `C:\Projects\CMP-720-Project-Proposal\final_report\main.pdf`, 7 pages, 377584 bytes, SHA-256 `A04BC3FAA6A57116022D06320434AB5B107851FFCDA09F07E580892254BA7689`, produced by MiKTeX pdfTeX at 2026-05-29 15:11:39 Turkey time. `pdftotext` confirmed the required results subsections and the `Conclusion and Future Work` heading in the PDF text.
+- The refreshed package is `C:\Projects\CMP-720-Project-Proposal\final_report.zip`, 673499 bytes, SHA-256 `A7FA7F98D54394B8390EA379261BC686B6BD7262BCA5C7B970C93DE55C5BB5AE`.
+- `final_report.zip` contains exactly six entries: `final_report/main.pdf` (377584 bytes), `final_report/main.tex` (35039 bytes), `final_report/references.bib` (2683 bytes), `final_report/IEEEtran.cls` (281957 bytes), `final_report/README.md` (1296 bytes), and `final_report/figures/schematic.png` (241184 bytes).
+- The final LaTeX log contains no unresolved-reference warnings, citation warnings, fatal errors, LaTeX errors, rerun warnings, or overfull boxes. Remaining diagnostics are underfull hbox/vbox messages and the standard IEEEtran final-page column-balance reminder.
+- `git diff --check` completed with exit code `0`; Git emitted line-ending conversion warnings for edited text files only and no whitespace errors.
+- Final `external/noxim` status remained clean on `feat/baseline-noxim...origin/feat/baseline-noxim`.
+- Protected generated-artifact status checks returned no changed tracked files for T0026/T0027/T0028, T0042, T0044, T0050, T0051, T0052, T0053, T0054, T0055, and T0056 generated directories.
+- Extended Proposal checks returned no changed files for `Extended_Proposal.pdf`, `Extended_Proposal.zip`, or `Extended_Proposal/`.
+- No simulator source, standard `XY`, IA-XY, `DEFT` behavior, VN transition restrictions, VL fault injection semantics, LUT schema/use path, topology behavior, traffic-generation behavior, metrics/runner/analysis behavior, simulation output, Noxim rebuild, dependency, PARSEC/GEM5 trace, Extended Proposal artifact, or `./regression.sh --update` was changed.
+- Blocked: `latexmk` remains blocked until Perl is available to MiKTeX, but the documented fallback TeX workflow completed.
+- Blocked: Strong algorithm ranking, improvement percentages, universal reachability beyond the documented matrix scopes, PARSEC/GEM5 workload claims, directional endpoint fault claims, and statistical conclusions remain blocked after T0059.
+
+- T0058 Final Refreshed Submission Handoff Check completed as a read-only report/packaging handoff task on 2026-05-29.
+- Required startup reading was completed before task work: `AGENTS.md`, `docs/PROGRESS.md`, `docs/TASKS.md`, `docs/ROADMAP.md`, `docs/ARCHITECTURE.md`, `docs/VALIDATION.md`, `docs/DECISIONS.md`, `docs/PROMPTS.md`, `docs/FINAL_REPORT_DRAFT.md`, and `final_report/main.tex`.
+- Source-document roles were preserved: `Extended_Proposal.pdf` is the primary project requirements source, the original DeFT paper is the primary algorithmic reference, `Proposal.pdf` is initial context only, and the peer evaluation document was ignored completely.
+- Parent repository status before checks was clean on `feat/map-noxim-extension-points...origin/feat/map-noxim-extension-points` with the branch ahead by two commits. `external/noxim` status before checks was clean on `feat/baseline-noxim...origin/feat/baseline-noxim`. No task branch was created or switched.
+- Before validation, `final_report/main.pdf`, `final_report.zip`, and the zip contents were inspected. The PDF is `C:\Projects\CMP-720-Project-Proposal\final_report\main.pdf`, 6 pages, 373494 bytes, SHA-256 `D3B0DDF2D74ABA648FEF9B4D763781968AD7825D9E06F5F4D0CDC6444F0AC0C9`, created and modified at 2026-05-29 02:45:57 Turkey Standard Time by MiKTeX pdfTeX. The PDF page size is letter, PDF version 1.5, and it is not encrypted.
+- The refreshed package is `C:\Projects\CMP-720-Project-Proposal\final_report.zip`, 670414 bytes, SHA-256 `A3026F5C997D1AC65F5AED5638F1FFF18986D9B4879F3EEEEB99BB88B34F6DE4`.
+- `final_report.zip` contains exactly six entries: `final_report/main.pdf` (373494 bytes), `final_report/main.tex` (32292 bytes), `final_report/references.bib` (2683 bytes), `final_report/IEEEtran.cls` (281957 bytes), `final_report/README.md` (1296 bytes), and `final_report/figures/schematic.png` (241184 bytes).
+- Before running validation, the exact read-only checks and blockers were defined. Assumption: because the historical generated artifacts are ignored report-support outputs, "not changed" is confirmed through no tracked status/diff changes in the registered Noxim tree and no parent-repo changes touching protected paths. Blocked: `latexmk` remains blocked until Perl is available to MiKTeX, but no TeX build command was needed for T0058.
+- `git diff --check` completed with exit code `0` and no output.
+- Final `external/noxim` status remained clean on `feat/baseline-noxim...origin/feat/baseline-noxim`.
+- Protected generated-artifact checks returned no changed tracked files for `other/generated/t0026_final_sweep_v1`, `other/generated/t0026_final_analysis_v1`, `other/generated/t0027_report_support_v1`, `other/generated/t0028_final_report_results_v1`, `other/generated/t0042_iaxy_deft_limited_v1`, `other/generated/t0044_drain_smokes`, `other/generated/t0050_deft_reachability_diagnosis_v1`, `other/generated/t0051_deft_destination_stress_fix_v1`, `other/generated/t0052_deft_drain_reachability_v1`, `other/generated/t0053_drain_iaxy_deft_comparison_v1`, `other/generated/t0054_deft_drain_timeout_diagnosis_v1`, `other/generated/t0055_deft_destination_stress_diagnosis_v1`, and `other/generated/t0056_deft_post_fix_reachability_v1`.
+- Extended Proposal checks returned no changed files for `Extended_Proposal.pdf`, `Extended_Proposal.zip`, or `Extended_Proposal/`.
+- Direct final-deliverable status checks returned no changed files for `final_report/main.pdf` or `final_report.zip`.
+- No report wording, report claims, generated experiment artifacts, Extended Proposal artifacts, simulator source, standard `XY`, IA-XY, `DEFT` behavior, VN transition restrictions, VL fault injection semantics, LUT schema/use path, topology behavior, traffic-generation behavior, metrics/runner/analysis behavior, dependency, simulation output, Noxim rebuild, package regeneration, PDF regeneration, PARSEC/GEM5 trace, or `./regression.sh --update` was changed.
+- Blocked: Strong algorithm ranking, improvement percentages, universal reachability, PARSEC/GEM5 workload claims, directional endpoint fault claims, and statistical conclusions remain blocked after T0058.
 
 - T0057 Refresh Updated Final Report PDF and Submission Package completed as a report/packaging task on 2026-05-29.
 - Required startup reading was completed before task work: `AGENTS.md`, `docs/PROGRESS.md`, `docs/TASKS.md`, `docs/ROADMAP.md`, `docs/ARCHITECTURE.md`, `docs/VALIDATION.md`, `docs/DECISIONS.md`, `docs/PROMPTS.md`, `docs/FINAL_REPORT_DRAFT.md`, and `final_report/main.tex`.
@@ -1069,6 +1132,16 @@ External source tree registered during `T0023`:
 
 - `external/noxim` - Noxim submodule and modifiable project fork from `https://github.com/YusufTahirOrhan/noxim`.
 
+Files updated or generated during `T0060` Exhaustive DeFT Reachability Claim Audit:
+
+- Generated ignored artifacts under `external/noxim/other/generated/t0060_deft_reachability_audit_v1/`
+- `docs/DECISIONS.md`
+- `docs/PROGRESS.md`
+- `docs/PROMPTS.md`
+- `docs/ROADMAP.md`
+- `docs/TASKS.md`
+- `docs/VALIDATION.md`
+
 ## Current Assumptions
 
 - Assumption: `Extended_Proposal.pdf` is the primary technical source.
@@ -1190,6 +1263,9 @@ External source tree registered during `T0023`:
 - Assumption: T0056 was sufficient to unblock the T0053 drain-mode comparison artifact task, and T0048 later used it only as matrix-scoped report evidence.
 - Assumption: T0053 validates only its documented 190-case opt-in drain comparison matrix and does not prove universal IA-XY or DeFT behavior beyond that artifact set.
 - Assumption: T0057 refreshed `final_report/main.pdf` and `final_report.zip` from the T0048-updated source without changing report claims.
+- Assumption: T0059 treats `CMP720_Final_Report_Instructions.pdf` as a late report-structure instruction source only; project requirements and algorithmic interpretation still come from `Extended_Proposal.pdf` and the original DeFT paper.
+- Assumption: T0060 supports a stronger DeFT drain-mode all-valid-ordered-pair accepted-physical-fault-ladder delivery claim only within deterministic hardcoded fixtures, opt-in drain mode, seed `0`, and the current 16-physical-bidirectional-VL fault model.
+- Assumption: T0060 does not reinterpret T0026/T0027/T0028/T0033 fixed-window results and does not support universal timing, stochastic workload, PARSEC/GEM5, directional endpoint fault, performance-ranking, improvement-percentage, or statistical claims.
 - Blocked: Strong IA-XY-vs-DEFT ranking, improvement percentages, and statistical conclusions remain blocked after T0048.
 - Blocked: `latexmk` remains blocked in the current MiKTeX setup because Perl is not available to MiKTeX; the documented `pdflatex`/`bibtex` fallback workflow remains usable and completed T0057.
 - Blocked: Strong IA-XY performance claims remain blocked after T0042 because the new artifact set is limited, two-seed exploratory data and still contains blank IA-XY hotspot cells.
@@ -1198,7 +1274,7 @@ External source tree registered during `T0023`:
 - Blocked: PARSEC/GEM5 workload claims remain blocked after T0046 until GEM5/PARSEC dependencies or trace inputs, a versioned trace schema, workload mapping, ingestion validation, and new artifact directories exist.
 - Blocked: Reopening source-cutoff/drain semantics, route-compatible intra-chiplet comparison, PARSEC/GEM5 traces, directional endpoint faults, or stronger performance claims requires a new explicit task with its own design and validation policy.
 - Blocked: T0052 does not support a 100% DeFT reachability claim because every aggregate all-pairs mask case stopped with `drain_timeout`.
-- Blocked: Stronger claims beyond the T0048 artifact-scoped drain-mode summaries remain blocked until a later task defines and validates the required evidence.
+- Blocked: Stronger claims beyond T0060's deterministic DeFT drain-mode all-pair accepted-physical-fault-ladder delivery scope remain blocked until a later task defines and validates the required evidence.
 
 ## Open Questions
 
@@ -1213,69 +1289,18 @@ External source tree registered during `T0023`:
 - Should a later experiment policy select one global drain timeout, or traffic-profile-specific timeout budgets after T0044 smokes exist?
 - Should the generated final-analysis scaffold blocker text be updated in a future task to reflect the T0025 policy resolutions while still keeping generated scaffold outputs conservative?
 - Should a future report-packaging cleanup install Perl for `latexmk` support, install or vendor the exact `IEEEtran.bst` style, or keep the currently working `pdflatex`/`bibtex` fallback with `ieeetr`?
-- Is a final read-only refreshed submission handoff check desired before external submission?
-
 ## Next Recommended Task
 
-No further implementation or experiment task is required for the current refreshed deliverable package. Start `T0058` only if a final read-only refreshed submission handoff check is desired.
+No source-fix task is required from T0060. If the final report should use the stronger T0060 DeFT drain-mode all-pair claim, start a separate report-source integration task so the new claim boundary can be added without rerunning simulations or changing deliverable artifacts implicitly.
 
 ## Next Ready-to-Send Prompt
 
 ```text
-Start task T0058: Final Refreshed Submission Handoff Check.
+Start task T0061: Integrate T0060 DeFT reachability audit into final report source.
 
-Before starting, read:
-- AGENTS.md
-- docs/PROGRESS.md
-- docs/TASKS.md
-- docs/ROADMAP.md
-- docs/ARCHITECTURE.md
-- docs/VALIDATION.md
-- docs/DECISIONS.md
-- docs/PROMPTS.md
-- docs/FINAL_REPORT_DRAFT.md
-- final_report/main.tex
+Before starting, read AGENTS.md, docs/PROGRESS.md, docs/TASKS.md, docs/ROADMAP.md, docs/ARCHITECTURE.md, docs/VALIDATION.md, docs/DECISIONS.md, docs/PROMPTS.md, docs/FINAL_REPORT_DRAFT.md, and final_report/main.tex. Continue on the existing Git branch without creating or switching branches. Use Extended_Proposal.pdf as the primary requirements source, the original DeFT paper as the primary algorithmic reference, Proposal.pdf only as initial context, and ignore the peer evaluation document completely.
 
-Continue on the existing Git branch. Do not create or switch task branches.
-
-Use Extended_Proposal.pdf as the primary project requirements source and the original DeFT paper as the primary algorithmic reference. Use Proposal.pdf only as initial context. Ignore the peer evaluation document completely.
-
-Use the registered Noxim source tree at external/noxim only for status checks. Do not rebuild Noxim.
-
-Goal: perform a final read-only handoff check after T0057 and summarize the refreshed submission artifacts, sizes, hashes, package contents, validation state, and remaining blockers.
-
-Before running anything:
-- Check parent repository status.
-- Check external/noxim status.
-- Inspect `final_report/main.pdf` and `final_report.zip`.
-- Inspect `final_report.zip` contents.
-- Define the exact read-only validation checks and any blockers before running them.
-- Clearly mark assumptions as `Assumption`.
-- Clearly mark blockers as `Blocked`.
-
-Scope:
-- Read-only inspection of refreshed T0057 deliverables.
-- Summarize `final_report/main.pdf`, `final_report.zip`, package contents, sizes, hashes, and validation status.
-- Preserve all report wording, claims, generated experiment artifacts, and Extended Proposal artifacts.
-
-Do not:
-- Rerun simulations or regenerate final sweep artifacts.
-- Make source changes.
-- Regenerate `final_report/main.pdf` or `final_report.zip`.
-- Modify report claims, standard `XY`, IA-XY, `DEFT` behavior, VN transition restrictions, VL fault injection semantics, LUT schema/use path, topology behavior, traffic generation behavior, metrics, runner, or analysis behavior.
-- Install dependencies.
-- Import or generate PARSEC/GEM5 traces.
-- Use ./regression.sh --update.
-- Invent results, rank algorithms beyond the validated matrices, or make unsupported final-report claims.
-
-Validation:
-- Run git diff --check.
-- Check external/noxim status after validation.
-- Inspect package contents.
-- Confirm T0026/T0027/T0028, T0042, T0044, T0050, T0051, T0052, T0053, T0054, T0055, and T0056 generated artifacts were not changed.
-- Confirm Extended Proposal files were not changed.
-
-Update tracking docs with the final handoff result, blockers, and the next recommended task.
+Scope the task to report-source and tracking-document edits only. Inspect T0060 artifacts under external/noxim/other/generated/t0060_deft_reachability_audit_v1/, inspect T0056/T0053 only as comparison context, and update docs/FINAL_REPORT_DRAFT.md and final_report/main.tex only where the T0060 drain-mode evidence supports a stronger DeFT all-valid-ordered-pair accepted-physical-fault-ladder delivery claim. Preserve all T0026/T0027/T0028 fixed-window limitations and do not add performance ranking, improvement percentages, statistical conclusions, PARSEC/GEM5 claims, stochastic workload claims, directional endpoint fault claims, or universal timing claims. Do not modify simulator source, Noxim behavior, generated experiment artifacts, final_report/main.pdf, final_report.zip, or Extended Proposal artifacts. Run git diff --check, check external/noxim status, confirm protected artifacts are unchanged, update tracking docs, and provide a suggested commit message plus the next recommended prompt.
 ```
 
 ## Suggested Branch Name for Next Task
@@ -1287,5 +1312,5 @@ None; continue on the existing branch.
 ## Suggested Commit Message
 
 ```text
-Refresh final report PDF and submission package
+Audit DeFT all-pair drain reachability
 ```

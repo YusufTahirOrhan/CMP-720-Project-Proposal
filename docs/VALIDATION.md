@@ -2201,6 +2201,68 @@ T0057 result on 2026-05-29:
 - Extended Proposal checks returned no changed files for `Extended_Proposal.pdf`, `Extended_Proposal.zip`, or `Extended_Proposal/`.
 - No simulator source, standard `XY`, IA-XY, `DEFT` behavior, VN transition restrictions, VL fault injection semantics, LUT schema/use path, topology behavior, traffic-generation behavior, metrics/runner/analysis behavior, simulations, final sweep artifacts, Extended Proposal artifacts, dependencies, or `./regression.sh --update` was changed.
 
+T0058 result on 2026-05-29:
+
+- Required startup reading was completed before task work: `AGENTS.md`, `docs/PROGRESS.md`, `docs/TASKS.md`, `docs/ROADMAP.md`, `docs/ARCHITECTURE.md`, `docs/VALIDATION.md`, `docs/DECISIONS.md`, `docs/PROMPTS.md`, `docs/FINAL_REPORT_DRAFT.md`, and `final_report/main.tex`.
+- Source-document roles were preserved: `Extended_Proposal.pdf` is the primary project requirements source, the original DeFT paper is the primary algorithmic reference, `Proposal.pdf` is initial context only, and the peer evaluation document was ignored completely.
+- Parent status before read-only checks was clean on `feat/map-noxim-extension-points...origin/feat/map-noxim-extension-points` with the branch ahead by two commits. `external/noxim` status before checks was clean on `feat/baseline-noxim...origin/feat/baseline-noxim`.
+- Before validation, the refreshed artifacts were inspected. `final_report/main.pdf` is 6 pages, 373494 bytes, SHA-256 `D3B0DDF2D74ABA648FEF9B4D763781968AD7825D9E06F5F4D0CDC6444F0AC0C9`, letter page size, PDF version 1.5, produced by MiKTeX pdfTeX at 2026-05-29 02:45:57 Turkey Standard Time. `final_report.zip` is 670414 bytes with SHA-256 `A3026F5C997D1AC65F5AED5638F1FFF18986D9B4879F3EEEEB99BB88B34F6DE4`.
+- `final_report.zip` contains exactly `final_report/main.pdf`, `final_report/main.tex`, `final_report/references.bib`, `final_report/IEEEtran.cls`, `final_report/README.md`, and `final_report/figures/schematic.png`.
+- The exact read-only validation checks were defined before execution. Assumption: ignored generated report-support artifact preservation is confirmed through tracked status checks and by not writing to those paths. Blocked: `latexmk` remains blocked until Perl is available to MiKTeX, but T0058 did not need a TeX build.
+- `git diff --check` completed with exit code `0` and no output.
+- Final `external/noxim` status remained clean on `feat/baseline-noxim...origin/feat/baseline-noxim`.
+- Protected generated-artifact status checks returned no changed tracked files for T0026/T0027/T0028, T0042, T0044, T0050, T0051, T0052, T0053, T0054, T0055, and T0056 generated directories.
+- Extended Proposal checks returned no changed files for `Extended_Proposal.pdf`, `Extended_Proposal.zip`, or `Extended_Proposal/`.
+- Direct final-deliverable checks returned no changed files for `final_report/main.pdf` or `final_report.zip`.
+- No report wording, claims, generated experiment artifacts, Extended Proposal artifacts, simulator source, Noxim rebuild, simulation, dependency, PARSEC/GEM5 trace, package regeneration, PDF regeneration, or `./regression.sh --update` was changed.
+
+T0059 result on 2026-05-29:
+
+- Required startup reading was completed before task work: `AGENTS.md`, `docs/PROGRESS.md`, `docs/TASKS.md`, `docs/ROADMAP.md`, `docs/ARCHITECTURE.md`, `docs/VALIDATION.md`, `docs/DECISIONS.md`, `docs/PROMPTS.md`, `docs/FINAL_REPORT_DRAFT.md`, and `final_report/main.tex`.
+- Source-document roles were preserved: `Extended_Proposal.pdf` is the primary project requirements source, the original DeFT paper is the primary algorithmic reference, `Proposal.pdf` is initial context only, and the peer evaluation document was ignored completely.
+- The late instructor file `C:\Users\ysfth\Downloads\CMP720_Final_Report_Instructions.pdf` was inspected. It is 4 pages and 112364 bytes. Assumption: this file governs final-report structure/submission instructions only and does not replace the project requirements or algorithmic reference sources.
+- The exact T0059 scope and blockers were defined before report edits. Scope was limited to section-structure compliance, PDF/package refresh, package inspection, and validation. Blocked: stronger claims, algorithm ranking, improvement percentages, PARSEC/GEM5 claims, directional endpoint fault claims, universal reachability beyond documented matrices, and statistical conclusions remained blocked.
+- `docs/FINAL_REPORT_DRAFT.md` and `final_report/main.tex` were updated so `Results and Evaluation` contains `Performance Results`, `Comparative Analysis`, `Discussion`, and `Reproducibility`, followed by `Conclusion and Future Work` before the bibliography.
+- No simulation was run and Noxim was not rebuilt.
+- The documented fallback build from `final_report/` completed with exit code `0`: `pdflatex main.tex`, `bibtex main`, `pdflatex main.tex`, and `pdflatex main.tex`. `latexmk` remains blocked until Perl is available to MiKTeX.
+- Generated PDF path: `final_report/main.pdf`; absolute path: `C:\Projects\CMP-720-Project-Proposal\final_report\main.pdf`; size: 377584 bytes; pages: 7; SHA-256: `A04BC3FAA6A57116022D06320434AB5B107851FFCDA09F07E580892254BA7689`.
+- `final_report/main.log` contains no unresolved-reference warnings, undefined-citation warnings, fatal errors, LaTeX errors, rerun warnings, or overfull boxes in the final pass. Remaining diagnostics are underfull hbox/vbox messages and the standard IEEEtran final-page column-balance reminder.
+- `pdftotext -layout final_report/main.pdf -` confirmed the required final-report headings, including `Performance Results`, `Comparative Analysis`, `Discussion`, `Reproducibility`, and `Conclusion and Future Work`.
+- The refreshed `final_report.zip` contains exactly `final_report/main.pdf`, `final_report/main.tex`, `final_report/references.bib`, `final_report/IEEEtran.cls`, `final_report/README.md`, and `final_report/figures/schematic.png`. Archive size: 673499 bytes. SHA-256: `A7FA7F98D54394B8390EA379261BC686B6BD7262BCA5C7B970C93DE55C5BB5AE`.
+- Package entry sizes were inspected: `final_report/main.pdf` 377584 bytes, `final_report/main.tex` 35039 bytes, `final_report/references.bib` 2683 bytes, `final_report/IEEEtran.cls` 281957 bytes, `final_report/README.md` 1296 bytes, and `final_report/figures/schematic.png` 241184 bytes.
+- `git diff --check` completed with exit code `0`; Git emitted line-ending conversion warnings for edited text files only and no whitespace errors.
+- Final `external/noxim` status remained clean on `feat/baseline-noxim...origin/feat/baseline-noxim`.
+- Protected generated-artifact status checks returned no changed tracked files for T0026/T0027/T0028, T0042, T0044, T0050, T0051, T0052, T0053, T0054, T0055, and T0056 generated directories.
+- Extended Proposal checks returned no changed files for `Extended_Proposal.pdf`, `Extended_Proposal.zip`, or `Extended_Proposal/`.
+- No simulator source, standard `XY`, IA-XY, `DEFT` behavior, VN transition restrictions, VL fault injection semantics, LUT schema/use path, topology behavior, traffic-generation behavior, metrics/runner/analysis behavior, generated experiment artifact, Extended Proposal artifact, dependency, PARSEC/GEM5 trace, or `./regression.sh --update` was changed.
+
+T0060 result on 2026-05-31:
+
+- Required startup reading was completed before task work: `AGENTS.md`, `docs/PROGRESS.md`, `docs/TASKS.md`, `docs/ROADMAP.md`, `docs/ARCHITECTURE.md`, `docs/VALIDATION.md`, `docs/DECISIONS.md`, `docs/PROMPTS.md`, `docs/FINAL_REPORT_DRAFT.md`, and `final_report/main.tex`.
+- Source-document roles were preserved: `Extended_Proposal.pdf` is the primary project requirements source, the original DeFT paper is the primary algorithmic reference, `Proposal.pdf` is initial context only, and the peer evaluation document was ignored completely.
+- Parent status before audit work already contained pre-existing modified tracking docs and final-report artifacts from prior work. `external/noxim` status before audit work was clean on `feat/baseline-noxim...origin/feat/baseline-noxim`. No branch was created or switched.
+- T0056 artifacts were inspected before simulator execution as the prior DeFT drain-mode evidence. The T0056 manifest records 95 cases, 95 pass rows, zero failure rows, and all five all-pairs aggregate rows delivering 4032 packets and 32256 flits. T0056 remained matrix-scoped evidence before T0060.
+- T0053 artifacts were inspected only as comparison context. T0053 records all 95 `DEFT` rows passing and 27 IA-XY timeout/non-100% rows; T0060 did not change or reuse IA-XY as DeFT reachability evidence.
+- The T0060 audit plan was defined before simulator execution. Assumption: seed `0` is sufficient because all traffic fixtures are deterministic hardcoded schedules. Assumption: the gap-128 sequential all-pairs fixture is a task-local near-isolated delivery audit, not per-pair independent timing evidence. Blocked: fully independent one-simulator-run-per-pair timing evidence was not attempted because it would require 20,160 pair/mask launches and is outside the task-local audit scope.
+- Generated outputs were written only under ignored `external/noxim/other/generated/t0060_deft_reachability_audit_v1/`.
+- The matrix used `DEFT` only, seed `0`, opt-in drain mode, `-warmup 0`, generated schema-v1 LUT `luts/deft_vl_lut_t0060.yaml`, the full accepted physical fault-mask ladder (`0x0000`, `0x0001`, `0x0011`, `0x0111`, `0x1111`), 130 deterministic hardcoded fixtures, and 650 simulator cases.
+- Fixture groups were one gap-128 near-isolated sequential all-pairs fixture, 64 source-isolated all-destination fixtures, 64 destination-stress fixtures, and one all-pairs aggregate fixture, each repeated for all five masks.
+- The artifact set contains the runner, `README.txt`, `matrix.tsv`, copied config fixture, generated traffic fixtures, generated LUT, `commands.sh`, stdout/stderr logs, JSON stats, `summary.csv`, `received_pairs.csv`, `fixture_coverage.csv`, `failing_cases.csv`, and `manifest.json`.
+- Manifest/stat checks passed. The manifest records `fixture_count: 130`, `case_count: 650`, `summary_row_count: 650`, `passing_case_count: 650`, `failure_row_count: 0`, and `all_cases_passed: true`.
+- All 650 simulator invocations returned code `0`, stopped with `drain_completed`, and passed. Every row had exact measured packet and flit delivery and zero undelivered packets/flits at stop.
+- All 4032 valid ordered chiplet-router source/destination pairs were delivered for every accepted physical mask. Across the five masks, each fixture group injected and received 20160 packets and received 161280 flits with zero failing rows.
+- Pair-level checks found 80640 `full_packet_flits_received` rows and no missing or partial pair rows. `failing_cases.csv` contains only its header.
+- The all-pairs aggregate drain-cycle values were 4088, 4858, 5617, 6239, and 5208 cycles for masks `0x0000`, `0x0001`, `0x0011`, `0x0111`, and `0x1111`, matching the T0056 all-pairs aggregate behavior.
+- LUT diagnosis found no suspicious mismatch: LUT generation returned `0`, every actual fault mask matched the requested mask, and all schema-v1 LUT-backed rows delivered completely.
+- Fixed-window context was checked before interpretation. T0026/T0027/T0028/T0033 use fixed-window synthetic traffic without a post-injection drain phase, so their blank/partial or less-than-100% fixed-window results remain descriptive and do not contradict T0060 drain-mode delivery.
+- T0060 supports a stronger DeFT drain-mode all-valid-ordered-pair accepted-physical-fault-ladder delivery claim within deterministic hardcoded fixtures and the current physical VL fault model. It does not support fixed-window workload reachability, performance ranking, improvement percentages, universal timing, stochastic workload, PARSEC/GEM5, directional endpoint fault, IA-XY, or statistical claims.
+- No simulator source, standard `XY`, IA-XY, `DEFT` behavior, VN transition restriction, VL fault injection semantic, LUT schema/use path, topology behavior, traffic-generation behavior, metrics/runner/analysis behavior, final-report source, final-report PDF/package artifact, Extended Proposal artifact, dependency, PARSEC/GEM5 trace, or `./regression.sh --update` was changed.
+- `git diff --check` completed with exit code `0`; Git emitted line-ending conversion warnings for edited/pre-existing text files only and no whitespace errors.
+- Final `external/noxim` status remained clean on `feat/baseline-noxim...origin/feat/baseline-noxim`.
+- Protected generated-artifact status checks returned no changed tracked files for T0026/T0027/T0028, T0042, T0044, T0050, T0051, T0052, T0053, T0054, T0055, and T0056 generated directories.
+- Extended Proposal checks returned no changed files for `Extended_Proposal.pdf`, `Extended_Proposal.zip`, or `Extended_Proposal/`.
+- Final-report artifact hash checks still matched the T0059 handoff values: `final_report/main.pdf` SHA-256 `A04BC3FAA6A57116022D06320434AB5B107851FFCDA09F07E580892254BA7689`; `final_report.zip` SHA-256 `A7FA7F98D54394B8390EA379261BC686B6BD7262BCA5C7B970C93DE55C5BB5AE`. These files were already modified before T0060 and were not regenerated or edited during T0060.
+
 ## Metrics Validation
 
 Purpose:

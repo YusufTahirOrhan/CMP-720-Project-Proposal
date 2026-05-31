@@ -289,6 +289,9 @@ This roadmap is based on `Extended_Proposal.pdf`, `Proposal.pdf`, and the origin
 - Post-fix DeFT drain-mode reachability validation before any baseline comparison or stronger report claim.
 - A completed claim-safe comparison against a proper interposer-aware baseline, not standard cardinal-only `XY`.
 - Final report updates only after a later report task reviews the new validated artifacts and preserves denominator-safe claim limits.
+- Final report PDF/package refreshes after report-source changes.
+- Late instructor final-report instruction alignment while preserving validated claim limits.
+- All-pair DeFT drain-mode reachability claim audit over the accepted physical fault-mask ladder before report text uses a stronger DeFT reachability statement.
 
 **Success criteria:**
 
@@ -297,6 +300,8 @@ This roadmap is based on `Extended_Proposal.pdf`, `Proposal.pdf`, and the origin
 - Drain-timeout validation blockers are diagnosed before source fixes or baseline comparisons.
 - Standard `XY` remains a limited control baseline; comparison claims use `INTERPOSER_AWARE_XY` or another explicitly validated 2.5D-aware algorithm.
 - Historical T0026/T0027/T0028 and T0042 artifacts remain unchanged and are not reinterpreted.
+- The final report follows the instructor-required final-report section structure without changing validated result claims.
+- Stronger DeFT reachability wording, if used, is limited to T0060's deterministic drain-mode all-valid-ordered-pair accepted-physical-fault-ladder evidence and remains separate from fixed-window workload results.
 
 **Validation method:**
 
@@ -305,6 +310,7 @@ This roadmap is based on `Extended_Proposal.pdf`, `Proposal.pdf`, and the origin
 - Small deterministic drain-mode diagnostics before any broader matrix.
 - Manifest/stat cross-checks for new generated artifact directories.
 - Protected-artifact guards for historical generated outputs, final-report package artifacts, and Extended Proposal files.
+- PDF log checks, package-content inspection, and hash/size recording for final report refresh tasks.
 
 **Risks or assumptions:**
 
@@ -313,4 +319,7 @@ This roadmap is based on `Extended_Proposal.pdf`, `Proposal.pdf`, and the origin
 - Assumption: T0056 supports DeFT drain reachability only for its documented 95-case matrix and is not universal reachability evidence.
 - Assumption: T0053 supports IA-XY-vs-DEFT comparison only for its documented 190-case drain-mode matrix and does not support universal algorithm ranking.
 - Assumption: T0048 integrated T0056/T0053 only as artifact-scoped drain-mode report-source summaries and did not regenerate PDF/package artifacts.
-- Blocked: Stronger claims beyond T0048's denominator-safe drain-mode summaries remain blocked until a future task defines and validates additional evidence.
+- Assumption: T0059 uses the instructor final-report instructions for report structure only; `Extended_Proposal.pdf` and the original DeFT paper remain the project and algorithmic sources of truth.
+- Assumption: T0060 supports a stronger DeFT drain-mode all-valid-ordered-pair accepted-physical-fault-ladder delivery claim only for deterministic hardcoded fixtures, opt-in drain mode, seed `0`, and the current physical bidirectional VL fault model.
+- Assumption: T0060 does not reinterpret fixed-window T0026/T0027/T0028/T0033 data and does not support stochastic workload, PARSEC/GEM5, directional endpoint fault, universal timing, ranking, improvement-percentage, or statistical claims.
+- Blocked: Stronger claims beyond T0060's deterministic DeFT drain-mode all-pair accepted-physical-fault-ladder scope remain blocked until a future task defines and validates additional evidence.

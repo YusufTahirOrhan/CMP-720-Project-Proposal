@@ -749,21 +749,60 @@ Statuses: `TODO`, `IN_PROGRESS`, `DONE`, `BLOCKED`.
 
 ## T0058: Final Refreshed Submission Handoff Check
 
-- **Status:** TODO
+- **Status:** DONE
 - **Type:** report/packaging
 - **Objective:** Perform a final read-only handoff check after T0057 to confirm the refreshed PDF and zip are ready for submission.
 - **Why it exists:** T0057 refreshed the generated deliverables. A final handoff check can summarize exact artifact paths, sizes, hashes, and remaining limitations without editing report claims or rerunning experiments.
 - **Relevant roadmap phase:** Phase 10 reachability closure and final report refresh.
 - **Scope:** Inspect `final_report/main.pdf`, `final_report.zip`, package contents, current Git status, and `external/noxim` status; summarize handoff artifacts and remaining blockers.
 - **Out of scope:** Report wording changes, source changes, Noxim rebuilds, simulations, regenerated experiment artifacts, Extended Proposal changes, dependency installation, and unsupported claim edits.
-- **Files likely to change:** Tracking docs only, if the handoff check is recorded.
+- **Files changed:** `docs/PROGRESS.md`, `docs/TASKS.md`, `docs/VALIDATION.md`, `docs/PROMPTS.md`, `docs/DECISIONS.md`
 - **Source code changes allowed:** No.
 - **Simulation reruns allowed:** No.
-- **Acceptance criteria:** The refreshed submission artifacts are identified with paths, sizes, hashes, package contents, validation state, and remaining blockers.
+- **Acceptance criteria:** Completed. The refreshed submission artifacts were identified with paths, sizes, hashes, package contents, validation state, and remaining blockers.
 - **Validation method or limitation:** Read-only status, PDF metadata, zip-content inspection, `git diff --check`, protected-artifact checks, and `external/noxim` status.
 - **Dependencies:** T0057.
 - **Risk level:** Low, because the task is read-only unless tracking docs are updated.
-- **Recommended prompt:** `Start task T0058: Final Refreshed Submission Handoff Check. Before starting, read the required project docs and final report source. Continue on the existing branch. Do not create or switch branches. Inspect the refreshed final_report/main.pdf and final_report.zip, verify package contents, run git diff --check, check external/noxim status, confirm protected generated artifacts and Extended Proposal files are unchanged, and update tracking docs with the final handoff result. Do not edit report claims, rebuild Noxim, rerun simulations, regenerate experiment artifacts, install dependencies, or use ./regression.sh --update.`
+- **Recommended prompt:** Completed by this handoff check.
+- **Notes:** Completed on 2026-05-29. The parent repository was clean before checks on `feat/map-noxim-extension-points...origin/feat/map-noxim-extension-points` with the branch ahead by two commits, and `external/noxim` was clean on `feat/baseline-noxim...origin/feat/baseline-noxim`. `final_report/main.pdf` is a 6-page, 373494-byte PDF with SHA-256 `D3B0DDF2D74ABA648FEF9B4D763781968AD7825D9E06F5F4D0CDC6444F0AC0C9`. `final_report.zip` is 670414 bytes with SHA-256 `A3026F5C997D1AC65F5AED5638F1FFF18986D9B4879F3EEEEB99BB88B34F6DE4` and contains exactly `final_report/main.pdf`, `final_report/main.tex`, `final_report/references.bib`, `final_report/IEEEtran.cls`, `final_report/README.md`, and `final_report/figures/schematic.png`. `git diff --check` completed with exit code `0`; `external/noxim` remained clean; protected generated-artifact, Extended Proposal, and final deliverable status checks returned no changed tracked files. Assumption: ignored generated report-support artifacts are guarded by tracked-status checks and by preserving their paths without writes. Blocked: `latexmk` remains blocked until Perl is available to MiKTeX, and stronger ranking, improvement percentages, universal reachability, PARSEC/GEM5 workload claims, directional endpoint fault claims, and statistical conclusions remain blocked.
+
+## T0059: Align Final Report With Instructor Final-Report Instructions
+
+- **Status:** DONE
+- **Type:** report/packaging
+- **Objective:** Incorporate the late instructor final-report instructions into the final report structure and refresh the submission package.
+- **Why it exists:** The instructor instructions explicitly require continuing in the same IEEE double-column LaTeX document and adding a `Results and Evaluation` section with `Performance Results`, `Comparative Analysis`, `Discussion`, and `Reproducibility`, followed by `Conclusion and Future Work`.
+- **Relevant roadmap phase:** Phase 10 reachability closure and final report refresh.
+- **Scope:** Inspect `C:\Users\ysfth\Downloads\CMP720_Final_Report_Instructions.pdf`, align `docs/FINAL_REPORT_DRAFT.md` and `final_report/main.tex` section structure with the instructions, rebuild `final_report/main.pdf` with the documented TeX fallback, refresh `final_report.zip`, inspect package contents, and record validation/provenance.
+- **Out of scope:** Simulator/source changes, report-claim strengthening, new experiments, Noxim rebuilds, generated experiment artifact changes, Extended Proposal changes, dependency installation, PARSEC/GEM5 traces, and `./regression.sh --update`.
+- **Files changed:** `docs/FINAL_REPORT_DRAFT.md`, `final_report/main.tex`, `final_report/main.pdf`, `final_report.zip`, refreshed LaTeX byproducts under `final_report/` (`main.aux`, `main.bbl`, `main.blg`, `main.log`, and `main.out`), and tracking docs.
+- **Source code changes allowed:** No.
+- **Simulation reruns allowed:** No.
+- **Acceptance criteria:** Completed. The report follows the instructor-required final-report section structure, the PDF and zip package were refreshed, package contents were inspected, and no simulator behavior, generated experiment artifact, Extended Proposal artifact, or unsupported claim was changed.
+- **Validation method or limitation:** PDF instruction inspection, LaTeX fallback build, final log scan, PDF text heading check, zip-content inspection, hashes/sizes, `git diff --check`, protected generated-artifact status checks, Extended Proposal status checks, and `external/noxim` status.
+- **Dependencies:** T0058 handoff state plus the late instructor instruction PDF.
+- **Risk level:** Low-medium, because report-structure edits can accidentally alter claim boundaries or package stale content.
+- **Recommended prompt:** No next project task is required for final submission unless new instructor instructions appear.
+- **Notes:** Completed on 2026-05-29. Assumption: `CMP720_Final_Report_Instructions.pdf` is a report-structure instruction source only; `Extended_Proposal.pdf` and the original DeFT paper remain the project and algorithmic sources of truth. The report was reorganized without changing the validated T0026/T0027/T0028 fixed-window limitations or the T0056/T0053 drain-mode claim limits. The refreshed PDF is 7 pages and 377584 bytes with SHA-256 `A04BC3FAA6A57116022D06320434AB5B107851FFCDA09F07E580892254BA7689`. The refreshed zip is 673499 bytes with SHA-256 `A7FA7F98D54394B8390EA379261BC686B6BD7262BCA5C7B970C93DE55C5BB5AE` and contains exactly `final_report/main.pdf`, `final_report/main.tex`, `final_report/references.bib`, `final_report/IEEEtran.cls`, `final_report/README.md`, and `final_report/figures/schematic.png`. Blocked: `latexmk` remains blocked until Perl is available to MiKTeX; stronger ranking, improvement percentages, universal reachability beyond documented matrices, PARSEC/GEM5 workload claims, directional endpoint fault claims, and statistical conclusions remain blocked.
+
+## T0060: Exhaustive DeFT Reachability Claim Audit
+
+- **Status:** DONE
+- **Type:** experiment/validation
+- **Objective:** Audit whether current DeFT evidence can support a stronger all-valid-ordered-pair accepted-fault-ladder drain reachability claim.
+- **Why it exists:** T0056 was explicitly matrix-scoped and T0059 preserved that limit in the report. A stronger DeFT reachability statement requires a separate audit over all valid chiplet-router source/destination pairs and the accepted physical fault-mask ladder.
+- **Relevant roadmap phase:** Phase 10 reachability closure and final report refresh.
+- **Scope:** Check parent and registered `external/noxim` status, inspect T0056 artifacts, inspect T0053 only as comparison context, define a task-local audit plan, run `DEFT` only under opt-in drain mode, use accepted masks `0x0000`, `0x0001`, `0x0011`, `0x0111`, and `0x1111`, and write generated outputs only under ignored `external/noxim/other/generated/t0060_deft_reachability_audit_v1/`.
+- **Out of scope:** Simulator source edits, DeFT/VN/VL/LUT behavior changes, standard `XY` or IA-XY changes, final-report source/PDF/package changes, Extended Proposal changes, PARSEC/GEM5 traces, directional endpoint fault modeling, stochastic workload claims, performance ranking, statistical conclusions, and `./regression.sh --update`.
+- **Files changed:** Generated ignored artifacts under `external/noxim/other/generated/t0060_deft_reachability_audit_v1/` and tracking docs.
+- **Source code changes allowed:** No.
+- **Simulation reruns allowed:** Yes, only the accepted T0060 DeFT drain-mode audit matrix.
+- **Acceptance criteria:** Completed. The artifact set records the runner, README, matrix, commands, copied config, generated schema-v1 LUT, deterministic traffic fixtures, logs, JSON stats, summary CSV, received-pair CSV, fixture coverage CSV, empty failing-case CSV, and manifest.
+- **Validation method or limitation:** Manifest/stat/log cross-checks, fixed-window artifact interpretation review, `git diff --check`, `external/noxim` status, protected generated-artifact guards, final-report artifact hash checks, and Extended Proposal status checks.
+- **Dependencies:** T0056 is the prior DeFT drain matrix evidence. T0053 is comparison context only. T0026/T0027/T0028 remain fixed-window report-support context only.
+- **Risk level:** Medium-high, because claim wording can easily exceed the actual drain-mode artifact scope.
+- **Recommended prompt:** Completed by this audit.
+- **Notes:** T0060 used `DEFT` only, seed `0`, opt-in drain mode, `-warmup 0`, the full accepted physical fault-mask ladder, 130 deterministic hardcoded fixtures, and 650 simulator cases. Fixture groups covered one gap-128 near-isolated sequential all-pairs fixture, 64 source-isolated all-destination fixtures, 64 destination-stress fixtures, and one all-pairs aggregate fixture, each repeated for all five masks. All 650 simulator cases returned `0`, stopped with `drain_completed`, and passed with exact measured packet/flit delivery. The pair-coverage rows delivered all 4032 valid ordered source/destination pairs for every accepted mask, with zero missing or partial pairs. Assumption: the gap-128 sequential all-pairs fixture is sufficient as a task-local near-isolated delivery audit, but it is not per-pair independent timing evidence. T0060 supports a stronger DeFT drain-mode all-pair accepted-physical-fault-ladder delivery claim within deterministic hardcoded fixtures and the current physical VL fault model. It does not support fixed-window workload, universal timing, performance-ranking, statistical, PARSEC/GEM5, stochastic-traffic, or directional endpoint fault claims. No DeFT routing, VN transition, VL fault, LUT, Noxim source, final-report artifact, or Extended Proposal fix was needed.
 
 ## T0023: Add or Register Noxim Source Tree
 

@@ -164,7 +164,11 @@ Additional post-fix drain-mode provenance is traceable through T0056 at \path{ex
 
 \section{Results and Evaluation}
 
-The results in this section are assembled from the reviewed Markdown draft and the T0028/T0027/T0026 report-support artifacts. They are finite-window descriptive measurements. Blank cells are intentional and indicate that the supporting denominator is absent. The T0026/T0027/T0028 artifact chain remains the only final report-support data set used in the fixed-window tables below. T0056/T0053 drain-mode artifacts are summarized separately in Section~\ref{sec:drain_mode_results}.
+The results in this section are assembled from the reviewed Markdown draft and the T0028/T0027/T0026 report-support artifacts. They are finite-window descriptive measurements. Blank cells are intentional and indicate that the supporting denominator is absent. The T0026/T0027/T0028 artifact chain remains the only final report-support data set used in the fixed-window tables below. T0056/T0053 drain-mode artifacts are summarized separately in Section~\ref{sec:drain_mode_results}. Following the final-report instructions, this section separates measured outputs, comparison readiness, technical discussion, and reproducibility.
+
+\subsection{Performance Results}
+
+This subsection reports the measured fixed-window and drain-mode outputs. The fixed-window tables describe the final 150-run sweep, while the later drain-mode tables describe deterministic post-fix validation and comparison artifacts.
 
 All 150 planned simulator runs completed with return code 0, and the generated T0027 report-support tables were cross-checked against the T0026 executed manifest, raw JSON stats, sweep summary, analysis run summary, and analysis comparison summary with zero mismatches. The upstream report-support manifest keeps \texttt{claims\_allowed: false}.
 
@@ -174,7 +178,7 @@ Under this fixed-window measurement policy, the \texttt{XY} hotspot cells cannot
 
 The \texttt{XY} uniform and localized cells injected packets in some seeds, but received zero packets in the measured window. T0033 diagnosed these \texttt{XY|uniform} and \texttt{XY|localized\_40} zero-received cells as standard \texttt{XY} topology incompatibility on \texttt{DEFT\_2\_5D}: cardinal-only \texttt{XY} cannot route unrestricted inter-chiplet traffic through the VL/hub/interposer path required by this topology. Therefore, side-by-side latency comparisons against \texttt{DEFT} are not supported.
 
-\subsection{Artifact Readiness}
+\subsubsection{Artifact Readiness}
 
 \begin{table}[t]
 \centering
@@ -198,7 +202,7 @@ Claim state & \texttt{claims\_allowed: false} \\
 \end{tabular}
 \end{table}
 
-\subsection{Coverage}
+\subsubsection{Coverage}
 
 \begin{table}[t]
 \centering
@@ -220,7 +224,7 @@ Claim state & \texttt{claims\_allowed: false} \\
 \end{adjustbox}
 \end{table}
 
-\subsection{Condition-Level Metrics}
+\subsubsection{Condition-Level Metrics}
 
 Reachability is \texttt{total\_received\_packets / total\_injected\_packets} within the condition. Latency is received-packet-weighted across runs with received packets. Mean network throughput is the exported finite-window mean across all five runs. Status codes are: C = \texttt{complete\_injection\_cell}, P = \texttt{partial\_injection\_cell}, and E = \texttt{empty\_injection\_cell}. Blank reachability means no injected-packet denominator exists. Blank latency means no received-packet delay samples exist.
 
@@ -270,7 +274,7 @@ Reachability is \texttt{total\_received\_packets / total\_injected\_packets} wit
 \end{adjustbox}
 \end{table*}
 
-\subsection{Pairwise Readiness}
+\subsubsection{Pairwise Readiness}
 
 No delta columns are included. Table~\ref{tab:pair_readiness} describes whether values can be displayed side by side, not whether either routing mode should be preferred. The readiness code \texttt{XY-empty} means the XY side injected zero packets in the measured cell. The readiness code \texttt{latency-blank} means both modes have injection, but one mode has zero received packets, so latency comparison is blank.
 
@@ -304,7 +308,7 @@ No delta columns are included. Table~\ref{tab:pair_readiness} describes whether 
 \end{adjustbox}
 \end{table*}
 
-\subsection{Zero-Injection Runs}
+\subsubsection{Zero-Injection Runs}
 
 The full 54-run list is preserved in \path{external/noxim/other/generated/t0027_report_support_v1/zero_injection_runs.csv}. Table~\ref{tab:zero_injection} summarizes the zero-injection rows by routing and traffic profile.
 
@@ -325,7 +329,7 @@ The full 54-run list is preserved in \path{external/noxim/other/generated/t0027_
 \end{tabular}
 \end{table}
 
-\subsection{Drain-Mode Post-Fix Validation and IA-XY Comparison}
+\subsubsection{Drain-Mode Post-Fix Validation and IA-XY Comparison}
 \label{sec:drain_mode_results}
 
 T0056 and T0053 use opt-in source-cutoff plus drain semantics rather than the T0026 fixed-window policy. These results are artifact-scoped and denominator-safe. They do not update the fixed-window condition metrics above and do not relabel IA-XY as standard \texttt{XY}.
@@ -374,7 +378,15 @@ The five T0056 all-pairs aggregate rows drained after 4088, 4858, 5617, 6239, an
 
 The denominator-safe T0053 comparison table classifies 68 matched fixture/fault rows as \texttt{complete\_delivery\_both\_modes} and 27 rows as \texttt{descriptive\_only\_timeout\_or\_non100}. The latter rows are reported only as timeout/non-100\% evidence; they are not used for ranking, improvement percentages, or statistical conclusions. For the IA-XY all-pairs aggregate rows, the five fault-mask cases stopped at \texttt{drain\_timeout} after receiving 557, 1211, 888, 995, and 795 measured packets. These rows also retained source queues and in-network state at the timeout, so they remain descriptive-only.
 
-\section{Limitations}
+\subsection{Comparative Analysis}
+
+The fixed-window comparison with standard \texttt{XY} is not comparison-ready for latency or performance ranking. Table~\ref{tab:pair_readiness} records why: hotspot rows have no measured-window \texttt{XY} injection, and the uniform/localized rows that do inject on the \texttt{XY} side have zero received packets. These rows are useful for documenting the limitation of cardinal-only \texttt{XY} on \texttt{DEFT\_2\_5D}, but not for computing deltas.
+
+The later drain-mode comparison uses \texttt{INTERPOSER\_AWARE\_XY}, not standard \texttt{XY}, because IA-XY can traverse the modeled interposer path. Table~\ref{tab:t0053_iaxy_summary} shows that \texttt{DEFT} passed all 95 matched rows while IA-XY passed 68 rows and timed out in 27 rows. This supports only the artifact-scoped statement that \texttt{DEFT} completed the documented matrix and that IA-XY had descriptive timeout rows in that same matrix. It does not support universal algorithm ranking, improvement percentages, or statistical conclusions.
+
+\subsection{Discussion}
+
+The implementation successfully produced a complete Noxim extension surface, a validated fixed-window final sweep, and post-fix drain-mode evidence for the documented matrices. The main technical trade-off is that stronger claims are limited by the validated denominator: the report preserves fixed-window descriptive tables separately from drain-mode evidence, and it keeps standard \texttt{XY} separate from IA-XY.
 
 \textbf{Assumption:} The final report text is descriptive support, not a new analysis layer.
 
@@ -398,11 +410,13 @@ The denominator-safe T0053 comparison table classifies 68 matched fixture/fault 
 
 \textbf{Blocked:} PARSEC/GEM5 trace evaluation remains outside the current final-sweep artifact set.
 
-\section{Reproducibility}
+\subsection{Reproducibility}
 
-The final LaTeX artifact is generated from \path{docs/FINAL_REPORT_DRAFT.md}, using \path{Extended_Proposal.zip} as the IEEE conference-style template reference. The final report source is intentionally separated from the extended proposal source so the original archive and proposal files remain unchanged.
+The final LaTeX artifact is generated from \path{final_report/main.tex}, which was derived from \path{docs/FINAL_REPORT_DRAFT.md} and uses the same IEEE conference-style report template family as the extended proposal. The final report source is intentionally separated from the extended proposal source so the original archive and proposal files remain unchanged.
 
-The report-support data are traceable through task IDs T0025 through T0028. The T0033 diagnosis is provenance for interpreting blank \texttt{XY} cells, not a result source for the fixed-window tables. T0056 and T0053 are additional post-fix drain-mode artifact sets summarized separately. The simulator final sweep was not rerun during final-report conversion, T0035 report revision, or T0048 report integration. T0048 updates this LaTeX source only; PDF and package regeneration remain out of scope for that task.
+The code and experiment configuration are in the project repository, with the registered Noxim source tree at \path{external/noxim}. The validated Noxim build command is \texttt{./build.sh} from \path{external/noxim} in the documented WSL/Linux environment. The final fixed-window experiment commands, generated LUTs, JSON statistics, manifests, and summaries are preserved under \path{external/noxim/other/generated/t0026_final_sweep_v1/}, \path{external/noxim/other/generated/t0026_final_analysis_v1/}, \path{external/noxim/other/generated/t0027_report_support_v1/}, and \path{external/noxim/other/generated/t0028_final_report_results_v1/}. The post-fix drain-mode artifacts are preserved under \path{external/noxim/other/generated/t0056_deft_post_fix_reachability_v1/} and \path{external/noxim/other/generated/t0053_drain_iaxy_deft_comparison_v1/}; each artifact set includes the relevant commands, fixtures, generated LUTs, logs, summaries, and manifests.
+
+The final PDF was generated from \path{final_report/} using the documented TeX fallback sequence \texttt{pdflatex main.tex}, \texttt{bibtex main}, \texttt{pdflatex main.tex}, and \texttt{pdflatex main.tex}. The simulator final sweep was not rerun during final-report conversion, report revision, report integration, or packaging refresh.
 
 \section{Conclusion and Future Work}
 
